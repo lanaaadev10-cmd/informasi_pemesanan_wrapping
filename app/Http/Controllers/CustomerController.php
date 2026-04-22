@@ -12,4 +12,10 @@ class CustomerController extends Controller
 
         return view('customer.katalog', compact('layanan'));
     }
+
+    public function dashboard()
+    {
+        $layanan = \App\Models\Layanan::all();
+        return view('dashboard', compact('layanan'));
+    }
 }
