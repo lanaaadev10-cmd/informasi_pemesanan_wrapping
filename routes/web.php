@@ -12,9 +12,10 @@ Route::get('/', function () {
 
 // Grup Route yang butuh Login (Auth)
 Route::middleware(['auth', 'verified'])->group(function () {
-
-    // Dashboard (pakai controller)
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    // Dashboard Customer
+    Route::get('/dashboard', [CustomerController::class, 'dashboard'])
+    ->middleware(['auth'])
+    ->name('dashboard');
 
     // Fitur Katalog
     Route::get('/katalog', [CustomerController::class, 'katalog'])->name('katalog');
