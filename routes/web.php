@@ -13,9 +13,9 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     
     // Dashboard Customer
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [CustomerController::class, 'dashboard'])
+    ->middleware(['auth'])
+    ->name('dashboard');
 
     // Fitur Katalog
     Route::get('/katalog', [CustomerController::class, 'katalog'])->name('katalog');
