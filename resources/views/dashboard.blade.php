@@ -5,13 +5,16 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="p-6">
+    @if($profil)
+        <h2 class="text-xl font-bold">{{ $profil->nama_perusahaan }}</h2>
+        <p>{{ $profil->deskripsi }}</p>
+        
+        @if($profil->logo)
+            <img src="{{ asset('storage/' . $profil->logo) }}" class="w-32 h-auto mt-2">
+        @endif
+    @else
+        <p>Halo! Selamat datang di sistem kami.</p>
+    @endif
+</div>
 </x-app-layout>
