@@ -5,7 +5,6 @@
         </h2>
     </x-slot>
 
-<<<<<<< HEAD
     <div class="p-6 text-gray-900 dark:text-gray-100">
 
     <h2 class="text-2xl font-bold mb-4">Katalog Layanan</h2>
