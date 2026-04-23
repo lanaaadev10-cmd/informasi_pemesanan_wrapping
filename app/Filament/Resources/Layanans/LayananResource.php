@@ -11,13 +11,21 @@ use App\Models\Layanan;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Filament\Support\Icons\Heroicon;
 
 class LayananResource extends Resource
 {
     protected static ?string $model = Layanan::class;
+
+   // Tambahkan string|BackedEnum|null secara eksplisit
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-s-shopping-bag';
+    
     protected static ?string $navigationLabel = 'Katalog Layanan';
     protected static ?string $pluralModelLabel = 'Katalog Layanan';
     protected static ?string $recordTitleAttribute = 'nama_layanan';
+
+    // TAMBAHKAN BARIS INI (Angka 3 biar di bawah Dashboard)    
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $form): Schema
     {
