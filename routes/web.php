@@ -17,7 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ->middleware(['auth'])
     ->name('dashboard');
 
-    // Fitur Katalog
+    
     Route::get('/katalog', [CustomerController::class, 'katalog'])->name('katalog');
 
     // Manajemen Profile
