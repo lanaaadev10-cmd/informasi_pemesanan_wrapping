@@ -14,13 +14,11 @@
     
     <div class="flex items-center gap-6">
         @guest
-            {{-- Muncul kalau belum login --}}
             <a href="{{ route('login') }}" class="text-white hover:text-orange-500 transition-colors">Login</a>
             <a href="{{ route('register') }}" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-bold transition-all">Register</a>
         @endguest
 
         @auth
-            {{-- Muncul kalau sudah login --}}
             <div class="flex items-center gap-4">
                 <span class="text-zinc-400 hidden sm:inline">Selamat Datang,</span>
                 <span class="text-white font-bold">{{ Auth::user()->name }}</span>
@@ -36,11 +34,9 @@
 
 <header class="max-w-6xl mx-auto px-6 py-16">
     <div class="bg-zinc-900 border border-zinc-800 rounded-[32px] p-8 md:p-12 relative overflow-hidden shadow-2xl">
-        {{-- Efek Cahaya Dekoratif --}}
         <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/10 blur-[100px] rounded-full"></div>
 
         <div class="flex flex-col md:flex-row items-center gap-10 relative z-10">
-            {{-- Menampilkan Logo --}}
             <div class="flex-shrink-0">
                 @if($profil && $profil->logo)
                     <div class="w-40 h-40 bg-white rounded-3xl p-4 shadow-xl flex items-center justify-center overflow-hidden border-4 border-zinc-800">
@@ -53,7 +49,6 @@
                 @endif
             </div>
 
-            {{-- Menampilkan Nama & Deskripsi --}}
             <div class="text-center md:text-left flex-grow">
                 <h1 class="text-4xl md:text-6xl font-black text-white mb-4 tracking-tight">
                     {{ $profil->nama_perusahaan ?? 'Nama Toko' }}
@@ -62,7 +57,6 @@
                     {{ $profil->deskripsi ?? 'Deskripsi perusahaan belum diatur.' }}
                 </p>
 
-                {{-- Info Kontak Grid --}}
                 @if($profil)
                 <ul class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <li class="flex items-center gap-3 text-sm text-zinc-300 bg-zinc-800/50 p-3 rounded-xl border border-zinc-700">
@@ -99,13 +93,11 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         @foreach($layanans as $layanan)
             <div class="group bg-zinc-900 border border-zinc-800 p-8 rounded-[24px] hover:border-orange-600/50 transition-all duration-300 shadow-lg relative overflow-hidden">
-                {{-- Decorative Icon Background --}}
                 <div class="absolute -right-4 -top-4 text-zinc-800 text-8xl opacity-10 rotate-12 group-hover:text-orange-600/20 transition-colors">
                     <i class="fas fa-tags"></i>
                 </div>
 
                 <div class="relative z-10">
-                    {{-- Nama & Tipe Layanan --}}
                     <div class="mb-4">
                         <span class="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 bg-orange-500/10 px-2 py-1 rounded">
                             {{ $layanan->tipe_layanan }}
@@ -113,12 +105,10 @@
                         <h3 class="text-2xl font-bold text-white mt-2">{{ $layanan->nama_layanan }}</h3>
                     </div>
                     
-                    {{-- Deskripsi Layanan --}}
                     <p class="text-zinc-500 text-sm leading-relaxed mb-8 line-clamp-3">
                         {{ $layanan->deskripsi }}
                     </p>
 
-                    {{-- Harga & Button --}}
                     <div class="flex items-center justify-between pt-6 border-t border-zinc-800">
                         <div class="flex flex-col">
                             <span class="text-[10px] text-zinc-500 uppercase font-bold">Harga Mulai</span>
@@ -136,6 +126,45 @@
         @endforeach
     </div>
 </section>
+
+{{-- ✅ Google Maps Section — di luar footer, sebelum footer --}}
+@if($profil->maps_url)
+<section class="max-w-6xl mx-auto px-6 pb-24">
+    <div class="flex items-center gap-4 mb-12">
+        <h2 class="text-3xl font-black text-white uppercase tracking-wider">Lokasi Kami</h2>
+        <div class="h-1 flex-grow bg-zinc-900 rounded-full overflow-hidden">
+            <div class="w-24 h-full bg-orange-600"></div>
+        </div>
+    </div>
+
+    <div class="bg-zinc-900 border border-zinc-800 rounded-[24px] overflow-hidden shadow-2xl">
+        <iframe
+            src="{{ $profil->maps_url }}"
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+
+        {{-- Info + Tombol --}}
+        <div class="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-zinc-800">
+            <div class="flex items-center gap-3 text-zinc-300">
+                <i class="fas fa-map-marker-alt text-orange-500 text-lg"></i>
+                <span class="text-sm">{{ $profil->alamat }}</span>
+            </div>
+            <a 
+                href="https://maps.google.com/?q={{ urlencode($profil->alamat) }}"
+                target="_blank"
+                class="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all">
+                <i class="fas fa-map-marker-alt"></i>
+                Buka di Google Maps
+            </a>
+        </div>
+    </div>
+</section>
+@endif
 
 <footer class="bg-zinc-900 text-zinc-500 py-12 text-center border-t border-zinc-800">
     <div class="max-w-6xl mx-auto px-6">
