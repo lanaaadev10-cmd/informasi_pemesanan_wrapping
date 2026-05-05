@@ -15,7 +15,8 @@ class CustomerController extends Controller
 
     public function dashboard()
     {
-        $layanan = \App\Models\Layanan::all();
-        return view('dashboard', compact('layanan'));
+        $layanans = \App\Models\Layanan::all();
+        $profil = \App\Models\ProfilPerusahaan::first();
+        return view('dashboard', compact('layanans', 'profil'));
     }
 }
