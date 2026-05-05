@@ -34,7 +34,13 @@ class ProfilPerusahaanForm
                     ->directory('logos') // Masukin ke folder logo agar rapi
                     ->visibility('public') // Pastikan file bisa diakses publik
                     ->maxSize(10240) // 10240 KB = 10 MB. Browser bakal nolak kalau filenya terlalu besar
-                    ->helperText('Maksimal ukuran file adalah 10MB ya!')
+                    ->helperText('Maksimal ukuran file adalah 10MB ya!'),
+                Textarea::make('maps_url')
+                    ->label('Google Maps Embed URL')
+                    ->helperText('Buka Google Maps → Share → Embed a map → copy bagian src="..." nya aja')
+                    ->nullable()
+                    ->rows(3)
+                    ->columnSpanFull(),
             ]);
     }
 }
