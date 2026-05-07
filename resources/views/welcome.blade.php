@@ -149,6 +149,85 @@
     </div>
 </section>
 
+{{-- ================= GALERI ================= --}}
+<section class="max-w-6xl mx-auto px-6 pb-24">
+    <div class="flex items-center gap-4 mb-12">
+        <h2 class="text-3xl font-black text-white uppercase tracking-wider">Galeri Hasil Pekerjaan</h2>
+        <div class="h-1 flex-grow bg-zinc-900 rounded-full overflow-hidden">
+            <div class="w-24 h-full bg-orange-600"></div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        @foreach($galeris as $item)
+            <div class="group bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg hover:border-orange-600/50 transition-all">
+
+                <div class="overflow-hidden">
+                    <img 
+                        src="{{ asset('storage/' . $item->foto) }}" 
+                        alt="{{ $item->judul }}"
+                        class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                    >
+                </div>
+
+                <div class="p-4">
+                    <h3 class="text-white font-bold text-lg mb-2">
+                        {{ $item->judul }}
+                    </h3>
+
+                    <p class="text-zinc-500 text-sm line-clamp-2">
+                        {{ $item->deskripsi }}
+                    </p>
+
+                    <span class="text-xs text-zinc-600 mt-3 block">
+                        {{ $item->tanggal_upload }}
+                    </span>
+                </div>
+
+            </div>
+        @endforeach
+    </div>
+</section>
+
+{{-- ✅ Google Maps Section — di luar footer, sebelum footer --}}
+@if($profil->maps_url)
+<section class="max-w-6xl mx-auto px-6 pb-24">
+    <div class="flex items-center gap-4 mb-12">
+        <h2 class="text-3xl font-black text-white uppercase tracking-wider">Lokasi Kami</h2>
+        <div class="h-1 flex-grow bg-zinc-900 rounded-full overflow-hidden">
+            <div class="w-24 h-full bg-orange-600"></div>
+        </div>
+    </div>
+
+    <div class="bg-zinc-900 border border-zinc-800 rounded-[24px] overflow-hidden shadow-2xl">
+        <iframe
+            src="{{ $profil->maps_url }}"
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+
+        {{-- Info + Tombol --}}
+        <div class="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-t border-zinc-800">
+            <div class="flex items-center gap-3 text-zinc-300">
+                <i class="fas fa-map-marker-alt text-orange-500 text-lg"></i>
+                <span class="text-sm">{{ $profil->alamat }}</span>
+            </div>
+            <a 
+                href="https://maps.google.com/?q={{ urlencode($profil->alamat) }}"
+                target="_blank"
+                class="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all">
+                <i class="fas fa-map-marker-alt"></i>
+                Buka di Google Maps
+            </a>
+        </div>
+    </div>
+</section>
+@endif
+
 <footer class="bg-zinc-950 text-zinc-500 py-16 text-center border-t border-zinc-900">
     <div class="max-w-6xl mx-auto px-6">
         <div class="text-orange-500 font-black text-xl mb-6">DANTIE STICKER.</div>
