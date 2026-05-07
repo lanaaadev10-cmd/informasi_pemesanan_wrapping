@@ -4,9 +4,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GaleriController;
 
-
-//  
+// Route untuk Metrics (Monitoring)
 Route::get('/metrics', function () {
     return response("
 # HELP app_status Application status
@@ -20,31 +20,24 @@ memory_usage " . memory_get_usage()
     ->header('Content-Type', 'text/plain; version=0.0.4');
 });
 
-
-// // Halaman utama (Landing Page)
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-// Halaman utama (Landing Page) dengan data dari DashboardController
-Route::get('/', [DashboardController::class, 'index']);
+// --- PERBAIKAN DI SINI ---
+// Gunakan DashboardController untuk halaman utama agar semua variabel ($galeris, $layanans, $profil) terisi
+Route::get('/', [DashboardController::class, 'index'])->name('home');
 
 
 // Grup Route yang butuh Login (Auth)
 Route::middleware(['auth', 'verified'])->group(function () {
 
+    // Dashboard Customer
+    Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard');
 
-// Dashboard Customer
-    Route::get('/dashboard', [CustomerController::class, 'dashboard'])
-    ->middleware(['auth'])
-    ->name('dashboard');
-
-
-// Fitur Katalog
+    // Fitur Katalog
     Route::get('/katalog', [CustomerController::class, 'katalog'])->name('katalog');
 
+    // Fitur galeri (Halaman internal)
+    Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri');
 
-// Manajemen Profile
+    // Manajemen Profile User
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'edit')->name('profile.edit');
         Route::patch('/profile', 'update')->name('profile.update');
@@ -52,4 +45,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
 });
+
 require __DIR__.'/auth.php';

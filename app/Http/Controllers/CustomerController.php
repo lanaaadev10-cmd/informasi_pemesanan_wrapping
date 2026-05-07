@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Layanan;
+use App\Models\Galeri;  
 
 class CustomerController extends Controller
 {
@@ -17,6 +18,7 @@ class CustomerController extends Controller
     {
         $layanans = \App\Models\Layanan::all();
         $profil = \App\Models\ProfilPerusahaan::first();
-        return view('dashboard', compact('layanans', 'profil'));
+        $galeris = \App\Models\Galeri::latest()->get();
+        return view('dashboard', compact('layanans', 'profil', 'galeris'));
     }
 }
