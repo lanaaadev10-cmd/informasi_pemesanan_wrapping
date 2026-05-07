@@ -127,6 +127,46 @@
     </div>
 </section>
 
+{{-- ================= GALERI ================= --}}
+<section class="max-w-6xl mx-auto px-6 pb-24">
+    <div class="flex items-center gap-4 mb-12">
+        <h2 class="text-3xl font-black text-white uppercase tracking-wider">Galeri Hasil Pekerjaan</h2>
+        <div class="h-1 flex-grow bg-zinc-900 rounded-full overflow-hidden">
+            <div class="w-24 h-full bg-orange-600"></div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        @foreach($galeris as $item)
+            <div class="group bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-lg hover:border-orange-600/50 transition-all">
+
+                <div class="overflow-hidden">
+                    <img 
+                        src="{{ asset('storage/' . $item->foto) }}" 
+                        alt="{{ $item->judul }}"
+                        class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                    >
+                </div>
+
+                <div class="p-4">
+                    <h3 class="text-white font-bold text-lg mb-2">
+                        {{ $item->judul }}
+                    </h3>
+
+                    <p class="text-zinc-500 text-sm line-clamp-2">
+                        {{ $item->deskripsi }}
+                    </p>
+
+                    <span class="text-xs text-zinc-600 mt-3 block">
+                        {{ $item->tanggal_upload }}
+                    </span>
+                </div>
+
+            </div>
+        @endforeach
+    </div>
+</section>
+
 {{-- ✅ Google Maps Section — di luar footer, sebelum footer --}}
 @if($profil->maps_url)
 <section class="max-w-6xl mx-auto px-6 pb-24">
