@@ -31,7 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard Customer
     Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard');
 
-    
+    // Fitur Katalog
     Route::get('/katalog', [CustomerController::class, 'katalog'])->name('katalog');
 
     // Fitur galeri (Halaman internal)
