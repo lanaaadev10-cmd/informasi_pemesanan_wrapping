@@ -23,7 +23,6 @@
             <div class="flex items-center gap-4">
                 <span class="text-zinc-400 hidden sm:inline">Selamat Datang,</span>
                 <span class="text-white font-bold">{{ Auth::user()->name }}</span>
-                <a href="{{ route('profil.perusahaan') }}" class="text-zinc-400 hover:text-white transition-colors text-sm">Profil Perusahaan</a>
                 <a href="/profile" class="text-zinc-400 hover:text-white bg-zinc-800 px-3 py-1.5 rounded-lg text-sm transition-all border border-zinc-700">Profil saya</a>
                 <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf

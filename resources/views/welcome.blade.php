@@ -16,8 +16,8 @@
     </div>
     
     <div class="flex items-center gap-6">
+        <a href="{{ route('profil.perusahaan') }}" class="text-zinc-400 hover:text-white transition-colors font-medium">Profil Perusahaan</a>
         @guest
-            <a href="{{ route('profil.perusahaan') }}" class="text-white hover:text-orange-500 transition-colors">Profil Perusahaan</a>
             <a href="{{ route('login') }}" class="text-white hover:text-orange-500 transition-colors">Login</a>
             <a href="{{ route('register') }}" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-bold transition-all">Register</a>
         @endguest
