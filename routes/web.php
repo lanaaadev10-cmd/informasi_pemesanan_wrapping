@@ -23,6 +23,8 @@ memory_usage " . memory_get_usage()
 // --- PERBAIKAN DI SINI ---
 // Gunakan DashboardController untuk halaman utama agar semua variabel ($galeris, $layanans, $profil) terisi
 Route::get('/', [DashboardController::class, 'index'])->name('home');
+Route::get('/profil-perusahaan', [DashboardController::class, 'profile'])->name('profil.perusahaan');
+
 
 
 // Grup Route yang butuh Login (Auth)

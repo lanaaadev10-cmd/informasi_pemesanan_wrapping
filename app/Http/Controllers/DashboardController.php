@@ -23,4 +23,10 @@ class DashboardController extends Controller
         // Mengirim data ke halaman welcome
         return view('welcome', compact('profil', 'layanans', 'galeris'));
     }
+
+    public function profile()
+    {
+        $profil = ProfilPerusahaan::first();
+        return view('profil', compact('profil'));
+    }
 }
