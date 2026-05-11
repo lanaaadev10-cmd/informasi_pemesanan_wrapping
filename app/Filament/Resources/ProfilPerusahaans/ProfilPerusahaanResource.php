@@ -8,24 +8,28 @@ use App\Filament\Resources\ProfilPerusahaans\Pages\ListProfilPerusahaans;
 use App\Filament\Resources\ProfilPerusahaans\Schemas\ProfilPerusahaanForm;
 use App\Filament\Resources\ProfilPerusahaans\Tables\ProfilPerusahaansTable;
 use App\Models\ProfilPerusahaan;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-home-modern';
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-home-modern';
+
+    protected static ?string $label = 'Profil Perusahaan';
+    protected static ?string $pluralLabel = 'Profil Perusahaan';
+    protected static ?string $navigationLabel = 'Profil Perusahaan';
 
     protected static ?string $navigationGroup = 'Settings';
 
     protected static ?string $recordTitleAttribute = 'nama_perusahaan';
 
+    protected static ?int $navigationSort = 2;
+
     public static function form(Schema $schema): Schema
-    {
+    { 
         return ProfilPerusahaanForm::configure($schema);
     }
 
