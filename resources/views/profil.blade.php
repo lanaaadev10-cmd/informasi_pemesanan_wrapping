@@ -1,181 +1,243 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil - {{ $profil->nama_perusahaan ?? 'Dantie Sticker' }}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <title>{{ $profil->nama_perusahaan ?? 'Profil Perusahaan' }} - Official Website</title>
+    
+    <!-- Tipografi Premium -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icon & Animasi -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
-        body { font-family: 'Outfit', sans-serif; }
-        .glass {
-            background: rgba(24, 24, 27, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
         }
-        .orange-glow {
-            box-shadow: 0 0 40px -10px rgba(234, 88, 12, 0.3);
+        .text-gradient {
+            background: linear-gradient(135deg, #ea580c 0%, #9a3412 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-premium {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+            box-shadow: 0 10px 20px -5px rgba(234, 88, 12, 0.3);
+        }
+        .soft-card {
+            background: #ffffff;
+            border: 1px solid #f3f4f6;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+            border-radius: 24px;
+        }
+        .footer-link:hover {
+            color: #ea580c;
+            padding-left: 4px;
         }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-300 antialiased overflow-x-hidden">
+<body class="antialiased overflow-x-hidden">
 
-    <!-- Hero / Background Glow -->
-    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
-        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-orange-600/10 blur-[120px] rounded-full"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-orange-900/5 blur-[120px] rounded-full"></div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 glass border-b border-white/5">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-900/20 group-hover:rotate-12 transition-transform">
-                    <i class="fas fa-layer-group"></i>
-                </div>
-                <span class="text-white font-black text-xl tracking-tighter uppercase">Dantie Sticker</span>
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-3">
+                @if($profil && $profil->logo)
+                    <img src="{{ asset('storage/' . $profil->logo) }}" alt="Logo" class="h-10 w-auto">
+                @else
+                    <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center text-white">
+                        <i class="ph-bold ph-sketch-logo text-2xl"></i>
+                    </div>
+                @endif
+                <span class="font-bold text-xl tracking-tight">{{ $profil->nama_perusahaan ?? 'Dantie Sticker' }}</span>
             </a>
-            <div class="flex items-center gap-6">
-                <a href="/" class="text-zinc-400 hover:text-orange-500 transition-colors font-medium">Beranda</a>
-                <a href="{{ route('login') }}" class="bg-white/5 hover:bg-white/10 text-white px-5 py-2.5 rounded-xl font-bold transition-all border border-white/10">Masuk</a>
+            
+            <div class="hidden md:flex items-center gap-10">
+                <a href="/" class="text-sm font-medium text-gray-600 hover:text-orange-600 transition-colors">Beranda</a>
+                <a href="#tentang" class="text-sm font-medium text-gray-600 hover:text-orange-600 transition-colors">Tentang</a>
+                <a href="#kontak" class="text-sm font-medium text-gray-600 hover:text-orange-600 transition-colors">Kontak</a>
+                <a href="{{ route('login') }}" class="btn-premium text-white px-7 py-2.5 rounded-full text-sm font-bold transition-all hover:scale-105 active:scale-95">
+                    Member Area
+                </a>
             </div>
         </div>
     </nav>
 
-    <main class="relative z-10 max-w-7xl mx-auto px-6 py-16 lg:py-24">
+    <main class="pt-32">
         
-        <!-- Profile Header Section -->
-        <div class="grid lg:grid-cols-12 gap-12 items-center mb-24">
-            <div class="lg:col-span-7 space-y-8">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-500 text-sm font-bold uppercase tracking-widest">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-                    </span>
-                    Identity & Excellence
-                </div>
-                
-                <h1 class="text-5xl lg:text-8xl font-black text-white leading-[0.9] tracking-tighter">
-                    {{ $profil->nama_perusahaan ?? 'Premium Sticker' }}
-                </h1>
-                
-                <p class="text-xl lg:text-2xl text-zinc-400 leading-relaxed max-w-2xl font-light">
-                    {{ $profil->deskripsi ?? 'Dedikasi kami adalah memberikan kualitas stiker terbaik dengan presisi tinggi dan desain inovatif.' }}
-                </p>
-
-                <div class="flex flex-wrap gap-4">
-                    <div class="px-6 py-4 rounded-2xl glass border border-orange-500/20 flex flex-col gap-1">
-                        <span class="text-orange-500 text-xs font-bold uppercase tracking-widest">Terpercaya Sejak</span>
-                        <span class="text-white text-xl font-black italic">2018</span>
-                    </div>
-                    <div class="px-6 py-4 rounded-2xl glass border border-orange-500/20 flex flex-col gap-1">
-                        <span class="text-orange-500 text-xs font-bold uppercase tracking-widest">Kepuasan Pelanggan</span>
-                        <span class="text-white text-xl font-black italic">99.9%</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-5 flex justify-center lg:justify-end">
-                <div class="relative w-72 h-72 lg:w-96 lg:h-96">
-                    <div class="absolute inset-0 bg-orange-600/20 rounded-[60px] blur-3xl animate-pulse"></div>
-                    <div class="relative w-full h-full glass rounded-[60px] p-12 border border-white/10 flex items-center justify-center shadow-2xl orange-glow overflow-hidden">
-                        @if($profil && $profil->logo)
-                            <img src="{{ asset('storage/' . $profil->logo) }}" alt="Logo" class="w-full h-full object-contain">
-                        @else
-                            <i class="fas fa-gem text-[120px] text-zinc-800"></i>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Info Cards Section -->
-        <div class="grid md:grid-cols-3 gap-8 mb-24">
-            <!-- Address -->
-            <div class="group glass p-8 rounded-[40px] hover:bg-zinc-900 transition-all duration-500 border border-white/5 hover:border-orange-500/30">
-                <div class="w-14 h-14 bg-orange-600/20 rounded-2xl flex items-center justify-center text-orange-500 mb-6 group-hover:scale-110 group-hover:bg-orange-600 group-hover:text-white transition-all">
-                    <i class="fas fa-map-marked-alt text-2xl"></i>
-                </div>
-                <h3 class="text-white font-bold text-xl mb-3">Lokasi Fisik</h3>
-                <p class="text-zinc-500 leading-relaxed">{{ $profil->alamat ?? 'Alamat belum diatur' }}</p>
-            </div>
-
-            <!-- Contact -->
-            <div class="group glass p-8 rounded-[40px] hover:bg-zinc-900 transition-all duration-500 border border-white/5 hover:border-orange-500/30">
-                <div class="w-14 h-14 bg-orange-600/20 rounded-2xl flex items-center justify-center text-orange-500 mb-6 group-hover:scale-110 group-hover:bg-orange-600 group-hover:text-white transition-all">
-                    <i class="fas fa-headset text-2xl"></i>
-                </div>
-                <h3 class="text-white font-bold text-xl mb-3">Hubungi Kami</h3>
-                <div class="space-y-2">
-                    <p class="text-zinc-500 flex items-center gap-2">
-                        <i class="fas fa-envelope text-orange-600"></i>
-                        {{ $profil->email ?? '-' }}
-                    </p>
-                    <p class="text-zinc-500 flex items-center gap-2">
-                        <i class="fab fa-whatsapp text-green-500"></i>
-                        {{ $profil->nomor_telepon ?? '-' }}
-                    </p>
-                </div>
-            </div>
-
-            <!-- Map URL -->
-            @if($profil && $profil->maps_url)
-            <div class="group glass p-8 rounded-[40px] hover:bg-zinc-900 transition-all duration-500 border border-white/5 hover:border-orange-500/30 flex flex-col justify-between">
-                <div>
-                    <div class="w-14 h-14 bg-orange-600/20 rounded-2xl flex items-center justify-center text-orange-500 mb-6 group-hover:scale-110 group-hover:bg-orange-600 group-hover:text-white transition-all">
-                        <i class="fas fa-directions text-2xl"></i>
-                    </div>
-                    <h3 class="text-white font-bold text-xl mb-3">Petunjuk Arah</h3>
-                    <p class="text-zinc-500 mb-6">Temukan kami dengan mudah melalui navigasi instan.</p>
-                </div>
-                <a href="{{ $profil->maps_url }}" target="_blank" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg shadow-orange-900/20">
-                    <i class="fas fa-external-link-alt"></i>
-                    Buka Google Maps
+        <!-- Hero Section -->
+        <section class="max-w-7xl mx-auto px-6 text-center mb-32" data-aos="fade-up">
+            <span class="text-orange-600 font-bold text-xs uppercase tracking-[0.3em] mb-6 block">Premium Quality Assurance</span>
+            <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 leading-[1.1] tracking-tight mb-8">
+                Bring everyone together with <br> 
+                <span class="text-gradient">solutions that scale.</span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-gray-500 text-lg md:text-xl leading-relaxed mb-10">
+                {{ $profil->deskripsi ?? 'Kami hadir dengan dedikasi penuh untuk memberikan hasil terbaik bagi bisnis dan kendaraan Anda melalui inovasi stiker yang tak tertandingi.' }}
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#kontak" class="btn-premium text-white px-10 py-4 rounded-2xl font-bold text-lg hover:shadow-orange-600/40 transition-all">
+                    Hubungi Sekarang
+                </a>
+                <a href="#tentang" class="bg-gray-50 hover:bg-gray-100 text-gray-700 px-10 py-4 rounded-2xl font-bold text-lg transition-all border border-gray-200">
+                    Pelajari Lebih Lanjut
                 </a>
             </div>
-            @endif
-        </div>
+        </section>
 
-        <!-- Vision/Mission Style Section -->
-        <div class="glass rounded-[60px] p-12 lg:p-20 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-600/5 blur-[100px] rounded-full pointer-events-none"></div>
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div class="space-y-6">
-                    <h2 class="text-4xl font-black text-white italic tracking-tighter">"Kreativitas Tanpa Batas, Kualitas Tanpa Kompromi."</h2>
-                    <div class="w-24 h-1 bg-orange-600 rounded-full"></div>
-                    <p class="text-zinc-400 text-lg leading-relaxed">
-                        Sejak awal berdiri, kami percaya bahwa setiap kendaraan dan bisnis memiliki cerita unik. Melalui stiker berkualitas tinggi, kami membantu Anda menceritakan kisah tersebut dengan visual yang memukau.
-                    </p>
+        <!-- Stats Section -->
+        <section class="max-w-5xl mx-auto px-6 mb-32 grid grid-cols-2 md:grid-cols-4 gap-8" data-aos="fade-up" data-aos-delay="200">
+            <div class="text-center">
+                <h4 class="text-4xl font-bold text-gray-900 mb-2">5+</h4>
+                <p class="text-gray-500 text-sm font-medium">Tahun Pengalaman</p>
+            </div>
+            <div class="text-center border-l border-gray-100">
+                <h4 class="text-4xl font-bold text-gray-900 mb-2">1.2k</h4>
+                <p class="text-gray-500 text-sm font-medium">Project Selesai</p>
+            </div>
+            <div class="text-center border-l border-gray-100">
+                <h4 class="text-4xl font-bold text-gray-900 mb-2">99%</h4>
+                <p class="text-gray-500 text-sm font-medium">Kepuasan Pelanggan</p>
+            </div>
+            <div class="text-center border-l border-gray-100">
+                <h4 class="text-4xl font-bold text-gray-900 mb-2">24h</h4>
+                <p class="text-gray-500 text-sm font-medium">Support Standby</p>
+            </div>
+        </section>
+
+        <!-- Features (Like Image Cards) -->
+        <section id="tentang" class="max-w-7xl mx-auto px-6 mb-32">
+            <div class="grid md:grid-cols-2 gap-10 items-center">
+                <div class="soft-card p-10 md:p-16 flex flex-col justify-center gap-8" data-aos="fade-right">
+                    <div class="w-16 h-16 bg-orange-100 rounded-3xl flex items-center justify-center text-orange-600">
+                        <i class="ph-bold ph-lightning text-3xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-gray-900 mb-5">Pengerjaan Cepat & Presisi</h2>
+                        <p class="text-gray-500 leading-relaxed text-lg">
+                            Setiap pengerjaan kami melewati proses kontrol kualitas yang ketat untuk memastikan hasil akhir yang sempurna bagi Anda.
+                        </p>
+                    </div>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3 font-semibold text-gray-700">
+                            <i class="ph-bold ph-check-circle text-green-500 text-xl"></i>
+                            Bahan Vinyl Kualitas Dunia
+                        </li>
+                        <li class="flex items-center gap-3 font-semibold text-gray-700">
+                            <i class="ph-bold ph-check-circle text-green-500 text-xl"></i>
+                            Mesin Cetak Berteknologi Tinggi
+                        </li>
+                    </ul>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="aspect-square glass rounded-[40px] border border-white/5 p-8 flex flex-col justify-center items-center text-center gap-4 group hover:bg-orange-600 transition-all duration-500">
-                        <i class="fas fa-shield-alt text-3xl text-orange-500 group-hover:text-white"></i>
-                        <span class="text-white font-bold uppercase text-xs tracking-widest">Bahan Premium</span>
-                    </div>
-                    <div class="aspect-square glass rounded-[40px] border border-white/5 p-8 flex flex-col justify-center items-center text-center gap-4 group hover:bg-orange-600 transition-all duration-500">
-                        <i class="fas fa-clock text-3xl text-orange-500 group-hover:text-white"></i>
-                        <span class="text-white font-bold uppercase text-xs tracking-widest">Pengerjaan Cepat</span>
-                    </div>
-                    <div class="aspect-square glass rounded-[40px] border border-white/5 p-8 flex flex-col justify-center items-center text-center gap-4 group hover:bg-orange-600 transition-all duration-500">
-                        <i class="fas fa-users text-3xl text-orange-500 group-hover:text-white"></i>
-                        <span class="text-white font-bold uppercase text-xs tracking-widest">Tim Ahli</span>
-                    </div>
-                    <div class="aspect-square glass rounded-[40px] border border-white/5 p-8 flex flex-col justify-center items-center text-center gap-4 group hover:bg-orange-600 transition-all duration-500">
-                        <i class="fas fa-hand-holding-usd text-3xl text-orange-500 group-hover:text-white"></i>
-                        <span class="text-white font-bold uppercase text-xs tracking-widest">Harga Terbaik</span>
+                
+                <div class="relative group" data-aos="fade-left">
+                    <div class="absolute -inset-4 bg-orange-600/5 rounded-[40px] scale-95 group-hover:scale-100 transition-transform duration-700"></div>
+                    <div class="relative rounded-[32px] overflow-hidden shadow-2xl">
+                        <!-- Baru saya tambah: Placeholder gambar mockup premium -->
+                        <img src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=2070&auto=format&fit=crop" 
+                             class="w-full h-[500px] object-cover group-hover:scale-110 transition-transform duration-1000" alt="Mockup">
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- Ready to streamline CTA Section (As in image) -->
+        <section class="max-w-7xl mx-auto px-6 mb-32">
+            <div class="btn-premium rounded-[48px] p-12 md:p-24 text-center text-white relative overflow-hidden" data-aos="zoom-in">
+                <!-- Dekorasi -->
+                <div class="absolute top-0 left-0 w-64 h-64 bg-white/10 blur-[80px] rounded-full"></div>
+                <div class="absolute bottom-0 right-0 w-64 h-64 bg-orange-900/20 blur-[80px] rounded-full"></div>
+                
+                <div class="relative z-10">
+                    <h2 class="text-4xl md:text-6xl font-extrabold mb-8">Ready to streamline <br> your workflow?</h2>
+                    <p class="text-white/80 text-lg mb-12 max-w-xl mx-auto">
+                        Mulai hari ini dengan solusi stiker terbaik kami. Hubungi tim kami untuk konsultasi gratis.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-5">
+                        <a href="https://wa.me/{{ $profil->nomor_telepon ?? '' }}" class="bg-white text-orange-600 px-10 py-4 rounded-2xl font-bold text-lg transition-all hover:bg-orange-50">
+                            Get Started Now
+                        </a>
+                        <a href="#kontak" class="bg-white/10 text-white px-10 py-4 rounded-2xl font-bold text-lg transition-all border border-white/20 hover:bg-white/20">
+                            Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer (Style as in image) -->
+        <footer id="kontak" class="bg-gray-50 pt-24 pb-12 border-t border-gray-100">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid md:grid-cols-4 gap-16 mb-20">
+                    <div class="col-span-1 md:col-span-1">
+                        <a href="/" class="flex items-center gap-3 mb-8">
+                            <span class="font-bold text-2xl tracking-tight text-gray-900">{{ $profil->nama_perusahaan ?? 'Dantie' }}</span>
+                        </a>
+                        <p class="text-gray-500 leading-relaxed text-sm">
+                            Solusi branding dan wrapping terbaik dengan standar kualitas premium sejak 2018.
+                        </p>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-gray-900 mb-8">Halaman</h5>
+                        <ul class="space-y-4 text-sm font-medium text-gray-500">
+                            <li><a href="#" class="footer-link transition-all">Beranda</a></li>
+                            <li><a href="#" class="footer-link transition-all">Katalog Layanan</a></li>
+                            <li><a href="#" class="footer-link transition-all">Galeri Hasil Kerja</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-gray-900 mb-8">Perusahaan</h5>
+                        <ul class="space-y-4 text-sm font-medium text-gray-500">
+                            <li><a href="#" class="footer-link transition-all">Tentang Kami</a></li>
+                            <li><a href="#" class="footer-link transition-all">Kebijakan Privasi</a></li>
+                            <li><a href="#" class="footer-link transition-all">Syarat & Ketentuan</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-gray-900 mb-8">Hubungi Kami</h5>
+                        <ul class="space-y-4 text-sm font-medium text-gray-500">
+                            <li class="flex items-center gap-3">
+                                <i class="ph ph-envelope-simple text-orange-600 text-lg"></i>
+                                {{ $profil->email ?? 'email@anda.com' }}
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <i class="ph ph-phone text-orange-600 text-lg"></i>
+                                {{ $profil->nomor_telepon ?? '-' }}
+                            </li>
+                            <li class="flex items-start gap-3 mt-4">
+                                <i class="ph ph-map-pin text-orange-600 text-lg shrink-0"></i>
+                                <span class="leading-relaxed">{{ $profil->alamat ?? 'Alamat Anda' }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="pt-12 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-400 font-medium">
+                    <p>&copy; 2026 {{ $profil->nama_perusahaan ?? 'Dantie Sticker' }}. All rights reserved.</p>
+                    <div class="flex gap-8">
+                        <a href="#" class="hover:text-orange-600 transition-colors">Instagram</a>
+                        <a href="#" class="hover:text-orange-600 transition-colors">TikTok</a>
+                        <a href="#" class="hover:text-orange-600 transition-colors">Facebook</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
     </main>
 
-    <footer class="py-12 border-t border-white/5 mt-24">
-        <div class="max-w-7xl mx-auto px-6 text-center text-zinc-500 text-sm font-medium">
-            &copy; 2026 {{ $profil->nama_perusahaan ?? 'Dantie Sticker' }}. Crafted for Perfection.
-        </div>
-    </footer>
-
+    <!-- AOS Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: 'ease-out-cubic'
+        });
+    </script>
 </body>
 </html>
