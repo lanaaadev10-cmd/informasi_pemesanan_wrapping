@@ -10,22 +10,26 @@ use App\Filament\Resources\ProfilPerusahaans\Tables\ProfilPerusahaansTable;
 use App\Models\ProfilPerusahaan;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
 
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-rectangle-stack';
+    // Baru saya tambah: Icon sidebar yang lebih modern dan sesuai dengan profil
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-home-modern';
 
+    // Baru saya tambah: Label penamaan agar di Admin Panel muncul sebagai "Profil Perusahaan" (Bukan model name)
     protected static ?string $label = 'Profil Perusahaan';
     protected static ?string $pluralLabel = 'Profil Perusahaan';
     protected static ?string $navigationLabel = 'Profil Perusahaan';
 
-    protected static ?string $recordTitleAttribute = 'ProfilPerusahaan';
+    // Baru saya tambah: Mengelompokkan menu ini ke dalam grup "Settings" agar sidebar rapi
+    protected static string|null|\UnitEnum $navigationGroup = 'Settings';
 
-    // TAMBAHKAN BARIS INI (Angka 2 biar di bawah Dashboard)
+    protected static ?string $recordTitleAttribute = 'nama_perusahaan';
+
+    // Baru saya tambah: Mengatur urutan menu agar berada tepat di bawah Dashboard (Urutan ke-2)
     protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
