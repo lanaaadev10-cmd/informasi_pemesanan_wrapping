@@ -13,5 +13,6 @@ class ProfilPerusahaan extends Model
     'email',
     'nomor_telepon',
     'logo',
+    'maps_url',
 ];
 }

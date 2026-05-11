@@ -68,8 +68,9 @@ class ProfilPerusahaanForm
                         TextInput::make('maps_url')
                             ->label('Google Maps Embed URL')
                             ->placeholder('https://www.google.com/maps/embed?pb=...')
-                            ->helperText('Dapatkan URL ini dari menu Share > Embed Map di Google Maps.')
-                            ->prefixIcon('heroicon-m-globe-alt'),
+                            ->helperText('Buka Google Maps → Share → Embed a map → copy bagian src="..." nya aja')
+                            ->prefixIcon('heroicon-m-globe-alt')
+                            ->columnSpanFull(),
                     ]),
 
                 // Section 3: Branding
@@ -85,8 +86,8 @@ class ProfilPerusahaanForm
                             ->disk('public')
                             ->directory('logos')
                             ->visibility('public')
-                            ->maxSize(2048) // Maksimal 2MB untuk optimasi loading
-                            ->helperText('Gunakan gambar PNG transparan untuk hasil terbaik (Maks. 2MB).')
+                            ->maxSize(10240) // Mengikuti limit yang lebih besar dari main (10MB)
+                            ->helperText('Gunakan gambar PNG transparan untuk hasil terbaik (Maks. 10MB).')
                             ->columnSpanFull(),
                     ]),
             ]);
