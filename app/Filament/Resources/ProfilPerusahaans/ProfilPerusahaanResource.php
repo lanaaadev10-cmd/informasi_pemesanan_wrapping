@@ -18,9 +18,11 @@ class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-home-modern';
 
-    protected static ?string $recordTitleAttribute = 'ProfilPerusahaan';
+    protected static ?string $navigationGroup = 'Settings';
+
+    protected static ?string $recordTitleAttribute = 'nama_perusahaan';
 
     public static function form(Schema $schema): Schema
     {

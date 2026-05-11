@@ -9,30 +9,48 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\ImageColumn;
 
-
+/**
+ * Class ProfilPerusahaansTable
+ * Mengatur tampilan tabel daftar profil perusahaan di dashboard admin.
+ */
 class ProfilPerusahaansTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('nama_perusahaan')
-                    ->searchable(),
-                TextColumn::make('alamat')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('nomor_telepon')
-                    ->searchable(),
+                // Kolom Logo
                 ImageColumn::make('logo')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Branding')
+                    ->circular(),
+
+                // Kolom Nama Perusahaan
+                TextColumn::make('nama_perusahaan')
+                    ->label('Nama Perusahaan')
+                    ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->weight('bold')
+                    ->description(fn ($record) => $record->email),
+
+                // Kolom Kontak
+                TextColumn::make('nomor_telepon')
+                    ->label('Kontak')
+                    ->icon('heroicon-m-phone')
+                    ->copyable() // Memudahkan admin copy nomor
+                    ->searchable(),
+
+                // Kolom Alamat
+                TextColumn::make('alamat')
+                    ->label('Lokasi')
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->alamat)
+                    ->searchable(),
+
+                // Timestamp
                 TextColumn::make('updated_at')
+                    ->label('Terakhir Diperbarui')
                     ->dateTime()
+                    ->since() // Menampilkan waktu seperti "2 days ago" agar lebih modern
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -40,9 +58,12 @@ class ProfilPerusahaansTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->button()
+                    ->color('warning')
+                    ->icon('heroicon-m-pencil-square'),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
