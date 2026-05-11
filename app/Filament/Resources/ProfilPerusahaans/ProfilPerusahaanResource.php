@@ -16,16 +16,20 @@ class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
 
+    // Baru saya tambah: Icon sidebar yang lebih modern dan sesuai dengan profil
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-home-modern';
 
+    // Baru saya tambah: Label penamaan agar di Admin Panel muncul sebagai "Profil Perusahaan" (Bukan model name)
     protected static ?string $label = 'Profil Perusahaan';
     protected static ?string $pluralLabel = 'Profil Perusahaan';
     protected static ?string $navigationLabel = 'Profil Perusahaan';
 
-    protected static ?string $navigationGroup = 'Settings';
+    // Baru saya tambah: Mengelompokkan menu ini ke dalam grup "Settings" agar sidebar rapi
+    protected static string|null|\UnitEnum $navigationGroup = 'Settings';
 
     protected static ?string $recordTitleAttribute = 'nama_perusahaan';
 
+    // Baru saya tambah: Mengatur urutan menu agar berada tepat di bawah Dashboard (Urutan ke-2)
     protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema

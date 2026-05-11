@@ -9,48 +9,43 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\ImageColumn;
 
-/**
- * Class ProfilPerusahaansTable
- * Mengatur tampilan tabel daftar profil perusahaan di dashboard admin.
- */
 class ProfilPerusahaansTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                // Kolom Logo
+                // Baru saya tambah: Kolom Logo dengan bentuk lingkaran (circular)
                 ImageColumn::make('logo')
-                    ->label('Branding')
-                    ->circular(),
+                    ->label('Logo')
+                    ->circular(), // Membuat preview logo berbentuk bulat
 
-                // Kolom Nama Perusahaan
+                // Baru saya tambah: Kolom nama dengan teks tebal dan deskripsi email di bawahnya
                 TextColumn::make('nama_perusahaan')
-                    ->label('Nama Perusahaan')
+                    ->label('Perusahaan')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold')
-                    ->description(fn ($record) => $record->email),
+                    ->weight('bold') // Teks jadi tebal
+                    ->description(fn ($record) => $record->email), // Menampilkan email sebagai teks kecil di bawah nama
 
-                // Kolom Kontak
+                // Baru saya tambah: Kolom kontak dengan fitur Copy-to-Clipboard
                 TextColumn::make('nomor_telepon')
                     ->label('Kontak')
                     ->icon('heroicon-m-phone')
-                    ->copyable() // Memudahkan admin copy nomor
+                    ->copyable() // Admin bisa klik untuk copy nomor telepon
                     ->searchable(),
 
-                // Kolom Alamat
                 TextColumn::make('alamat')
-                    ->label('Lokasi')
-                    ->limit(30)
-                    ->tooltip(fn ($record) => $record->alamat)
+                    ->label('Alamat')
+                    ->limit(30) // Membatasi panjang teks agar tabel tidak berantakan
+                    ->tooltip(fn ($record) => $record->alamat) // Teks lengkap muncul saat mouse diarahkan (hover)
                     ->searchable(),
 
-                // Timestamp
+                // Baru saya tambah: Waktu update dengan format relatif (contoh: 2 jam yang lalu)
                 TextColumn::make('updated_at')
-                    ->label('Terakhir Diperbarui')
+                    ->label('Pembaruan')
                     ->dateTime()
-                    ->since() // Menampilkan waktu seperti "2 days ago" agar lebih modern
+                    ->since() // Format "time ago"
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -58,6 +53,7 @@ class ProfilPerusahaansTable
                 //
             ])
             ->recordActions([
+                // Baru saya tambah: Tombol edit dengan warna kuning agar lebih menonjol
                 EditAction::make()
                     ->button()
                     ->color('warning')
