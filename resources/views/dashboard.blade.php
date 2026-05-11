@@ -13,6 +13,7 @@
     <div class="text-orange-500 font-black text-2xl tracking-tighter">DANTIE STICKER</div>
     
     <div class="flex items-center gap-6">
+        <a href="{{ route('profil.perusahaan') }}" class="text-zinc-400 hover:text-white transition-colors text-sm">Profil Perusahaan</a>
         @guest
             <a href="{{ route('login') }}" class="text-white hover:text-orange-500 transition-colors">Login</a>
             <a href="{{ route('register') }}" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-bold transition-all">Register</a>
@@ -22,6 +23,7 @@
             <div class="flex items-center gap-4">
                 <span class="text-zinc-400 hidden sm:inline">Selamat Datang,</span>
                 <span class="text-white font-bold">{{ Auth::user()->name }}</span>
+                <a href="{{ route('profil.perusahaan') }}" class="text-zinc-400 hover:text-white transition-colors text-sm">Profil Perusahaan</a>
                 <a href="/profile" class="text-zinc-400 hover:text-white bg-zinc-800 px-3 py-1.5 rounded-lg text-sm transition-all border border-zinc-700">Profil saya</a>
                 <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf
