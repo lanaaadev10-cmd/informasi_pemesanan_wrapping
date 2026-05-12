@@ -11,7 +11,16 @@ class Layanan extends Model
     protected $fillable = [
         'nama_layanan',
         'deskripsi',
+        'gambar',
+        'foto_contoh',
         'harga',
         'tipe_layanan',
+        'tipe_paket',
+        'fitur',
+        'kategori',
+    ];
+
+    protected $casts = [
+        'fitur' => 'array',
     ];
 }
