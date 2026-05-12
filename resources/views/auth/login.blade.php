@@ -10,7 +10,7 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .bg-auth {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ $profil->login_image ? \Illuminate\Support\Facades\Storage::url($profil->login_image) : "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=2070&auto=format&fit=crop" }}');
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ ($profil?->login_image) ? \Illuminate\Support\Facades\Storage::url($profil->login_image) : "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=2070&auto=format&fit=crop" }}');
             background-size: cover;
             background-position: center;
         }
@@ -31,7 +31,7 @@
             
             <div class="z-10">
                 <h1 class="text-6xl font-black leading-tight mb-6">
-                    {!! $profil->login_title ? nl2br(e($profil->login_title)) : 'Level Up Your <br> <span class="text-orange-500">Business.</span>' !!}
+                    {!! ($profil?->login_title) ? nl2br(e($profil->login_title)) : 'Level Up Your <br> <span class="text-orange-500">Business.</span>' !!}
                 </h1>
                 <p class="text-xl text-gray-300 max-w-md leading-relaxed">
                     {{ $profil->login_subtitle ?? 'Masuk ke member area untuk mengelola pesanan dan melihat katalog wrapping terbaik kami.' }}
@@ -53,8 +53,8 @@
                 </div>
 
                 <div class="mb-12">
-                    <h2 class="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">{{ $profil->login_form_title ?? 'Welcome Back!' }}</h2>
-                    <p class="text-gray-500 font-medium">{{ $profil->login_form_subtitle ?? 'Silakan masuk untuk melanjutkan.' }}</p>
+                    <h2 class="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">{{ $profil?->login_form_title ?? 'Welcome Back!' }}</h2>
+                    <p class="text-gray-500 font-medium">{{ $profil?->login_form_subtitle ?? 'Silakan masuk untuk melanjutkan.' }}</p>
                 </div>
 
                 <!-- Session Status -->
