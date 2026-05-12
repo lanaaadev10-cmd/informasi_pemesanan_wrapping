@@ -27,6 +27,6 @@ class DetailKeranjang extends Model
     // Relasi ke Layanan (Paket)
     public function layanan()
     {
-        return $this->belongsTo(Layanan::class, 'id_paket', 'id');
+        return $this->belongsTo(Layanan::class, 'id_paket', 'id_layanan');
     }
 }

@@ -34,6 +34,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/profile', 'destroy')->name('profile.destroy');
     });
 
+    // --- RUTE KERANJANG ---
+    Route::prefix('keranjang')->group(function () {
+        Route::get('/', [\App\Http\Controllers\KeranjangController::class, 'index'])->name('keranjang.index');
+        Route::post('/tambah', [\App\Http\Controllers\KeranjangController::class, 'tambah'])->name('keranjang.tambah');
+        Route::delete('/hapus/{id}', [\App\Http\Controllers\KeranjangController::class, 'hapus'])->name('keranjang.hapus');
+        Route::delete('/kosongkan', [\App\Http\Controllers\KeranjangController::class, 'kosongkan'])->name('keranjang.kosongkan');
+    });
+
+    // --- RUTE PESANAN ---
+    Route::prefix('pesanan')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PesananController::class, 'index'])->name('pesanan.index');
+        Route::get('/checkout', function() {
+            $keranjang = \App\Models\Keranjang::where('id_user', auth()->id())->where('status', 'active')->firstOrFail();
+            return view('customer.pesanan.checkout', compact('keranjang'));
+        })->name('pesanan.checkout.form');
+        Route::post('/checkout', [\App\Http\Controllers\PesananController::class, 'checkout'])->name('pesanan.checkout.store');
+        Route::get('/{id}', [\App\Http\Controllers\PesananController::class, 'show'])->name('pesanan.show');
+        Route::post('/{id}/upload-bukti', [\App\Http\Controllers\PesananController::class, 'uploadBukti'])->name('pesanan.upload-bukti');
+    });
+
 });
+
+// --- RUTE API (DENGAN THROTTLE) ---
+Route::middleware(['auth', 'throttle:60,1'])->prefix('api')->group(function () {
+    Route::get('/keranjang', [\App\Http\Controllers\Api\KeranjangApiController::class, 'index']);
+    Route::post('/keranjang/tambah', [\App\Http\Controllers\Api\KeranjangApiController::class, 'tambah']);
+    Route::delete('/keranjang/{id}', [\App\Http\Controllers\Api\KeranjangApiController::class, 'hapus']);
+});
+
 
 require __DIR__.'/auth.php';
