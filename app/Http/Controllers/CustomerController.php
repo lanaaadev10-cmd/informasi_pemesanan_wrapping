@@ -2,23 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Cache;
 use App\Models\Layanan;
-use App\Models\Galeri;  
+use App\Models\Galeri;
 
 class CustomerController extends Controller
 {
     public function katalog()
     {
-        $layanan = Layanan::all();
+        // Cache data layanan selama 1 jam
+        $layanan = Cache::remember('katalog_layanans', 3600, function () {
+            return Layanan::all();
+        });
 
-        return view('customer.katalog', compact('layanan'));
+        return view('frontend.katalog.index', compact('layanan'));
     }
 
     public function dashboard()
     {
-        $layanans = \App\Models\Layanan::all();
-        $profil = \App\Models\ProfilPerusahaan::first();
-        $galeris = \App\Models\Galeri::latest()->get();
-        return view('dashboard', compact('layanans', 'profil', 'galeris'));
+        // Untuk dashboard member, kita cache sebentar saja (10 menit)
+        $layanans = Cache::remember('dashboard_layanans', 600, function () {
+            return Layanan::all();
+        });
+
+        $galeris = Cache::remember('dashboard_galeris', 600, function () {
+            return Galeri::latest()->limit(8)->get();
+        });
+
+        return view('customer.dashboard.index', compact('layanans', 'galeris'));
     }
 }
