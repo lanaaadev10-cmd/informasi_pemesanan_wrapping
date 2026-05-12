@@ -29,8 +29,8 @@ class LayananResource extends Resource
     protected static ?string $pluralModelLabel = 'Katalog Layanan';
     protected static ?string $recordTitleAttribute = 'nama_layanan';
 
-    // Urutan ke-3 di Sidebar
-    protected static ?int $navigationSort = 3;
+    protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
+    protected static ?int $navigationSort = 5;
 
     /**
      * Konfigurasi Form (Logika ada di folder Schemas)
