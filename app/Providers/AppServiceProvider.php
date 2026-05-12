@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Bagikan data profil perusahaan ke semua view agar tidak error
+        \Illuminate\Support\Facades\View::share('profil', \App\Models\ProfilPerusahaan::first());
     }
+
 }

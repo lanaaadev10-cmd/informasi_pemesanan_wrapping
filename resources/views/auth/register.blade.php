@@ -10,7 +10,7 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .bg-auth-reg {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ $profil->register_image ? \Illuminate\Support\Facades\Storage::url($profil->register_image) : "https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=2101&auto=format&fit=crop" }}');
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ ($profil?->register_image) ? \Illuminate\Support\Facades\Storage::url($profil->register_image) : "https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=2101&auto=format&fit=crop" }}');
             background-size: cover;
             background-position: center;
         }
@@ -31,7 +31,7 @@
             
             <div class="z-10">
                 <h1 class="text-6xl font-black leading-tight mb-6">
-                    {!! $profil->register_title ? nl2br(e($profil->register_title)) : 'Create Your <br> <span class="text-orange-500">Journey.</span>' !!}
+                    {!! ($profil?->register_title) ? nl2br(e($profil->register_title)) : 'Create Your <br> <span class="text-orange-500">Journey.</span>' !!}
                 </h1>
                 <p class="text-xl text-gray-300 max-w-md leading-relaxed">
                     {{ $profil->register_subtitle ?? 'Bergabunglah dengan ribuan pelanggan puas kami dan dapatkan layanan wrapping terbaik untuk aset berharga Anda.' }}
@@ -53,8 +53,8 @@
                 </div>
 
                 <div class="mb-8">
-                    <h2 class="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">{{ $profil->register_form_title ?? 'Get Started!' }}</h2>
-                    <p class="text-gray-500 font-medium italic">{{ $profil->register_form_subtitle ?? '"Mulai pengalaman premium Anda bersama kami."' }}</p>
+                    <h2 class="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight">{{ $profil?->register_form_title ?? 'Get Started!' }}</h2>
+                    <p class="text-gray-500 font-medium italic">{{ $profil?->register_form_subtitle ?? '"Mulai pengalaman premium Anda bersama kami."' }}</p>
                 </div>
 
                 <form method="POST" action="{{ route('register') }}" class="space-y-5">
