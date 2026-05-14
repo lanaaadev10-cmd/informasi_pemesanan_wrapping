@@ -21,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Bagikan data profil perusahaan ke semua view agar tidak error
         \Illuminate\Support\Facades\View::share('profil', \App\Models\ProfilPerusahaan::first());
+        
+        // Paksa semua URL (termasuk form action login) menggunakan HTTPS untuk Ngrok
+        if (request()->headers->has('X-Forwarded-Proto') || env('APP_ENV') !== 'local') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
-
 }
