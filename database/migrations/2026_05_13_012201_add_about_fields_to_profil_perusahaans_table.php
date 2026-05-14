@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pesanans', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('profil_perusahaans', function (Blueprint $table) {
+            $table->text('visi')->nullable();
+            $table->text('misi')->nullable();
+            $table->longText('sejarah')->nullable();
         });
     }
 
@@ -22,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pesanans');
+        Schema::table('profil_perusahaans', function (Blueprint $table) {
+            //
+        });
     }
 };

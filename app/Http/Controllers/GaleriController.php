@@ -10,7 +10,8 @@ class GaleriController extends Controller
     public function index()
     {
         $galeri = Galeri::latest()->get();
+        $profil = \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
 
-        return view('galeri.index', compact('galeri'));
+        return view('frontend.galeri.index', compact('galeri', 'profil'));
     }
 }

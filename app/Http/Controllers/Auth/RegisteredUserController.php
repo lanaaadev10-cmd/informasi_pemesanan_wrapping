@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -42,12 +43,18 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // [OTOMATIS] Berikan role 'user' kepada pendaftar baru
+        // [OTOMATIS] Berikan role 'user' kepada pendaftar baru (pastikan role ada)
+        Role::firstOrCreate([
+            'name' => 'user',
+            'guard_name' => 'web',
+        ]);
+
         $user->assignRole('user');
 
         event(new Registered($user));
 
-        Auth::login($user);
+        Auth::guard('web')->login($user);
+        $request->session()->regenerate();
 
         return redirect(route('dashboard', absolute: false));
     }
