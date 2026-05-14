@@ -22,6 +22,7 @@ class DashboardController extends Controller
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
 
+
         $layanans = Cache::rememberForever('site_layanans', function() {
             return Layanan::all();
         });
@@ -51,6 +52,7 @@ class DashboardController extends Controller
             'testimonis',
             'recentActivity'
         ));
+
     }
 
     public function profile()
