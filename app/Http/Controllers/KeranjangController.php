@@ -29,7 +29,7 @@ class KeranjangController extends Controller
     public function tambah(Request $request)
     {
         $request->validate([
-            'id_paket'       => 'required|exists:layanans,id',
+            'id_paket'       => 'required|exists:layanans,id_layanan',
             'jumlah'         => 'required|integer|min:1',
             'catatan_custom' => 'nullable|string|max:500',
         ]);
@@ -41,18 +41,35 @@ class KeranjangController extends Controller
             ['id_user' => Auth::id(), 'status' => 'active']
         );
 
-        $hargaSatuan = $layanan->harga_dasar;
+        // Cek apakah item sudah ada di keranjang
+        $existingDetail = DetailKeranjang::where('id_keranjang', $keranjang->id_keranjang)
+            ->where('id_paket', $request->id_paket)
+            ->first();
+
+        $hargaSatuan = $layanan->harga ?? 0;
         $subtotal    = $hargaSatuan * $request->jumlah;
 
-        // Tambahkan item ke detail keranjang
-        DetailKeranjang::create([
-            'id_keranjang'   => $keranjang->id_keranjang,
-            'id_paket'       => $request->id_paket,
-            'jumlah'         => $request->jumlah,
-            'catatan_custom' => $request->catatan_custom,
-            'harga_satuan'   => $hargaSatuan,
-            'subtotal'       => $subtotal,
-        ]);
+        if ($existingDetail) {
+            $existingDetail->update([
+                'jumlah'   => $existingDetail->jumlah + $request->jumlah,
+                'subtotal' => ($existingDetail->jumlah + $request->jumlah) * $hargaSatuan
+            ]);
+        } else {
+            // Tambahkan item ke detail keranjang
+            DetailKeranjang::create([
+                'id_keranjang'   => $keranjang->id_keranjang,
+                'id_paket'       => $request->id_paket,
+                'jumlah'         => $request->jumlah,
+                'catatan_custom' => $request->catatan_custom,
+                'harga_satuan'   => $hargaSatuan,
+                'subtotal'       => $subtotal,
+            ]);
+        }
+
+        // Jika request datang dari tombol "Pesan Sekarang", langsung ke checkout
+        if ($request->has('direct_checkout')) {
+            return redirect()->route('pesanan.checkout.form');
+        }
 
         return redirect()->route('keranjang.index')
             ->with('success', 'Paket berhasil ditambahkan ke keranjang!');

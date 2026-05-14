@@ -25,13 +25,12 @@ class GaleriResource extends Resource
     // Model yang digunakan: Galeri
     protected static ?string $model = Galeri::class;
 
-    // Nama menu di Sidebar
     protected static ?string $navigationLabel = 'Galeri Pekerjaan';
-
-    // Icon sidebar: Foto/Gambar
+    protected static ?string $pluralLabel = 'Galeri Pekerjaan';
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-photo';
+    protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
+    protected static ?int $navigationSort = 3;
 
-    // Judul record saat dicari
     protected static ?string $recordTitleAttribute = 'judul';
 
     /**
@@ -82,5 +81,25 @@ class GaleriResource extends Resource
             'create' => CreateGaleri::route('/create'),
             'edit' => EditGaleri::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
     }
 }

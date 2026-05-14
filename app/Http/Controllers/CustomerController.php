@@ -10,25 +10,32 @@ class CustomerController extends Controller
 {
     public function katalog()
     {
-        // Cache data layanan selama 1 jam
-        $layanan = Cache::remember('katalog_layanans', 3600, function () {
-            return Layanan::all();
+        $layanan = Layanan::all();
+        $profil = Cache::rememberForever('site_profile', function() {
+            return \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
         });
 
-        return view('frontend.katalog.index', compact('layanan'));
+        return view('frontend.katalog.index', compact('layanan', 'profil'));
     }
 
     public function dashboard()
     {
-        // Untuk dashboard member, kita cache sebentar saja (10 menit)
-        $layanans = Cache::remember('dashboard_layanans', 600, function () {
-            return Layanan::all();
+        // 🚀 Ambil data terbaru tanpa cache agar konsisten dengan katalog
+        $layanans = Layanan::all();
+        $galeris = Galeri::latest()->limit(8)->get();
+        
+        $latestOrders = \App\Models\Pesanan::where('id_user', auth()->id())
+            ->with(['form', 'details.layanan'])
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        $latestOrder = $latestOrders->first();
+        
+        $profil = Cache::rememberForever('site_profile', function() {
+            return \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
         });
 
-        $galeris = Cache::remember('dashboard_galeris', 600, function () {
-            return Galeri::latest()->limit(8)->get();
-        });
-
-        return view('customer.dashboard.index', compact('layanans', 'galeris'));
+        return view('customer.dashboard.index', compact('layanans', 'galeris', 'latestOrder', 'latestOrders', 'profil'));
     }
 }

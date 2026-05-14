@@ -16,21 +16,14 @@ class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
 
-    // Baru saya tambah: Icon sidebar yang lebih modern dan sesuai dengan profil
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-home-modern';
-
-    // Baru saya tambah: Label penamaan agar di Admin Panel muncul sebagai "Profil Perusahaan" (Bukan model name)
-    protected static ?string $label = 'Profil Perusahaan';
-    protected static ?string $pluralLabel = 'Profil Perusahaan';
-    protected static ?string $navigationLabel = 'Profil Perusahaan';
-
-    // Baru saya tambah: Mengelompokkan menu ini ke dalam grup "Settings" agar sidebar rapi
-    protected static string|null|\UnitEnum $navigationGroup = 'Settings';
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static ?string $label = 'Konfigurasi Website';
+    protected static ?string $pluralLabel = 'Konfigurasi Website';
+    protected static ?string $navigationLabel = 'Konfigurasi Website';
+    protected static string|null|\UnitEnum $navigationGroup = 'SISTEM';
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'nama_perusahaan';
-
-    // Baru saya tambah: Mengatur urutan menu agar berada tepat di bawah Dashboard (Urutan ke-2)
-    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     { 
@@ -52,9 +45,29 @@ class ProfilPerusahaanResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListProfilPerusahaans::route('/'),
-            'create' => CreateProfilPerusahaan::route('/create'),
-            'edit' => EditProfilPerusahaan::route('/{record}/edit'),
+            'index' => Pages\KonfigurasiWebsite::route('/'),
+            'create' => Pages\CreateProfilPerusahaan::route('/create'),
+            'edit' => Pages\EditProfilPerusahaan::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
     }
 }

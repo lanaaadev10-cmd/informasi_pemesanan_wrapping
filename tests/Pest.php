@@ -18,6 +18,21 @@ pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
 
+beforeEach(function () {
+    // Hindari Cache::remember menyimpan nilai null dari request sebelumnya
+    \Illuminate\Support\Facades\Cache::flush();
+
+    // Pastikan role untuk Spatie Permission tersedia saat database di-refresh
+    \Illuminate\Support\Facades\Artisan::call('db:seed', [
+        '--class' => \Database\Seeders\RolesTableSeeder::class,
+    ]);
+
+    // Pastikan konten CMS/profil tersedia saat homepage di-render
+    \Illuminate\Support\Facades\Artisan::call('db:seed', [
+        '--class' => \Database\Seeders\ProfilPerusahaanSeeder::class,
+    ]);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Expectations

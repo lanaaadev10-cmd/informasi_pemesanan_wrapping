@@ -20,7 +20,7 @@ class PesananController extends Controller
     public function index()
     {
         $pesanans = Pesanan::where('id_user', Auth::id())
-            ->with(['form', 'pembayaran'])
+            ->with(['form', 'pembayaran', 'details.layanan'])
             ->latest()
             ->get();
 
@@ -49,6 +49,10 @@ class PesananController extends Controller
             'nama_pemesan'       => 'required|string|max:100',
             'alamat_pengiriman'  => 'required|string',
             'no_hp'              => 'required|string|max:20',
+            'model_kendaraan'    => 'required|string|max:100',
+            'warna_kendaraan'    => 'required|string|max:100',
+            'lokasi_pengerjaan'  => 'required|string|in:toko,rumah',
+            'jadwal_pengerjaan'  => 'required|date',
             'keterangan_tambahan'=> 'nullable|string|max:500',
         ]);
 
@@ -82,31 +86,50 @@ class PesananController extends Controller
             ]);
         }
 
+        // Gabungkan info kendaraan & jadwal ke keterangan tambahan agar tetap kompatibel dengan DB lama
+        $keteranganLengkap = "Model: {$request->model_kendaraan} | Warna: {$request->warna_kendaraan}\n" .
+                             "Lokasi: " . ucfirst($request->lokasi_pengerjaan) . "\n" .
+                             "Jadwal: " . date('d M Y H:i', strtotime($request->jadwal_pengerjaan)) . "\n" .
+                             "Catatan: " . ($request->keterangan_tambahan ?? '-');
+
         // Simpan form pengiriman
         FormPesanan::create([
             'id_pesanan'          => $pesanan->id_pesanan,
             'nama_pemesan'        => $request->nama_pemesan,
             'alamat_pengiriman'   => $request->alamat_pengiriman,
             'no_hp'               => $request->no_hp,
-            'keterangan_tambahan' => $request->keterangan_tambahan,
+            'keterangan_tambahan' => $keteranganLengkap,
             'status_verifikasi'   => 'pending',
         ]);
 
-        // Kirim notifikasi ke user
+        // Kirim notifikasi ke user (Database notification)
         Notifikasi::create([
             'id_user'    => Auth::id(),
             'id_pesanan' => $pesanan->id_pesanan,
-            'judul'      => 'Pesanan Diterima',
-            'pesan'      => 'Pesanan Anda (' . $pesanan->kode_pesanan . ') sedang menunggu verifikasi admin.',
+            'judul'      => 'Pesanan Berhasil Dibuat',
+            'pesan'      => 'Pesanan Anda (' . $pesanan->kode_pesanan . ') telah dibuat. Tunggu konfirmasi admin untuk pembayaran.',
             'tipe'       => 'pesanan',
             'is_read'    => false,
         ]);
+
+        // Kirim notifikasi ke Admin (Filament) - Tanpa Action Link untuk menghindari error class not found
+        try {
+            $admins = \App\Models\User::role('admin')->get();
+            \Filament\Notifications\Notification::make()
+                ->title('Pesanan Baru Masuk')
+                ->body('Ada pesanan baru dari ' . $request->nama_pemesan . ' (' . $pesanan->kode_pesanan . ')')
+                ->icon('heroicon-o-shopping-bag')
+                ->color('success')
+                ->sendToDatabase($admins);
+        } catch (\Exception $e) {
+            // Silently fail admin notification if class error occurs
+        }
 
         // Ubah status keranjang menjadi checked_out
         $keranjang->update(['status' => 'checked_out']);
 
         return redirect()->route('pesanan.show', $pesanan->id_pesanan)
-            ->with('success', 'Pesanan berhasil dibuat! Kode: ' . $pesanan->kode_pesanan);
+            ->with('toast_success', 'Pesanan Anda telah dibuat!');
     }
 
     /**
@@ -137,9 +160,27 @@ class PesananController extends Controller
             ]
         );
 
-        $pesanan->update(['status' => 'menunggu_pembayaran']);
+        $pesanan->update(['status' => 'menunggu_konfirmasi']);
 
         return redirect()->route('pesanan.show', $pesanan->id_pesanan)
-            ->with('success', 'Bukti pembayaran berhasil dikirim!');
+            ->with('toast_success', 'Pembayaran Anda berhasil! Tunggu konfirmasi dari admin melalui WA.');
+    }
+
+    /**
+     * Tampilkan Invoice untuk dicetak
+     */
+    public function invoice($id_pesanan)
+    {
+        $query = Pesanan::where('id_pesanan', $id_pesanan);
+
+        // Jika bukan admin, hanya bisa lihat pesanan sendiri
+        if (!auth()->user()->hasRole('admin')) {
+            $query->where('id_user', Auth::id());
+        }
+
+        $pesanan = $query->with(['details.layanan', 'form', 'user'])
+            ->firstOrFail();
+
+        return view('customer.pesanan.invoice', compact('pesanan'));
     }
 }

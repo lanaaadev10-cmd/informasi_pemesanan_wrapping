@@ -21,16 +21,13 @@ class LayananResource extends Resource
     // Model yang digunakan: Layanan
     protected static ?string $model = Layanan::class;
 
-    // Icon sidebar: Tas Belanja
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-s-shopping-bag';
-    
-    // Penamaan menu di Admin
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-shopping-bag';
     protected static ?string $navigationLabel = 'Katalog Layanan';
-    protected static ?string $pluralModelLabel = 'Katalog Layanan';
+    protected static ?string $pluralLabel = 'Katalog Layanan';
     protected static ?string $recordTitleAttribute = 'nama_layanan';
 
     protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
 
     /**
      * Konfigurasi Form (Logika ada di folder Schemas)
@@ -58,5 +55,25 @@ class LayananResource extends Resource
             'create' => CreateLayanan::route('/create'),
             'edit'   => EditLayanan::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
     }
 }
