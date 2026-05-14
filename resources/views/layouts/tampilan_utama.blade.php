@@ -211,7 +211,7 @@
             </div>
             
             <div class="pt-12 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-400 font-medium">
-                <p>&copy; 2026 {{ $profil->nama_perusahaan ?? 'Dantie Sticker' }}. All rights reserved.</p>
+                <p>{!! $profil->footer_copyright ? e($profil->footer_copyright) : '&copy; ' . date('Y') . ' ' . ($profil->nama_perusahaan ?? 'Dantie Sticker') . '. All rights reserved.' !!}</p>
                 <div class="flex gap-6">
                     <a href="#" class="hover:text-orange-600 transition-colors">Instagram</a>
                     <a href="#" class="hover:text-orange-600 transition-colors">TikTok</a>
@@ -221,7 +221,66 @@
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    {{-- Toast Notification System --}}
+    <div id="toast-container" class="fixed bottom-10 right-10 z-[200] flex flex-col gap-4"></div>
+
     <script>
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-gray-900' : 'bg-red-600';
+            const icon = type === 'success' ? 'ph-check-circle' : 'ph-warning-circle';
+            
+            toast.className = `${bgColor} text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-4 transform translate-y-20 opacity-0 transition-all duration-500 border border-white/10 backdrop-blur-xl`;
+            toast.innerHTML = `
+                <i class="ph-fill ${icon} text-2xl text-orange-500"></i>
+                <div class="flex flex-col">
+                    <span class="text-sm font-bold tracking-tight">${message}</span>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Animation In
+            setTimeout(() => {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 100);
+            
+            // Auto Remove
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[-20px]', 'opacity-0');
+                setTimeout(() => toast.remove(), 500);
+            }, 5000);
+        }
+
+        // Trigger toast from session
+        @if(session('toast_success'))
+            showToast("{{ session('toast_success') }}", 'success');
+        @endif
+        @if(session('toast_error'))
+            showToast("{{ session('toast_error') }}", 'error');
+        @endif
+        @if(session('success'))
+            showToast("{{ session('success') }}", 'success');
+        @endif
+
+        // Poll for new notifications
+        @auth
+        setInterval(() => {
+            fetch('/api/notifikasi/unread')
+                .then(res => res.json())
+                .then(notifs => {
+                    notifs.forEach(n => {
+                        showToast(`${n.judul}: ${n.pesan}`, 'success');
+                    });
+                });
+        }, 15000); // Check every 15 seconds
+        @endauth
+
         // Hide Preloader
         window.addEventListener('load', function() {
             const preloader = document.getElementById('preloader');
