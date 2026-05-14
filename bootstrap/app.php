@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Percaya pada proxy Ngrok agar aset CSS/JS dimuat menggunakan HTTPS
+        $middleware->trustProxies(at: '*');
+        
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
