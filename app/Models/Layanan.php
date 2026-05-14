@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Layanan extends Model
 {
@@ -11,7 +12,6 @@ class Layanan extends Model
     protected $fillable = [
         'nama_layanan',
         'deskripsi',
-        'gambar',
         'foto_contoh',
         'harga',
         'tipe_layanan',
@@ -23,4 +23,18 @@ class Layanan extends Model
     protected $casts = [
         'fitur' => 'array',
     ];
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            Cache::forget('site_layanans');
+            Cache::forget('katalog_layanans');
+            Cache::forget('dashboard_layanans');
+        });
+        static::deleted(function () {
+            Cache::forget('site_layanans');
+            Cache::forget('katalog_layanans');
+            Cache::forget('dashboard_layanans');
+        });
+    }
 }

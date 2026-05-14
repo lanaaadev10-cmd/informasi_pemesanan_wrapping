@@ -38,4 +38,31 @@ class Pesanan extends Model
     {
         return $this->hasMany(Notifikasi::class, 'id_pesanan', 'id_pesanan');
     }
+
+    protected static function booted()
+    {
+        static::updated(function ($pesanan) {
+            if ($pesanan->wasChanged('status')) {
+                if ($pesanan->status === 'selesai') {
+                    Notifikasi::create([
+                        'id_user' => $pesanan->id_user,
+                        'id_pesanan' => $pesanan->id_pesanan,
+                        'judul' => 'Pemasangan Selesai!',
+                        'pesan' => 'Halo! Proses pemasangan kendaraan Anda sudah selesai. Silahkan diambil di toko ya. Terima kasih!',
+                        'tipe' => 'info',
+                        'is_read' => false,
+                    ]);
+                } elseif ($pesanan->status === 'menunggu_pembayaran') {
+                    Notifikasi::create([
+                        'id_user' => $pesanan->id_user,
+                        'id_pesanan' => $pesanan->id_pesanan,
+                        'judul' => 'Pesanan Diverifikasi',
+                        'pesan' => 'Pesanan Anda #' . $pesanan->kode_pesanan . ' telah diverifikasi Admin. Silahkan lakukan pembayaran untuk memproses pengerjaan.',
+                        'tipe' => 'info',
+                        'is_read' => false,
+                    ]);
+                }
+            }
+        });
+    }
 }

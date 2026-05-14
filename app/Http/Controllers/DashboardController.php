@@ -3,31 +3,62 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Models\ProfilPerusahaan;
 use App\Models\Layanan;
 use App\Models\Galeri;
+use App\Models\LandingFitur;
+use App\Models\Testimoni;
 
 class DashboardController extends Controller
 {
     /**
-     * Menampilkan halaman utama (Welcome) dengan data profil, layanan, dan galeri.
+     * Menampilkan halaman utama (Welcome) dengan data profil, layanan, galeri, dan konten CMS landing.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $profil = ProfilPerusahaan::first();
-        $layanans = Layanan::all();
-        $galeris = Galeri::latest()->get();
+        // 🚀 Caching Profil & Layanan (Auto-refresh via booted model)
+        $profil = Cache::rememberForever('site_profile', function() {
+            return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
+        });
 
-        return view('welcome', compact('profil', 'layanans', 'galeris'));
+        $layanans = Cache::rememberForever('site_layanans', function() {
+            return Layanan::all();
+        });
+
+        $galeris = Cache::rememberForever('site_galeris', function() {
+            return Galeri::latest()->limit(8)->get();
+        });
+        
+        $landingFiturs = collect([]); 
+
+        $testimonis = collect($profil->testimonis_json ?? [])
+            ->map(fn($item) => (object)$item);
+
+        // Aktivitas real-time di-cache sebentar (1 menit) agar tetap terasa "hidup"
+        $recentActivity = Cache::remember('recent_activity', 60, function() {
+            return \App\Models\Pesanan::with('user')
+                ->latest()
+                ->limit(10)
+                ->get();
+        });
+
+        return view('frontend.beranda.index', compact(
+            'profil',
+            'layanans',
+            'galeris',
+            'landingFiturs',
+            'testimonis',
+            'recentActivity'
+        ));
     }
 
-    /**
-     * Baru saya tambah: Method profile
-     * Fungsinya untuk mengambil data profil perusahaan dan menampilkannya ke halaman 'profil' yang baru kita buat (Frontend Premium).
-     */
     public function profile()
     {
-        $profil = ProfilPerusahaan::first();
-        return view('profil', compact('profil'));
+        $profil = Cache::rememberForever('site_profile', function() {
+            return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
+        });
+        
+        return view('frontend.profil.index', compact('profil'));
     }
 }
