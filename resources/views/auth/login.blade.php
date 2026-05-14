@@ -39,9 +39,9 @@
             </div>
 
             <div class="z-10 flex items-center gap-4 text-sm font-medium text-gray-400">
-                <span>&copy; {{ date('Y') }} {{ $profil->nama_perusahaan ?? 'ALTRA STICKER' }}</span>
+                <span>{!! $profil->footer_copyright ? e($profil->footer_copyright) : '&copy; ' . date('Y') . ' ' . ($profil->nama_perusahaan ?? 'Dantie Sticker') !!}</span>
                 <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
-                <span>Premium Quality</span>
+                <span>{{ $profil->auth_badge ?? 'Premium Quality' }}</span>
             </div>
         </div>
 
