@@ -44,7 +44,7 @@ class KeranjangApiController extends Controller
             'data'    => $keranjang->details->map(function ($item) {
                 return [
                     'id_detail'      => $item->id_detail,
-                    'nama_paket'     => $item->layanan->nama_paket ?? '-',
+                    'nama_layanan'   => $item->layanan->nama_layanan ?? '-',
                     'jumlah'         => $item->jumlah,
                     'harga_satuan'   => $item->harga_satuan,
                     'subtotal'       => $item->subtotal,
@@ -62,7 +62,7 @@ class KeranjangApiController extends Controller
     public function tambah(Request $request)
     {
         $request->validate([
-            'id_paket'       => 'required|exists:layanans,id',
+            'id_paket'       => 'required|exists:layanans,id_layanan',
             'jumlah'         => 'required|integer|min:1',
             'catatan_custom' => 'nullable|string|max:500',
         ]);
@@ -74,7 +74,7 @@ class KeranjangApiController extends Controller
             ['id_user' => $userId, 'status' => 'active']
         );
 
-        $hargaSatuan = $layanan->harga_dasar;
+        $hargaSatuan = $layanan->harga;
 
         DetailKeranjang::create([
             'id_keranjang'   => $keranjang->id_keranjang,
@@ -85,7 +85,6 @@ class KeranjangApiController extends Controller
             'subtotal'       => $hargaSatuan * $request->jumlah,
         ]);
 
-        // Hapus cache agar data terbaru ditampilkan
         Cache::forget("keranjang_user_{$userId}");
 
         return response()->json([
@@ -103,7 +102,6 @@ class KeranjangApiController extends Controller
         $userId = Auth::id();
         $detail = DetailKeranjang::findOrFail($id_detail);
 
-        // Pastikan item ini milik user yg login
         if ($detail->keranjang->id_user !== $userId) {
             return response()->json(['message' => 'Unauthorized.'], 403);
         }
@@ -115,6 +113,76 @@ class KeranjangApiController extends Controller
         return response()->json([
             'status'  => 'ok',
             'message' => 'Item berhasil dihapus dari keranjang.',
+        ]);
+    }
+
+    /**
+     * PATCH /api/keranjang/{id}
+     * Update quantity for cart item
+     */
+    public function update(Request $request, $id_detail)
+    {
+        $request->validate([
+            'jumlah' => 'required|integer|min:1'
+        ]);
+
+        $userId = Auth::id();
+        $detail = DetailKeranjang::findOrFail($id_detail);
+
+        if ($detail->keranjang->id_user !== $userId) {
+            return response()->json(['message' => 'Unauthorized.'], 403);
+        }
+
+        $hargaSatuan = $detail->harga_satuan;
+        $subtotal = $request->jumlah * $hargaSatuan;
+
+        $detail->update([
+            'jumlah' => $request->jumlah,
+            'subtotal' => $subtotal
+        ]);
+
+        $keranjang = Keranjang::where('id_user', $userId)
+            ->where('status', 'active')
+            ->with('details')
+            ->first();
+
+        $total = $keranjang->details->sum('subtotal');
+
+        Cache::forget("keranjang_user_{$userId}");
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Jumlah berhasil diperbarui.',
+            'data' => [
+                'id_detail' => $id_detail,
+                'jumlah' => $request->jumlah,
+                'subtotal' => $subtotal,
+                'total' => $total,
+            ]
+        ]);
+    }
+
+    /**
+     * DELETE /api/keranjang
+     * Empty entire cart
+     */
+    public function kosongkan()
+    {
+        $userId = Auth::id();
+
+        $keranjang = Keranjang::where('id_user', $userId)
+            ->where('status', 'active')
+            ->first();
+
+        if ($keranjang) {
+            $keranjang->details()->delete();
+        }
+
+        Cache::forget("keranjang_user_{$userId}");
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Keranjang berhasil dikosongkan.',
         ]);
     }
 }
