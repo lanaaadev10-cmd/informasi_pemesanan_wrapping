@@ -8,6 +8,7 @@ use App\Models\FormPesanan;
 use App\Models\Pembayaran;
 use App\Models\Notifikasi;
 use App\Models\Keranjang;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -15,7 +16,7 @@ use Illuminate\Support\Str;
 class PesananController extends Controller
 {
     /**
-     * Tampilkan daftar pesanan milik user yang login
+     * Daftar pesanan milik user yang login
      */
     public function index()
     {
@@ -28,7 +29,7 @@ class PesananController extends Controller
     }
 
     /**
-     * Tampilkan detail satu pesanan
+     * Detail satu pesanan
      */
     public function show($id_pesanan)
     {
@@ -41,37 +42,35 @@ class PesananController extends Controller
     }
 
     /**
-     * Buat pesanan baru dari keranjang (checkout)
+     * LANGKAH 1: User checkout → status: menunggu_konfirmasi_admin
      */
     public function checkout(Request $request)
     {
         $request->validate([
-            'nama_pemesan'       => 'required|string|max:100',
-            'alamat_pengiriman'  => 'required|string',
-            'no_hp'              => 'required|string|max:20',
-            'model_kendaraan'    => 'required|string|max:100',
-            'warna_kendaraan'    => 'required|string|max:100',
-            'lokasi_pengerjaan'  => 'required|string|in:toko,rumah',
-            'jadwal_pengerjaan'  => 'required|date',
-            'keterangan_tambahan'=> 'nullable|string|max:500',
+            'nama_pemesan'        => 'required|string|max:100',
+            'alamat_pengiriman'   => 'required|string',
+            'no_hp'               => 'required|string|max:20',
+            'model_kendaraan'     => 'required|string|max:100',
+            'warna_kendaraan'     => 'required|string|max:100',
+            'lokasi_pengerjaan'   => 'required|string|in:toko,rumah',
+            'jadwal_pengerjaan'   => 'required|date',
+            'keterangan_tambahan' => 'nullable|string|max:500',
         ]);
 
-        // Ambil keranjang aktif user
         $keranjang = Keranjang::where('id_user', Auth::id())
             ->where('status', 'active')
             ->with('details.layanan')
             ->firstOrFail();
 
-        // Hitung total harga
         $totalHarga = $keranjang->details->sum('subtotal');
 
-        // Buat pesanan baru
+        // Buat pesanan dengan status PERTAMA: menunggu konfirmasi admin
         $pesanan = Pesanan::create([
-            'id_user'        => Auth::id(),
-            'kode_pesanan'   => 'PSN-' . strtoupper(Str::random(8)),
-            'tanggal_pesan'  => now()->toDateString(),
-            'status'         => 'menunggu_verifikasi',
-            'total_harga'    => $totalHarga,
+            'id_user'       => Auth::id(),
+            'kode_pesanan'  => 'PSN-' . strtoupper(Str::random(8)),
+            'tanggal_pesan' => now()->toDateString(),
+            'status'        => Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN,
+            'total_harga'   => $totalHarga,
         ]);
 
         // Salin detail keranjang ke detail pesanan
@@ -86,13 +85,11 @@ class PesananController extends Controller
             ]);
         }
 
-        // Gabungkan info kendaraan & jadwal ke keterangan tambahan agar tetap kompatibel dengan DB lama
         $keteranganLengkap = "Model: {$request->model_kendaraan} | Warna: {$request->warna_kendaraan}\n" .
                              "Lokasi: " . ucfirst($request->lokasi_pengerjaan) . "\n" .
-                             "Jadwal: " . date('d M Y H:i', strtotime($request->jadwal_pengerjaan)) . "\n" .
+                             "Jadwal: " . date('d M Y', strtotime($request->jadwal_pengerjaan)) . "\n" .
                              "Catatan: " . ($request->keterangan_tambahan ?? '-');
 
-        // Simpan form pengiriman
         FormPesanan::create([
             'id_pesanan'          => $pesanan->id_pesanan,
             'nama_pemesan'        => $request->nama_pemesan,
@@ -102,49 +99,37 @@ class PesananController extends Controller
             'status_verifikasi'   => 'pending',
         ]);
 
-        // Kirim notifikasi ke user (Database notification)
-        Notifikasi::create([
-            'id_user'    => Auth::id(),
-            'id_pesanan' => $pesanan->id_pesanan,
-            'judul'      => 'Pesanan Berhasil Dibuat',
-            'pesan'      => 'Pesanan Anda (' . $pesanan->kode_pesanan . ') telah dibuat. Tunggu konfirmasi admin untuk pembayaran.',
-            'tipe'       => 'pesanan',
-            'is_read'    => false,
-        ]);
+        // Notifikasi ke Admin via Filament
+        $this->kirimNotifikasiAdmin(
+            '🛒 Pesanan Baru dari ' . Auth::user()->name,
+            'Pesanan #' . $pesanan->kode_pesanan . ' menunggu konfirmasi Anda.'
+        );
 
-        // Kirim notifikasi ke Admin (Filament) - Tanpa Action Link untuk menghindari error class not found
-        try {
-            $admins = \App\Models\User::role('admin')->get();
-            \Filament\Notifications\Notification::make()
-                ->title('Pesanan Baru Masuk')
-                ->body('Ada pesanan baru dari ' . $request->nama_pemesan . ' (' . $pesanan->kode_pesanan . ')')
-                ->icon('heroicon-o-shopping-bag')
-                ->color('success')
-                ->sendToDatabase($admins);
-        } catch (\Exception $e) {
-            // Silently fail admin notification if class error occurs
-        }
-
-        // Ubah status keranjang menjadi checked_out
+        // Kosongkan keranjang
         $keranjang->update(['status' => 'checked_out']);
 
         return redirect()->route('pesanan.show', $pesanan->id_pesanan)
-            ->with('toast_success', 'Pesanan Anda telah dibuat!');
+            ->with('toast_success', 'Pesanan berhasil dibuat! Tunggu konfirmasi dari admin.');
     }
 
     /**
-     * Upload bukti pembayaran
+     * LANGKAH 3: User upload bukti pembayaran → status: menunggu_verifikasi_pembayaran
      */
     public function uploadBukti(Request $request, $id_pesanan)
     {
         $request->validate([
             'metode_pembayaran' => 'required|string',
-            'bukti_transfer'    => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'bukti_transfer'    => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $pesanan = Pesanan::where('id_pesanan', $id_pesanan)
             ->where('id_user', Auth::id())
             ->firstOrFail();
+
+        // Pastikan status memang menunggu pembayaran
+        if ($pesanan->status !== Pesanan::STATUS_MENUNGGU_PEMBAYARAN) {
+            return back()->with('toast_error', 'Pesanan ini tidak dalam status menunggu pembayaran.');
+        }
 
         $path = $request->file('bukti_transfer')->store('bukti_transfer', 'public');
 
@@ -160,27 +145,65 @@ class PesananController extends Controller
             ]
         );
 
-        $pesanan->update(['status' => 'menunggu_konfirmasi']);
+        // Update ke status: menunggu verifikasi pembayaran
+        $pesanan->update(['status' => Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN]);
+
+        // Notifikasi ke Admin
+        $this->kirimNotifikasiAdmin(
+            '💳 Bukti Bayar dari ' . Auth::user()->name,
+            'Pesanan #' . $pesanan->kode_pesanan . ' telah mengirim bukti pembayaran. Harap verifikasi.'
+        );
+
+        // Notifikasi ke User
+        Notifikasi::create([
+            'id_user'    => Auth::id(),
+            'id_pesanan' => $pesanan->id_pesanan,
+            'judul'      => '📤 Bukti Pembayaran Terkirim',
+            'pesan'      => 'Bukti pembayaran pesanan #' . $pesanan->kode_pesanan . ' berhasil dikirim. Tunggu verifikasi dari admin.',
+            'tipe'       => 'info',
+            'is_read'    => false,
+        ]);
 
         return redirect()->route('pesanan.show', $pesanan->id_pesanan)
-            ->with('toast_success', 'Pembayaran Anda berhasil! Tunggu konfirmasi dari admin melalui WA.');
+            ->with('toast_success', 'Bukti pembayaran berhasil dikirim! Tunggu verifikasi admin.');
     }
 
     /**
-     * Tampilkan Invoice untuk dicetak
+     * Invoice — hanya bisa diakses jika status sudah dikonfirmasi/diproses/selesai
      */
     public function invoice($id_pesanan)
     {
         $query = Pesanan::where('id_pesanan', $id_pesanan);
 
-        // Jika bukan admin, hanya bisa lihat pesanan sendiri
         if (!auth()->user()->hasRole('admin')) {
             $query->where('id_user', Auth::id());
         }
 
-        $pesanan = $query->with(['details.layanan', 'form', 'user'])
-            ->firstOrFail();
+        $pesanan = $query->with(['details.layanan', 'form', 'user', 'pembayaran'])->firstOrFail();
+
+        // Hanya tampilkan invoice jika sudah dikonfirmasi
+        if (!auth()->user()->hasRole('admin') && !$pesanan->bisaUnduhInvoice()) {
+            return back()->with('toast_error', 'Invoice belum tersedia. Tunggu konfirmasi pembayaran dari admin.');
+        }
 
         return view('customer.pesanan.invoice', compact('pesanan'));
+    }
+
+    /**
+     * Helper: Kirim notifikasi ke semua admin via Filament
+     */
+    private function kirimNotifikasiAdmin(string $judul, string $pesan): void
+    {
+        try {
+            $admins = User::role('admin')->get();
+            \Filament\Notifications\Notification::make()
+                ->title($judul)
+                ->body($pesan)
+                ->icon('heroicon-o-shopping-bag')
+                ->warning()
+                ->sendToDatabase($admins);
+        } catch (\Exception $e) {
+            // Silently fail
+        }
     }
 }
