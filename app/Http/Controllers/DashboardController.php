@@ -9,6 +9,9 @@ use App\Models\Galeri;
 
 class DashboardController extends Controller
 {
+    /**
+     * Menampilkan halaman utama (Welcome) dengan data profil, layanan, dan galeri.
+     */
     public function index()
     {
         $profil = ProfilPerusahaan::first();
