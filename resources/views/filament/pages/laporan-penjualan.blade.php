@@ -1,85 +1,229 @@
 <x-filament-panels::page>
+    <style>
+        /* Scoped styles for high-fidelity admin panel reporting */
+        .lp-grid-stats {
+            display: grid;
+            grid-template-cols: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        @media (min-width: 768px) {
+            .lp-grid-stats {
+                grid-template-cols: repeat(3, 1fr);
+            }
+        }
+        .lp-stat-card {
+            position: relative;
+            overflow: hidden;
+            padding: 2rem;
+            background-color: #111827; /* bg-gray-900 */
+            border-radius: 1.5rem;
+            border: 1px solid #1f2937;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        .lp-stat-card-title {
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            margin-bottom: 0.75rem;
+        }
+        .lp-stat-card-val {
+            font-size: 1.875rem;
+            font-weight: 900;
+            color: #ffffff;
+            font-style: italic;
+            letter-spacing: -0.03em;
+        }
+
+        .lp-grid-reports {
+            display: grid;
+            grid-template-cols: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .lp-grid-reports {
+                grid-template-cols: repeat(3, 1fr);
+            }
+        }
+        
+        .lp-report-card {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 2rem;
+            border: 1px solid #f3f4f6;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .dark .lp-report-card {
+            background-color: #18181b; /* zinc-900 */
+            border-color: #27272a;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+        .lp-report-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+        }
+        .dark .lp-report-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .lp-icon-box {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        .lp-report-card:hover .lp-icon-box {
+            transform: scale(1.08);
+        }
+
+        .lp-report-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #18181b;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        .dark .lp-report-title {
+            color: #ffffff;
+        }
+        .lp-report-desc {
+            font-size: 0.85rem;
+            color: #71717a;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            font-style: italic;
+            font-weight: 500;
+            flex-grow: 1;
+        }
+        .dark .lp-report-desc {
+            color: #a1a1aa;
+        }
+
+        .lp-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 1.15rem;
+            color: #ffffff;
+            border-radius: 1rem;
+            font-weight: 800;
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .lp-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .lp-btn:active {
+            transform: translateY(1px);
+        }
+    </style>
+
     {{-- Header Stats --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="relative overflow-hidden p-8 bg-gray-900 rounded-[2rem] border border-gray-800 shadow-2xl">
+    <div class="lp-grid-stats">
+        <!-- Revenue Stat -->
+        <div class="lp-stat-card">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-600/20 blur-[50px] rounded-full"></div>
             <div class="relative z-10">
-                <p class="text-[10px] font-black text-orange-500 uppercase tracking-[0.3em] mb-4">Total Revenue Today</p>
+                <p class="lp-stat-card-title text-orange-500">Total Revenue Today</p>
                 @php
                     $todayIncome = \App\Models\Pesanan::where('status', 'dibayar')
                         ->whereDate('updated_at', today())
                         ->sum('total_harga');
                 @endphp
-                <h4 class="text-3xl font-black text-white italic tracking-tighter">Rp {{ number_format($todayIncome, 0, ',', '.') }}</h4>
+                <h4 class="lp-stat-card-val">Rp {{ number_format($todayIncome, 0, ',', '.') }}</h4>
             </div>
         </div>
-        <div class="relative overflow-hidden p-8 bg-gray-900 rounded-[2rem] border border-gray-800 shadow-2xl">
+        
+        <!-- Verification Stat -->
+        <div class="lp-stat-card">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/10 blur-[50px] rounded-full"></div>
             <div class="relative z-10">
-                <p class="text-[10px] font-black text-blue-400 uppercase tracking-[0.3em] mb-4">Orders to Verify</p>
+                <p class="lp-stat-card-title text-blue-400">Orders to Verify</p>
                 @php
                     $pendingCount = \App\Models\Pesanan::where('status', 'menunggu_verifikasi')->count();
                 @endphp
-                <h4 class="text-3xl font-black text-white italic tracking-tighter">{{ $pendingCount }} <span class="text-xs not-italic text-gray-500 ml-1">Orders</span></h4>
+                <h4 class="lp-stat-card-val">{{ $pendingCount }} <span class="text-xs not-italic text-gray-500 ml-1">Orders</span></h4>
             </div>
         </div>
-        <div class="relative overflow-hidden p-8 bg-gray-900 rounded-[2rem] border border-gray-800 shadow-2xl">
+
+        <!-- Completion Stat -->
+        <div class="lp-stat-card">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-green-600/10 blur-[50px] rounded-full"></div>
             <div class="relative z-10">
-                <p class="text-[10px] font-black text-green-400 uppercase tracking-[0.3em] mb-4">Completed This Month</p>
+                <p class="lp-stat-card-title text-green-400">Completed This Month</p>
                 @php
                     $monthCount = \App\Models\Pesanan::where('status', 'selesai')
                         ->whereMonth('updated_at', now()->month)
                         ->count();
                 @endphp
-                <h4 class="text-3xl font-black text-white italic tracking-tighter">{{ $monthCount }} <span class="text-xs not-italic text-gray-500 ml-1">Orders</span></h4>
+                <h4 class="lp-stat-card-val">{{ $monthCount }} <span class="text-xs not-italic text-gray-500 ml-1">Orders</span></h4>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {{-- Daily Report --}}
-        <div class="group relative bg-white dark:bg-gray-900 p-10 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
-            <div class="w-16 h-16 bg-orange-50 dark:bg-orange-600/10 rounded-2xl flex items-center justify-center text-orange-600 mb-8 group-hover:scale-110 transition-transform">
-                <x-heroicon-o-calendar-days class="w-8 h-8" />
+    {{-- Main Custom Dashboard Grid --}}
+    <div class="lp-grid-reports">
+        {{-- Daily Report Card --}}
+        <div class="lp-report-card">
+            <div class="lp-icon-box bg-orange-50 dark:bg-orange-600/10 text-orange-600">
+                <x-heroicon-o-calendar-days style="width: 32px; height: 32px;" />
             </div>
-            <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">Laporan Harian</h3>
-            <p class="text-sm text-gray-400 dark:text-gray-500 mb-10 leading-relaxed font-medium italic">
+            <h3 class="lp-report-title">Laporan Harian</h3>
+            <p class="lp-report-desc">
                 "Ringkasan transaksi lengkap yang terjadi pada hari ini untuk monitoring harian."
             </p>
             <a href="{{ route('admin.laporan', ['type' => 'hari']) }}" target="_blank" 
-               class="flex items-center justify-center gap-3 w-full py-5 bg-gray-900 dark:bg-orange-600 text-white rounded-2xl font-black text-[11px] tracking-widest uppercase hover:bg-orange-600 transition-all shadow-xl shadow-orange-900/10">
-                PRINT DAILY REPORT <x-heroicon-o-printer class="w-4 h-4" />
+               class="lp-btn bg-stone-900 dark:bg-orange-600 hover:bg-orange-600 dark:hover:bg-orange-700">
+                PRINT DAILY REPORT 
+                <x-heroicon-o-printer style="width: 16px; height: 16px; margin-left: 4px;" />
             </a>
         </div>
 
-        {{-- Weekly Report --}}
-        <div class="group relative bg-white dark:bg-gray-900 p-10 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
-            <div class="w-16 h-16 bg-blue-50 dark:bg-blue-600/10 rounded-2xl flex items-center justify-center text-blue-600 mb-8 group-hover:scale-110 transition-transform">
-                <x-heroicon-o-chart-bar class="w-8 h-8" />
+        {{-- Weekly Report Card --}}
+        <div class="lp-report-card">
+            <div class="lp-icon-box bg-blue-50 dark:bg-blue-600/10 text-blue-600">
+                <x-heroicon-o-chart-bar style="width: 32px; height: 32px;" />
             </div>
-            <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">Laporan Mingguan</h3>
-            <p class="text-sm text-gray-400 dark:text-gray-500 mb-10 leading-relaxed font-medium italic">
+            <h3 class="lp-report-title">Laporan Mingguan</h3>
+            <p class="lp-report-desc">
                 "Analisis performa penjualan dalam periode 7 hari terakhir untuk evaluasi mingguan."
             </p>
             <a href="{{ route('admin.laporan', ['type' => 'minggu']) }}" target="_blank" 
-               class="flex items-center justify-center gap-3 w-full py-5 bg-gray-900 dark:bg-blue-600 text-white rounded-2xl font-black text-[11px] tracking-widest uppercase hover:bg-blue-600 transition-all shadow-xl shadow-blue-900/10">
-                PRINT WEEKLY REPORT <x-heroicon-o-printer class="w-4 h-4" />
+               class="lp-btn bg-stone-900 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700">
+                PRINT WEEKLY REPORT 
+                <x-heroicon-o-printer style="width: 16px; height: 16px; margin-left: 4px;" />
             </a>
         </div>
 
-        {{-- Monthly Report --}}
-        <div class="group relative bg-white dark:bg-gray-900 p-10 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2">
-            <div class="w-16 h-16 bg-green-50 dark:bg-green-600/10 rounded-2xl flex items-center justify-center text-green-600 mb-8 group-hover:scale-110 transition-transform">
-                <x-heroicon-o-presentation-chart-line class="w-8 h-8" />
+        {{-- Monthly Report Card --}}
+        <div class="lp-report-card">
+            <div class="lp-icon-box bg-green-50 dark:bg-green-600/10 text-green-600">
+                <x-heroicon-o-presentation-chart-line style="width: 32px; height: 32px;" />
             </div>
-            <h3 class="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">Laporan Bulanan</h3>
-            <p class="text-sm text-gray-400 dark:text-gray-500 mb-10 leading-relaxed font-medium italic">
+            <h3 class="lp-report-title">Laporan Bulanan</h3>
+            <p class="lp-report-desc">
                 "Rekapitulasi total dalam 30 hari terakhir untuk laporan keuangan bulanan perusahaan."
             </p>
             <a href="{{ route('admin.laporan', ['type' => 'bulan']) }}" target="_blank" 
-               class="flex items-center justify-center gap-3 w-full py-5 bg-gray-900 dark:bg-green-600 text-white rounded-2xl font-black text-[11px] tracking-widest uppercase hover:bg-green-600 transition-all shadow-xl shadow-green-900/10">
-                PRINT MONTHLY REPORT <x-heroicon-o-printer class="w-4 h-4" />
+               class="lp-btn bg-stone-900 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700">
+                PRINT MONTHLY REPORT 
+                <x-heroicon-o-printer style="width: 16px; height: 16px; margin-left: 4px;" />
             </a>
         </div>
     </div>
