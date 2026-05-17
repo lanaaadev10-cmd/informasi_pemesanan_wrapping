@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{ $profil->deskripsi ?? 'Penyedia layanan stiker dan wrapping kendaraan premium.' }}">
     <meta name="keywords" content="stiker mobil, wrapping mobil, branding kendaraan, dantie sticker">
-    <meta name="author" content="{{ $profil->nama_perusahaan ?? 'Altra' }}">
+    <meta name="author" content="{{ $profil->nama_perusahaan ?? 'dantiestiker' }}">
     <title>@yield('title') - {{ $profil->nama_perusahaan ?? 'Official Website' }}</title>
     
     <!-- Tipografi Premium -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Icon & Animasi -->
     <script defer src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -19,7 +19,7 @@
 
     <style>
         body { 
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: #ffffff;
             color: #1a1a1a;
         }
