@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 
 // Spatie
@@ -14,7 +15,7 @@ use Filament\Panel;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
         'name',
