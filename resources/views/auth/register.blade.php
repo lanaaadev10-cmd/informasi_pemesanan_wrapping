@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - {{ config('app.name') }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script defer src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .bg-auth-reg {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ ($profil?->register_image) ? \Illuminate\Support\Facades\Storage::url($profil->register_image) : "https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=2101&auto=format&fit=crop" }}');
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ $profil?->register_image ? \Illuminate\Support\Facades\Storage::url($profil->register_image) : "https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=2101&auto=format&fit=crop" }}');
             background-size: cover;
             background-position: center;
         }
@@ -23,25 +23,25 @@
             <div class="z-10">
                 <a href="/" class="flex items-center gap-3 text-2xl font-bold tracking-tighter uppercase">
                     <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center">
-                        <i class="ph-bold ph-sketch-logo"></i>
+                         <i class="ph-bold ph-sketch-logo"></i>
                     </div>
-                    {{ $profil->nama_perusahaan ?? 'ALTRA' }}
+                    {{ $profil?->nama_perusahaan ?? 'ALTRA' }}
                 </a>
             </div>
             
             <div class="z-10">
                 <h1 class="text-6xl font-black leading-tight mb-6">
-                    {!! ($profil?->register_title) ? nl2br(e($profil->register_title)) : 'Create Your <br> <span class="text-orange-500">Journey.</span>' !!}
+                    {!! $profil?->register_title ? nl2br(e($profil->register_title)) : 'Create Your <br> <span class="text-orange-500">Journey.</span>' !!}
                 </h1>
                 <p class="text-xl text-gray-300 max-w-md leading-relaxed">
-                    {{ $profil->register_subtitle ?? 'Bergabunglah dengan ribuan pelanggan puas kami dan dapatkan layanan wrapping terbaik untuk aset berharga Anda.' }}
+                    {{ $profil?->register_subtitle ?? 'Bergabunglah dengan ribuan pelanggan puas kami dan dapatkan layanan wrapping terbaik untuk aset berharga Anda.' }}
                 </p>
             </div>
 
             <div class="z-10 flex items-center gap-4 text-sm font-medium text-gray-400">
-                <span>{!! $profil->footer_copyright ? e($profil->footer_copyright) : '&copy; ' . date('Y') . ' ' . ($profil->nama_perusahaan ?? 'Dantie Sticker') !!}</span>
+                <span>&copy; {{ date('Y') }} {{ $profil?->nama_perusahaan ?? 'ALTRA STICKER' }}</span>
                 <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
-                <span>{{ $profil->auth_badge ?? 'Join the Community' }}</span>
+                <span>Join the Community</span>
             </div>
         </div>
 
@@ -49,7 +49,7 @@
         <div class="w-full md:w-1/2 flex items-center justify-center p-8 md:px-16 py-12 bg-gray-50 overflow-y-auto">
             <div class="w-full max-w-md">
                 <div class="mb-10 md:hidden flex justify-center">
-                    <a href="/" class="text-2xl font-black text-orange-600 uppercase tracking-tighter italic">{{ $profil->nama_perusahaan ?? 'ALTRA' }}</a>
+                    <a href="/" class="text-2xl font-black text-orange-600 uppercase tracking-tighter italic">{{ $profil?->nama_perusahaan ?? 'ALTRA' }}</a>
                 </div>
 
                 <div class="mb-8">

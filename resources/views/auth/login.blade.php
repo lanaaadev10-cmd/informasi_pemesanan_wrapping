@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - {{ config('app.name') }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script defer src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        body { font-family: 'Poppins', sans-serif; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .bg-auth {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ ($profil?->login_image) ? \Illuminate\Support\Facades\Storage::url($profil->login_image) : "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=2070&auto=format&fit=crop" }}');
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ $profil?->login_image ? \Illuminate\Support\Facades\Storage::url($profil->login_image) : "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=2070&auto=format&fit=crop" }}');
             background-size: cover;
             background-position: center;
         }
@@ -25,23 +25,23 @@
                     <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center">
                         <i class="ph-bold ph-sketch-logo"></i>
                     </div>
-                    {{ $profil->nama_perusahaan ?? 'ALTRA' }}
+                    {{ $profil?->nama_perusahaan ?? 'ALTRA' }}
                 </a>
             </div>
             
             <div class="z-10">
                 <h1 class="text-6xl font-black leading-tight mb-6">
-                    {!! ($profil?->login_title) ? nl2br(e($profil->login_title)) : 'Level Up Your <br> <span class="text-orange-500">Business.</span>' !!}
+                    {!! $profil?->login_title ? nl2br(e($profil->login_title)) : 'Level Up Your <br> <span class="text-orange-500">Business.</span>' !!}
                 </h1>
                 <p class="text-xl text-gray-300 max-w-md leading-relaxed">
-                    {{ $profil->login_subtitle ?? 'Masuk ke member area untuk mengelola pesanan dan melihat katalog wrapping terbaik kami.' }}
+                    {{ $profil?->login_subtitle ?? 'Masuk ke member area untuk mengelola pesanan dan melihat katalog wrapping terbaik kami.' }}
                 </p>
             </div>
 
             <div class="z-10 flex items-center gap-4 text-sm font-medium text-gray-400">
-                <span>{!! $profil->footer_copyright ? e($profil->footer_copyright) : '&copy; ' . date('Y') . ' ' . ($profil->nama_perusahaan ?? 'Dantie Sticker') !!}</span>
+                <span>&copy; {{ date('Y') }} {{ $profil?->nama_perusahaan ?? 'ALTRA STICKER' }}</span>
                 <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
-                <span>{{ $profil->auth_badge ?? 'Premium Quality' }}</span>
+                <span>Premium Quality</span>
             </div>
         </div>
 
@@ -49,7 +49,7 @@
         <div class="w-full md:w-1/2 flex items-center justify-center p-8 md:p-16 bg-gray-50">
             <div class="w-full max-w-md">
                 <div class="mb-10 md:hidden flex justify-center">
-                    <a href="/" class="text-2xl font-black text-orange-600 uppercase tracking-tighter italic">{{ $profil->nama_perusahaan ?? 'ALTRA' }}</a>
+                    <a href="/" class="text-2xl font-black text-orange-600 uppercase tracking-tighter italic">{{ $profil?->nama_perusahaan ?? 'ALTRA' }}</a>
                 </div>
 
                 <div class="mb-12">
