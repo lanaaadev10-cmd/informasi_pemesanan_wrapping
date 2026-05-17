@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class Galeri extends Model
 {
+    use HasFactory;
+
     protected $primaryKey = 'id_galeri';
 
     protected $fillable = [
