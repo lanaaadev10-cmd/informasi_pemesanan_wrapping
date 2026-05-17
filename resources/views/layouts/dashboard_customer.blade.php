@@ -40,79 +40,91 @@
     <aside id="side-menu" class="fixed top-0 left-0 bottom-0 w-[280px] bg-[#151413] z-[100] flex flex-col transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 shadow-2xl lg:shadow-none border-r border-stone-900">
         
         <!-- Logo Section -->
-        <div class="h-24 px-6 flex items-center justify-between border-b border-stone-800/40 relative overflow-hidden shrink-0">
-            <!-- Glowing accent in logo section -->
-            <div class="absolute -left-10 -top-10 w-28 h-28 bg-[#f2541b]/15 rounded-full blur-2xl"></div>
-            
-            <a href="/" class="flex items-center gap-3 relative z-10 py-1.5 px-4 bg-[#1f1d1b] rounded-full border border-stone-800/60">
-                <div class="w-6.5 h-6.5 bg-[#f2541b] rounded-lg flex items-center justify-center text-white font-black text-xs shadow-md shadow-[#f2541b]/20">
+        <div class="h-20 px-5 flex items-center justify-between border-b border-white/5 shrink-0">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-[#f2541b] rounded-xl flex items-center justify-center text-white font-black text-sm shadow-lg shadow-[#f2541b]/25 shrink-0">
                     D
                 </div>
-                <span class="font-serif font-black text-white text-base tracking-tight">dantiestiker</span>
+                <span class="font-black text-white text-base tracking-tight">dantie<span class="text-[#f2541b]">stiker</span></span>
             </a>
-            <button onclick="toggleMenu()" class="lg:hidden p-2 text-stone-400 hover:text-white hover:bg-stone-800 rounded-xl transition-colors">
-                <i class="ph-bold ph-x text-xl"></i>
+            <button onclick="toggleMenu()" class="lg:hidden p-2 text-stone-500 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                <i class="ph-bold ph-x text-lg"></i>
             </button>
         </div>
 
         <!-- Navigation -->
-        <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-2">
-            <p class="px-4 text-[9px] font-bold tracking-widest text-stone-500 uppercase mb-3 mt-1">Menu Utama</p>
-            
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all {{ Request::routeIs('dashboard') ? 'sidebar-link-active' : 'text-[#a19f9a] hover:bg-stone-800/30 hover:text-white' }}">
-                <i class="ph-fill ph-squares-four text-xl {{ Request::routeIs('dashboard') ? '' : 'text-stone-500' }}"></i> Beranda
+        <nav class="flex-1 overflow-y-auto py-5 px-3 space-y-0.5">
+            <p class="px-3 text-[9px] font-black tracking-[0.18em] text-stone-600 uppercase mb-2">Menu Utama</p>
+
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ Request::routeIs('dashboard') ? 'sidebar-link-active' : 'text-stone-400 hover:bg-white/5 hover:text-white' }}">
+                <i class="ph-fill ph-squares-four text-lg {{ Request::routeIs('dashboard') ? '' : 'text-stone-600' }}"></i>
+                <span>Beranda</span>
             </a>
-            
-            <a href="{{ route('katalog.user') }}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all {{ Request::routeIs('katalog.user') ? 'sidebar-link-active' : 'text-[#a19f9a] hover:bg-stone-800/30 hover:text-white' }}">
-                <i class="ph-fill ph-storefront text-xl {{ Request::routeIs('katalog.user') ? '' : 'text-stone-500' }}"></i> Katalog Layanan
+
+            <a href="{{ route('katalog.user') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ Request::routeIs('katalog.user') ? 'sidebar-link-active' : 'text-stone-400 hover:bg-white/5 hover:text-white' }}">
+                <i class="ph-fill ph-storefront text-lg {{ Request::routeIs('katalog.user') ? '' : 'text-stone-600' }}"></i>
+                <span>Katalog Layanan</span>
             </a>
-            
-            <a href="{{ route('keranjang.index') }}" class="flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-bold transition-all {{ Request::routeIs('keranjang.*') ? 'sidebar-link-active' : 'text-[#a19f9a] hover:bg-stone-800/30 hover:text-white' }}">
+
+            <a href="{{ route('keranjang.index') }}" class="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ Request::routeIs('keranjang.*') ? 'sidebar-link-active' : 'text-stone-400 hover:bg-white/5 hover:text-white' }}">
                 <div class="flex items-center gap-3">
-                    <i class="ph-fill ph-shopping-cart text-xl {{ Request::routeIs('keranjang.*') ? '' : 'text-stone-500' }}"></i> Keranjang
+                    <i class="ph-fill ph-shopping-cart text-lg {{ Request::routeIs('keranjang.*') ? '' : 'text-stone-600' }}"></i>
+                    <span>Keranjang</span>
                 </div>
                 @php $cartCount = \App\Models\Keranjang::where('id_user', auth()->id())->count(); @endphp
                 @if($cartCount > 0)
-                <span class="w-5 h-5 flex items-center justify-center rounded-full text-[9px] font-bold {{ Request::routeIs('keranjang.*') ? 'bg-white text-[#f2541b]' : 'bg-[#f2541b] text-white' }}">{{ $cartCount }}</span>
+                <span class="w-5 h-5 flex items-center justify-center rounded-full text-[9px] font-black {{ Request::routeIs('keranjang.*') ? 'bg-white text-[#f2541b]' : 'bg-[#f2541b] text-white' }}">{{ $cartCount }}</span>
                 @endif
             </a>
 
-            <button onclick="bukaModalPanduan()" class="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold text-[#a19f9a] hover:bg-stone-800/30 hover:text-white transition-all text-left">
-                <i class="ph-fill ph-info text-xl text-stone-500"></i> Panduan Pemesanan
+            <a href="{{ route('pesanan.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ Request::routeIs('pesanan.index') || Request::routeIs('pesanan.show') ? 'sidebar-link-active' : 'text-stone-400 hover:bg-white/5 hover:text-white' }}">
+                <i class="ph-fill ph-receipt text-lg {{ Request::routeIs('pesanan.*') ? '' : 'text-stone-600' }}"></i>
+                <span>Riwayat Pesanan</span>
+            </a>
+
+            <button onclick="bukaModalPanduan()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-stone-400 hover:bg-white/5 hover:text-white transition-all text-left">
+                <i class="ph-fill ph-question text-lg text-stone-600"></i>
+                <span>Panduan Pemesanan</span>
             </button>
 
             @if(Request::routeIs('pesanan.checkout.form'))
-            <div class="flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold sidebar-link-active">
-                <i class="ph-fill ph-credit-card text-xl"></i> Pembayaran
+            <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold sidebar-link-active">
+                <i class="ph-fill ph-credit-card text-lg"></i>
+                <span>Pembayaran</span>
             </div>
             @endif
 
-            <p class="px-4 text-[9px] font-bold tracking-widest text-stone-500 uppercase mb-3 mt-6">Lainnya</p>
+            <div class="my-3 border-t border-white/5"></div>
+            <p class="px-3 text-[9px] font-black tracking-[0.18em] text-stone-600 uppercase mb-2">Lainnya</p>
 
-            <a href="{{ route('profil.perusahaan') }}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all {{ Request::routeIs('profil.perusahaan') ? 'sidebar-link-active' : 'text-[#a19f9a] hover:bg-stone-800/30 hover:text-white' }}">
-                <i class="ph-fill ph-buildings text-xl {{ Request::routeIs('profil.perusahaan') ? '' : 'text-stone-500' }}"></i> Profil Bisnis
+            <a href="{{ route('profil.perusahaan') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ Request::routeIs('profil.perusahaan') ? 'sidebar-link-active' : 'text-stone-400 hover:bg-white/5 hover:text-white' }}">
+                <i class="ph-fill ph-buildings text-lg {{ Request::routeIs('profil.perusahaan') ? '' : 'text-stone-600' }}"></i>
+                <span>Profil Bisnis</span>
             </a>
-            
-            <a href="{{ route('galeri.user') }}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all {{ Request::routeIs('galeri.user') ? 'sidebar-link-active' : 'text-[#a19f9a] hover:bg-stone-800/30 hover:text-white' }}">
-                <i class="ph-fill ph-image text-xl {{ Request::routeIs('galeri.user') ? '' : 'text-stone-500' }}"></i> Galeri Hasil
+
+            <a href="{{ route('galeri.user') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all {{ Request::routeIs('galeri.user') ? 'sidebar-link-active' : 'text-stone-400 hover:bg-white/5 hover:text-white' }}">
+                <i class="ph-fill ph-image text-lg {{ Request::routeIs('galeri.user') ? '' : 'text-stone-600' }}"></i>
+                <span>Galeri Hasil</span>
             </a>
         </nav>
 
         <!-- User Profile & Logout -->
-        <div class="p-5 border-t border-stone-800/40 shrink-0">
-            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 mb-4 group block">
-                <div class="w-8.5 h-8.5 rounded-full bg-stone-800 text-[#f2541b] font-black text-sm flex items-center justify-center border border-stone-750 shrink-0">
+        <div class="p-4 border-t border-white/5 shrink-0">
+            <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors group mb-2">
+                <div class="w-9 h-9 rounded-xl bg-[#f2541b]/15 text-[#f2541b] font-black text-sm flex items-center justify-center shrink-0 border border-[#f2541b]/20">
                     {{ substr(Auth::user()->name, 0, 1) }}
                 </div>
                 <div class="flex-1 overflow-hidden">
-                    <p class="text-xs font-bold text-white group-hover:text-[#f2541b] transition-colors truncate">{{ Auth::user()->name }}</p>
-                    <p class="text-[9px] font-semibold text-stone-500 truncate">Pengaturan Akun</p>
+                    <p class="text-sm font-bold text-white truncate group-hover:text-[#f2541b] transition-colors">{{ Auth::user()->name }}</p>
+                    <p class="text-[10px] text-stone-500 truncate">Pengaturan Akun</p>
                 </div>
+                <i class="ph-bold ph-caret-right text-stone-600 text-xs group-hover:text-[#f2541b] transition-colors"></i>
             </a>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="flex items-center gap-1.5 text-[10px] font-bold text-[#f2541b] hover:text-[#f36b37] transition-colors bg-transparent border-0 p-0 uppercase tracking-wider">
-                    Keluar &rarr;
+                <button type="submit" class="w-full flex items-center justify-center gap-2 py-2.5 text-xs font-bold text-red-400 hover:text-white hover:bg-red-500/10 rounded-xl transition-all border border-red-500/10 hover:border-red-500/20">
+                    <i class="ph-bold ph-sign-out text-sm"></i>
+                    Keluar dari Akun
                 </button>
             </form>
         </div>
@@ -122,10 +134,14 @@
     <div class="lg:ml-[280px] min-h-screen flex flex-col bg-[#f5f4f0]">
         
         <!-- Top Navbar -->
-        <header class="h-24 px-6 md:px-10 flex items-center justify-between sticky top-0 z-[50] bg-[#f5f4f0]/95 backdrop-blur-md">
-            <div class="flex items-center gap-4">
-                <div class="block">
-                    <h2 class="font-serif font-black text-stone-900 text-base md:text-xl tracking-tight">@yield('title', 'Dashboard')</h2>
+        <header class="h-20 px-6 md:px-10 flex items-center justify-between sticky top-0 z-[50] bg-[#f5f4f0]/95 backdrop-blur-md border-b border-stone-200/30">
+            <div class="flex items-center gap-3">
+                <!-- Hamburger Mobile -->
+                <button onclick="toggleMenu()" class="lg:hidden p-2 bg-white border border-stone-200 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-stone-50 transition-colors shadow-sm">
+                    <i class="ph-bold ph-list text-lg"></i>
+                </button>
+                <div>
+                    <h2 class="font-black text-stone-900 text-base md:text-lg tracking-tight">@yield('title', 'Dashboard')</h2>
                 </div>
             </div>
             
