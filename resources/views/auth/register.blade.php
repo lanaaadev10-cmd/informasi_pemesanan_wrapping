@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - {{ config('app.name') }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script defer src="https://unpkg.com/@phosphor-icons/web"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { font-family: 'Poppins', sans-serif; }
         .bg-auth-reg {
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ ($profil?->register_image) ? \Illuminate\Support\Facades\Storage::url($profil->register_image) : "https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=2101&auto=format&fit=crop" }}');
             background-size: cover;
