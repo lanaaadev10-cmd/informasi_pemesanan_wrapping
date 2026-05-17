@@ -42,6 +42,8 @@
     </section>
 
     <!-- 2. Section Header (Designed for Professionals) -->
+    <section class="max-w-7xl mx-auto px-6 mb-32 text-center" data-aos="fade-up">
+        <span class="text-orange-600 font-bold text-xs uppercase tracking-[0.3em] mb-4 block">For Professionals</span>
         <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
             {!! $profil->home_prof_title ? nl2br(e($profil->home_prof_title)) : 'Designed for <br> Professionals' !!}
         </h2>

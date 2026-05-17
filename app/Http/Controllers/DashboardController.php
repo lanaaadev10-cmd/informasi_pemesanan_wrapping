@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\ProfilPerusahaan;
 use App\Models\Layanan;
 use App\Models\Galeri;
-use App\Models\LandingFitur;
-use App\Models\Testimoni;
 
 class DashboardController extends Controller
 {
@@ -31,8 +29,9 @@ class DashboardController extends Controller
             return Galeri::latest()->limit(8)->get();
         });
         
-        $landingFiturs = collect([]); 
+        $landingFiturs = collect([]);
 
+        // Testimonis diambil dari JSON di ProfilPerusahaan (model Testimoni terpisah tidak dipakai)
         $testimonis = collect($profil->testimonis_json ?? [])
             ->map(fn($item) => (object)$item);
 
