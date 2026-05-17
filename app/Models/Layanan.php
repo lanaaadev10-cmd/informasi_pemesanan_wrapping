@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class Layanan extends Model
 {
+    use HasFactory;
+
     protected $primaryKey = 'id_layanan';
 
     protected $fillable = [

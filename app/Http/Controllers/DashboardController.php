@@ -11,9 +11,9 @@ use App\Models\Galeri;
 class DashboardController extends Controller
 {
     /**
-     * Menampilkan halaman utama (Welcome) dengan data profil, layanan, galeri, dan konten CMS landing.
+     * Menampilkan halaman utama (Welcome) dengan data profil, layanan, dan galeri.
      */
-    public function index(Request $request)
+    public function index()
     {
         // 🚀 Caching Profil & Layanan (Auto-refresh via booted model)
         $profil = Cache::rememberForever('site_profile', function() {

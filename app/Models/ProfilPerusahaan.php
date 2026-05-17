@@ -2,19 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Traits\HasCompanyCms;
 
+/**
+ * Model ProfilPerusahaan
+ *
+ * Model singleton — hanya ada 1 record profil perusahaan di database.
+ * Dikelola melalui Admin Panel Filament v5.
+ */
 class ProfilPerusahaan extends Model
 {
-    use HasCompanyCms;
+    use HasFactory;
 
     /**
-     * Data Identitas Inti Perusahaan.
-     * Kolom CMS lainnya dipindahkan ke Trait HasCompanyCms agar tidak menumpuk.
+     * Kolom yang boleh diisi secara mass-assignment.
      */
     protected $fillable = [
+        // Informasi Utama
         'nama_perusahaan',
         'deskripsi',
         'alamat',
@@ -22,25 +29,67 @@ class ProfilPerusahaan extends Model
         'nomor_telepon',
         'logo',
         'maps_url',
-    ];
 
-    protected $casts = [
-        'testimonis_json' => 'array',
-        'about_feature_list' => 'array',
+        // CMS Dinamis — Tentang Kami
+        'visi',
+        'misi',
+        'sejarah',
+
+        // Sosial Media
+        'instagram_url',
+        'facebook_url',
+        'tiktok_url',
+        'whatsapp_url',
+
+        // SEO & Metadata
+        'meta_title',
+        'meta_description',
     ];
 
     /**
-     * Gabungkan fillable dari Trait saat model diinisialisasi.
+     * Type casting untuk kolom tertentu.
      */
-    public function __construct(array $attributes = [])
+    protected function casts(): array
     {
-        parent::__construct($attributes);
-        $this->mergeFillable($this->getCmsFillable());
+        return [
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+        ];
     }
 
-    protected static function booted()
+    /**
+     * Helper: Ambil profil perusahaan (singleton pattern).
+     * Selalu mengembalikan record pertama, atau null jika belum ada.
+     */
+    public static function singleton(): ?self
     {
-        static::saved(fn () => Cache::forget('site_profile'));
-        static::deleted(fn () => Cache::forget('site_profile'));
+        return static::first();
+    }
+
+    /**
+     * Accessor: URL lengkap logo untuk ditampilkan di frontend.
+     */
+    public function getLogoUrlAttribute(): ?string
+    {
+        if (! $this->logo) {
+            return null;
+        }
+
+        return asset('storage/' . $this->logo);
+    }
+
+    /**
+     * Accessor: Link WhatsApp langsung dari nomor telepon.
+     */
+    public function getWhatsappLinkAttribute(): string
+    {
+        $nomor = preg_replace('/[^0-9]/', '', $this->nomor_telepon ?? '');
+
+        // Ganti awalan 0 dengan 62 (kode negara Indonesia)
+        if (str_starts_with($nomor, '0')) {
+            $nomor = '62' . substr($nomor, 1);
+        }
+
+        return "https://wa.me/{$nomor}";
     }
 }
