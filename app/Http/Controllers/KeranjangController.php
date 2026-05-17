@@ -107,4 +107,50 @@ class KeranjangController extends Controller
         return redirect()->route('keranjang.index')
             ->with('success', 'Keranjang berhasil dikosongkan.');
     }
+
+    /**
+     * Update jumlah unit layanan di keranjang
+     */
+    public function update(Request $request, $id_detail)
+    {
+        $request->validate([
+            'jumlah' => 'required|integer|min:1'
+        ]);
+
+        $detail = DetailKeranjang::findOrFail($id_detail);
+
+        if ($detail->keranjang->id_user !== Auth::id()) {
+            if ($request->wantsJson()) {
+                return response()->json(['message' => 'Unauthorized.'], 403);
+            }
+            abort(403, 'Akses ditolak.');
+        }
+
+        $hargaSatuan = $detail->harga_satuan;
+        $subtotal = $request->jumlah * $hargaSatuan;
+
+        $detail->update([
+            'jumlah' => $request->jumlah,
+            'subtotal' => $subtotal
+        ]);
+
+        if ($request->wantsJson() || $request->header('Accept') === 'application/json') {
+            $keranjang = Keranjang::where('id_user', Auth::id())
+                ->where('status', 'active')
+                ->with('details')
+                ->first();
+
+            $total_payment = $keranjang->details->sum('subtotal');
+
+            return response()->json([
+                'success' => true,
+                'jumlah' => $request->jumlah,
+                'subtotal' => 'Rp ' . number_format($subtotal, 0, ',', '.'),
+                'total_payment' => 'Rp ' . number_format($total_payment, 0, ',', '.')
+            ]);
+        }
+
+        return redirect()->route('keranjang.index')
+            ->with('success', 'Jumlah unit berhasil diperbarui!');
+    }
 }
