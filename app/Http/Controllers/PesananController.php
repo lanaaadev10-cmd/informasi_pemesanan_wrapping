@@ -9,6 +9,8 @@ use App\Models\Pembayaran;
 use App\Models\Notifikasi;
 use App\Models\Keranjang;
 use App\Models\User;
+use App\Events\OrderCreated;
+use App\Events\PaymentUploaded;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -85,6 +87,20 @@ class PesananController extends Controller
             ]);
         }
 
+        // Parsing nomor polisi dan tahun dari keterangan_tambahan jika tidak dikirim langsung di request
+        $nopol = $request->nomor_polisi;
+        $tahun = $request->tahun_produksi;
+        if (!$nopol && $request->keterangan_tambahan) {
+            if (preg_match('/Nomor Polisi:\s*([^|]+)/i', $request->keterangan_tambahan, $m)) {
+                $nopol = trim($m[1]);
+            }
+        }
+        if (!$tahun && $request->keterangan_tambahan) {
+            if (preg_match('/Tahun Produksi:\s*([0-9]+)/i', $request->keterangan_tambahan, $m)) {
+                $tahun = trim($m[1]);
+            }
+        }
+
         $keteranganLengkap = "Model: {$request->model_kendaraan} | Warna: {$request->warna_kendaraan}\n" .
                              "Lokasi: " . ucfirst($request->lokasi_pengerjaan) . "\n" .
                              "Jadwal: " . date('d M Y', strtotime($request->jadwal_pengerjaan)) . "\n" .
@@ -97,7 +113,18 @@ class PesananController extends Controller
             'no_hp'               => $request->no_hp,
             'keterangan_tambahan' => $keteranganLengkap,
             'status_verifikasi'   => 'pending',
+            // Kolom Kendaraan & Jadwal Sesi
+            'model_kendaraan'     => $request->model_kendaraan,
+            'warna_kendaraan'     => $request->warna_kendaraan,
+            'nomor_polisi'        => $nopol,
+            'tahun_produksi'      => $tahun,
+            'lokasi_pengerjaan'   => $request->lokasi_pengerjaan,
+            'jadwal_pengerjaan'   => $request->jadwal_pengerjaan,
+            'estimasi_durasi'     => '4 - 5 Hari Kerja',
         ]);
+
+        // Dispatch OrderCreated event (handles notifications)
+        OrderCreated::dispatch($pesanan);
 
         // Notifikasi ke Admin via Filament
         $this->kirimNotifikasiAdmin(
@@ -133,7 +160,7 @@ class PesananController extends Controller
 
         $path = $request->file('bukti_transfer')->store('bukti_transfer', 'public');
 
-        Pembayaran::updateOrCreate(
+        $pembayaran = Pembayaran::updateOrCreate(
             ['id_pesanan' => $pesanan->id_pesanan],
             [
                 'metode_pembayaran' => $request->metode_pembayaran,
@@ -148,11 +175,8 @@ class PesananController extends Controller
         // Update ke status: menunggu verifikasi pembayaran
         $pesanan->update(['status' => Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN]);
 
-        // Notifikasi ke Admin
-        $this->kirimNotifikasiAdmin(
-            '💳 Bukti Bayar dari ' . Auth::user()->name,
-            'Pesanan #' . $pesanan->kode_pesanan . ' telah mengirim bukti pembayaran. Harap verifikasi.'
-        );
+        // Dispatch PaymentUploaded event (handles admin notification)
+        PaymentUploaded::dispatch($pembayaran);
 
         // Notifikasi ke User
         Notifikasi::create([
