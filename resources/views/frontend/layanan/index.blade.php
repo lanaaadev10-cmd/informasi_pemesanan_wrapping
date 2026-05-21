@@ -33,9 +33,13 @@
         <!-- Ambient Glowing Core -->
         <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[500px] h-[250px] rounded-full blur-[120px] pointer-events-none z-0" style="background-color: color-mix(in srgb, var(--accent-color) 5%, transparent);"></div>
 
-        <!-- HERO HEADER SECTION - CENTERED -->
-        <div class="text-center space-y-4 z-10 relative">
-            <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+        <!-- HERO HEADER SECTION - CENTERED WITH PREMIUM STYLING -->
+        <div class="text-center space-y-6 z-10 relative">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-2" style="background-color: color-mix(in srgb, var(--accent-color) 10%, transparent); border: 1px solid color-mix(in srgb, var(--accent-color) 20%, transparent);">
+                <span class="w-2 h-2 rounded-full animate-pulse" style="background-color: var(--accent-color);"></span>
+                <span class="text-xs font-bold tracking-widest uppercase" style="color: var(--accent-color);">Paket Layanan Premium</span>
+            </div>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
                 {{ $profil->layanan_hero_title ?? 'Precision in Every Layer' }}
             </h1>
             @if($profil?->layanan_hero_desc)
@@ -73,16 +77,16 @@
                 @endphp
 
                 @if($nama)
-                    <div class="bg-black border border-white/10 rounded-3xl overflow-hidden group hover:border-white/20 transition-all duration-300 flex flex-col h-full shadow-xl">
+                    <div class="bg-gradient-to-b from-white/[0.05] to-white/[0.01] border border-white/10 rounded-3xl overflow-hidden group hover:border-white/20 transition-all duration-300 flex flex-col h-full shadow-xl hover:shadow-2xl">
                         <!-- Image Section -->
-                        <div class="relative h-48 overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+                        <div class="relative h-56 overflow-hidden bg-gradient-to-br from-gray-900 to-black">
                             @if($gambar)
                                 <img src="{{ asset('storage/' . $gambar) }}"
                                      alt="{{ $nama }}"
-                                     class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                                     class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
                             @else
-                                <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(to bottom right, color-mix(in srgb, var(--accent-color) 20%, transparent), color-mix(in srgb, var(--accent-color) 5%, transparent));">
-                                    <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: color-mix(in srgb, var(--accent-color) 30%, transparent);">
+                                <div class="w-full h-full flex items-center justify-center" style="background: linear-gradient(135deg, color-mix(in srgb, var(--accent-color) 25%, transparent), color-mix(in srgb, var(--accent-color) 5%, transparent));">
+                                    <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: color-mix(in srgb, var(--accent-color) 25%, transparent);">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                     </svg>
                                 </div>
@@ -90,47 +94,44 @@
                         </div>
 
                         <!-- Content Section - FLEX COLUMN FOR EQUAL HEIGHT -->
-                        <div class="p-6 flex-1 flex flex-col">
-                            <!-- Title -->
-                            <h3 class="text-xl font-bold text-white mb-1">
-                                {{ $nama }}
-                            </h3>
-
-                            <!-- Price -->
-                            <div class="mb-3">
-                                <span class="font-bold text-lg accent-color">
+                        <div class="p-7 flex-1 flex flex-col">
+                            <!-- Title & Price -->
+                            <div class="mb-4 flex-shrink-0">
+                                <h3 class="text-2xl font-extrabold text-white mb-2 leading-tight">
+                                    {{ $nama }}
+                                </h3>
+                                <div class="text-xl font-black accent-color tracking-wide">
                                     {{ $harga }}
-                                </span>
-                                <span class="text-gray-500 text-sm"> ...</span>
+                                </div>
                             </div>
 
                             <!-- Description -->
                             @if($deskripsi)
-                                <p class="text-gray-400 text-sm mb-4 line-clamp-2">
+                                <p class="text-gray-400 text-sm mb-5 leading-relaxed flex-shrink-0">
                                     {{ $deskripsi }}
                                 </p>
                             @endif
 
                             <!-- Features with Icons - FLEX GROW -->
                             @if($fitur && count($fitur) > 0)
-                                <div class="space-y-2 mb-6 flex-1">
+                                <div class="space-y-3 mb-7 flex-1">
                                     @foreach($fitur as $item)
                                         <div class="flex items-start gap-3">
-                                            <div class="flex-shrink-0 mt-0.5">
-                                                <div class="flex items-center justify-center h-5 w-5 rounded-full transition-all duration-300" style="border: 1px solid var(--accent-color); background-color: color-mix(in srgb, var(--accent-color) 10%, transparent);">
-                                                    <svg class="h-3 w-3" fill="currentColor" viewBox="0 0 20 20" style="color: var(--accent-color);">
+                                            <div class="flex-shrink-0 mt-1">
+                                                <div class="flex items-center justify-center h-5 w-5 rounded-full transition-all duration-300" style="border: 1.5px solid var(--accent-color); background-color: color-mix(in srgb, var(--accent-color) 15%, transparent);">
+                                                    <svg class="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20" style="color: var(--accent-color);">
                                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                     </svg>
                                                 </div>
                                             </div>
-                                            <span class="text-gray-300 text-sm">{{ $item }}</span>
+                                            <span class="text-gray-300 text-sm font-medium">{{ $item }}</span>
                                         </div>
                                     @endforeach
                                 </div>
                             @endif
 
                             <!-- CTA Button - ALWAYS AT BOTTOM -->
-                            <a href="{{ route('katalog.user') }}" class="inline-flex items-center justify-center w-full px-4 py-3 text-black font-bold rounded-full transition-all duration-300 text-sm uppercase tracking-wider" style="background-color: var(--accent-color);">
+                            <a href="{{ route('katalog.user') }}" class="inline-flex items-center justify-center w-full px-4 py-3 text-black font-extrabold rounded-2xl transition-all duration-300 text-xs uppercase tracking-widest shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95" style="background-color: var(--accent-color);">
                                 Pesan Sekarang
                             </a>
                         </div>
