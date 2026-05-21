@@ -90,15 +90,27 @@
             </div>
         </div>
 
-        <!-- SEJARAH SECTION - CONDITIONAL DISPLAY -->
+        <!-- SEJARAH SECTION - 2 COLUMN LAYOUT - CONDITIONAL DISPLAY -->
         @if($showHistory && $profil?->sejarah)
-            <div class="bg-white/[0.01] border border-white/5 p-8 sm:p-10 rounded-[32px] accent-hover transition-all duration-300 group relative overflow-hidden shadow-lg z-10">
-                <div class="absolute -right-16 -top-16 w-32 h-32 rounded-full blur-2xl group-hover:blur-3xl transition-all duration-500 pointer-events-none" style="background-color: color-mix(in srgb, var(--accent-color) 5%, transparent);"></div>
-
-                <div class="space-y-4 relative z-10">
-                    <h3 class="text-2xl font-bold text-white">Sejarah Perjalanan Kami</h3>
-                    <div class="text-gray-300 text-sm leading-relaxed prose prose-invert max-w-none">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 z-10 relative items-center">
+                <!-- LEFT: Judul & Teks -->
+                <div class="space-y-6">
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
+                        Satu Dekade Dedikasi pada Perfeksi
+                    </h3>
+                    <div class="text-gray-300 text-base leading-relaxed prose prose-invert max-w-none">
                         {!! $profil->sejarah !!}
+                    </div>
+                </div>
+
+                <!-- RIGHT: Gradient Placeholder -->
+                <div class="h-96 rounded-[32px] overflow-hidden shadow-2xl" style="background: linear-gradient(to bottom right, color-mix(in srgb, var(--accent-color) 30%, transparent), color-mix(in srgb, var(--accent-color) 10%, transparent)); border: 1px solid color-mix(in srgb, var(--accent-color) 20%, transparent);">
+                    <div class="w-full h-full flex items-center justify-center">
+                        <div class="text-center">
+                            <svg class="w-24 h-24 opacity-50 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--accent-color);">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
