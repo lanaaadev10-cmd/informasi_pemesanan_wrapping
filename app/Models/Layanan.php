@@ -21,6 +21,7 @@ class Layanan extends Model
         'tipe_paket',
         'fitur',
         'kategori',
+        'estimasi_waktu',
     ];
 
     protected $casts = [

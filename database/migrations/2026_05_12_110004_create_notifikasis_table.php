@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('id_pesanan')->nullable()->constrained('pesanans', 'id_pesanan')->onDelete('set null');
             $table->string('judul');
             $table->text('pesan');
-            $table->enum('tipe', ['info', 'pesanan', 'pembayaran', 'sistem'])->default('info');
+            $table->enum('tipe', ['info', 'pesanan', 'pembayaran', 'sistem', 'email', 'sms', 'in_app', 'push'])->default('info');
             $table->boolean('is_read')->default(false);
             $table->timestamps();
         });

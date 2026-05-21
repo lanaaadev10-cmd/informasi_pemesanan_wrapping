@@ -78,6 +78,13 @@ class NotifikasiApiController extends Controller
 
         $notifikasi->update(['is_read' => true]);
 
+        if ($notifikasi->id_pesanan) {
+            Notifikasi::where('id_user', Auth::id())
+                ->where('id_pesanan', $notifikasi->id_pesanan)
+                ->where('is_read', false)
+                ->update(['is_read' => true]);
+        }
+
         return response()->json([
             'status' => 'ok',
             'data' => $notifikasi,
@@ -102,6 +109,13 @@ class NotifikasiApiController extends Controller
         }
 
         $notifikasi->update(['is_read' => true]);
+
+        if ($notifikasi->id_pesanan) {
+            Notifikasi::where('id_user', Auth::id())
+                ->where('id_pesanan', $notifikasi->id_pesanan)
+                ->where('is_read', false)
+                ->update(['is_read' => true]);
+        }
 
         return response()->json([
             'status' => 'ok',

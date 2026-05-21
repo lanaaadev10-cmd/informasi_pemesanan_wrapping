@@ -62,4 +62,28 @@ class DashboardController extends Controller
         
         return view('frontend.profil.index', compact('profil'));
     }
+
+    /**
+     * Menampilkan halaman Tentang Kami
+     */
+    public function tentangKami()
+    {
+        $profil = Cache::rememberForever('site_profile', function() {
+            return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
+        });
+        
+        return view('frontend.tentang-kami.index', compact('profil'));
+    }
+
+    /**
+     * Menampilkan halaman Layanan
+     */
+    public function layanan()
+    {
+        $profil = Cache::rememberForever('site_profile', function() {
+            return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
+        });
+        
+        return view('frontend.layanan.index', compact('profil'));
+    }
 }

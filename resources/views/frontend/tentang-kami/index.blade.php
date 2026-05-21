@@ -93,14 +93,11 @@
         <!-- SEJARAH SECTION - 2 COLUMN LAYOUT - CONDITIONAL DISPLAY -->
         @if($showHistory && $profil?->sejarah)
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 z-10 relative items-center">
-                <!-- LEFT: Judul & Teks -->
+                <!-- LEFT: Judul Only -->
                 <div class="space-y-6">
                     <h3 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
                         Satu Dekade Dedikasi pada Perfeksi
                     </h3>
-                    <div class="text-gray-300 text-base leading-relaxed prose prose-invert max-w-none">
-                        {!! $profil->sejarah !!}
-                    </div>
                 </div>
 
                 <!-- RIGHT: Gradient Placeholder -->

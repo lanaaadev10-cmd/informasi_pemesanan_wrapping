@@ -20,12 +20,37 @@ class PesananController extends Controller
     /**
      * Daftar pesanan milik user yang login
      */
-    public function index()
+    public function index(Request $request)
     {
-        $pesanans = Pesanan::where('id_user', Auth::id())
+        $query = Pesanan::where('id_user', Auth::id())
             ->with(['form', 'pembayaran', 'details.layanan'])
-            ->latest()
-            ->get();
+            ->latest();
+
+        if ($request->status === 'menunggu_pembayaran') {
+            $query->whereIn('status', [
+                Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN,
+                Pesanan::STATUS_MENUNGGU_PEMBAYARAN,
+                Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN,
+            ]);
+        } elseif ($request->status === 'berjalan') {
+            $query->whereIn('status', [
+                Pesanan::STATUS_DIKONFIRMASI,
+                Pesanan::STATUS_SEDANG_DIPROSES,
+            ]);
+        } elseif ($request->status === 'selesai') {
+            $query->where('status', Pesanan::STATUS_SELESAI);
+        } else {
+            // Default "Riwayat Pesanan" (tanpa parameter status):
+            // Sesuai permintaan user: "hingga pembayaran selesai dan status di terima baru invoice mengunkan pdf baru bisa di unudh baru masuk ke dalam riwayat pesananan"
+            $query->whereIn('status', [
+                Pesanan::STATUS_DIKONFIRMASI,
+                Pesanan::STATUS_SEDANG_DIPROSES,
+                Pesanan::STATUS_SELESAI,
+                Pesanan::STATUS_DITOLAK,
+            ]);
+        }
+
+        $pesanans = $query->get();
 
         return view('customer.pesanan.index', compact('pesanans'));
     }
@@ -153,8 +178,9 @@ class PesananController extends Controller
             ->where('id_user', Auth::id())
             ->firstOrFail();
 
+        $statusVal = $pesanan->status instanceof \App\Enums\OrderStatus ? $pesanan->status->value : $pesanan->status;
         // Pastikan status memang menunggu pembayaran
-        if ($pesanan->status !== Pesanan::STATUS_MENUNGGU_PEMBAYARAN) {
+        if ($statusVal !== Pesanan::STATUS_MENUNGGU_PEMBAYARAN) {
             return back()->with('toast_error', 'Pesanan ini tidak dalam status menunggu pembayaran.');
         }
 
@@ -177,6 +203,12 @@ class PesananController extends Controller
 
         // Dispatch PaymentUploaded event (handles admin notification)
         PaymentUploaded::dispatch($pembayaran);
+
+        // Notifikasi ke Admin via Filament
+        $this->kirimNotifikasiAdmin(
+            '💳 Bukti Pembayaran Baru dari ' . Auth::user()->name,
+            'Pesanan #' . $pesanan->kode_pesanan . ' telah mengunggah bukti pembayaran dan menunggu verifikasi Anda.'
+        );
 
         // Notifikasi ke User
         Notifikasi::create([
@@ -220,12 +252,13 @@ class PesananController extends Controller
     {
         try {
             $admins = User::role('admin')->get();
-            \Filament\Notifications\Notification::make()
+            $filNotif = \Filament\Notifications\Notification::make()
                 ->title($judul)
                 ->body($pesan)
                 ->icon('heroicon-o-shopping-bag')
-                ->warning()
-                ->sendToDatabase($admins);
+                ->warning();
+            
+            \Illuminate\Support\Facades\Notification::sendNow($admins, $filNotif->toDatabase());
         } catch (\Exception $e) {
             // Silently fail
         }

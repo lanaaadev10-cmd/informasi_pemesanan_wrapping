@@ -15,6 +15,14 @@ class Pembayaran extends Model
         'verifikasi_admin', 'catatan_admin',
     ];
 
+    protected $casts = [
+        'status_pembayaran' => \App\Enums\PaymentStatus::class,
+        'metode_pembayaran' => \App\Enums\PaymentMethod::class,
+        'tgl_bayar' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function pesanan()
     {
         return $this->belongsTo(Pesanan::class, 'id_pesanan', 'id_pesanan');
