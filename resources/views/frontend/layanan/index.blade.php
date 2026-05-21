@@ -107,7 +107,7 @@
 
                             <!-- Description -->
                             @if($deskripsi)
-                                <p class="text-gray-400 text-sm mb-5 leading-relaxed flex-shrink-0">
+                                <p class="text-gray-400 text-sm mb-5 leading-relaxed flex-shrink-0 hidden">
                                     {{ $deskripsi }}
                                 </p>
                             @endif

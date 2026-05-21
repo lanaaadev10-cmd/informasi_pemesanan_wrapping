@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Services\KeranjangService;
+use App\Services\PesananService;
+use App\Services\PembayaranService;
+use App\Services\NotifikasiService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -11,7 +15,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register Keranjang Service
+        $this->app->singleton(KeranjangService::class, function ($app) {
+            return new KeranjangService();
+        });
+
+        // Register Pesanan Service (depends on KeranjangService)
+        $this->app->singleton(PesananService::class, function ($app) {
+            return new PesananService($app->make(KeranjangService::class));
+        });
+
+        // Register Pembayaran Service
+        $this->app->singleton(PembayaranService::class, function ($app) {
+            return new PembayaranService();
+        });
+
+        // Register Notifikasi Service
+        $this->app->singleton(NotifikasiService::class, function ($app) {
+            return new NotifikasiService();
+        });
     }
 
     /**

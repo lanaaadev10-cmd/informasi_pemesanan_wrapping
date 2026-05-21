@@ -1,5 +1,9 @@
 @extends('layouts.dashboard_customer')
 
+@php
+    $statusVal = $pesanan->status instanceof \App\Enums\OrderStatus ? $pesanan->status->value : $pesanan->status;
+@endphp
+
 @section('title', 'Payment Verification - ' . $pesanan->kode_pesanan)
 
 @section('content')
@@ -119,7 +123,7 @@
         <div class="lg:col-span-5 relative">
             <div class="bg-[#121212] border border-white/5 rounded-3xl p-8 shadow-lg lg:sticky lg:top-8">
 
-                @if($pesanan->status === 'menunggu_pembayaran')
+                @if($statusVal === 'menunggu_pembayaran')
                     <h2 class="text-xl font-bold text-white mb-2">Proof of Payment</h2>
                     <p class="text-xs text-gray-400 mb-6">Upload a screenshot or photo of your bank transfer receipt.</p>
 
@@ -140,7 +144,7 @@
                             <!-- Preview Image Container (Hidden by default) -->
                             <div id="preview-container" class="hidden absolute inset-0 w-full h-full bg-[#1a1a1a] rounded-2xl border-2 border-[#f2994a] overflow-hidden z-20">
                                 <img id="preview-image" class="w-full h-full object-cover">
-                                <button type="button" onclick="removeFile()" class="absolute top-2 right-2 w-8 h-8 bg-black/70 rounded-lg text-white flex items-center justify-center hover:bg-red-500 transition-colors">
+                                <button type="button" onclick="removeFile()" class="absolute top-2 right-2 w-8 h-8 bg-black/70 rounded-lg text-white flex items-center justify-center hover:bg-red-50 transition-colors">
                                     <i class="ph-bold ph-x"></i>
                                 </button>
                                 <div class="absolute bottom-0 inset-x-0 bg-black/70 p-2 text-center text-[10px] text-white">Bukti Terlampir</div>
@@ -149,12 +153,10 @@
 
                         <!-- Optional Fields -->
                         <div class="space-y-2">
-                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-1">Payment Method</label>
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-1">Metode Pembayaran (Manual Transfer)</label>
                             <select name="metode_pembayaran" required class="w-full bg-[#1a1a1a] border border-white/5 rounded-xl px-4 py-3.5 text-white text-xs focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
-                                <option value="">Select Payment Method</option>
-                                <option value="transfer_bank">Bank Transfer</option>
-                                <option value="transfer_e_wallet">E-Wallet Transfer</option>
-                                <option value="cash">Cash Payment</option>
+                                <option value="transfer_bank" selected>Transfer Bank (Manual)</option>
+                                <option value="transfer_e_wallet">E-Wallet Transfer (Manual)</option>
                             </select>
                         </div>
 
@@ -169,7 +171,7 @@
                         </div>
                     </form>
 
-                @elseif($pesanan->status === 'menunggu_konfirmasi_admin')
+                @elseif($statusVal === 'menunggu_konfirmasi_admin')
                     <div class="flex flex-col items-center justify-center text-center py-12 space-y-4">
                         <div class="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
                             <i class="ph-fill ph-hourglass-high text-4xl animate-spin-slow"></i>
@@ -179,7 +181,7 @@
                         <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">Kembali ke Dashboard</a>
                     </div>
 
-                @elseif($pesanan->status === 'menunggu_verifikasi_pembayaran')
+                @elseif($statusVal === 'menunggu_verifikasi_pembayaran')
                     <div class="flex flex-col items-center justify-center text-center py-12 space-y-4">
                         <div class="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center text-yellow-400 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
                             <i class="ph-fill ph-clock text-4xl animate-pulse"></i>
@@ -189,7 +191,7 @@
                         <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">Kembali ke Dashboard</a>
                     </div>
 
-                @elseif($pesanan->status === 'sedang_diproses' || $pesanan->status === 'dikonfirmasi')
+                @elseif($statusVal === 'sedang_diproses' || $statusVal === 'dikonfirmasi')
                     <div class="flex flex-col items-center justify-center text-center py-12 space-y-4">
                         <div class="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                             <i class="ph-fill ph-check-circle text-4xl"></i>
@@ -202,7 +204,7 @@
                         <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">Kembali ke Dashboard</a>
                     </div>
 
-                @elseif($pesanan->status === 'selesai')
+                @elseif($statusVal === 'selesai')
                     <div class="flex flex-col items-center justify-center text-center py-12 space-y-4">
                         <div class="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                             <i class="ph-fill ph-check-circle text-4xl"></i>
@@ -215,7 +217,7 @@
                         <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">Kembali ke Dashboard</a>
                     </div>
 
-                @elseif($pesanan->status === 'ditolak')
+                @elseif($statusVal === 'ditolak')
                     <div class="flex flex-col items-center justify-center text-center py-12 space-y-4">
                         <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center text-red-400 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                             <i class="ph-fill ph-x-circle text-4xl"></i>
@@ -271,9 +273,74 @@
     }
 </script>
 
+<!-- Premium Floating Success Toast -->
+@if(session('toast_success') || session('success'))
+<div id="success-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-500 ease-out max-w-sm w-full bg-[#121c15]/95 border border-emerald-500/20 rounded-2xl p-4 shadow-[0_8px_32px_rgba(16,185,129,0.15)] backdrop-blur-md flex gap-4 pointer-events-auto">
+    <!-- Pulse glowing bubble for the checkmark -->
+    <div class="relative flex items-center justify-center shrink-0">
+        <div class="absolute inset-0 bg-emerald-500/20 rounded-xl blur animate-pulse"></div>
+        <div class="relative w-10 h-10 bg-emerald-500/10 rounded-xl border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+            <i class="ph-bold ph-check text-xl"></i>
+        </div>
+    </div>
+    <!-- Toast Content -->
+    <div class="flex-1 space-y-1">
+        <h4 class="text-xs font-bold text-white tracking-wide">Success Action</h4>
+        <p class="text-[11px] text-gray-400 leading-relaxed">{{ session('toast_success') ?? session('success') }}</p>
+    </div>
+    <!-- Close Button -->
+    <button onclick="dismissToast()" class="shrink-0 w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+        <i class="ph ph-x text-xs"></i>
+    </button>
+    
+    <!-- Countdown progress bar -->
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-950 rounded-b-2xl overflow-hidden">
+        <div id="toast-progress" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 w-full transition-all duration-5000 ease-linear"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toast = document.getElementById('success-toast');
+        const progress = document.getElementById('toast-progress');
+        if (toast) {
+            // Trigger entry animation
+            setTimeout(() => {
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            }, 100);
+
+            // Progress bar animation
+            setTimeout(() => {
+                if (progress) progress.style.width = '0%';
+            }, 200);
+
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                dismissToast();
+            }, 5000);
+        }
+    });
+
+    function dismissToast() {
+        const toast = document.getElementById('success-toast');
+        if (toast) {
+            toast.classList.remove('translate-y-0', 'opacity-100');
+            toast.classList.add('translate-y-10', 'opacity-0');
+            setTimeout(() => {
+                toast.remove();
+            }, 500);
+        }
+    }
+</script>
+@endif
+
 <style>
     .animate-spin-slow {
         animation: spin 3s linear infinite;
+    }
+    .duration-5000 {
+        transition-duration: 5000ms;
     }
 </style>
 @endsection

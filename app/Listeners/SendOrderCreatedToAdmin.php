@@ -22,7 +22,7 @@ class SendOrderCreatedToAdmin
         $admins = User::role('admin')->get();
 
         foreach ($admins as $admin) {
-            Notification::make()
+            $filNotif = Notification::make()
                 ->title('🛒 Pesanan Baru dari ' . $customer->name)
                 ->body(
                     "Pesanan #{$pesanan->kode_pesanan} telah dibuat.\n" .
@@ -30,8 +30,9 @@ class SendOrderCreatedToAdmin
                     "Status: Menunggu Konfirmasi"
                 )
                 ->icon('heroicon-o-shopping-bag')
-                ->warning()
-                ->sendToDatabase([$admin]);
+                ->warning();
+
+            \Illuminate\Support\Facades\Notification::sendNow($admin, $filNotif->toDatabase());
         }
     }
 }

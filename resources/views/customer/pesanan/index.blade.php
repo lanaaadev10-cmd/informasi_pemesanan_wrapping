@@ -1,6 +1,20 @@
 @extends('layouts.dashboard_customer')
 
-@section('title', 'Riwayat Pesanan')
+@php
+    $accentColor = $profil->accent_color ?? '#f2994a';
+    $isPembayaranTab = request('status') === 'menunggu_pembayaran';
+    $pageTitle = $isPembayaranTab ? 'Tagihan & Pembayaran' : ($profil->pesanan_page_title_all ?? 'Riwayat Pesanan');
+    $pageDesc = $isPembayaranTab ? 'Pantau pesanan yang menunggu konfirmasi admin, pembayaran, atau verifikasi bukti transfer.' : ($profil->pesanan_page_desc_all ?? 'Kelola dan pantau riwayat pesanan layanan pembungkusan premium Anda yang telah terverifikasi.');
+@endphp
+
+<style>
+    :root {
+        --accent-color: {{ $accentColor }};
+    }
+    .accent-bg { background-color: var(--accent-color); }
+</style>
+
+@section('title', $pageTitle)
 
 @section('content')
 <div class="max-w-6xl mx-auto py-8 text-white space-y-8 relative overflow-hidden">
@@ -10,10 +24,11 @@
     <!-- Header & Filters -->
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 z-10 relative">
         <div class="space-y-1">
-            <h1 class="text-3xl font-bold tracking-tight">Riwayat Pesanan</h1>
-            <p class="text-sm text-gray-400">Kelola dan pantau status layanan pembungkusan premium Anda.</p>
+            <h1 class="text-3xl font-bold tracking-tight">{{ $pageTitle }}</h1>
+            <p class="text-sm text-gray-400">{{ $pageDesc }}</p>
         </div>
         
+        @if(!$isPembayaranTab)
         <div class="flex items-center bg-[#121212] border border-white/10 rounded-xl p-1.5 shrink-0">
             <a href="{{ route('pesanan.index') }}" 
                class="px-5 py-2.5 rounded-lg text-xs font-bold transition-all {{ !request()->has('status') ? 'bg-[#f2994a] text-black shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
@@ -28,6 +43,7 @@
                 Selesai
             </a>
         </div>
+        @endif
     </div>
 
     @if($pesanans->isEmpty())
@@ -35,8 +51,8 @@
             <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center text-gray-500 mx-auto mb-6">
                 <i class="ph-bold ph-package text-3xl"></i>
             </div>
-            <h3 class="text-xl font-bold mb-2">Belum Ada Pesanan</h3>
-            <p class="text-xs text-gray-400 mb-6">Anda belum melakukan pesanan layanan pembungkusan.</p>
+            <h3 class="text-xl font-bold mb-2">{{ $isPembayaranTab ? 'Belum Ada Tagihan Pembayaran' : 'Belum Ada Pesanan' }}</h3>
+            <p class="text-xs text-gray-400 mb-6">{{ $isPembayaranTab ? 'Anda tidak memiliki pesanan yang menunggu pembayaran saat ini.' : 'Anda belum melakukan pesanan layanan pembungkusan.' }}</p>
             <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#f2994a] hover:bg-[#e28a44] text-black rounded-xl font-bold text-xs uppercase tracking-wider transition-all">
                 Mulai Proyek Baru &rarr;
             </a>
@@ -45,10 +61,11 @@
         <div class="space-y-6 z-10 relative">
             @foreach($pesanans as $pesanan)
                 @php
-                    $isMenungguPembayaran = in_array($pesanan->status, ['menunggu_pembayaran', 'menunggu_konfirmasi_admin', 'menunggu_verifikasi_pembayaran']);
-                    $isSelesai = $pesanan->status === 'selesai';
-                    $isDitolak = $pesanan->status === 'ditolak';
-                    $isProses = in_array($pesanan->status, ['sedang_diproses', 'dikonfirmasi']);
+                    $statusVal = $pesanan->status instanceof \App\Enums\OrderStatus ? $pesanan->status->value : $pesanan->status;
+                    $isMenungguPembayaran = in_array($statusVal, ['menunggu_pembayaran', 'menunggu_konfirmasi_admin', 'menunggu_verifikasi_pembayaran']);
+                    $isSelesai = $statusVal === 'selesai';
+                    $isDitolak = $statusVal === 'ditolak';
+                    $isProses = in_array($statusVal, ['sedang_diproses', 'dikonfirmasi']);
 
                     // Fallback visual car image mapping based on package if order form lacks specific photos
                     $thumbnail = $pesanan->details->first()?->layanan->foto_contoh;
@@ -64,15 +81,15 @@
 
                         <!-- Status Badge Overlay -->
                         <div class="absolute top-4 left-4">
-                            @if($pesanan->status === 'menunggu_konfirmasi_admin')
+                            @if($statusVal === 'menunggu_konfirmasi_admin')
                                 <span class="bg-blue-500/10 border border-blue-500/50 text-blue-400 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
                                     Konfirmasi Admin
                                 </span>
-                            @elseif($pesanan->status === 'menunggu_pembayaran')
+                            @elseif($statusVal === 'menunggu_pembayaran')
                                 <span class="bg-red-500/10 border border-red-500/50 text-red-400 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
                                     Menunggu Pembayaran
                                 </span>
-                            @elseif($pesanan->status === 'menunggu_verifikasi_pembayaran')
+                            @elseif($statusVal === 'menunggu_verifikasi_pembayaran')
                                 <span class="bg-yellow-500/10 border border-yellow-500/50 text-yellow-400 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
                                     Verifikasi Pembayaran
                                 </span>
@@ -125,7 +142,7 @@
                                 <a href="{{ route('pesanan.show', $pesanan->id_pesanan) }}" class="flex items-center gap-1.5 hover:text-white transition-colors">
                                     <i class="ph-bold ph-eye text-sm"></i> Lihat Detail
                                 </a>
-                                @if(!$isMenungguPembayaran && !$isDitolak && $pesanan->status !== 'menunggu_konfirmasi_admin')
+                                @if(!$isMenungguPembayaran && !$isDitolak && $statusVal !== 'menunggu_konfirmasi_admin')
                                     <a href="{{ route('pesanan.invoice', $pesanan->id_pesanan) }}" class="flex items-center gap-1.5 hover:text-white transition-colors">
                                         <i class="ph-bold ph-download-simple text-sm"></i> Unduh Invoice
                                     </a>
@@ -133,7 +150,7 @@
                             </div>
 
                             <div class="flex items-center gap-4 w-full sm:w-auto shrink-0">
-                                @if($pesanan->status === 'menunggu_pembayaran')
+                                @if($statusVal === 'menunggu_pembayaran')
                                     <a href="{{ route('pesanan.show', $pesanan->id_pesanan) }}" class="flex-1 sm:flex-none text-center px-6 py-2.5 bg-[#f2994a] hover:bg-[#e28a44] text-black font-bold text-[10px] uppercase tracking-wider rounded-lg transition-all active:scale-95 shadow-md">
                                         Bayar Sekarang
                                     </a>

@@ -12,6 +12,13 @@ class FormPesanan extends Model
     protected $fillable = [
         'id_pesanan', 'nama_pemesan', 'alamat_pengiriman',
         'no_hp', 'keterangan_tambahan', 'status_verifikasi',
+        // Kolom Kendaraan & Jadwal Sesi
+        'model_kendaraan', 'warna_kendaraan', 'nomor_polisi', 'tahun_produksi',
+        'lokasi_pengerjaan', 'jadwal_pengerjaan', 'estimasi_durasi',
+    ];
+
+    protected $casts = [
+        'jadwal_pengerjaan' => 'datetime',
     ];
 
     public function pesanan()

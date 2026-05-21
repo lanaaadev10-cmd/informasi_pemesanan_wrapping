@@ -38,34 +38,34 @@ class PesanansTable
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN      => 'warning',
-                        Pesanan::STATUS_MENUNGGU_PEMBAYARAN            => 'info',
-                        Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => 'warning',
-                        Pesanan::STATUS_DIKONFIRMASI                   => 'success',
-                        Pesanan::STATUS_SEDANG_DIPROSES                => 'primary',
-                        Pesanan::STATUS_SELESAI                        => 'success',
-                        Pesanan::STATUS_DITOLAK                        => 'danger',
-                        default => 'gray',
+                        'menunggu_konfirmasi_admin'      => 'warning',
+                        'menunggu_pembayaran'            => 'info',
+                        'menunggu_verifikasi_pembayaran' => 'warning',
+                        'dikonfirmasi'                   => 'success',
+                        'sedang_diproses'                => 'primary',
+                        'selesai'                        => 'success',
+                        'ditolak'                        => 'danger',
+                        default                          => 'gray',
                     })
                     ->icon(fn (string $state): string => match ($state) {
-                        Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN      => 'heroicon-m-clock',
-                        Pesanan::STATUS_MENUNGGU_PEMBAYARAN            => 'heroicon-m-credit-card',
-                        Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => 'heroicon-m-magnifying-glass',
-                        Pesanan::STATUS_DIKONFIRMASI                   => 'heroicon-m-check-badge',
-                        Pesanan::STATUS_SEDANG_DIPROSES                => 'heroicon-m-wrench-screwdriver',
-                        Pesanan::STATUS_SELESAI                        => 'heroicon-m-check-circle',
-                        Pesanan::STATUS_DITOLAK                        => 'heroicon-m-x-circle',
-                        default => 'heroicon-m-question-mark-circle',
+                        'menunggu_konfirmasi_admin'      => 'heroicon-m-clock',
+                        'menunggu_pembayaran'            => 'heroicon-m-credit-card',
+                        'menunggu_verifikasi_pembayaran' => 'heroicon-m-magnifying-glass',
+                        'dikonfirmasi'                   => 'heroicon-m-check-badge',
+                        'sedang_diproses'                => 'heroicon-m-wrench-screwdriver',
+                        'selesai'                        => 'heroicon-m-check-circle',
+                        'ditolak'                        => 'heroicon-m-x-circle',
+                        default                          => 'heroicon-m-question-mark-circle',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN      => 'Tunggu Konfirmasi',
-                        Pesanan::STATUS_MENUNGGU_PEMBAYARAN            => 'Tunggu Pembayaran',
-                        Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => 'Verifikasi Bayar',
-                        Pesanan::STATUS_DIKONFIRMASI                   => 'Dikonfirmasi',
-                        Pesanan::STATUS_SEDANG_DIPROSES                => 'Sedang Diproses',
-                        Pesanan::STATUS_SELESAI                        => 'Selesai',
-                        Pesanan::STATUS_DITOLAK                        => 'Ditolak',
-                        default => ucfirst(str_replace('_', ' ', $state)),
+                        'menunggu_konfirmasi_admin'      => 'Tunggu Konfirmasi',
+                        'menunggu_pembayaran'            => 'Tunggu Pembayaran',
+                        'menunggu_verifikasi_pembayaran' => 'Verifikasi Bayar',
+                        'dikonfirmasi'                   => 'Pembayaran OK',
+                        'sedang_diproses'                => 'Sedang Diproses',
+                        'selesai'                        => 'Selesai',
+                        'ditolak'                        => 'Ditolak',
+                        default                          => ucfirst(str_replace('_', ' ', $state)),
                     }),
 
                 ImageColumn::make('pembayaran.bukti_transfer')
@@ -110,7 +110,6 @@ class PesanansTable
                     ->modalSubmitActionLabel('Ya, Konfirmasi')
                     ->action(function (Pesanan $record) {
                         $record->update(['status' => Pesanan::STATUS_MENUNGGU_PEMBAYARAN]);
-                        // Notifikasi ke user dikirim otomatis via Pesanan::booted()
                         \Filament\Notifications\Notification::make()
                             ->title('Pesanan dikonfirmasi!')
                             ->body('User telah dinotifikasi untuk melakukan pembayaran.')
@@ -136,7 +135,7 @@ class PesanansTable
 
                         // Update status pembayaran
                         if ($record->pembayaran) {
-                            $record->pembayaran->update(['verifikasi_admin' => 'terverifikasi']);
+                            $record->pembayaran->update(['verifikasi_admin' => 'diverifikasi']);
                         }
 
                         // Notifikasi ke user dikirim otomatis via Pesanan::booted()
@@ -183,7 +182,6 @@ class PesanansTable
                     ->modalSubmitActionLabel('Ya, Tandai Selesai')
                     ->action(function (Pesanan $record) {
                         $record->update(['status' => Pesanan::STATUS_SELESAI]);
-                        // Notifikasi ke user dikirim otomatis via Pesanan::booted()
                         \Filament\Notifications\Notification::make()
                             ->title('Pesanan diselesaikan!')
                             ->success()->send();
@@ -208,7 +206,7 @@ class PesanansTable
                     ])
                     ->action(function (Pesanan $record, array $data) {
                         $record->update([
-                            'status'        => Pesanan::STATUS_DITOLAK,
+                            'status'        => \App\Enums\OrderStatus::DITOLAK,
                             'catatan_admin' => $data['alasan_tolak'],
                         ]);
                         // Notifikasi ke user dikirim otomatis via Pesanan::booted()

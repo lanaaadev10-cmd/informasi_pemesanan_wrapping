@@ -3,235 +3,282 @@
 @section('title', 'Beranda')
 
 @section('content')
-    <!-- 1. Hero Section (Sesuai Gambar) -->
-    <section class="max-w-7xl mx-auto px-6 pt-12 pb-24 text-center" data-aos="fade-up">
-        <span class="text-orange-600 font-bold text-xs uppercase tracking-[0.3em] mb-6 block">Premium Sticker & Wrapping</span>
-        <h1 class="text-4xl sm:text-6xl md:text-8xl font-extrabold text-gray-900 leading-[1.1] md:leading-[1] tracking-tighter mb-8">
-            @if($profil->home_title)
-                {!! nl2br(e($profil->home_title)) !!}
-            @else
-                Make these <br> 
-                <span class="text-gradient italic">phenomenal.</span>
-            @endif
-        </h1>
-        <p class="max-w-2xl mx-auto text-gray-500 text-lg md:text-xl leading-relaxed mb-10">
-            {{ $profil->home_subtitle ?? ($profil->deskripsi ?? 'Transformasikan kendaraan dan bisnis Anda dengan sentuhan profesional dari tim ahli kami.') }}
-        </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-            <a href="https://wa.me/{{ $profil->nomor_telepon ?? '' }}" class="btn-premium text-white px-10 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105">
-                Get Started Now
-            </a>
-            <a href="{{ route('profil.perusahaan') }}" class="bg-gray-50 hover:bg-gray-100 text-gray-700 px-10 py-4 rounded-2xl font-bold text-lg transition-all border border-gray-200">
-                View All Works
-            </a>
-        </div>
+    {{-- Ambil nilai dari DB dengan fallback default --}}
+    @php
+        $badge       = $profil->home_badge_text         ?? 'Professional Car Wrapping Indonesia';
+        $title1      = $profil->home_hero_title_line1   ?? 'Elevasi Estetika';
+        $title2      = $profil->home_hero_title_line2   ?? 'Aset Mewah Anda.';
+        $subtitle    = $profil->home_subtitle           ?? 'Layanan premium yang melindungi dan memperindah mobil kesayangan Anda. Hubungi kami untuk penawaran terbaik.';
+        $stat1v      = $profil->home_stat1_value        ?? '500+';
+        $stat1l      = $profil->home_stat1_label        ?? 'Supercars Wrapped';
+        $stat2v      = $profil->home_stat2_value        ?? '5 Tahun';
+        $stat2l      = $profil->home_stat2_label        ?? 'Garansi Material';
 
-        <!-- Featured Image Mockup (Sesuai Gambar) -->
-        <div class="relative max-w-5xl mx-auto" data-aos="zoom-in" data-aos-delay="200">
-            <div class="absolute -inset-10 bg-orange-600/5 blur-[100px] rounded-full pointer-events-none"></div>
-            <div class="soft-card p-4 overflow-hidden shadow-2xl relative">
-                @if($profil->home_hero_image)
-                    <img src="{{ asset('storage/' . $profil->home_hero_image) }}" 
-                         class="w-full h-auto rounded-2xl" alt="Featured Work">
-                @else
-                    <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?q=80&w=2101&auto=format&fit=crop" 
-                         class="w-full h-auto rounded-2xl" alt="Featured Work">
-                @endif
-            </div>
-        </div>
-    </section>
+        $k1t = $profil->home_keunggulan_card1_title ?? 'Kualitas Material Grade-A';
+        $k1d = $profil->home_keunggulan_card1_desc  ?? 'Kami hanya menggunakan merk premium dunia seperti <span class="text-white font-semibold">Avery Dennison, 3M, dan Teckwrap</span>. Memberikan hasil akhir yang sangat rapi, warna yang tahan lama, serta perlindungan cat orisinil mobil yang maksimal.';
+        $k2t = $profil->home_keunggulan_card2_title ?? 'Teknisi Tersertifikasi';
+        $k2d = $profil->home_keunggulan_card2_desc  ?? 'Dikerjakan oleh tim profesional yang terlatih dan memiliki sertifikasi resmi di bidang car wrapping untuk menjamin ketelitian tinggi.';
+        $k3t = $profil->home_keunggulan_card3_title ?? 'Pengerjaan Tepat Waktu';
+        $k3d = $profil->home_keunggulan_card3_desc  ?? 'Kami menghargai waktu berharga Anda. Dengan SOP terstruktur, kami menjamin kendaraan Anda selesai dikerjakan sesuai estimasi waktu.';
+        $k4t = $profil->home_keunggulan_card4_title ?? 'Garansi Hingga 5 Tahun';
+        $k4d = $profil->home_keunggulan_card4_desc  ?? 'Kami sangat yakin atas kualitas pengerjaan dan ketahanan bahan yang kami berikan. Nikmati perlindungan garansi penuh hingga 5 tahun untuk kepuasan total Anda.';
 
-    <!-- 2. Section Header (Designed for Professionals) -->
-    <section class="max-w-7xl mx-auto px-6 mb-32 text-center" data-aos="fade-up">
-        <span class="text-orange-600 font-bold text-xs uppercase tracking-[0.3em] mb-4 block">For Professionals</span>
-        <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
-            {!! $profil->home_prof_title ? nl2br(e($profil->home_prof_title)) : 'Designed for <br> Professionals' !!}
-        </h2>
-        <p class="max-w-xl mx-auto text-gray-500 leading-relaxed font-medium">
-            {{ $profil->home_prof_subtitle ?? 'Memberikan solusi wrapping dan stiker yang presisi untuk kebutuhan bisnis skala besar maupun personal.' }}
-        </p>
-    </section>
+        $ctaTitle    = $profil->home_cta_title    ?? 'Siap Mengubah Tampilan Kendaraan?';
+        $ctaSubtitle = $profil->home_cta_subtitle ?? 'Hubungi konsultan desain gratis sekarang. Tim ahli kami akan membantu Anda memilih material dan warna terbaik yang sesuai dengan kepribadian Anda.';
 
-    <!-- 4. Catalog Section -->
-    <section class="max-w-7xl mx-auto px-6 mb-32" id="katalog">
-        <div class="text-center mb-16" data-aos="fade-up">
-            <span class="text-orange-600 font-bold text-xs uppercase tracking-[0.3em] mb-4 block">Our Catalog</span>
-            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
-                @if($profil->home_catalog_title)
-                    {!! nl2br(e($profil->home_catalog_title)) !!}
-                @else
-                    Pilihan Paket <span class="text-gradient">Terbaik.</span>
-                @endif
-            </h2>
-            <p class="max-w-2xl mx-auto text-gray-500 font-medium italic">
-                "{{ $profil->home_catalog_subtitle ?? 'Pilih dari berbagai layanan wrapping dan stiker premium kami yang telah dikurasi untuk hasil maksimal.' }}"
-            </p>
-        </div>
+        $s1t = $profil->home_step1_title ?? 'Konsultasi & Estimasi';
+        $s1d = $profil->home_step1_desc  ?? 'Hubungi tim admin kami untuk berkonsultasi mengenai desain & biaya.';
+        $s2t = $profil->home_step2_title ?? 'Pilihan Wrapping';
+        $s2d = $profil->home_step2_desc  ?? 'Tentukan pilihan material, merk premium, dan warna sesuai keinginan Anda.';
+        $s3t = $profil->home_step3_title ?? 'Pengerjaan Rapi';
+        $s3d = $profil->home_step3_desc  ?? 'Bawa mobil Anda ke workshop kami dan serahkan pengerjaan pada ahlinya.';
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            @forelse($layanans->take(3) as $item)
-                <div class="katalog-item group relative bg-white rounded-[2.5rem] border border-gray-100 hover:border-orange-500/30 transition-all duration-700 hover:-translate-y-3 hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden">
-                    <div class="relative aspect-[1/1] overflow-hidden m-4 rounded-[2rem]">
-                        @if($item->foto_contoh)
-                            <img src="{{ asset('storage/' . $item->foto_contoh) }}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt="{{ $item->nama_layanan }}">
-                        @else
-                            <div class="w-full h-full bg-gray-50 flex items-center justify-center text-gray-200">
-                                <i class="ph-fill ph-sketch-logo text-7xl"></i>
-                            </div>
-                        @endif
-                        <div class="absolute top-5 left-5 z-20">
-                            <span class="px-5 py-2 bg-white/20 backdrop-blur-xl border border-white/30 text-white text-[9px] font-black uppercase tracking-[0.3em] rounded-full shadow-2xl">
-                                {{ $item->kategori ?? 'Masterpiece' }}
-                            </span>
-                        </div>
+        $waNumber = preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '628123456789');
+    @endphp
+
+    <!-- 1. Hero Section -->
+    <section class="relative min-h-screen pt-32 pb-20 px-6 sm:px-10 lg:px-16 flex items-center overflow-hidden bg-cover bg-center lg:bg-[right_center] bg-no-repeat" style="background-image: url('{{ asset('images/hero_car.png') }}');">
+        <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/85 to-black lg:bg-gradient-to-r lg:from-[#0a0a0a] lg:via-[#0a0a0a]/75 lg:to-transparent z-0"></div>
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#f2994a]/10 rounded-full blur-[120px] pointer-events-none z-10"></div>
+        <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#e28a44]/5 rounded-full blur-[100px] pointer-events-none z-10"></div>
+
+        <div class="max-w-7xl mx-auto w-full relative z-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-8 space-y-8" data-aos="fade-right" data-aos-duration="1200">
+                    <!-- Badge -->
+                    <div class="inline-flex items-center gap-2 bg-[#f2994a]/10 border border-[#f2994a]/20 px-4 py-2 rounded-full">
+                        <span class="w-2 h-2 rounded-full bg-[#f2994a] animate-pulse"></span>
+                        <span class="text-xs font-bold text-[#f2994a] tracking-wider uppercase">{{ $badge }}</span>
                     </div>
-                    <div class="p-8 pt-2 flex flex-col flex-grow">
-                        <div class="mb-8">
-                            <h3 class="text-2xl font-black text-gray-900 mb-2 tracking-tight group-hover:text-orange-600 transition-colors">{{ $item->nama_layanan }}</h3>
-                            <div class="flex items-center gap-3">
-                                <div class="h-[1px] w-8 bg-orange-600/30"></div>
-                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Premium Package</span>
-                            </div>
-                        </div>
-                        <div class="mt-auto">
-                            <div class="flex items-end justify-between mb-8">
-                                <div class="flex flex-col">
-                                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Starting Price</span>
-                                    <span class="text-3xl font-black text-gray-900 italic tracking-tighter">
-                                        <span class="text-orange-600 text-lg not-italic font-bold mr-1">Rp</span>{{ number_format($item->harga, 0, ',', '.') }}
-                                    </span>
-                                </div>
-                                <a href="{{ route('katalog.user') }}" class="w-14 h-14 bg-gray-50 text-gray-400 rounded-2xl flex items-center justify-center hover:bg-orange-600 hover:text-white transition-all group/cart">
-                                    <i class="ph-bold ph-shopping-cart-simple text-2xl group-hover/cart:animate-bounce"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <div class="col-span-full py-12 text-center text-gray-400 italic font-medium">
-                    "Belum ada katalog yang ditambahkan."
-                </div>
-            @endforelse
-        </div>
-        
-        @if($layanans->count() > 3)
-            <div class="text-center mt-12" data-aos="fade-up">
-                <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 font-black text-gray-900 hover:text-orange-600 transition-colors tracking-widest uppercase text-sm">
-                    View All Masterpieces <i class="ph-bold ph-arrow-right"></i>
-                </a>
-            </div>
-        @endif
-    </section>
 
-    <!-- 4.5 Live Activity Feed -->
-    <section class="max-w-7xl mx-auto px-6 mb-32 overflow-hidden">
-        <div class="bg-gray-900 rounded-[50px] p-12 md:p-16 relative shadow-2xl">
-            <div class="absolute -top-24 -left-24 w-64 h-64 bg-orange-600/20 blur-[100px] rounded-full"></div>
-            
-            <div class="flex flex-col md:flex-row items-center justify-between gap-10 relative z-10">
-                <div class="max-w-md" data-aos="fade-right">
-                    <span class="text-orange-500 font-bold text-xs uppercase tracking-[0.4em] mb-4 block">Live Activity</span>
-                    <h2 class="text-4xl font-black text-white mb-6">Recent <br> <span class="text-orange-500 italic">Bookings.</span></h2>
-                    <p class="text-gray-400 font-medium leading-relaxed italic">"Witness the transformation. Real-time updates from our workshop and premium clients."</p>
-                </div>
-
-                <div class="flex-grow w-full md:max-w-xl" data-aos="fade-left">
+                    <!-- Heading -->
                     <div class="space-y-4">
-                        @forelse($recentActivity as $act)
-                        <div class="flex items-center justify-between p-5 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm hover:bg-white/10 transition-all">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-orange-600/20 flex items-center justify-center text-orange-500">
-                                    <i class="ph-fill ph-user"></i>
-                                </div>
-                                <div>
-                                    <p class="text-white text-sm font-bold">
-                                        {{ substr($act->user->name, 0, 1) . str_repeat('*', 3) . substr($act->user->name, -1) }}
-                                    </p>
-                                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-black">Just secured a service</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="px-3 py-1 bg-white/5 text-orange-400 text-[10px] font-black rounded-lg border border-white/5 italic">
-                                    {{ $act->created_at->diffForHumans() }}
-                                </span>
-                            </div>
+                        <h1 class="text-4xl sm:text-5xl lg:text-6.5xl font-extrabold text-white leading-[1.1] tracking-tight">
+                            {{ $title1 }} <br>
+                            <span class="text-gradient">{{ $title2 }}</span>
+                        </h1>
+                        <p class="text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl">
+                            {{ $subtitle }}
+                        </p>
+                    </div>
+
+                    <!-- CTAs -->
+                    <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
+                        <a href="https://wa.me/{{ $waNumber }}"
+                           class="btn-premium px-8 py-4 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-widest text-black flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(242,153,74,0.3)]">
+                            Pesan Sekarang <i class="ph-bold ph-arrow-right text-base"></i>
+                        </a>
+                        <a href="#mahakarya"
+                           class="px-8 py-4 rounded-xl border border-white/20 text-white font-bold text-xs sm:text-sm uppercase tracking-widest bg-white/5 hover:bg-white/10 hover:border-white/40 transition-all">
+                            Lihat Portofolio
+                        </a>
+                    </div>
+
+                    <!-- Micro Stats -->
+                    <div class="flex items-center gap-12 pt-8 border-t border-white/5 max-w-md">
+                        <div>
+                            <h3 class="text-3xl font-extrabold text-white">{{ $stat1v }}</h3>
+                            <p class="text-gray-400 text-xs mt-1 uppercase tracking-wider">{{ $stat1l }}</p>
                         </div>
-                        @empty
-                        <p class="text-gray-500 italic text-center">No bookings yet today.</p>
-                        @endforelse
+                        <div class="w-px h-8 bg-white/10"></div>
+                        <div>
+                            <h3 class="text-3xl font-extrabold text-[#f2994a]">{{ $stat2v }}</h3>
+                            <p class="text-gray-400 text-xs mt-1 uppercase tracking-wider">{{ $stat2l }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 5. Step-by-Step Ordering Flow (Dynamic from ProfilPerusahaan) -->
-    <section class="max-w-7xl mx-auto px-6 mb-32 bg-gray-50 rounded-[60px] py-24 border border-gray-100">
-        <div class="text-center mb-16" data-aos="fade-up">
-            <span class="text-orange-600 font-bold text-xs uppercase tracking-[0.3em] mb-4 block">Our Process</span>
-            <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">Alur Pemesanan <span class="text-gradient italic">Mudah.</span></h2>
-        </div>
+    <!-- 2. Keunggulan Section -->
+    <section class="py-24 bg-[#080808] px-6 sm:px-10 lg:px-16 relative overflow-hidden" id="tentang">
+        <div class="absolute top-1/2 left-0 -translate-y-1/2 w-[350px] h-[350px] bg-[#e28a44]/5 rounded-full blur-[80px] pointer-events-none"></div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
-            <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -translate-y-12 z-0"></div>
-
-            @php
-                $steps = [
-                    ['title' => $profil->step_1_title ?? 'Pilih Paket', 'desc' => $profil->step_1_desc ?? 'Jelajahi katalog kami dan pilih paket yang sesuai.'],
-                    ['title' => $profil->step_2_title ?? 'Login & Pesan', 'desc' => $profil->step_2_desc ?? 'Masuk ke akun Anda dan isi formulir pemesanan.'],
-                    ['title' => $profil->step_3_title ?? 'Konfirmasi', 'desc' => $profil->step_3_desc ?? 'Tim kami akan mengonfirmasi jadwal pengerjaan.'],
-                    ['title' => $profil->step_4_title ?? 'Pengerjaan', 'desc' => $profil->step_4_desc ?? 'Bawa kendaraan Anda ke workshop kami.'],
-                ];
-            @endphp
-
-            @foreach($steps as $index => $step)
-            <div class="relative z-10 flex flex-col items-center text-center group" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
-                <div class="w-20 h-20 bg-white rounded-3xl flex items-center justify-center text-gray-900 text-3xl font-black shadow-xl group-hover:bg-orange-600 group-hover:text-white transition-all mb-8 border border-gray-100 italic">{{ $index + 1 }}</div>
-                <h4 class="text-xl font-bold mb-3 tracking-tight">{{ $step['title'] }}</h4>
-                <p class="text-gray-500 text-sm leading-relaxed font-medium italic">"{{ $step['desc'] }}"</p>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block mb-3">Keunggulan Layanan</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
+                    Mengapa Memilih <span class="relative inline-block pb-2">Wapping<span class="absolute bottom-0 left-0 w-full h-[3px] bg-[#f2994a] rounded-full"></span></span>?
+                </h2>
             </div>
-            @endforeach
-        </div>
-    </section>
 
-    <!-- 6. Testimonial Section (Dynamic from ProfilPerusahaan JSON) -->
-    @if($testimonis->count() > 0)
-    <section class="max-w-4xl mx-auto px-6 py-24 text-center" data-aos="fade-up">
-        @php $topTesti = $testimonis->first(); @endphp
-        <div class="mb-10">
-            @if(isset($topTesti->foto) && $topTesti->foto)
-                <img src="{{ asset('storage/' . $topTesti->foto) }}" 
-                     class="w-24 h-24 rounded-full mx-auto border-4 border-orange-500/20 shadow-xl object-cover" alt="Testimonial">
-            @else
-                <div class="w-24 h-24 rounded-full mx-auto bg-gray-100 flex items-center justify-center text-gray-300">
-                    <i class="ph-fill ph-user text-5xl"></i>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                <!-- Card 1: Wide -->
+                <div class="lg:col-span-7 bg-[#121212] border border-white/5 rounded-3xl p-8 sm:p-10 flex flex-col justify-between hover:border-[#f2994a]/30 transition-all duration-300 group" data-aos="fade-up">
+                    <div class="space-y-6">
+                        <div class="w-12 h-12 rounded-2xl bg-[#f2994a]/10 border border-[#f2994a]/20 flex items-center justify-center text-2xl text-[#f2994a] group-hover:bg-[#f2994a] group-hover:text-black transition-all duration-300">
+                            <i class="ph-bold ph-shield-check"></i>
+                        </div>
+                        <div class="space-y-3">
+                            <h3 class="text-xl sm:text-2xl font-extrabold text-white group-hover:text-[#f2994a] transition-all">{{ $k1t }}</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed max-w-xl">{!! $k1d !!}</p>
+                        </div>
+                    </div>
+                    <div class="pt-8">
+                        <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#f2994a] hover:text-[#e28a44] transition-all group-hover:translate-x-1">
+                            Selengkapnya <i class="ph-bold ph-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
-            @endif
-        </div>
-        <div class="flex justify-center gap-1 mb-6">
-            @for($i=0; $i<($topTesti->rating ?? 5); $i++) <i class="ph-fill ph-star text-orange-500"></i> @endfor
-        </div>
-        <h3 class="text-3xl md:text-4xl font-black text-gray-900 leading-snug mb-8 tracking-tight italic">
-            "{!! isset($topTesti->isi) ? nl2br(e($topTesti->isi)) : 'Belum ada isi testimoni.' !!}"
-        </h3>
-        <p class="text-gray-400 font-black uppercase tracking-[0.3em] text-xs">{{ $topTesti->nama ?? 'Anonymous' }} - {{ $topTesti->jabatan ?? 'Pelanggan' }}</p>
-    </section>
-    @endif
 
-    <!-- 7. Final CTA Section -->
-    <section class="max-w-7xl mx-auto px-6 mb-32">
-        <div class="btn-premium rounded-[48px] p-12 md:p-24 text-center text-white relative overflow-hidden shadow-2xl" data-aos="zoom-in">
-            <div class="absolute top-0 left-0 w-64 h-64 bg-white/10 blur-[80px] rounded-full"></div>
-            <div class="relative z-10">
-                <h2 class="text-4xl md:text-7xl font-black mb-8 italic tracking-tighter uppercase">Ready to <br> Transform?</h2>
-                <p class="text-white/80 text-lg mb-12 max-w-xl mx-auto font-medium italic leading-relaxed">
-                    "Jadikan kendaraan atau bisnis Anda pusat perhatian hari ini. Konsultasikan kebutuhan Anda secara gratis dengan tim ahli kami."
-                </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-5">
-                    <a href="https://wa.me/{{ $profil->nomor_telepon ?? '' }}" class="bg-white text-orange-600 px-12 py-5 rounded-2xl font-black text-sm tracking-widest uppercase shadow-2xl hover:scale-105 transition-transform">
-                        CONTACT US NOW
+                <!-- Card 2 -->
+                <div class="lg:col-span-5 bg-[#121212] border border-white/5 rounded-3xl p-8 sm:p-10 flex flex-col justify-between hover:border-[#f2994a]/30 transition-all duration-300 group" data-aos="fade-up" data-aos-delay="100">
+                    <div class="space-y-6">
+                        <div class="w-12 h-12 rounded-2xl bg-[#f2994a]/10 border border-[#f2994a]/20 flex items-center justify-center text-2xl text-[#f2994a] group-hover:bg-[#f2994a] group-hover:text-black transition-all duration-300">
+                            <i class="ph-bold ph-seal-check"></i>
+                        </div>
+                        <div class="space-y-3">
+                            <h3 class="text-xl font-extrabold text-white group-hover:text-[#f2994a] transition-all">{{ $k2t }}</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">{{ $k2d }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="lg:col-span-5 bg-[#121212] border border-white/5 rounded-3xl p-8 sm:p-10 flex flex-col justify-between hover:border-[#f2994a]/30 transition-all duration-300 group" data-aos="fade-up" data-aos-delay="200">
+                    <div class="space-y-6">
+                        <div class="w-12 h-12 rounded-2xl bg-[#f2994a]/10 border border-[#f2994a]/20 flex items-center justify-center text-2xl text-[#f2994a] group-hover:bg-[#f2994a] group-hover:text-black transition-all duration-300">
+                            <i class="ph-bold ph-clock"></i>
+                        </div>
+                        <div class="space-y-3">
+                            <h3 class="text-xl font-extrabold text-white group-hover:text-[#f2994a] transition-all">{{ $k3t }}</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">{{ $k3d }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Orange Emphasized -->
+                <div class="lg:col-span-7 bg-gradient-to-br from-[#e28a44] to-[#f2994a] rounded-3xl p-8 sm:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-lg shadow-[#f2994a]/10 hover:shadow-[#f2994a]/20 hover:scale-[1.01] transition-all duration-300 group" data-aos="fade-up" data-aos-delay="300">
+                    <div class="space-y-6 md:max-w-md">
+                        <div class="space-y-3">
+                            <h3 class="text-2xl font-black text-black leading-tight">{{ $k4t }}</h3>
+                            <p class="text-black/80 text-sm leading-relaxed">{{ $k4d }}</p>
+                        </div>
+                        <div class="pt-2">
+                            <a href="https://wa.me/{{ $waNumber }}"
+                               class="inline-block bg-black text-[#f2994a] hover:bg-black/90 hover:text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
+                                Cek Syarat & Ketentuan
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 bg-black/5 rounded-3xl p-6 border border-black/10 flex items-center justify-center self-center">
+                        <i class="ph-bold ph-award text-6xl text-black"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Portofolio Section -->
+    <section class="py-24 bg-[#0a0a0a] px-6 sm:px-10 lg:px-16 relative overflow-hidden" id="mahakarya">
+        <div class="absolute bottom-0 right-0 w-[450px] h-[450px] bg-[#f2994a]/5 rounded-full blur-[110px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16" data-aos="fade-up">
+                <div class="space-y-3">
+                    <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block">Showcase Portofolio</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Mahakarya Kami</h2>
+                    <p class="text-gray-500 text-sm max-w-lg">Berikut adalah hasil pengerjaan car wrapping premium dari tim ahli profesional kami.</p>
+                </div>
+                <div class="flex-shrink-0">
+                    <a href="{{ route('galeri.user') }}" class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#f2994a] hover:text-[#e28a44] transition-all group">
+                        Lihat Semua <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
                     </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden group hover:border-[#f2994a]/30 transition-all duration-500 shadow-md" data-aos="fade-up">
+                    <div class="relative h-64 overflow-hidden">
+                        <span class="absolute top-4 left-4 z-20 bg-[#f2994a]/95 text-black font-extrabold text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-md">Varian Favorit</span>
+                        <img src="{{ asset('images/tesla_model_s.png') }}" width="400" height="256" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Tesla Model S Wrapping">
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <h3 class="text-lg font-bold text-white group-hover:text-[#f2994a] transition-all">Tesla Model S</h3>
+                        <p class="text-gray-400 text-sm">Luxury Matte Grey / Blue</p>
+                    </div>
+                </div>
+
+                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden group hover:border-[#f2994a]/30 transition-all duration-500 shadow-md" data-aos="fade-up" data-aos-delay="100">
+                    <div class="relative h-64 overflow-hidden">
+                        <span class="absolute top-4 left-4 z-20 bg-[#f2994a]/95 text-black font-extrabold text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-md">Sangat Direkomendasikan</span>
+                        <img src="{{ asset('images/range_rover.png') }}" width="400" height="256" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Range Rover Wrapping">
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <h3 class="text-lg font-bold text-white group-hover:text-[#f2994a] transition-all">Range Rover Sport</h3>
+                        <p class="text-gray-400 text-sm">Satin Liquid Silver Wrap</p>
+                    </div>
+                </div>
+
+                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden group hover:border-[#f2994a]/30 transition-all duration-500 shadow-md" data-aos="fade-up" data-aos-delay="200">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="{{ asset('images/ferrari_f8.png') }}" width="400" height="256" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Ferrari F8 Wrapping">
+                    </div>
+                    <div class="p-6 space-y-2">
+                        <h3 class="text-lg font-bold text-white group-hover:text-[#f2994a] transition-all">Ferrari F8</h3>
+                        <p class="text-gray-400 text-sm">Satin Metallic Gold Yellow</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. CTA + Langkah Mudah Section -->
+    <section class="py-24 bg-[#080808] px-6 sm:px-10 lg:px-16 relative overflow-hidden" id="testimoni">
+        <div class="absolute top-0 left-0 w-[400px] h-[400px] bg-[#f2994a]/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="bg-[#121212] border border-white/5 rounded-[40px] p-8 sm:p-12 lg:p-16" data-aos="zoom-in" data-aos-duration="1200">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+                    <!-- Left: CTA Text -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-[1.15] tracking-tight">
+                            {{ $ctaTitle }}
+                        </h2>
+                        <p class="text-gray-400 text-sm sm:text-base leading-relaxed max-w-xl">
+                            {{ $ctaSubtitle }}
+                        </p>
+                        <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-4">
+                            <a href="https://wa.me/{{ $waNumber }}"
+                               class="btn-premium px-8 py-4 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider text-black flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(242,153,74,0.3)]">
+                                <i class="ph-bold ph-whatsapp-logo text-lg"></i> Hubungi WhatsApp
+                            </a>
+                            <a href="{{ route('katalog.user') }}"
+                               class="px-8 py-4 rounded-xl border border-white/10 text-white font-bold text-xs sm:text-sm uppercase tracking-wider bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all">
+                                Pelajari Prosedur
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right: Steps -->
+                    <div class="lg:col-span-5">
+                        <div class="bg-[#181818] border border-white/5 rounded-3xl p-8 space-y-6 shadow-xl relative overflow-hidden group hover:border-[#f2994a]/25 transition-all">
+                            <div class="flex justify-between items-center pb-4 border-b border-white/5">
+                                <h4 class="text-xs font-bold text-[#f2994a] tracking-widest uppercase">Langkah Mudah</h4>
+                                <span class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Fast Process</span>
+                            </div>
+                            <div class="space-y-6">
+                                @foreach([
+                                    ['no'=>1, 'title'=>$s1t, 'desc'=>$s1d],
+                                    ['no'=>2, 'title'=>$s2t, 'desc'=>$s2d],
+                                    ['no'=>3, 'title'=>$s3t, 'desc'=>$s3d],
+                                ] as $step)
+                                <div class="flex items-start gap-4">
+                                    <div class="w-8 h-8 rounded-full bg-[#f2994a]/10 border border-[#f2994a]/30 flex items-center justify-center text-xs font-extrabold text-[#f2994a] flex-shrink-0 group-hover:bg-[#f2994a] group-hover:text-black transition-all duration-300">
+                                        {{ $step['no'] }}
+                                    </div>
+                                    <div>
+                                        <h5 class="text-sm font-bold text-white">{{ $step['title'] }}</h5>
+                                        <p class="text-gray-500 text-xs mt-1 leading-relaxed">{{ $step['desc'] }}</p>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

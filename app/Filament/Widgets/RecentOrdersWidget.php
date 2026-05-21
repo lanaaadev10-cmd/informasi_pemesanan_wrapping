@@ -38,18 +38,34 @@ class RecentOrdersWidget extends BaseWidget
                     ->label('Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'pending' => 'warning',
-                        'proses' => 'info',
+                        'menunggu_konfirmasi_admin' => 'warning',
+                        'menunggu_pembayaran' => 'info',
+                        'menunggu_verifikasi_pembayaran' => 'warning',
+                        'dikonfirmasi' => 'success',
+                        'sedang_diproses' => 'info',
                         'selesai' => 'success',
-                        'cancel' => 'danger',
+                        'ditolak' => 'danger',
                         default => 'gray',
                     })
                     ->icon(fn (string $state): string => match ($state) {
-                        'pending' => 'heroicon-m-clock',
-                        'proses' => 'heroicon-m-cog-6-tooth',
+                        'menunggu_konfirmasi_admin' => 'heroicon-m-clock',
+                        'menunggu_pembayaran' => 'heroicon-m-credit-card',
+                        'menunggu_verifikasi_pembayaran' => 'heroicon-m-check',
+                        'dikonfirmasi' => 'heroicon-m-check-badge',
+                        'sedang_diproses' => 'heroicon-m-cog-6-tooth',
                         'selesai' => 'heroicon-m-check-circle',
-                        'cancel' => 'heroicon-m-x-circle',
+                        'ditolak' => 'heroicon-m-x-circle',
                         default => 'heroicon-m-question-mark-circle',
+                    })
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'menunggu_konfirmasi_admin' => 'Tunggu Konfirmasi',
+                        'menunggu_pembayaran' => 'Tunggu Pembayaran',
+                        'menunggu_verifikasi_pembayaran' => 'Verifikasi Bayar',
+                        'dikonfirmasi' => 'Pembayaran OK',
+                        'sedang_diproses' => 'Sedang Diproses',
+                        'selesai' => 'Selesai',
+                        'ditolak' => 'Ditolak',
+                        default => ucfirst(str_replace('_', ' ', $state)),
                     }),
 
                 Tables\Columns\TextColumn::make('created_at')

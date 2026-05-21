@@ -25,6 +25,14 @@ class Pesanan extends Model
         'status', 'catatan_admin', 'total_harga',
     ];
 
+    protected $casts = [
+        // 'status' cast intentionally removed — kept as plain string
+        // for compatibility with all string comparisons across controllers and views
+        'tanggal_pesan' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     // =============================================
     //  RELASI
     // =============================================
@@ -58,7 +66,7 @@ class Pesanan extends Model
     // =============================================
     public function getLabelStatusAttribute(): string
     {
-        return match ($this->status) {
+        return match ((string) $this->status) {
             self::STATUS_MENUNGGU_KONFIRMASI_ADMIN      => 'Menunggu Konfirmasi Admin',
             self::STATUS_MENUNGGU_PEMBAYARAN            => 'Menunggu Pembayaran',
             self::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => 'Menunggu Verifikasi Pembayaran',
@@ -66,13 +74,13 @@ class Pesanan extends Model
             self::STATUS_SEDANG_DIPROSES                => 'Sedang Diproses',
             self::STATUS_SELESAI                        => 'Selesai',
             self::STATUS_DITOLAK                        => 'Ditolak',
-            default => ucfirst(str_replace('_', ' ', $this->status)),
+            default => ucfirst(str_replace('_', ' ', (string) $this->status)),
         };
     }
 
     public function getWarnaBadgeAttribute(): string
     {
-        return match ($this->status) {
+        return match ((string) $this->status) {
             self::STATUS_MENUNGGU_KONFIRMASI_ADMIN      => 'yellow',
             self::STATUS_MENUNGGU_PEMBAYARAN            => 'blue',
             self::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => 'orange',
@@ -97,7 +105,7 @@ class Pesanan extends Model
      */
     public function bisaUnduhInvoice(): bool
     {
-        return in_array($this->status, [
+        return in_array((string) $this->status, [
             self::STATUS_DIKONFIRMASI,
             self::STATUS_SEDANG_DIPROSES,
             self::STATUS_SELESAI,
@@ -124,12 +132,12 @@ class Pesanan extends Model
         static::updated(function ($pesanan) {
             if (!$pesanan->wasChanged('status')) return;
 
-            $notifikasiUser = match ($pesanan->status) {
+            $notifikasiUser = match ((string) $pesanan->status) {
                 self::STATUS_MENUNGGU_PEMBAYARAN => [
                     'judul' => '🔔 Pesanan Dikonfirmasi — Silakan Bayar',
                     'pesan' => 'Pesanan #' . $pesanan->kode_pesanan . ' telah dikonfirmasi admin. Silakan lakukan pembayaran untuk memulai pengerjaan.',
                 ],
-                self::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => null, // Tidak notif ke user, ini trigger dari user sendiri
+                self::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => null,
                 self::STATUS_DIKONFIRMASI => [
                     'judul' => '💳 Pembayaran Terverifikasi — Invoice Tersedia',
                     'pesan' => 'Pembayaran Anda untuk pesanan #' . $pesanan->kode_pesanan . ' telah diverifikasi. Anda sekarang dapat mengunduh invoice.',
