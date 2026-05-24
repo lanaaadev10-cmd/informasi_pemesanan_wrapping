@@ -77,7 +77,6 @@ class LayananForm
 
             Forms\Components\Repeater::make('fitur')
                 ->label('Daftar Keunggulan & Fitur Paket')
-                ->description('Tambahkan fitur-fitur unggulan yang menjadi keunggulan paket ini')
                 ->schema([
                     Forms\Components\TextInput::make('nama_fitur')
                         ->label('Keunggulan')
@@ -90,7 +89,7 @@ class LayananForm
                 ->addActionLabel('+ Tambah Keunggulan Baru')
                 ->defaultItems(0)
                 ->minItems(1)
-                ->helperText('Minimal 1 keunggulan harus ditambahkan'),
+                ->helperText('Tambahkan fitur-fitur unggulan yang menjadi keunggulan paket ini. Minimal 1 keunggulan harus ditambahkan.'),
         ];
     }
 }
