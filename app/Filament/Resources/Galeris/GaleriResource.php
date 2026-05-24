@@ -21,10 +21,10 @@ class GaleriResource extends Resource
     // Model yang digunakan: Galeri
     protected static ?string $model = Galeri::class;
 
-    protected static ?string $navigationLabel = 'Galeri Pekerjaan';
-    protected static ?string $pluralLabel = 'Galeri Pekerjaan';
+    protected static ?string $navigationLabel = 'Edit Galeri Pekerjaan';
+    protected static ?string $pluralLabel = 'Edit Galeri Pekerjaan';
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-photo';
-    protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Konten Website';
     protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'judul';
