@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Layanans\Schemas;
 
 use Filament\Forms;
 use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Utilities\Get;
 
 class LayananForm
 {
@@ -52,7 +53,7 @@ class LayananForm
                 ->prefix('Rp ')
                 ->required()
                 ->columnSpan(1)
-                ->visible(fn (Forms\Get $get) => $get('tipe_layanan') === 'fix'),
+                ->visible(fn (Get $get) => $get('tipe_layanan') === 'fix'),
 
             Forms\Components\TextInput::make('estimasi_waktu')
                 ->label('Estimasi Waktu Pengerjaan')
