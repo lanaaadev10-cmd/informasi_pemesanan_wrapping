@@ -10,63 +10,87 @@ class LayananForm
     public static function schema(): array
     {
         return [
-            // [TAMBAHAN FUNGSI] Mengizinkan Admin mengunggah Foto Utama Layanan
             Forms\Components\FileUpload::make('foto_contoh')
-                ->label('Foto')
+                ->label('Foto Layanan')
                 ->image()
-                ->disk('public') // MEMASTIKAN file masuk ke folder yang bisa diakses publik
+                ->disk('public')
                 ->directory('layanan/admin')
-                ->columnSpanFull(),
+                ->imagePreviewHeight(140)
+                ->columnSpanFull()
+                ->helperText('Ukuran rekomendasi: 1200x800px'),
 
             Forms\Components\TextInput::make('nama_layanan')
                 ->label('Nama Layanan')
                 ->required()
-                ->maxLength(255),
+                ->maxLength(255)
+                ->columnSpan(2)
+                ->helperText('Contoh: Precision Coating - Protection Ultimate'),
 
-            Forms\Components\Select::make('tipe_layanan')
-                ->label('Kategori Harga')
-                ->options([
-                    'fix'    => 'Fix (Harga Tetap)',
-                    'custom' => 'Custom (Nego)',
-                ])
-                ->required(),
-
-            Forms\Components\TextInput::make('harga')
-                ->label('Harga (Rp)')
-                ->numeric()
-                ->prefix('Rp')
-                ->required(),
-
-            // [TAMBAHAN FUNGSI] Menentukan paket ini untuk Mobil, Motor, atau Stiker agar bisa difilter di depan
             Forms\Components\Select::make('kategori')
-                ->label('Kategori Kendaraan/Jasa')
+                ->label('Kategori Kendaraan')
                 ->options([
                     'mobil' => 'Mobil',
                     'motor' => 'Sepeda Motor',
                     'stiker' => 'Custom Stiker',
                 ])
-                ->required(),
+                ->required()
+                ->columnSpan(1),
+
+            Forms\Components\Select::make('tipe_layanan')
+                ->label('Tipe Penawaran')
+                ->options([
+                    'fix'    => 'Fixed Price (Harga Tetap)',
+                    'custom' => 'Custom Quote (Negosiasi)',
+                ])
+                ->required()
+                ->columnSpan(1)
+                ->live(),
+
+            Forms\Components\TextInput::make('harga')
+                ->label('Harga Paket (Rp)')
+                ->numeric()
+                ->prefix('Rp ')
+                ->required()
+                ->columnSpan(1)
+                ->visible(fn (Forms\Get $get) => $get('tipe_layanan') === 'fix'),
 
             Forms\Components\TextInput::make('estimasi_waktu')
-                ->label('Estimasi Waktu')
-                ->placeholder('Contoh: 3 hari'),
+                ->label('Estimasi Waktu Pengerjaan')
+                ->placeholder('Contoh: 3 hari kerja')
+                ->columnSpan(1)
+                ->helperText('Durasi pengerjaan standar'),
 
-            Forms\Components\Textarea::make('deskripsi')
-                ->label('Deskripsi Singkat')
-                ->columnSpanFull(),
+            Forms\Components\RichEditor::make('deskripsi')
+                ->label('Deskripsi Lengkap Paket')
+                ->toolbarButtons([
+                    'bold',
+                    'italic',
+                    'strike',
+                    'link',
+                    'bulletList',
+                    'orderedList',
+                    'redo',
+                    'undo',
+                ])
+                ->columnSpanFull()
+                ->helperText('Jelaskan detail, manfaat, dan spesifikasi paket ini'),
 
-            // [TAMBAHAN FUNGSI] Sistem "Daftar Keunggulan" yang bisa ditambah-tambah sendiri di Admin
             Forms\Components\Repeater::make('fitur')
-                ->label('Daftar Keunggulan Paket')
+                ->label('Daftar Keunggulan & Fitur Paket')
+                ->description('Tambahkan fitur-fitur unggulan yang menjadi keunggulan paket ini')
                 ->schema([
                     Forms\Components\TextInput::make('nama_fitur')
-                        ->label('Nama Keunggulan')
-                        ->placeholder('Contoh: Garansi 6 Bulan')
-                        ->required(),
+                        ->label('Keunggulan')
+                        ->placeholder('Contoh: Garansi Resmi hingga 5 Tahun')
+                        ->required()
+                        ->columnSpanFull(),
                 ])
                 ->columnSpanFull()
                 ->columns(1)
-                ->addActionLabel('Tambah Keunggulan Baru'),
+                ->addActionLabel('+ Tambah Keunggulan Baru')
+                ->defaultItems(0)
+                ->minItems(1)
+                ->helperText('Minimal 1 keunggulan harus ditambahkan'),
         ];
     }
 }
