@@ -3,24 +3,26 @@
 namespace App\Filament\Resources\TentangKamis\Pages;
 
 use App\Filament\Resources\TentangKamiResource;
+use App\Models\ProfilPerusahaan;
 use Filament\Resources\Pages\EditRecord;
 
 class EditTentangKami extends EditRecord
 {
     protected static string $resource = TentangKamiResource::class;
 
+    public function mount(string|int $record = null): void
+    {
+        // Singleton pattern - always get/create first record
+        $profil = ProfilPerusahaan::firstOrCreate(
+            ['id' => 1],
+            ['nama_perusahaan' => 'Perusahaan Anda']
+        );
+        parent::mount($profil->getKey());
+    }
+
     protected function getHeaderActions(): array
     {
         return [];
-    }
-
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        // Jika belum ada record, ambil yang pertama atau buat default
-        if (empty($data)) {
-            $data = \App\Models\ProfilPerusahaan::first()?->toArray() ?? [];
-        }
-        return $data;
     }
 
     protected function getRedirectUrl(): string
@@ -28,3 +30,4 @@ class EditTentangKami extends EditRecord
         return $this->getResource()::getUrl('index');
     }
 }
+

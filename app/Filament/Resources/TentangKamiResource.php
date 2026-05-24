@@ -21,7 +21,7 @@ class TentangKamiResource extends Resource
     protected static ?string $label = 'Edit Tentang Kami';
     protected static ?string $pluralLabel = 'Edit Tentang Kami';
     protected static ?string $navigationLabel = 'Edit Tentang Kami';
-    protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Konten Website';
     protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
@@ -131,5 +131,19 @@ class TentangKamiResource extends Resource
     }
 
     public static function canCreate(): bool { return false; }
-    public static function canDelete(Model $record): bool { return false; }
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool { return false; }
+
+    protected static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
+
+    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true): string
+    {
+        // Singleton - always go to first record
+        if ($name === 'index') {
+            return route('filament.admin.resources.tentang-kamis.index', [], $isAbsolute);
+        }
+        return parent::getUrl($name, $parameters, $isAbsolute);
+    }
 }

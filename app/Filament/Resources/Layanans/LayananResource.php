@@ -22,11 +22,11 @@ class LayananResource extends Resource
     protected static ?string $model = Layanan::class;
 
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-shopping-bag';
-    protected static ?string $navigationLabel = 'Katalog Layanan';
-    protected static ?string $pluralLabel = 'Katalog Layanan';
+    protected static ?string $navigationLabel = 'Edit Katalog Layanan';
+    protected static ?string $pluralLabel = 'Edit Katalog Layanan';
     protected static ?string $recordTitleAttribute = 'nama_layanan';
 
-    protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Konten Website';
     protected static ?int $navigationSort = 4;
 
     /**
