@@ -12,9 +12,6 @@ class CreateLayanan extends CreateRecord
 
     protected function getFormSchema(): array
     {
-        return [
-            LayananForm::schema(),
-        ];
         return LayananForm::schema();
     }
 }
