@@ -11,10 +11,6 @@ use App\Models\Galeri;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\DatePicker;
 
 /**
  * GaleriResource
@@ -38,29 +34,7 @@ class GaleriResource extends Resource
      */
     public static function form(Schema $schema): Schema
     {
-        return $schema->schema([
-
-            TextInput::make('judul')
-                ->label('Judul Foto/Pekerjaan')
-                ->required(),
-
-            FileUpload::make('foto')
-                ->label('Unggah Foto')
-                ->image()
-                ->directory('galeri') // folder penyimpanan
-                ->disk('public')
-                ->maxSize(10240) // 10MB
-                ->helperText('Maksimal 10MB')
-                ->required(),
-
-            Textarea::make('deskripsi')
-                ->label('Deskripsi Singkat'),
-
-            DatePicker::make('tanggal_upload')
-                ->label('Tanggal Pekerjaan')
-                ->required(),
-
-        ]);
+        return GaleriForm::configure($schema);
     }
 
     /**

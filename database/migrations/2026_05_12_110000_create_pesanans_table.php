@@ -13,15 +13,10 @@ return new class extends Migration
             $table->foreignId('id_user')->constrained('users', 'id')->onDelete('cascade');
             $table->string('kode_pesanan')->unique();
             $table->date('tanggal_pesan');
-            $table->enum('status', [
-                'menunggu_verifikasi',
-                'perlu_diperbaiki',
-                'diverifikasi',
-                'menunggu_pembayaran',
-                'dibayar',
-                'selesai',
-                'dibatalkan',
-            ])->default('menunggu_verifikasi');
+            // Use string status for scalability; enforce allowed values via application layer (Enum + Validation)
+            $table->string('status', 64)->default('menunggu_konfirmasi_admin');
+
+
             $table->text('catatan_admin')->nullable();
             $table->decimal('total_harga', 15, 2)->default(0);
             $table->timestamps();

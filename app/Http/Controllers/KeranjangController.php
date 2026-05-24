@@ -20,11 +20,11 @@ class KeranjangController extends Controller
             ->with('details.layanan')
             ->first();
 
-        return view('customer.keranjang.index', compact('keranjang'));
+        return view('dashboard.customer.keranjang.index', compact('keranjang'));
     }
 
     /**
-     * Tambahkan paket layanan ke keranjang
+     * Tambahkan paket layanan ke keranjang dengan validasi max 3 paket
      */
     public function tambah(Request $request)
     {
@@ -41,10 +41,19 @@ class KeranjangController extends Controller
             ['id_user' => Auth::id(), 'status' => 'active']
         );
 
+        // Cek jumlah unique items (max 3)
+        $itemCount = $keranjang->details()->count();
+
         // Cek apakah item sudah ada di keranjang
         $existingDetail = DetailKeranjang::where('id_keranjang', $keranjang->id_keranjang)
             ->where('id_paket', $request->id_paket)
             ->first();
+
+        // Jika item belum ada dan sudah 3 item, tolak
+        if (!$existingDetail && $itemCount >= 3) {
+            return redirect()->route('keranjang.index')
+                ->with('error', 'Maksimal hanya 3 paket dalam keranjang. Silakan hapus paket lain terlebih dahulu.');
+        }
 
         $hargaSatuan = $layanan->harga ?? 0;
         $subtotal    = $hargaSatuan * $request->jumlah;

@@ -46,7 +46,9 @@ class AppServiceProvider extends ServiceProvider
             view()->composer('*', function ($view) {
                 $profil = null;
                 try {
-                    $profil = \App\Models\ProfilPerusahaan::singleton();
+                    $profil = \Illuminate\Support\Facades\Cache::rememberForever('site_profile', function() {
+                        return \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
+                    });
                 } catch (\Throwable $e) {
                     // Fail silently if DB is not migrated yet
                 }

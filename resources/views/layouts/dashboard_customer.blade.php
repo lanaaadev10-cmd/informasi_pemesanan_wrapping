@@ -82,8 +82,9 @@
             <a href="{{ route('katalog.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('katalog.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
                 <i class="ph-bold ph-tag text-lg"></i> Katalog Layanan
             </a>
-            <a href="{{ route('keranjang.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('keranjang.index') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+            <a href="{{ route('keranjang.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('keranjang.index') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }} relative">
                 <i class="ph-bold ph-shopping-cart text-lg"></i> Keranjang
+                <span data-cart-badge class="hidden absolute -top-2 -right-2 min-w-[20px] h-[20px] px-1.5 bg-[#f2994a] text-black text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-lg">0</span>
             </a>
 
             <div class="pt-5 pb-2">
@@ -237,9 +238,10 @@
                 <span class="text-[9px] font-bold uppercase tracking-wide">Katalog</span>
             </a>
             {{-- Keranjang --}}
-            <a href="{{ route('keranjang.index') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('keranjang.index') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
+            <a href="{{ route('keranjang.index') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('keranjang.index') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }} relative">
                 <i class="ph-bold ph-shopping-cart text-xl"></i>
                 <span class="text-[9px] font-bold uppercase tracking-wide">Keranjang</span>
+                <span data-cart-badge-mobile class="hidden absolute top-0 right-1 min-w-[18px] h-[18px] px-1 bg-[#f2994a] text-black text-[8px] font-extrabold rounded-full flex items-center justify-center shadow-lg">0</span>
             </a>
             {{-- Pesanan --}}
             <a href="{{ route('pesanan.index') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('pesanan.index') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
@@ -451,14 +453,57 @@
             } catch(e) {}
         }
 
+        // =============================================
+        // Shopping Cart Badge
+        // =============================================
+        async function loadCartCount() {
+            try {
+                const res = await fetch('/api/keranjang/count', {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                });
+                const json = await res.json();
+                const count = json.data?.count ?? 0;
+                updateCartBadge(count);
+            } catch(e) {
+                console.error('Error loading cart count:', e);
+            }
+        }
+
+        function updateCartBadge(count) {
+            const badge = document.querySelector('[data-cart-badge]');
+            const badgeMobile = document.querySelector('[data-cart-badge-mobile]');
+
+            if (count > 0) {
+                if (badge) {
+                    badge.textContent = count > 9 ? '9+' : count;
+                    badge.classList.remove('hidden');
+                }
+                if (badgeMobile) {
+                    badgeMobile.textContent = count > 9 ? '9+' : count;
+                    badgeMobile.classList.remove('hidden');
+                }
+            } else {
+                if (badge) badge.classList.add('hidden');
+                if (badgeMobile) badgeMobile.classList.add('hidden');
+            }
+        }
+
         // Jalankan saat DOM siap
         document.addEventListener('DOMContentLoaded', function() {
             checkUnreadCount();
+            loadCartCount();
             // Auto-refresh unread count setiap 30 detik
             setInterval(function() {
                 if (!notifPanelOpen) checkUnreadCount();
                 else { notifLoaded = false; loadNotifikasi(); }
             }, 30000);
+            // Auto-refresh cart count setiap 10 detik
+            setInterval(function() {
+                loadCartCount();
+            }, 10000);
         });
     </script>
 

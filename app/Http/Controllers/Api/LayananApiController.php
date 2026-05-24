@@ -55,13 +55,14 @@ class LayananApiController extends Controller
 
     /**
      * GET /api/layanans/{id}
-     * Get single service details
+     * Get single service details with caching
      */
     public function show($id)
     {
         $cacheKey = "layanan_{$id}";
+        $cacheDuration = config('app-settings.cache.api_layanan', 3600);
 
-        $layanan = Cache::remember($cacheKey, 600, function () use ($id) {
+        $layanan = Cache::remember($cacheKey, $cacheDuration, function () use ($id) {
             return Layanan::findOrFail($id, ['id_layanan', 'nama_layanan', 'deskripsi', 'foto_contoh', 'harga', 'tipe_layanan', 'tipe_paket', 'fitur', 'kategori']);
         });
 
@@ -104,11 +105,13 @@ class LayananApiController extends Controller
 
     /**
      * GET /api/layanans/categories
-     * Get all available categories
+     * Get all available categories with caching
      */
     public function categories()
     {
-        $categories = Cache::remember('layanan_categories', 3600, function () {
+        $cacheDuration = config('app-settings.cache.api_layanan', 3600);
+
+        $categories = Cache::remember('layanan_categories', $cacheDuration, function () {
             return Layanan::distinct('kategori')
                 ->pluck('kategori')
                 ->filter()

@@ -44,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Shopping Cart
     Route::prefix('keranjang')->group(function () {
         Route::get('/', [KeranjangController::class, 'index']);
+        Route::get('/count', [KeranjangController::class, 'getCount']);
+        Route::get('/check/{idLayanan}', [KeranjangController::class, 'checkItemInCart']);
         Route::post('/item', [KeranjangController::class, 'addItem']);
         Route::put('/item/{idDetailKeranjang}', [KeranjangController::class, 'updateItem']);
         Route::delete('/item/{idDetailKeranjang}', [KeranjangController::class, 'removeItem']);

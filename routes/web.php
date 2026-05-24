@@ -64,16 +64,30 @@ Route::middleware('throttle:60,5')->group(function () {
         // --- RUTE PESANAN ---
         Route::prefix('pesanan')->group(function () {
             Route::get('/', [\App\Http\Controllers\PesananController::class, 'index'])->name('pesanan.index');
+
+            // Direct order dari paket (Pesan sekarang)
+            Route::get('/buat', function() {
+                $packageId = request('package_id');
+
+                if (!$packageId) {
+                    return redirect()->route('katalog.user')->with('error', 'Paket tidak ditemukan.');
+                }
+
+                $package = \App\Models\Layanan::findOrFail($packageId);
+
+                return view('dashboard.customer.pesanan.direct-order', compact('package'));
+            })->name('pesanan.direct-order');
+
             Route::get('/checkout', function() {
                 $keranjang = \App\Models\Keranjang::where('id_user', auth()->id())
                     ->where('status', 'active')
                     ->first();
-                
+
                 if (!$keranjang || $keranjang->details->count() == 0) {
                     return redirect()->route('katalog.user')->with('error', 'Keranjang Anda kosong. Silakan pilih paket terlebih dahulu.');
                 }
-                
-                return view('customer.pesanan.checkout', compact('keranjang'));
+
+                return view('dashboard.customer.pesanan.checkout', compact('keranjang'));
             })->name('pesanan.checkout.form');
             Route::post('/checkout', [\App\Http\Controllers\PesananController::class, 'checkout'])->name('pesanan.checkout.store');
             Route::get('/{id}', [\App\Http\Controllers\PesananController::class, 'show'])->name('pesanan.show');

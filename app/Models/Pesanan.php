@@ -26,9 +26,8 @@ class Pesanan extends Model
     ];
 
     protected $casts = [
-        // 'status' cast intentionally removed — kept as plain string
-        // for compatibility with all string comparisons across controllers and views
-        'tanggal_pesan' => 'datetime',
+            'tanggal_pesan' => 'datetime',
+
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -97,8 +96,9 @@ class Pesanan extends Model
      */
     public function bisaUploadBukti(): bool
     {
-        return $this->status === self::STATUS_MENUNGGU_PEMBAYARAN;
+        return (string) $this->status === self::STATUS_MENUNGGU_PEMBAYARAN;
     }
+
 
     /**
      * Apakah invoice bisa diunduh?
@@ -111,6 +111,7 @@ class Pesanan extends Model
             self::STATUS_SELESAI,
         ]);
     }
+
 
     // =============================================
     //  BOOT - Otomatisasi Notifikasi

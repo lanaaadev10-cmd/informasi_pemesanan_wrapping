@@ -39,11 +39,21 @@ class PesananService
             throw new \Exception('Keranjang kosong. Tambahkan item terlebih dahulu.');
         }
 
-        $keranjang = $this->keranjangService->getOrCreateCart($userId);
-        $keranjangDetails = $keranjang->details()->with('layanan')->get();
-
         DB::beginTransaction();
         try {
+            // Use pessimistic locking to prevent concurrent checkouts
+            $keranjang = Keranjang::lockForUpdate()
+                ->where('id_user', $userId)
+                ->firstOrFail();
+
+            $keranjangDetails = $keranjang->details()
+                ->with('layanan')
+                ->get();
+
+            if ($keranjangDetails->isEmpty()) {
+                throw new \Exception('Keranjang kosong. Tambahkan item terlebih dahulu.');
+            }
+
             // Generate unique order code
             $kodePesanan = 'ORD-' . date('YmdHis') . '-' . Str::random(6);
 
@@ -87,14 +97,16 @@ class PesananService
 
             DB::commit();
 
-            // 5. Emit event (listeners akan handle email, notification, etc)
-            event(new OrderCreated($pesanan->fresh()->load([
+            // 5. Reload with relations and emit event
+            $pesanan = $pesanan->load([
                 'details.layanan',
                 'form',
                 'user',
-            ])));
+            ]);
 
-            return $pesanan->fresh()->load(['details.layanan', 'form', 'user']);
+            event(new OrderCreated($pesanan));
+
+            return $pesanan;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -131,7 +143,7 @@ class PesananService
 
             DB::commit();
 
-            return $pesanan->fresh();
+            return $pesanan;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -192,7 +204,7 @@ class PesananService
      */
     protected function emitStatusChangeEvent(Pesanan $pesanan, OrderStatus $status): void
     {
-        $pesananWithRelations = $pesanan->fresh()->load([
+        $pesananWithRelations = $pesanan->load([
             'details.layanan',
             'form',
             'user',

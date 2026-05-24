@@ -12,6 +12,6 @@ class GaleriController extends Controller
         $galeri = Galeri::latest()->get();
         $profil = \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
 
-        return view('frontend.galeri.index', compact('galeri', 'profil'));
+        return view('landing.galeri.index', compact('galeri', 'profil'));
     }
 }

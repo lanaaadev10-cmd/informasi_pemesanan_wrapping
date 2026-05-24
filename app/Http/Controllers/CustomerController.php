@@ -15,7 +15,7 @@ class CustomerController extends Controller
             return \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
         });
 
-        return view('frontend.katalog.index', compact('layanan', 'profil'));
+        return view('landing.katalog.index', compact('layanan', 'profil'));
     }
 
     public function dashboard()
@@ -23,7 +23,7 @@ class CustomerController extends Controller
         // 🚀 Ambil data terbaru tanpa cache agar konsisten dengan katalog
         $layanans = Layanan::all();
         $galeris = Galeri::latest()->limit(8)->get();
-        
+
         $latestOrders = \App\Models\Pesanan::where('id_user', auth()->id())
             ->with(['form', 'details.layanan'])
             ->latest()
@@ -31,11 +31,11 @@ class CustomerController extends Controller
             ->get();
 
         $latestOrder = $latestOrders->first();
-        
+
         $profil = Cache::rememberForever('site_profile', function() {
             return \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
         });
 
-        return view('customer.dashboard.index', compact('layanans', 'galeris', 'latestOrder', 'latestOrders', 'profil'));
+        return view('dashboard.customer.dashboard.index', compact('layanans', 'galeris', 'latestOrder', 'latestOrders', 'profil'));
     }
 }

@@ -45,7 +45,7 @@
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email</label>
                         <div class="relative">
                             <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
-                            <input type="email" name="email" :value="old('email')" required autofocus 
+                            <input type="email" name="email" value="{{ old('email') }}" required autofocus
                                    class="w-full pl-12 pr-4 py-3.5 bg-[#161616] border border-white/5 rounded-xl focus:ring-1 focus:ring-[#f2994a] focus:border-[#f2994a] text-white text-xs placeholder-gray-600 transition-all outline-none"
                                    placeholder="email@premiumwrap.id">
                         </div>

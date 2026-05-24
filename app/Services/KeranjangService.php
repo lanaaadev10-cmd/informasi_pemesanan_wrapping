@@ -29,7 +29,8 @@ class KeranjangService
     }
 
     /**
-     * Add item ke cart dengan cek duplikasi
+     * Add item ke cart dengan cek duplikasi & max 3 unique items
+     * Max 3 paket unique per user
      */
     public function addItem($userId, $idLayanan, $quantity, $customData = null)
     {
@@ -40,6 +41,12 @@ class KeranjangService
         $existingItem = $keranjang->details()
             ->where('id_layanan', $idLayanan)
             ->first();
+
+        // Cek max 3 unique items
+        $itemCount = $keranjang->details()->count();
+        if (!$existingItem && $itemCount >= 3) {
+            throw new \Exception('Maksimal hanya 3 paket dalam keranjang.');
+        }
 
         DB::beginTransaction();
         try {
@@ -139,5 +146,41 @@ class KeranjangService
     {
         $keranjang = $this->getOrCreateCart($userId);
         return $keranjang->details()->count() === 0;
+    }
+
+    /**
+     * Check apakah paket sudah ada di cart
+     */
+    public function isItemInCart($userId, $idLayanan): bool
+    {
+        $keranjang = $this->getOrCreateCart($userId);
+        return $keranjang->details()
+            ->where('id_layanan', $idLayanan)
+            ->exists();
+    }
+
+    /**
+     * Get cart count (unique items)
+     */
+    public function getCartItemCount($userId): int
+    {
+        $keranjang = $this->getOrCreateCart($userId);
+        return $keranjang->details()->count();
+    }
+
+    /**
+     * Get max items allowed
+     */
+    public function getMaxItems(): int
+    {
+        return 3;
+    }
+
+    /**
+     * Check apakah bisa menambah item baru
+     */
+    public function canAddMoreItems($userId): bool
+    {
+        return $this->getCartItemCount($userId) < $this->getMaxItems();
     }
 }

@@ -43,7 +43,7 @@ class DashboardController extends Controller
                 ->get();
         });
 
-        return view('frontend.beranda.index', compact(
+        return view('landing.beranda.index', compact(
             'profil',
             'layanans',
             'galeris',
@@ -59,8 +59,8 @@ class DashboardController extends Controller
         $profil = Cache::rememberForever('site_profile', function() {
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
-        
-        return view('frontend.profil.index', compact('profil'));
+
+        return view('landing.profil.index', compact('profil'));
     }
 
     /**
@@ -71,8 +71,8 @@ class DashboardController extends Controller
         $profil = Cache::rememberForever('site_profile', function() {
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
-        
-        return view('frontend.tentang-kami.index', compact('profil'));
+
+        return view('landing.tentang-kami.index', compact('profil'));
     }
 
     /**
@@ -83,7 +83,11 @@ class DashboardController extends Controller
         $profil = Cache::rememberForever('site_profile', function() {
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
-        
-        return view('frontend.layanan.index', compact('profil'));
+
+        $layanans = Cache::rememberForever('site_layanans', function() {
+            return Layanan::all();
+        });
+
+        return view('landing.layanan.index', compact('profil', 'layanans'));
     }
 }

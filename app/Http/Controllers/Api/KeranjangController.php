@@ -145,4 +145,59 @@ class KeranjangController extends Controller
             ], 400);
         }
     }
+
+    /**
+     * GET /api/keranjang/check/:idLayanan
+     * Check if specific item is in cart
+     */
+    public function checkItemInCart($idLayanan)
+    {
+        try {
+            $userId = auth()->id();
+            $inCart = $this->keranjangService->isItemInCart($userId, $idLayanan);
+            $canAdd = $this->keranjangService->canAddMoreItems($userId);
+            $cartCount = $this->keranjangService->getCartItemCount($userId);
+            $maxItems = $this->keranjangService->getMaxItems();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'in_cart' => $inCart,
+                    'can_add' => $canAdd,
+                    'cart_count' => $cartCount,
+                    'max_items' => $maxItems,
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+    }
+
+    /**
+     * GET /api/keranjang/count
+     * Get cart item count
+     */
+    public function getCount()
+    {
+        try {
+            $userId = auth()->id();
+            $count = $this->keranjangService->getCartItemCount($userId);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'count' => $count,
+                    'max_items' => $this->keranjangService->getMaxItems(),
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ], 400);
+        }
+    }
 }
