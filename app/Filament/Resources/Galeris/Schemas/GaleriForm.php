@@ -7,8 +7,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 
 class GaleriForm
@@ -16,76 +14,62 @@ class GaleriForm
     public static function configure(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Informasi Dasar')
-                ->description('Informasi utama untuk galeri/portofolio')
-                ->aside()
-                ->schema([
-                    Grid::make(2)->schema([
-                        TextInput::make('judul')
-                            ->label('Judul Pekerjaan')
-                            ->placeholder('Contoh: Sticker Custom Premium')
-                            ->required()
-                            ->maxLength(255)
-                            ->prefixIcon('heroicon-m-pencil'),
+            TextInput::make('judul')
+                ->label('Judul Pekerjaan')
+                ->placeholder('Contoh: Sticker Custom Premium untuk Mobil Avanza')
+                ->required()
+                ->maxLength(255)
+                ->columnSpan(2)
+                ->helperText('Judul yang menarik untuk galeri/portofolio. Akan ditampilkan di halaman galeri.'),
 
-                        TextInput::make('sub_judul')
-                            ->label('Sub Judul (Opsional)')
-                            ->placeholder('Detail tambahan atau kategori')
-                            ->maxLength(255)
-                            ->prefixIcon('heroicon-m-sparkles'),
-                    ]),
+            TextInput::make('sub_judul')
+                ->label('Sub Judul (Opsional)')
+                ->placeholder('Contoh: Premium Design dengan Tinta Berkualitas')
+                ->maxLength(255)
+                ->columnSpan(1)
+                ->helperText('Detail tambahan atau kategori jenis pekerjaan.'),
 
-                    Textarea::make('deskripsi')
-                        ->label('Deskripsi Pekerjaan')
-                        ->placeholder('Tuliskan detail dan cerita di balik pekerjaan ini...')
-                        ->rows(5)
-                        ->columnSpanFull(),
-                ]),
+            Textarea::make('deskripsi')
+                ->label('Deskripsi Pekerjaan')
+                ->placeholder('Tuliskan detail cerita, proses, dan pencapaian di balik pekerjaan ini...')
+                ->rows(5)
+                ->columnSpanFull()
+                ->helperText('Cerita lengkap tentang pekerjaan ini. Jelaskan proses, material yang digunakan, dan hasil akhir.'),
 
-            Section::make('Media')
-                ->description('Upload foto dan konten visual')
-                ->aside()
-                ->schema([
-                    FileUpload::make('foto')
-                        ->label('Foto Utama')
-                        ->image()
-                        ->imageEditor()
-                        ->directory('galeri')
-                        ->disk('public')
-                        ->maxSize(10240)
-                        ->helperText('Format: JPG, PNG. Maks. 10MB')
-                        ->required()
-                        ->columnSpanFull(),
-                ]),
+            FileUpload::make('foto')
+                ->label('Foto Utama Galeri')
+                ->image()
+                ->imageEditor()
+                ->directory('galeri')
+                ->disk('public')
+                ->maxSize(10240)
+                ->required()
+                ->columnSpanFull()
+                ->helperText('Format: JPG, PNG, WebP. Maksimal 10MB. Ukuran rekomendasi: 1200x800px untuk hasil optimal di website.'),
 
-            Section::make('Kategori & Penanda')
-                ->description('Organisir galeri dengan kategori dan penanda khusus')
-                ->aside()
-                ->schema([
-                    Grid::make(2)->schema([
-                        TextInput::make('kategori')
-                            ->label('Kategori')
-                            ->placeholder('Contoh: Sticker, Wrapping, Desain')
-                            ->prefixIcon('heroicon-m-tag'),
+            TextInput::make('kategori')
+                ->label('Kategori')
+                ->placeholder('Contoh: Sticker, Wrapping, Vinyl Wrapping, Desain Khusus')
+                ->columnSpan(1)
+                ->helperText('Kategori pekerjaan. Digunakan untuk filter dan organisir di galeri.'),
 
-                        TextInput::make('badge_text')
-                            ->label('Teks Badge')
-                            ->placeholder('Contoh: Featured, Best Seller')
-                            ->helperText('Akan ditampilkan di sudut foto'),
-                    ]),
+            TextInput::make('badge_text')
+                ->label('Teks Badge (Label)')
+                ->placeholder('Contoh: Featured, Best Seller, Recommended, Premium')
+                ->columnSpan(1)
+                ->helperText('Label khusus yang akan ditampilkan di sudut foto sebagai penanda spesial.'),
 
-                    Grid::make(2)->schema([
-                        DatePicker::make('tanggal_upload')
-                            ->label('Tanggal Upload')
-                            ->required()
-                            ->prefixIcon('heroicon-m-calendar'),
+            DatePicker::make('tanggal_upload')
+                ->label('Tanggal Upload')
+                ->required()
+                ->columnSpan(1)
+                ->helperText('Tanggal pekerjaan ini selesai/dipublikasikan.'),
 
-                        Toggle::make('is_featured')
-                            ->label('Tampilkan sebagai Featured?')
-                            ->helperText('Tampilkan di halaman utama galeri')
-                            ->default(false),
-                    ]),
-                ]),
+            Toggle::make('is_featured')
+                ->label('Tampilkan sebagai Featured?')
+                ->columnSpan(1)
+                ->helperText('Jika aktif, pekerjaan ini akan ditampilkan di bagian "Featured Works" di halaman utama galeri.')
+                ->default(false),
         ]);
     }
 }

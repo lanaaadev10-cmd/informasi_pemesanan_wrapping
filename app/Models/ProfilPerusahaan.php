@@ -98,6 +98,7 @@ class ProfilPerusahaan extends Model
         // ─── CMS Tentang Kami ──────────────────────────────────
         'tentang_kami_hero_title',
         'tentang_kami_hero_desc',
+        'tentang_kami_hero_image',
         'tentang_kami_team_title',
         'tentang_kami_team_desc',
         'tentang_kami_team_members',
@@ -241,6 +242,16 @@ class ProfilPerusahaan extends Model
             'layanan_show_warranty' => 'boolean',
             'dark_mode' => 'boolean',
         ];
+    }
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            Cache::forget('site_profile');
+        });
+        static::deleted(function () {
+            Cache::forget('site_profile');
+        });
     }
 
     /**

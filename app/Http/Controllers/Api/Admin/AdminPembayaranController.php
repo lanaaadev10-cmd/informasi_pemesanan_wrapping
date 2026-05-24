@@ -21,14 +21,18 @@ class AdminPembayaranController extends Controller
 
     /**
      * GET /api/admin/pembayaran
-     * List all pending payments for verification
+     * List all pending payments for verification with optimized queries
      */
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 20);
         $status = $request->get('status', 'pending');
 
-        $pembayarans = Pembayaran::with(['pesanan.user', 'pesanan.details'])
+        $pembayarans = Pembayaran::with([
+            'pesanan:id_pesanan,kode_pesanan,id_user,status,total_harga,tanggal_pesan',
+            'pesanan.user:id,name,email,no_hp',
+            'pesanan.details:id_detail,id_pesanan,id_layanan,quantity,harga_satuan',
+        ])
             ->where('status_pembayaran', $status)
             ->orderByDesc('updated_at')
             ->paginate($perPage);

@@ -18,14 +18,15 @@ class LayananForm
                 ->directory('layanan/admin')
                 ->imagePreviewHeight(140)
                 ->columnSpanFull()
-                ->helperText('Ukuran rekomendasi: 1200x800px'),
+                ->helperText('Upload foto contoh hasil pekerjaan. Ukuran rekomendasi: 1200x800px. Berfungsi sebagai visual referensi di halaman katalog.'),
 
             Forms\Components\TextInput::make('nama_layanan')
                 ->label('Nama Layanan')
                 ->required()
                 ->maxLength(255)
                 ->columnSpan(2)
-                ->helperText('Contoh: Precision Coating - Protection Ultimate'),
+                ->placeholder('Contoh: Precision Coating - Protection Ultimate')
+                ->helperText('Nama layanan yang akan ditampilkan di website. Gunakan nama yang deskriptif agar mudah dipahami customer.'),
 
             Forms\Components\Select::make('kategori')
                 ->label('Kategori Kendaraan')
@@ -35,7 +36,8 @@ class LayananForm
                     'stiker' => 'Custom Stiker',
                 ])
                 ->required()
-                ->columnSpan(1),
+                ->columnSpan(1)
+                ->helperText('Pilih jenis kendaraan/jasa. Digunakan untuk filter di halaman katalog.'),
 
             Forms\Components\Select::make('tipe_layanan')
                 ->label('Tipe Penawaran')
@@ -45,7 +47,8 @@ class LayananForm
                 ])
                 ->required()
                 ->columnSpan(1)
-                ->live(),
+                ->live()
+                ->helperText('Fixed Price: harga standar untuk semua customer. Custom Quote: harga negosiasi per customer.'),
 
             Forms\Components\TextInput::make('harga')
                 ->label('Harga Paket (Rp)')
@@ -53,13 +56,14 @@ class LayananForm
                 ->prefix('Rp ')
                 ->required()
                 ->columnSpan(1)
-                ->visible(fn (Get $get) => $get('tipe_layanan') === 'fix'),
+                ->visible(fn (Get $get) => $get('tipe_layanan') === 'fix')
+                ->helperText('Masukkan harga dalam rupiah. Hanya muncul jika tipe "Fixed Price" dipilih.'),
 
             Forms\Components\TextInput::make('estimasi_waktu')
                 ->label('Estimasi Waktu Pengerjaan')
                 ->placeholder('Contoh: 3 hari kerja')
                 ->columnSpan(1)
-                ->helperText('Durasi pengerjaan standar'),
+                ->helperText('Berapa lama waktu pengerjaan layanan ini. Contoh: 3 hari, 1 minggu, 5 jam kerja.'),
 
             Forms\Components\RichEditor::make('deskripsi')
                 ->label('Deskripsi Lengkap Paket')
@@ -74,7 +78,8 @@ class LayananForm
                     'undo',
                 ])
                 ->columnSpanFull()
-                ->helperText('Jelaskan detail, manfaat, dan spesifikasi paket ini'),
+                ->placeholder('Jelaskan detail layanan, manfaat, dan spesifikasi...')
+                ->helperText('Deskripsi detail yang akan ditampilkan di halaman detail layanan. Gunakan formatting untuk memudahkan pembacaan: bold, italic, list, dll.'),
 
             Forms\Components\Repeater::make('fitur')
                 ->label('Daftar Keunggulan & Fitur Paket')
@@ -90,7 +95,7 @@ class LayananForm
                 ->addActionLabel('+ Tambah Keunggulan Baru')
                 ->defaultItems(0)
                 ->minItems(1)
-                ->helperText('Tambahkan fitur-fitur unggulan yang menjadi keunggulan paket ini. Minimal 1 keunggulan harus ditambahkan.'),
+                ->helperText('Daftar keunggulan paket (contoh: Garansi, Material Premium, Installer Bersertifikat, etc). Minimal 1 keunggulan harus ditambahkan. Akan ditampilkan di halaman detail layanan.'),
         ];
     }
 }

@@ -64,10 +64,11 @@ class PembayaranService
 
             DB::commit();
 
-            // Emit event
-            event(new PaymentUploaded($pembayaran->fresh()->load('pesanan')));
+            // Emit event with loaded relations
+            $pembayaran->load('pesanan');
+            event(new PaymentUploaded($pembayaran));
 
-            return $pembayaran->fresh();
+            return $pembayaran;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -75,16 +76,19 @@ class PembayaranService
     }
 
     /**
-     * Verify payment oleh admin
+     * Verify payment oleh admin dengan pessimistic locking
      */
     public function verifyPayment(Pembayaran $pembayaran, ?string $catatan = null): Pembayaran
     {
-        if ($pembayaran->status_pembayaran !== PaymentStatus::PENDING->value) {
-            throw new \Exception('Payment tidak dalam status pending');
-        }
-
         DB::beginTransaction();
         try {
+            // Lock payment record to prevent concurrent verification
+            $pembayaran = Pembayaran::lockForUpdate()->find($pembayaran->id_pembayaran);
+
+            if ($pembayaran->status_pembayaran !== PaymentStatus::PENDING->value) {
+                throw new \Exception('Payment tidak dalam status pending');
+            }
+
             $pembayaran->update([
                 'status_pembayaran' => PaymentStatus::VERIFIED->value,
                 'tanggal_pembayaran' => now(),
@@ -97,7 +101,7 @@ class PembayaranService
             DB::commit();
 
             // Emit events
-            event(new \App\Events\PaymentVerified($pesanan->fresh()->load(['details', 'form'])));
+            event(new \App\Events\PaymentVerified($pesanan->load(['details', 'form', 'user'])));
 
             return $pembayaran->fresh();
         } catch (\Exception $e) {
@@ -130,7 +134,7 @@ class PembayaranService
 
             DB::commit();
 
-            return $pembayaran->fresh();
+            return $pembayaran;
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

@@ -41,21 +41,28 @@ class NotifikasiApiController extends Controller
 
     /**
      * GET /api/notifikasi/unread
-     * Get unread notifications only
+     * Get unread notifications only with pagination
      */
-    public function unread()
+    public function unread(Request $request)
     {
         $userId = Auth::id();
+        $perPage = $request->get('per_page', 15);
 
         $unreadNotifikasi = Notifikasi::where('id_user', $userId)
             ->where('is_read', false)
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate($perPage);
 
         return response()->json([
             'status' => 'ok',
-            'data' => $unreadNotifikasi,
-            'count' => $unreadNotifikasi->count(),
+            'data' => $unreadNotifikasi->items(),
+            'count' => $unreadNotifikasi->total(),
+            'pagination' => [
+                'current_page' => $unreadNotifikasi->currentPage(),
+                'total' => $unreadNotifikasi->total(),
+                'per_page' => $unreadNotifikasi->perPage(),
+                'last_page' => $unreadNotifikasi->lastPage(),
+            ],
         ]);
     }
 

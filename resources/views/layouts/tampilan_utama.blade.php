@@ -117,17 +117,23 @@
                 
                 @if($is_frontend)
                     <div class="flex items-center gap-4 border-l pl-6 border-white/10">
-                        <a href="{{ route('katalog.user') }}" class="px-6 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider text-black bg-[#f2994a] hover:bg-[#e28a44] transition-all hover:scale-105 shadow-md">
-                            Pemesanan
-                        </a>
                         @guest
-                            <a href="{{ route('login') }}" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all">
-                                <i class="ph ph-user text-lg"></i>
+                            <a href="{{ route('login') }}" class="text-sm font-bold text-gray-300 hover:text-[#f2994a] transition-colors">
+                                Masuk
+                            </a>
+                            <a href="{{ route('register') }}" class="px-6 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider text-black bg-[#f2994a] hover:bg-[#e28a44] transition-all hover:scale-105 shadow-md">
+                                Daftar
                             </a>
                         @endguest
                         @auth
+                            <a href="{{ route('katalog.user') }}" class="px-6 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider text-black bg-[#f2994a] hover:bg-[#e28a44] transition-all hover:scale-105 shadow-md">
+                                Pemesanan
+                            </a>
                             <a href="{{ route('dashboard') }}" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all" title="Dashboard">
                                 <i class="ph-bold ph-user-circle text-xl text-[#f2994a]"></i>
+                            </a>
+                            <a href="{{ route('logout.get') }}" class="text-sm font-bold text-red-500 hover:text-red-400 transition-colors">
+                                Keluar
                             </a>
                         @endauth
                     </div>
@@ -177,15 +183,19 @@
                 
                 <div class="pt-6 border-t {{ $is_frontend ? 'border-white/5' : 'border-gray-100' }}">
                     @if($is_frontend)
-                        <div class="grid grid-cols-1 gap-4">
-                            <a href="{{ route('katalog.user') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-[#f2994a] text-black font-extrabold rounded-2xl shadow-lg uppercase tracking-wider text-sm transition-transform hover:scale-105">Pemesanan</a>
-                            @guest
-                                <a href="{{ route('login') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-white/5 rounded-2xl font-bold text-gray-300 border border-white/10 transition-colors hover:bg-white/10">Login</a>
-                            @endguest
-                            @auth
+                        @guest
+                            <div class="grid grid-cols-2 gap-4">
+                                <a href="{{ route('login') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-white/5 rounded-2xl font-bold text-gray-300 border border-white/10 transition-colors hover:bg-white/10">Masuk</a>
+                                <a href="{{ route('register') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 btn-premium text-white rounded-2xl font-bold shadow-lg transition-transform hover:scale-105">Daftar</a>
+                            </div>
+                        @endguest
+                        @auth
+                            <div class="grid grid-cols-1 gap-4">
+                                <a href="{{ route('katalog.user') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-[#f2994a] text-black font-extrabold rounded-2xl shadow-lg uppercase tracking-wider text-sm transition-transform hover:scale-105">Pemesanan</a>
                                 <a href="{{ route('dashboard') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-white/5 rounded-2xl font-bold text-gray-300 border border-white/10 transition-colors hover:bg-white/10">Dashboard</a>
-                            @endauth
-                        </div>
+                                <a href="{{ route('logout.get') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-red-500/10 text-red-500 rounded-2xl font-bold border border-red-500/20 transition-colors hover:bg-red-500/20">Keluar</a>
+                            </div>
+                        @endauth
                     @else
                         @guest
                             <div class="grid grid-cols-2 gap-4">
@@ -213,7 +223,7 @@
     </nav>
 
     {{-- Konten Utama --}}
-    <main class="{{ (Request::routeIs('home') || Request::routeIs('profil.perusahaan')) ? 'pt-0' : 'pt-32' }}">
+    <main class="{{ (Request::routeIs('home') || Request::routeIs('profil.perusahaan') || Request::routeIs('layanan')) ? 'pt-0' : 'pt-32' }}">
         @yield('content')
     </main>
 

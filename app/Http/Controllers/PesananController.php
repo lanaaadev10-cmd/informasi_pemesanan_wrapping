@@ -52,7 +52,7 @@ class PesananController extends Controller
 
         $pesanans = $query->get();
 
-        return view('customer.pesanan.index', compact('pesanans'));
+        return view('dashboard.customer.pesanan.index', compact('pesanans'));
     }
 
     /**
@@ -65,7 +65,7 @@ class PesananController extends Controller
             ->with(['details.layanan', 'form', 'pembayaran'])
             ->firstOrFail();
 
-        return view('customer.pesanan.show', compact('pesanan'));
+        return view('dashboard.customer.pesanan.show', compact('pesanan'));
     }
 
     /**
@@ -242,7 +242,7 @@ class PesananController extends Controller
             return back()->with('toast_error', 'Invoice belum tersedia. Tunggu konfirmasi pembayaran dari admin.');
         }
 
-        return view('customer.pesanan.invoice', compact('pesanan'));
+        return view('dashboard.customer.pesanan.invoice', compact('pesanan'));
     }
 
     /**
