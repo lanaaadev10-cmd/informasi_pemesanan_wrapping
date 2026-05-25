@@ -106,6 +106,7 @@ class ProfilPerusahaan extends Model
         // ─── CMS Layanan (Services) ────────────────────────────
         'layanan_hero_title',
         'layanan_hero_desc',
+        'layanan_hero_image',
         'layanan_1_nama',
         'layanan_1_deskripsi',
         'layanan_1_harga',
@@ -167,6 +168,7 @@ class ProfilPerusahaan extends Model
         // ─── Galeri Page CMS ─────────────────────────────────
         'galeri_hero_title',
         'galeri_hero_desc',
+        'galeri_hero_image',
         'galeri_intro_text',
         'galeri_empty_state_title',
         'galeri_empty_state_desc',

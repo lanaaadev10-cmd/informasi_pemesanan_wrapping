@@ -17,11 +17,10 @@ class TentangKamiResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
 
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-information-circle';
     protected static ?string $label = 'Edit Tentang Kami';
     protected static ?string $pluralLabel = 'Edit Tentang Kami';
     protected static ?string $navigationLabel = 'Edit Tentang Kami';
-    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Konten Website';
+    protected static string|null|\UnitEnum $navigationGroup = 'Halaman Website';
     protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
