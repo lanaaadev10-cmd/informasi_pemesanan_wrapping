@@ -108,15 +108,12 @@
         ];
     @endphp
 
-    @include('landing.layanan._style')
+    <style>:root{--accent:{{$accentColor}}}</style>
 
-    {{-- ═══════════════════════════════════════════════
-         OUTER WRAPPER
-    ═══════════════════════════════════════════════ --}}
-    <div class="layanan-page relative">
+    <div class="bg-[#0a0a0a] min-h-screen relative">
 
-        {{-- Ambient glow top --}}
-        <div class="glow-ambient-top absolute inset-x-0 top-0 h-[500px] z-0"></div>
+        <div class="absolute inset-x-0 top-0 h-[500px] pointer-events-none z-0"
+             style="background:radial-gradient(ellipse 55% 35% at 50% 0,{{$accentColor}}15,transparent 70%)"></div>
 
         <div class="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 pb-24 space-y-24">
 
@@ -136,6 +133,7 @@
             @include('landing.layanan._benefits')
 
         </div>{{-- /max-w-7xl --}}
-    </div>{{-- /outer wrapper --}}
+        </div>
+    </div>
 @endsection
 
