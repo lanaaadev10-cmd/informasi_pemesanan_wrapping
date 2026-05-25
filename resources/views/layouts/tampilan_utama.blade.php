@@ -176,9 +176,9 @@
             <div class="p-8 space-y-6">
                 <div class="space-y-1">
                     <a href="{{ route('home') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('home') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-600') }} transition-colors">Beranda</a>
-                    <a href="{{ route('katalog.user') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('katalog.user') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">Layanan</a>
+                    <a href="{{ route('layanan') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('layanan') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">Layanan</a>
                     <a href="{{ route('galeri.user') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('galeri.user') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">Galeri</a>
-                    <a href="{{ route('profil.perusahaan') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('profil.perusahaan') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">Tentang Kami</a>
+                    <a href="{{ route('tentang-kami') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('tentang-kami') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">Tentang Kami</a>
                 </div>
                 
                 <div class="pt-6 border-t {{ $is_frontend ? 'border-white/5' : 'border-gray-100' }}">

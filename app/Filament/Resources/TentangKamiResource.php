@@ -131,19 +131,19 @@ class TentangKamiResource extends Resource
     }
 
     public static function canCreate(): bool { return false; }
-    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool { return false; }
+    public static function canDelete(Model $record): bool { return false; }
 
-    protected static function shouldRegisterNavigation(): bool
+    public static function shouldRegisterNavigation(): bool
     {
         return true;
     }
 
-    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true): string
+    public static function getUrl(?string $name = null, array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false, ?string $configuration = null): string
     {
         // Singleton - always go to first record
         if ($name === 'index') {
             return route('filament.admin.resources.tentang-kamis.index', [], $isAbsolute);
         }
-        return parent::getUrl($name, $parameters, $isAbsolute);
+        return parent::getUrl($name, $parameters, $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters, $configuration);
     }
 }

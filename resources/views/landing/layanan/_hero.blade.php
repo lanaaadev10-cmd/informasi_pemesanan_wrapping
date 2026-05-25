@@ -10,7 +10,7 @@
         Layanan & Paket
     </div>
 
-    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]" style="font-style: italic;">
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.1]">
         {{ $profil?->layanan_hero_title ?? 'Precision in Every Layer.' }}
     </h1>
 

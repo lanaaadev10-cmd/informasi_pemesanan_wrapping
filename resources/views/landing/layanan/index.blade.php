@@ -8,18 +8,18 @@
         $accentColor = $profil?->accent_color ?? '#f2994a';
 
         // Badge labels untuk setiap card
-        $badgeLabels = ['Matte Series', 'Best Seller', 'Elegant Choice', 'Ultimate Guard'];
+        $badgeLabels = ['Matte Series', 'Best Seller', 'Satin Series', 'Paint Protection'];
         $badgeColors = [
-            'rgba(255,255,255,0.08)',         // subtle
-            'var(--accent)',                  // highlighted (Best Seller)
-            'rgba(255,255,255,0.08)',         // subtle
-            'rgba(255,255,255,0.08)',         // subtle
+            'rgba(242,153,74,0.12)',         // subtle orange
+            'rgba(242,153,74,0.22)',         // highlighted orange
+            'rgba(242,153,74,0.12)',         // subtle orange
+            'rgba(242,153,74,0.12)',         // subtle orange
         ];
         $badgeTextColors = [
-            'rgba(255,255,255,0.7)',
-            '#0a0a0a',
-            'rgba(255,255,255,0.7)',
-            'rgba(255,255,255,0.7)',
+            'var(--accent)',
+            'var(--accent)',
+            'var(--accent)',
+            'var(--accent)',
         ];
 
         // Fallback layanan jika belum ada data dari Layanan model
@@ -93,8 +93,9 @@
             }
         }
 
-        // Final fallback
-        if (empty($services)) {
+        // Final fallback: Hanya gunakan defaultServices jika $layanans tidak dikirim/tidak diatur.
+        // Jika $layanans diatur tetapi kosong, artinya data dari database kosong (admin belum menambahkan), maka biarkan kosong agar memicu status kosong (empty state).
+        if (empty($services) && !isset($layanans)) {
             $services = $defaultServices;
         }
 

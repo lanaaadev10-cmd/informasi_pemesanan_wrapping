@@ -5,7 +5,6 @@
 <style>
     :root { --accent: {{ $accentColor }}; }
     .layanan-accent { color: var(--accent); }
-    /* Gunakan warna accent untuk deskripsi hero agar terlihat emas/orange */
     .layanan-hero-desc,
     .layanan-hero-desc * {
         color: var(--accent) !important;
@@ -46,6 +45,7 @@
         padding: 5px 12px;
         border-radius: 999px;
         backdrop-filter: blur(8px);
+        border: 1px solid rgba(242, 153, 74, 0.25);
     }
 
     /* ── Feature Bullet ── */

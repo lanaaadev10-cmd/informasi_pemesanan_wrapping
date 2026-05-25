@@ -101,8 +101,12 @@
                     </div>
                 </div>
                 @empty
-                <div class="w-full py-12 text-center">
-                    <p class="text-gray-400">Tidak ada paket layanan tersedia saat ini.</p>
+                <div class="w-full py-16 text-center border border-dashed border-white/10 rounded-[32px] bg-white/[0.02]">
+                    <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-500 mx-auto mb-4">
+                        <i class="ph-bold ph-package text-2xl text-[#f2994a]"></i>
+                    </div>
+                    <h4 class="text-base font-bold text-white mb-1">admin belum menambahkan</h4>
+                    <p class="text-xs text-gray-500 font-light">Admin belum menambahkan paket layanan saat ini.</p>
                 </div>
                 @endforelse
             </div>
