@@ -19,7 +19,6 @@ class PesananResource extends Resource
 {
     protected static ?string $model = Pesanan::class;
 
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-shopping-cart';
     protected static ?string $navigationLabel = 'Kelola Pesanan';
     protected static ?string $pluralLabel = 'Pesanan';
     protected static string|null|\UnitEnum $navigationGroup = 'Manajemen Transaksi';

@@ -2,12 +2,11 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
 use Filament\Actions\Action;
+use Filament\Pages\Page;
 
 class LaporanPenjualan extends Page
 {
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-document-chart-bar';
     protected static ?string $navigationLabel = 'Laporan Penjualan';
     protected static ?string $title = 'Laporan Penjualan';
     protected static string|null|\UnitEnum $navigationGroup = 'Manajemen Transaksi';

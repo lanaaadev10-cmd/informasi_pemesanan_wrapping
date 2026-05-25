@@ -14,7 +14,6 @@ class RiwayatPesananResource extends Resource
 {
     protected static ?string $model = Pesanan::class;
 
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationLabel = 'Riwayat Transaksi';
     protected static ?string $pluralLabel = 'Riwayat Transaksi';
     protected static string|null|\UnitEnum $navigationGroup = 'Manajemen Transaksi';
