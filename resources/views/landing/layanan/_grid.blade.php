@@ -51,7 +51,7 @@
             </div>
 
             {{-- ── Card Body ── --}}
-            <div class="flex flex-col flex-1 p-5 sm:p-6 gap-3">
+            <div class="flex flex-col flex-1 p-5 sm:p-6 gap-4">
 
                 {{-- Name --}}
                 <h3 class="text-lg font-extrabold text-white leading-tight">

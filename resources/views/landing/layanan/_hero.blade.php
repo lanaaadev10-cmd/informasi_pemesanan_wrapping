@@ -2,7 +2,7 @@
     BAGIAN: Hero Layanan
     Deskripsi: Header judul "Layanan & Paket" + Deskripsi
 ============================================ --}}
-<div class="text-center space-y-5 max-w-3xl mx-auto">
+<div class="text-center space-y-6 sm:space-y-8 max-w-3xl mx-auto">
     {{-- Badge --}}
     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest"
          style="background: rgba(242,153,74,0.1); border: 1px solid rgba(242,153,74,0.2); color: var(--accent);">
