@@ -1,0 +1,458 @@
+@extends('layouts.dashboard_customer')
+
+@section('title', 'Konfirmasi Pemesanan')
+
+@php
+    $accentColor = $profil->accent_color ?? '#f2994a';
+    $step1Label = $profil->checkout_step_1_label ?? 'Pilih Layanan';
+    $step2Label = $profil->checkout_step_2_label ?? 'Data Kendaraan';
+    $step3Label = $profil->checkout_step_3_label ?? 'Review';
+    $step4Label = $profil->checkout_step_4_label ?? 'Pembayaran';
+@endphp
+
+<style>
+    :root {
+        --accent-color: {{ $accentColor }};
+    }
+    .accent-bg { background-color: var(--accent-color); }
+    .accent-color { color: var(--accent-color); }
+    .accent-shadow { box-shadow: 0 0 15px color-mix(in srgb, var(--accent-color) 40%, transparent); }
+    .accent-border { border-color: var(--accent-color); }
+</style>
+
+@section('content')
+<div class="max-w-6xl mx-auto py-8 space-y-12 relative overflow-hidden text-white">
+
+    <!-- Top Header (Wapping Premium style from Figma) -->
+    <div class="flex items-center justify-between z-10 relative">
+        <h1 class="text-xl sm:text-2xl font-bold tracking-wide font-serif accent-color">{{ $profil->nama_perusahaan ?? 'Wapping Premium' }}</h1>
+    </div>
+
+    <!-- Stepper (4 Steps Figma Match) -->
+    <div class="flex items-center justify-center w-full max-w-3xl mx-auto px-4 z-10 relative">
+        <!-- Step 1: Pilih Layanan (Completed) -->
+        <div class="flex flex-col items-center gap-3 relative z-10 w-28">
+            <div class="w-10 h-10 rounded-full accent-bg text-black font-bold flex items-center justify-center text-sm accent-shadow transition-all">
+                <i class="ph-bold ph-check"></i>
+            </div>
+            <span class="text-[10px] font-bold accent-color transition-all text-center">{{ $step1Label }}</span>
+        </div>
+        <div class="flex-grow h-px bg-[#f2994a] mx-2 shadow-[0_0_10px_rgba(242,153,74,0.5)]"></div>
+
+        <!-- Step 2: Data Kendaraan (Dynamic) -->
+        <div class="flex flex-col items-center gap-3 relative z-10 w-28">
+            <div id="step-circle-2" class="w-10 h-10 rounded-full bg-[#f2994a] text-black font-bold flex items-center justify-center text-sm shadow-[0_0_15px_rgba(242,153,74,0.4)] transition-all scale-110">
+                <i class="ph-bold ph-pencil-simple text-lg"></i>
+            </div>
+            <span id="step-label-2" class="text-[10px] font-bold text-[#f2994a] transition-all text-center">Data Kendaraan</span>
+        </div>
+        <div id="step-line-2" class="flex-grow h-px bg-white/10 mx-2 transition-all duration-500"></div>
+
+        <!-- Step 3: Review -->
+        <div class="flex flex-col items-center gap-3 relative z-10 w-28">
+            <div id="step-circle-3" class="w-10 h-10 rounded-full bg-[#202020] text-gray-400 font-bold flex items-center justify-center text-sm border border-white/10 transition-all">
+                3
+            </div>
+            <span id="step-label-3" class="text-[10px] font-bold text-gray-500 transition-all text-center">Review</span>
+        </div>
+        <div class="flex-grow h-px bg-white/10 mx-2"></div>
+
+        <!-- Step 4: Pembayaran -->
+        <div class="flex flex-col items-center gap-3 relative z-10 w-28">
+            <div class="w-10 h-10 rounded-full bg-[#202020] text-gray-400 font-bold flex items-center justify-center text-sm border border-white/10">
+                4
+            </div>
+            <span class="text-[10px] font-bold text-gray-500 transition-all text-center">Pembayaran</span>
+        </div>
+    </div>
+
+    <!-- Page Title -->
+    <div class="z-10 relative space-y-1">
+        <h2 id="page-title" class="text-3xl font-medium tracking-tight text-white">Data Kendaraan & Jadwal</h2>
+        <p id="page-subtitle" class="text-sm text-gray-400">Harap lengkapi informasi kendaraan dan jadwal penyerahan sebelum tinjauan.</p>
+    </div>
+
+    <!-- Main Content Area -->
+    <form id="checkout-form" action="{{ route('pesanan.checkout.store') }}" method="POST">
+        @csrf
+        
+        <!-- HIDDEN KETERANGAN (Menerima input dari Data Tambahan seperti Nopol) -->
+        <input type="hidden" name="keterangan_tambahan" id="hidden_keterangan">
+
+        <!-- PANEL 2: DATA KENDARAAN (Form Pengisian) -->
+        <div id="step-panel-2" class="animate-fade-in max-w-4xl">
+            <div class="bg-[#121212] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-lg relative overflow-hidden">
+                <!-- Ambient Glow inside panel -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-[#f2994a]/5 blur-[80px] rounded-full pointer-events-none"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                    <!-- Kolom 1 -->
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-gray-400 px-1">Merk & Model Kendaraan <span class="text-red-500">*</span></label>
+                            <input type="text" id="input_merk" name="model_kendaraan" placeholder="Contoh: Porsche 911 GT3 (992)" required
+                                   class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-gray-400 px-1">Warna Dasar Kendaraan <span class="text-red-500">*</span></label>
+                            <input type="text" id="input_warna" name="warna_kendaraan" placeholder="Contoh: Chalk White" required
+                                   class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-medium text-gray-400 px-1">Nomor Polisi <span class="text-red-500">*</span></label>
+                                <input type="text" id="input_nopol" name="nomor_polisi" placeholder="B 911 RSR" required
+                                       class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner uppercase">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-medium text-gray-400 px-1">Tahun Produksi <span class="text-red-500">*</span></label>
+                                <input type="number" id="input_tahun" name="tahun_produksi" placeholder="2023" required
+                                       class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-gray-400 px-1">Nama Pemesan <span class="text-red-500">*</span></label>
+                            <input type="text" id="input_nama" name="nama_pemesan" value="{{ auth()->user()->name }}" required
+                                   class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
+                        </div>
+                    </div>
+
+                    <!-- Kolom 2 -->
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-gray-400 px-1">Lokasi Pengerjaan (Workshop) <span class="text-red-500">*</span></label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="cursor-pointer group h-full">
+                                    <input type="radio" name="lokasi_pengerjaan" value="toko" class="peer hidden" checked onchange="updateLokasiLabel()">
+                                    <div class="h-full border border-white/10 peer-checked:border-[#f2994a] bg-[#1c1c1c] peer-checked:bg-[#f2994a]/5 rounded-xl px-4 py-3 flex items-center justify-between transition-all hover:bg-white/5">
+                                        <span class="text-xs font-medium text-gray-400 peer-checked:text-white">Studio HQ</span>
+                                        <i class="ph-bold ph-check-circle text-[#f2994a] opacity-0 peer-checked:opacity-100"></i>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group h-full">
+                                    <input type="radio" name="lokasi_pengerjaan" value="rumah" class="peer hidden" onchange="updateLokasiLabel()">
+                                    <div class="h-full border border-white/10 peer-checked:border-[#f2994a] bg-[#1c1c1c] peer-checked:bg-[#f2994a]/5 rounded-xl px-4 py-3 flex items-center justify-between transition-all hover:bg-white/5">
+                                        <span class="text-xs font-medium text-gray-400 peer-checked:text-white">Home Service</span>
+                                        <i class="ph-bold ph-check-circle text-[#f2994a] opacity-0 peer-checked:opacity-100"></i>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-gray-400 px-1">Alamat Pengerjaan / Penjemputan <span class="text-red-500">*</span></label>
+                            <textarea id="input_alamat" name="alamat_pengiriman" rows="2" placeholder="Wapping Premium - Jakarta Selatan (Atau alamat lengkap Anda)..." required
+                                      class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner"></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-gray-400 px-1">Tanggal Mulai Sesi <span class="text-red-500">*</span></label>
+                            <input type="datetime-local" id="input_jadwal" name="jadwal_pengerjaan" required
+                                   class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner [color-scheme:dark]">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-medium text-gray-400 px-1">WhatsApp <span class="text-red-500">*</span></label>
+                            <input type="text" name="no_hp" placeholder="08XXXXXXXXXX" required
+                                   class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
+                        </div>
+                        <div class="space-y-2 hidden">
+                            <!-- Field asli catatan tambahan disembunyikan karena digunakan JS untuk menyimpan custom Nopol/Tahun -->
+                            <input type="text" id="input_ket" value="">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-6 mt-4 border-t border-white/5 relative z-10">
+                    <button type="button" onclick="goToStep(3)" class="px-8 py-3.5 bg-[#f2994a] hover:bg-[#e28a44] rounded-xl text-black font-medium text-sm transition-all hover:shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-[1.02] active:scale-95 flex items-center gap-2">
+                        Lanjutkan ke Review <i class="ph-bold ph-arrow-right text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL 3: REVIEW (Figma Design Layout) -->
+        <div id="step-panel-3" class="hidden animate-fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Kiri: Rincian Kartu (Col 8) -->
+                <div class="lg:col-span-8 space-y-6">
+                    
+                    <!-- Card 1: Layanan Terpilih -->
+                    <div class="bg-[#121212] border border-white/5 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                            <div class="flex items-center gap-3">
+                                <i class="ph ph-stack text-[#f2994a] text-2xl"></i>
+                                <h3 class="text-white font-medium text-lg">Layanan Terpilih</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            @foreach($keranjang->details as $item)
+                            <div class="flex gap-5 items-center">
+                                <div class="w-24 h-24 bg-white/5 rounded-xl border border-white/5 overflow-hidden shrink-0 shadow-inner">
+                                    @if($item->layanan->foto_contoh)
+                                        <img src="{{ asset('storage/' . $item->layanan->foto_contoh) }}" class="w-full h-full object-cover">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <i class="ph ph-car text-3xl text-gray-500"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="flex flex-col gap-1.5 flex-grow">
+                                    <h4 class="text-white font-medium text-base">{{ $item->layanan->nama_layanan }}</h4>
+                                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                                        Kategori: {{ $item->layanan->kategori ?? 'Layanan Premium' }}<br>
+                                        Kuantitas: {{ $item->jumlah }} Unit
+                                    </p>
+                                    <div class="flex gap-2 mt-1">
+                                        <span class="text-[8px] bg-white/5 text-gray-400 px-2 py-1 rounded border border-white/10 uppercase tracking-widest font-bold">Garansi 2 Tahun</span>
+                                        <span class="text-[8px] bg-white/5 text-gray-400 px-2 py-1 rounded border border-white/10 uppercase tracking-widest font-bold">UV Protection</span>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Detail Kendaraan -->
+                    <div class="bg-[#121212] border border-white/5 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                            <div class="flex items-center gap-3">
+                                <i class="ph ph-car-profile text-[#f2994a] text-2xl"></i>
+                                <h3 class="text-white font-medium text-lg">Detail Kendaraan</h3>
+                            </div>
+                            <button type="button" onclick="goToStep(2)" class="flex items-center gap-1.5 text-gray-400 hover:text-white text-xs font-medium transition-colors">
+                                <i class="ph-bold ph-pencil-simple"></i> Edit
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-y-8 gap-x-4">
+                            <div>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Merk & Model</span>
+                                <span id="review-merk" class="text-gray-200 font-medium text-sm"></span>
+                            </div>
+                            <div>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Nomor Polisi</span>
+                                <span id="review-nopol" class="text-gray-200 font-medium text-sm"></span>
+                            </div>
+                            <div>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Warna Dasar</span>
+                                <span id="review-warna" class="text-gray-200 font-medium text-sm"></span>
+                            </div>
+                            <div>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Tahun Produksi</span>
+                                <span id="review-tahun" class="text-gray-200 font-medium text-sm"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Jadwal Sesi -->
+                    <div class="bg-[#121212] border border-white/5 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+                        <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                            <div class="flex items-center gap-3">
+                                <i class="ph ph-calendar-blank text-[#f2994a] text-2xl"></i>
+                                <h3 class="text-white font-medium text-lg">Jadwal Sesi</h3>
+                            </div>
+                            <button type="button" onclick="goToStep(2)" class="flex items-center gap-1.5 text-gray-400 hover:text-white text-xs font-medium transition-colors">
+                                <i class="ph-bold ph-pencil-simple"></i> Edit
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div class="flex items-start gap-3">
+                                <i class="ph ph-calendar text-gray-400 text-xl mt-0.5"></i>
+                                <div>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Tanggal Mulai</span>
+                                    <span id="review-jadwal" class="text-gray-200 font-medium text-xs leading-relaxed block max-w-[150px]"></span>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="ph ph-clock text-gray-400 text-xl mt-0.5"></i>
+                                <div>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Estimasi Durasi</span>
+                                    <span class="text-gray-200 font-medium text-xs leading-relaxed block">4 - 5 Hari Kerja</span>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="ph ph-map-pin text-gray-400 text-xl mt-0.5"></i>
+                                <div>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Workshop</span>
+                                    <span id="review-lokasi" class="text-gray-200 font-medium text-xs leading-relaxed block">Wapping Premium - HQ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Kanan: Rincian Biaya (Col 4) -->
+                <div class="lg:col-span-4 relative">
+                    <div class="bg-[#121212] border border-white/5 rounded-[24px] p-6 sm:p-8 space-y-8 shadow-lg lg:sticky lg:top-24">
+                        <h3 class="text-white font-medium text-lg">Rincian Biaya</h3>
+                        
+                        <div class="space-y-4">
+                            @foreach($keranjang->details as $item)
+                                <div class="flex justify-between items-center text-xs text-gray-400">
+                                    <span class="truncate pr-4">{{ $item->layanan->nama_layanan }} ({{ $item->jumlah }}x)</span>
+                                    <span class="font-medium text-white shrink-0">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                                </div>
+                            @endforeach
+                            <div class="flex justify-between items-center text-xs text-gray-400 pt-2">
+                                <span>Biaya Layanan & Pemasangan</span>
+                                <span class="font-medium text-white shrink-0">Rp 150.000</span>
+                            </div>
+                        </div>
+
+                        @php
+                            $subtotal = $keranjang->details->sum('subtotal');
+                            $grandTotal = $subtotal + 150000;
+                        @endphp
+
+                        <div class="bg-[#1a1a1a] border border-white/5 rounded-xl p-5 flex justify-between items-center shadow-inner mt-4">
+                            <span class="text-gray-400 text-xs font-medium">Total<br>Pembayaran</span>
+                            <span class="text-[#f2994a] text-xl font-medium tracking-tight">Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit" onclick="prepareSubmit()" class="w-full py-4 bg-[#f2994a] hover:bg-[#e28a44] rounded-xl text-black font-medium text-sm transition-all hover:shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
+                                Konfirmasi Pemesanan <i class="ph-bold ph-arrow-right"></i>
+                            </button>
+                            <p class="text-center text-[9px] text-gray-500 leading-relaxed mt-5 px-2">
+                                Dengan mengklik Konfirmasi, Anda menyetujui Syarat & Ketentuan serta Kebijakan Pembatalan kami.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    /* Sembunyikan panah di input number */
+    input[type="number"]::-webkit-inner-spin-button, 
+    input[type="number"]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; margin: 0; 
+    }
+</style>
+
+<script>
+    function updateLokasiLabel() {
+        const t = document.querySelector('input[name="lokasi_pengerjaan"]:checked').value;
+        const almt = document.getElementById('input_alamat');
+        if(t === 'toko') {
+            almt.placeholder = "Contoh: Menggunakan Studio Wapping Premium (Otomatis terisi jika kosong)";
+        } else {
+            almt.placeholder = "Masukkan alamat rumah/lokasi lengkap Anda...";
+        }
+    }
+
+    function formatTanggal(isoString) {
+        if(!isoString) return "-";
+        const date = new Date(isoString);
+        return date.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit' }) + ' WIB';
+    }
+
+    function goToStep(step) {
+        // Validation check before going to step 3
+        if (step === 3) {
+            const currentPanel = document.getElementById('step-panel-2');
+            const requiredInputs = currentPanel.querySelectorAll('input[required], textarea[required]');
+            let allValid = true;
+            requiredInputs.forEach(input => {
+                if (!input.value) {
+                    allValid = false;
+                    input.classList.add('border-red-500');
+                    input.classList.remove('border-white/10');
+                } else {
+                    input.classList.remove('border-red-500');
+                    input.classList.add('border-white/10');
+                }
+            });
+            if (!allValid) {
+                alert('Harap lengkapi semua data wajib bertanda bintang merah (*).');
+                return; // Stop if validation fails
+            }
+
+            // Populate Review Card Data
+            document.getElementById('review-merk').innerText = document.getElementById('input_merk').value;
+            document.getElementById('review-warna').innerText = document.getElementById('input_warna').value;
+            document.getElementById('review-nopol').innerText = document.getElementById('input_nopol').value.toUpperCase();
+            document.getElementById('review-tahun').innerText = document.getElementById('input_tahun').value;
+            
+            document.getElementById('review-jadwal').innerText = formatTanggal(document.getElementById('input_jadwal').value);
+            
+            const tipeLok = document.querySelector('input[name="lokasi_pengerjaan"]:checked').value;
+            const almtValue = document.getElementById('input_alamat').value;
+            if(tipeLok === 'toko') {
+                document.getElementById('review-lokasi').innerHTML = 'Wapping Premium HQ<br><span class="text-[9px] text-gray-500 leading-tight">Studio Jakarta Selatan</span>';
+            } else {
+                document.getElementById('review-lokasi').innerHTML = 'Home Service<br><span class="text-[9px] text-gray-500 leading-tight block truncate max-w-[200px]" title="'+almtValue+'">'+almtValue+'</span>';
+            }
+        }
+
+        // Hide all panels
+        document.querySelectorAll('[id^="step-panel-"]').forEach(p => {
+            p.classList.add('hidden');
+            p.classList.remove('animate-fade-in');
+        });
+        
+        // Show target panel
+        const target = document.getElementById('step-panel-' + step);
+        if(target) {
+            target.classList.remove('hidden');
+            void target.offsetWidth; // trigger reflow
+            target.classList.add('animate-fade-in');
+        }
+
+        // Update Nav Stepper visual styling
+        const title = document.getElementById('page-title');
+        const subtitle = document.getElementById('page-subtitle');
+        
+        if (step === 3) {
+            title.innerText = "Konfirmasi Pemesanan";
+            subtitle.innerText = "Harap tinjau kembali detail pesanan Anda sebelum melanjutkan ke pembayaran.";
+            
+            // Step 2 becomes completed
+            document.getElementById('step-circle-2').innerHTML = '<i class="ph-bold ph-check"></i>';
+            document.getElementById('step-circle-2').classList.remove('scale-110');
+            document.getElementById('step-line-2').classList.add('bg-[#f2994a]', 'shadow-[0_0_10px_rgba(242,153,74,0.5)]');
+            document.getElementById('step-line-2').classList.remove('bg-white/10');
+            
+            // Step 3 becomes active
+            document.getElementById('step-circle-3').className = "w-10 h-10 rounded-full bg-[#f2994a] text-black font-bold flex items-center justify-center text-sm shadow-[0_0_15px_rgba(242,153,74,0.4)] transition-all scale-110";
+            document.getElementById('step-label-3').className = "text-[10px] font-bold text-[#f2994a] transition-all text-center";
+        } else if (step === 2) {
+            title.innerText = "Data Kendaraan & Jadwal";
+            subtitle.innerText = "Harap lengkapi informasi kendaraan dan jadwal penyerahan sebelum tinjauan.";
+            
+            // Step 2 becomes active again
+            document.getElementById('step-circle-2').innerHTML = '<i class="ph-bold ph-pencil-simple text-lg"></i>';
+            document.getElementById('step-circle-2').classList.add('scale-110');
+            document.getElementById('step-line-2').classList.remove('bg-[#f2994a]', 'shadow-[0_0_10px_rgba(242,153,74,0.5)]');
+            document.getElementById('step-line-2').classList.add('bg-white/10');
+            
+            // Step 3 becomes inactive
+            document.getElementById('step-circle-3').className = "w-10 h-10 rounded-full bg-[#202020] text-gray-400 font-bold flex items-center justify-center text-sm border border-white/10 transition-all";
+            document.getElementById('step-label-3').className = "text-[10px] font-bold text-gray-500 transition-all text-center";
+        }
+
+        // Smooth scroll to top of form area
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function prepareSubmit() {
+        // Compile custom form fields (Nopol, Tahun) into the hidden keterangan_tambahan expected by DB
+        const nopol = document.getElementById('input_nopol').value;
+        const tahun = document.getElementById('input_tahun').value;
+        
+        let customData = `Nomor Polisi: ${nopol.toUpperCase()} | Tahun Produksi: ${tahun}`;
+        
+        document.getElementById('hidden_keterangan').value = customData;
+    }
+</script>
+@endsection

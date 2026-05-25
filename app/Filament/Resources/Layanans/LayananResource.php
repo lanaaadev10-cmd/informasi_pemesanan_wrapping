@@ -13,30 +13,40 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Filament\Support\Icons\Heroicon;
 
+/**
+ * LayananResource
+ * Digunakan untuk mengelola Katalog Layanan/Jasa di dashboard admin.
+ */
 class LayananResource extends Resource
 {
+    // Model yang digunakan: Layanan
     protected static ?string $model = Layanan::class;
 
-   // Tambahkan string|BackedEnum|null secara eksplisit
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-s-shopping-bag';
-    
-    protected static ?string $navigationLabel = 'Katalog Layanan';
-    protected static ?string $pluralModelLabel = 'Katalog Layanan';
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-shopping-bag';
+    protected static ?string $navigationLabel = 'Edit Katalog Layanan';
+    protected static ?string $pluralLabel = 'Edit Katalog Layanan';
     protected static ?string $recordTitleAttribute = 'nama_layanan';
 
-    // TAMBAHKAN BARIS INI (Angka 3 biar di bawah Dashboard)    
-    protected static ?int $navigationSort = 3;
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Konten Website';
+    protected static ?int $navigationSort = 4;
 
+    /**
+     * Konfigurasi Form (Logika ada di folder Schemas)
+     */
     public static function form(Schema $form): Schema
     {
         return $form->schema(LayananForm::schema());
     }
-
+    /**
+     * Konfigurasi Table (Logika ada di folder Tables)
+     */
     public static function table(Table $table): Table
     {
         return LayanansTable::configure($table);
     }
-
+    /**
+     * Definisi Rute Halaman
+     */
     public static function getPages(): array
     {
         return [
@@ -44,5 +54,25 @@ class LayananResource extends Resource
             'create' => CreateLayanan::route('/create'),
             'edit'   => EditLayanan::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->hasRole('admin') ?? false;
     }
 }

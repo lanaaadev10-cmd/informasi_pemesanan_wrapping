@@ -19,6 +19,7 @@ return new class extends Migration
         $table->string('email');
         $table->string('nomor_telepon');
         $table->string('logo')->nullable(); // nullable biar gak wajib diisi pas awal
+        $table->text('maps_url')->nullable();
         $table->timestamps();
 });
     }

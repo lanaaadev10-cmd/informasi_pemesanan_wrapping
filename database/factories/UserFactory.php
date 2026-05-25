@@ -16,6 +16,23 @@ class UserFactory extends Factory
      */
     protected static ?string $password;
 
+<<<<<<< HEAD
+=======
+    public function configure(): static
+    {
+        return $this->afterCreating(function (\App\Models\User $user): void {
+            // Seeder/role mungkin belum ada di beberapa test; pastikan role tersedia.
+            \Spatie\Permission\Models\Role::firstOrCreate([
+                'name' => 'user',
+                'guard_name' => 'web',
+            ]);
+
+            $user->assignRole('user');
+        });
+    }
+
+
+>>>>>>> bf0334c2b14d316dddb6e466f2be6d6502606610
     /**
      * Define the model's default state.
      *

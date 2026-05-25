@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -27,3 +28,104 @@
         </div>
     </div>
 </x-app-layout>
+=======
+@extends('layouts.dashboard_customer')
+
+@section('title', 'Pengaturan Akun')
+
+@section('content')
+<div class="max-w-5xl mx-auto py-12 px-6">
+    <!-- Header -->
+    <div class="mb-16" data-aos="fade-down">
+        <h1 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">Pengaturan <span class="text-orange-600 italic">Akun.</span></h1>
+        <p class="text-gray-400 mt-2 font-medium italic">Kelola identitas dan keamanan akses akun Anda secara terpusat.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <!-- Sidebar Navigation -->
+        <div class="lg:col-span-4 space-y-4" data-aos="fade-right">
+            <div class="soft-card p-6 border-none bg-gray-900 text-white shadow-2xl overflow-hidden relative">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-600/20 blur-3xl rounded-full"></div>
+                <div class="relative z-10 flex flex-col items-center text-center py-6">
+                    <div class="w-24 h-24 rounded-[2.5rem] bg-orange-600 flex items-center justify-center text-4xl mb-6 shadow-xl shadow-orange-900/40">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                    <h3 class="text-2xl font-black italic tracking-tight">{{ Auth::user()->name }}</h3>
+                    <p class="text-gray-400 text-xs font-medium italic mt-1">{{ Auth::user()->email }}</p>
+                    <span class="mt-6 px-4 py-1.5 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-orange-500 border border-white/5">
+                        Premium Member
+                    </span>
+                </div>
+            </div>
+
+            <!-- Tab Navigation Buttons (Visual Only for now, scrolling to sections) -->
+            <div class="space-y-2">
+                <a href="#profil" class="flex items-center gap-4 p-5 rounded-2xl bg-white text-gray-900 border border-gray-100 hover:border-orange-500/30 transition-all font-black text-sm group">
+                    <i class="ph-bold ph-user-circle text-xl text-orange-600"></i> Informasi Profil
+                    <i class="ph ph-caret-right ml-auto text-gray-300 group-hover:text-orange-600 transition-all"></i>
+                </a>
+                <a href="#password" class="flex items-center gap-4 p-5 rounded-2xl bg-white text-gray-900 border border-gray-100 hover:border-orange-500/30 transition-all font-black text-sm group">
+                    <i class="ph-bold ph-lock-key text-xl text-orange-600"></i> Keamanan Sandi
+                    <i class="ph ph-caret-right ml-auto text-gray-300 group-hover:text-orange-600 transition-all"></i>
+                </a>
+                <a href="#hapus" class="flex items-center gap-4 p-5 rounded-2xl bg-white text-red-600 border border-red-50 hover:bg-red-50 transition-all font-black text-sm group">
+                    <i class="ph-bold ph-trash text-xl"></i> Hapus Akun
+                </a>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="lg:col-span-8 space-y-12">
+            <!-- Profil Section -->
+            <section id="profil" class="soft-card p-10 md:p-12 relative overflow-hidden" data-aos="fade-up">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full"></div>
+                <h3 class="text-2xl font-black text-gray-900 mb-10 flex items-center gap-4">
+                    <i class="ph-fill ph-user-circle text-orange-600 bg-orange-50 p-4 rounded-2xl"></i> Informasi Profil
+                </h3>
+                <div class="max-w-xl">
+                    @include('profile.partials.update-profile-information-form')
+                </div>
+            </section>
+
+            <!-- Password Section -->
+            <section id="password" class="soft-card p-10 md:p-12 relative overflow-hidden" data-aos="fade-up">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full"></div>
+                <h3 class="text-2xl font-black text-gray-900 mb-10 flex items-center gap-4">
+                    <i class="ph-fill ph-lock-key text-orange-600 bg-orange-50 p-4 rounded-2xl"></i> Keamanan Akun
+                </h3>
+                <div class="max-w-xl">
+                    @include('profile.partials.update-password-form')
+                </div>
+            </section>
+
+            <!-- Danger Zone -->
+            <section id="hapus" class="p-10 md:p-12 rounded-[40px] border-2 border-dashed border-red-100 bg-red-50/30" data-aos="fade-up">
+                <h3 class="text-2xl font-black text-red-600 mb-10 flex items-center gap-4">
+                    <i class="ph-fill ph-warning-circle text-red-600 bg-red-100 p-4 rounded-2xl"></i> Zona Berbahaya
+                </h3>
+                <div class="max-w-xl">
+                    @include('profile.partials.delete-user-form')
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- Extra Styles for Breeze Forms Consistency -->
+<style>
+    .soft-card input[type="text"], 
+    .soft-card input[type="email"], 
+    .soft-card input[type="password"] {
+        @apply w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-gray-900 font-bold focus:ring-2 focus:ring-orange-500 outline-none transition-all placeholder:text-gray-300 !important;
+    }
+    
+    .soft-card label {
+        @apply text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 px-1 mb-2 block !important;
+    }
+    
+    .soft-card button[type="submit"] {
+        @apply px-10 py-4 bg-gray-900 text-white rounded-2xl font-black text-xs tracking-widest uppercase hover:bg-orange-600 transition-all shadow-xl shadow-gray-200 !important;
+    }
+</style>
+@endsection
+>>>>>>> bf0334c2b14d316dddb6e466f2be6d6502606610

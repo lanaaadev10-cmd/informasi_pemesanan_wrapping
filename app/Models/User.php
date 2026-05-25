@@ -9,12 +9,15 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 // Filament
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 
 class User extends Authenticatable implements FilamentUser
 {
     use Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, HasApiTokens;
 
     protected $fillable = [
         'name',
@@ -22,9 +25,22 @@ class User extends Authenticatable implements FilamentUser
         'password',
     ];
 
+    // 🔒 Sembunyikan field sensitif dari JSON/array response
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    // 🔒 Cast tipe data agar aman
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
     // 🔐 Batasi akses ke Filament
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->hasRole('admin');
     }
 }
+
+
