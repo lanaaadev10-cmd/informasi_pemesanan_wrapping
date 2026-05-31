@@ -31,7 +31,7 @@
                 <span class="inline-flex items-center gap-1.5 bg-[#f2994a]/10 border border-[#f2994a]/25 text-[#f2994a] text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg font-mono">
                     Active Order
                 </span>
-                <h3 class="text-2xl font-extrabold text-white mt-4">{{ $latestOrder->form->model_kendaraan ?? 'Kendaraan' }}</h3>
+                <h3 class="text-2xl font-extrabold text-white mt-4">{{ $latestOrder->form?->model_kendaraan ?? 'Kendaraan' }}</h3>
                 <div class="flex items-center gap-2 mt-2">
                     <span class="w-2 h-2 rounded-full {{ $statusColorClass }}"></span>
                     <span class="text-xs font-bold {{ $statusTextClass }} font-mono uppercase tracking-wider">{{ $latestOrder->label_status }}</span>
@@ -48,7 +48,7 @@
         <div class="grid grid-cols-3 gap-4">
             <div class="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col justify-between">
                 <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Service</span>
-                <span class="text-xs font-bold text-white mt-2">{{ $latestOrder->details->first()->layanan->nama_layanan ?? '-' }}</span>
+                <span class="text-xs font-bold text-white mt-2">{{ $latestOrder->details->first()?->layanan?->nama_layanan ?? '-' }}</span>
             </div>
             <div class="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col justify-between">
                 <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Color</span>
@@ -56,7 +56,7 @@
             </div>
             <div class="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex flex-col justify-between">
                 <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Material</span>
-                <span class="text-xs font-bold text-white mt-2">{{ $latestOrder->details->first()->layanan->tipe_paket ?? 'Avery Dennison' }}</span>
+                <span class="text-xs font-bold text-white mt-2">{{ $latestOrder->details->first()?->layanan?->tipe_paket ?? 'Avery Dennison' }}</span>
             </div>
         </div>
     </div>

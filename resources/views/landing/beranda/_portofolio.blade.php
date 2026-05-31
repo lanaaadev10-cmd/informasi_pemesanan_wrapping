@@ -22,7 +22,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             @forelse($galeris as $galeri)
                 @php
-                    $fotoUrl = $galeri->foto ? asset('storage/' . $galeri->foto) : 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=800&auto=format&fit=crop';
+                    $fotoUrl = resolveImageUrl($galeri->foto, 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=800&auto=format&fit=crop');
                 @endphp
                 <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden group hover:border-[#f2994a]/30 transition-all duration-500 shadow-md" data-aos="fade-up" @if($loop->index > 0) data-aos-delay="{{ $loop->index * 100 }}" @endif>
                     <div class="relative h-64 overflow-hidden">

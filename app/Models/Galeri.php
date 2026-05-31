@@ -27,10 +27,12 @@ class Galeri extends Model
     {
         static::saved(function () {
             Cache::forget('site_galeris');
+            Cache::forget('site_galeris_home');
             Cache::forget('dashboard_galeris');
         });
         static::deleted(function () {
             Cache::forget('site_galeris');
+            Cache::forget('site_galeris_home');
             Cache::forget('dashboard_galeris');
         });
     }

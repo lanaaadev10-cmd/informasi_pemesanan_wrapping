@@ -20,12 +20,15 @@ return new class extends Migration
 
         Schema::table('keranjangs', function (Blueprint $table) {
             $table->index(['id_user', 'status']);
+        });
+
+        Schema::table('detail_keranjangs', function (Blueprint $table) {
             $table->unique(['id_keranjang', 'id_paket']); // Prevent duplicate items
         });
 
         Schema::table('pembayarans', function (Blueprint $table) {
-            $table->index('status_pembayaran');
-            $table->index(['status_pembayaran', 'updated_at']);
+            $table->index('status');
+            $table->index(['status', 'updated_at']);
         });
 
         Schema::table('notifikasis', function (Blueprint $table) {
@@ -48,12 +51,15 @@ return new class extends Migration
 
         Schema::table('keranjangs', function (Blueprint $table) {
             $table->dropIndex(['id_user', 'status']);
+        });
+
+        Schema::table('detail_keranjangs', function (Blueprint $table) {
             $table->dropUnique(['id_keranjang', 'id_paket']);
         });
 
         Schema::table('pembayarans', function (Blueprint $table) {
-            $table->dropIndex(['status_pembayaran']);
-            $table->dropIndex(['status_pembayaran', 'updated_at']);
+            $table->dropIndex(['status']);
+            $table->dropIndex(['status', 'updated_at']);
         });
 
         Schema::table('notifikasis', function (Blueprint $table) {

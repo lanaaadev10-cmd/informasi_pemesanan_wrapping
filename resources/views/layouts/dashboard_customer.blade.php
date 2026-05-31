@@ -256,6 +256,7 @@
         </div>
     </nav>
 
+    @stack('scripts')
     <script>
         // =============================================
         // Sidebar Menu (Mobile)

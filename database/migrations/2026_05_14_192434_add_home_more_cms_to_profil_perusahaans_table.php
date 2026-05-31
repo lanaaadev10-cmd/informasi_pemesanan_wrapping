@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('profil_perusahaans', function (Blueprint $table) {
-            $table->string('home_prof_title')->nullable();
-            $table->string('home_prof_subtitle')->nullable();
-            $table->string('home_catalog_title')->nullable();
-            $table->string('home_catalog_subtitle')->nullable();
-            $table->string('home_recent_title')->nullable();
-            $table->string('home_recent_subtitle')->nullable();
-            $table->string('home_cta_title')->nullable();
-            $table->string('home_cta_subtitle')->nullable();
+            $table->text('home_prof_title')->nullable();
+            $table->text('home_prof_subtitle')->nullable();
+            $table->text('home_catalog_title')->nullable();
+            $table->text('home_catalog_subtitle')->nullable();
+            $table->text('home_recent_title')->nullable();
+            $table->text('home_recent_subtitle')->nullable();
+            $table->text('home_cta_title')->nullable();
+            $table->text('home_cta_subtitle')->nullable();
         });
     }
 

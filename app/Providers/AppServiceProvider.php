@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
             view()->composer('*', function ($view) {
                 $profil = null;
                 try {
-                    $profil = \Illuminate\Support\Facades\Cache::rememberForever('site_profile', function() {
+                    $profil = \Illuminate\Support\Facades\Cache::remember('site_profile', 3600, function() {
                         return \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
                     });
                 } catch (\Throwable $e) {

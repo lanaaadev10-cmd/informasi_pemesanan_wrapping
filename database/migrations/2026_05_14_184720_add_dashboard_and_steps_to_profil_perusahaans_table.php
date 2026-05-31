@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::table('profil_perusahaans', function (Blueprint $table) {
             // Dashboard CMS
-            $table->string('dashboard_title')->nullable();
-            $table->string('dashboard_subtitle')->nullable();
+            $table->text('dashboard_title')->nullable();
+            $table->text('dashboard_subtitle')->nullable();
 
             // Ordering Steps CMS
-            $table->string('step_1_title')->nullable();
+            $table->text('step_1_title')->nullable();
             $table->text('step_1_desc')->nullable();
-            $table->string('step_2_title')->nullable();
+            $table->text('step_2_title')->nullable();
             $table->text('step_2_desc')->nullable();
-            $table->string('step_3_title')->nullable();
+            $table->text('step_3_title')->nullable();
             $table->text('step_3_desc')->nullable();
-            $table->string('step_4_title')->nullable();
+            $table->text('step_4_title')->nullable();
             $table->text('step_4_desc')->nullable();
         });
     }

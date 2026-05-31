@@ -29,7 +29,7 @@
                 <!-- Image -->
                 <div class="relative h-64 bg-gradient-to-br from-[#f2994a]/20 to-transparent overflow-hidden">
                     @if($package->foto_contoh)
-                        <img src="{{ asset('storage/' . $package->foto_contoh) }}"
+                        <img src="{{ str_starts_with($package->foto_contoh, 'http') ? $package->foto_contoh : asset('storage/' . $package->foto_contoh) }}"
                              alt="{{ $package->nama_layanan }}"
                              class="w-full h-full object-cover">
                     @else
@@ -65,7 +65,7 @@
                             @foreach($package->fitur as $fitur)
                             <div class="flex items-start gap-2">
                                 <i class="ph-bold ph-check-circle text-[#f2994a] text-sm mt-0.5 shrink-0"></i>
-                                <span class="text-xs text-gray-300">{{ $fitur }}</span>
+                                <span class="text-xs text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '') : $fitur }}</span>
                             </div>
                             @endforeach
                         </div>

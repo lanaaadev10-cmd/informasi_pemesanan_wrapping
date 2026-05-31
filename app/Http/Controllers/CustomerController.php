@@ -11,7 +11,7 @@ class CustomerController extends Controller
     public function katalog()
     {
         $layanan = Layanan::all();
-        $profil = Cache::rememberForever('site_profile', function() {
+        $profil = Cache::remember('site_profile', 3600, function() {
             return \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
         });
 
@@ -32,7 +32,7 @@ class CustomerController extends Controller
 
         $latestOrder = $latestOrders->first();
 
-        $profil = Cache::rememberForever('site_profile', function() {
+        $profil = Cache::remember('site_profile', 3600, function() {
             return \App\Models\ProfilPerusahaan::first() ?? new \App\Models\ProfilPerusahaan();
         });
 

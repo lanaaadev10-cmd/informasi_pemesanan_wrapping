@@ -33,7 +33,7 @@
             @if($wideItem)
                 @php 
                     $wideFinish = getFinishType($wideItem, 0); 
-                    $wideImage = $wideItem->foto_contoh ? asset('storage/' . $wideItem->foto_contoh) : 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=800&auto=format&fit=crop';
+                    $wideImage = resolveImageUrl($wideItem->foto_contoh, 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=800&auto=format&fit=crop');
                 @endphp
                 <div class="katalog-item lg:col-span-2 bg-[#121212]/40 border border-white/5 rounded-[32px] overflow-hidden relative min-h-[380px] lg:min-h-[420px] flex flex-col justify-end p-8 sm:p-10 group shadow-[0_15px_30px_rgba(0,0,0,0.5)] transition-all duration-500"
                      data-category="{{ $wideFinish }} {{ strtolower($wideItem->kategori) }}">
@@ -104,7 +104,7 @@
             @if($mediumItem)
                 @php 
                     $mediumFinish = getFinishType($mediumItem, 1); 
-                    $mediumImage = $mediumItem->foto_contoh ? asset('storage/' . $mediumItem->foto_contoh) : 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=400&auto=format&fit=crop';
+                    $mediumImage = resolveImageUrl($mediumItem->foto_contoh, 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=400&auto=format&fit=crop');
                 @endphp
                 <div class="katalog-item lg:col-span-1 bg-[#121212]/40 border border-white/5 rounded-[32px] overflow-hidden relative min-h-[380px] lg:min-h-[420px] flex flex-col justify-end p-8 group shadow-[0_15px_30px_rgba(0,0,0,0.5)] transition-all duration-500"
                      data-category="{{ $mediumFinish }} {{ strtolower($mediumItem->kategori) }}">
@@ -172,7 +172,7 @@
                 @foreach($gridItems as $index => $item)
                     @php 
                         $itemFinish = getFinishType($item, $index + 2); 
-                        $itemImage = $item->foto_contoh ? asset('storage/' . $item->foto_contoh) : '';
+                        $itemImage = resolveImageUrl($item->foto_contoh, '');
                         if(!$itemImage) {
                             // Stagger fallback images dynamically to look extremely premium
                             $fallbacks = [

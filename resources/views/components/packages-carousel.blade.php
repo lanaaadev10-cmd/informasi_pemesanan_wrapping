@@ -22,8 +22,9 @@
 
                         <!-- Image Section -->
                         <div class="relative h-48 bg-gradient-to-br from-[#f2994a]/20 to-transparent overflow-hidden">
-                            @if($package->foto_contoh)
-                            <img src="{{ asset('storage/' . $package->foto_contoh) }}"
+                            @php $pkgImg = resolveImageUrl($package->foto_contoh); @endphp
+                            @if($pkgImg)
+                            <img src="{{ $pkgImg }}"
                                  alt="{{ $package->nama_layanan }}"
                                  class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-300">
                             @else
@@ -60,7 +61,7 @@
                                 @foreach(array_slice($package->fitur, 0, 2) as $fitur)
                                 <div class="flex items-center gap-2">
                                     <i class="ph-bold ph-check-circle text-[#f2994a] text-xs"></i>
-                                    <span class="text-[10px] text-gray-300">{{ $fitur }}</span>
+                                    <span class="text-[10px] text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '') : $fitur }}</span>
                                 </div>
                                 @endforeach
                                 @if(count($package->fitur) > 2)

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Users\Schemas;
 
-use Filament\Forms\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
@@ -12,9 +12,10 @@ class UserForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->schema([
-                Section::make('Informasi Akun')
+        return $schema->statePath('user')->schema([
+                Section::make('Data Pengguna')
+                    ->description('Kelola informasi akun pengguna, termasuk nama, email, password, dan peran akses. Pastikan untuk memberikan hak akses yang sesuai untuk menjaga keamanan sistem.')
+                    ->icon('heroicon-o-user')
                     ->schema([
                         TextInput::make('name')
                             ->label('Nama Lengkap')

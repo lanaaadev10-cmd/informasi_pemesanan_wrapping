@@ -13,30 +13,30 @@ return new class extends Migration
     {
         Schema::table('profil_perusahaans', function (Blueprint $table) {
             // Dashboard CMS - Member Status Card
-            $table->string('dashboard_member_title')->nullable()->default('Premium Gold');
-            $table->string('dashboard_member_desc')->nullable()->default('Satu langkah lagi menuju Platinum');
+            $table->string('dashboard_member_title', 100)->nullable()->default('Premium Gold');
+            $table->string('dashboard_member_desc', 200)->nullable()->default('Satu langkah lagi menuju Platinum');
             $table->integer('dashboard_member_progress')->nullable()->default(85);
             $table->text('dashboard_member_benefits')->nullable();
 
             // Dashboard CMS - Fast Services (4 Cards)
-            $table->string('dashboard_service_1_title')->nullable()->default('Paint Protection Film');
+            $table->string('dashboard_service_1_title', 100)->nullable()->default('Paint Protection Film');
             $table->text('dashboard_service_1_desc')->nullable();
-            $table->string('dashboard_service_1_icon')->nullable()->default('ph-shield');
+            $table->string('dashboard_service_1_icon', 50)->nullable()->default('ph-shield');
 
-            $table->string('dashboard_service_2_title')->nullable()->default('Color Change');
+            $table->string('dashboard_service_2_title', 100)->nullable()->default('Color Change');
             $table->text('dashboard_service_2_desc')->nullable();
-            $table->string('dashboard_service_2_icon')->nullable()->default('ph-palette');
+            $table->string('dashboard_service_2_icon', 50)->nullable()->default('ph-palette');
 
-            $table->string('dashboard_service_3_title')->nullable()->default('Interior Styling');
+            $table->string('dashboard_service_3_title', 100)->nullable()->default('Interior Styling');
             $table->text('dashboard_service_3_desc')->nullable();
-            $table->string('dashboard_service_3_icon')->nullable()->default('ph-armchair');
+            $table->string('dashboard_service_3_icon', 50)->nullable()->default('ph-armchair');
 
-            $table->string('dashboard_service_4_title')->nullable()->default('Detailing');
+            $table->string('dashboard_service_4_title', 100)->nullable()->default('Detailing');
             $table->text('dashboard_service_4_desc')->nullable();
-            $table->string('dashboard_service_4_icon')->nullable()->default('ph-sparkles');
+            $table->string('dashboard_service_4_icon', 50)->nullable()->default('ph-sparkles');
 
             // Dashboard CMS - Empty State Card
-            $table->string('dashboard_empty_title')->nullable()->default('Tidak Ada Pengerjaan Aktif');
+            $table->string('dashboard_empty_title', 100)->nullable()->default('Tidak Ada Pengerjaan Aktif');
             $table->text('dashboard_empty_desc')->nullable();
         });
     }

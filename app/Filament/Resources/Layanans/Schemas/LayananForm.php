@@ -83,15 +83,13 @@ class LayananForm
 
             Forms\Components\Repeater::make('fitur')
                 ->label('Daftar Keunggulan & Fitur Paket')
-                ->schema([
-                    Forms\Components\TextInput::make('nama_fitur')
+                ->simple(
+                    Forms\Components\TextInput::make('fitur')
                         ->label('Keunggulan')
                         ->placeholder('Contoh: Garansi Resmi hingga 5 Tahun')
                         ->required()
-                        ->columnSpanFull(),
-                ])
+                )
                 ->columnSpanFull()
-                ->columns(1)
                 ->addActionLabel('+ Tambah Keunggulan Baru')
                 ->defaultItems(0)
                 ->minItems(1)

@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('profil_perusahaans', function (Blueprint $table) {
-            $table->string('katalog_title')->nullable();
-            $table->string('katalog_subtitle')->nullable();
-            $table->string('galeri_title')->nullable();
-            $table->string('galeri_subtitle')->nullable();
+            $table->text('katalog_title')->nullable();
+            $table->text('katalog_subtitle')->nullable();
+            $table->text('galeri_title')->nullable();
+            $table->text('galeri_subtitle')->nullable();
         });
     }
 

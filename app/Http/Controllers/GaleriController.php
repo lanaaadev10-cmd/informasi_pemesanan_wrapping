@@ -10,11 +10,11 @@ class GaleriController extends Controller
 {
     public function index()
     {
-        $profil = Cache::rememberForever('site_profile', function () {
+        $profil = Cache::remember('site_profile', 3600, function () {
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
 
-        $galeri = Cache::rememberForever('site_galeris', function () {
+        $galeri = Cache::remember('site_galeris', 3600, function () {
             return Galeri::latest()->get();
         });
 

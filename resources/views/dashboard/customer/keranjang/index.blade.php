@@ -74,7 +74,7 @@
                 @foreach($keranjang->details as $item)
                     @php
                         // Premium visual fallback selector based on catalog categories
-                        $itemImage = $item->layanan->foto_contoh ? asset('storage/' . $item->layanan->foto_contoh) : '';
+                        $itemImage = $item->layanan->foto_contoh ? (str_starts_with($item->layanan->foto_contoh, 'http') ? $item->layanan->foto_contoh : asset('storage/' . $item->layanan->foto_contoh)) : '';
                         if(!$itemImage) {
                             $fallbacks = [
                                 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=200&auto=format&fit=crop',

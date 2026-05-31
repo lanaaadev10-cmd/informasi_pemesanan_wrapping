@@ -15,22 +15,22 @@ return new class extends Migration
             // Beranda CMS
             $table->text('home_title')->nullable();
             $table->text('home_subtitle')->nullable();
-            $table->string('home_hero_image')->nullable();
+            $table->text('home_hero_image')->nullable();
             $table->text('home_feature_title')->nullable();
             $table->text('home_feature_subtitle')->nullable();
 
             // Auth CMS
             $table->text('login_title')->nullable();
             $table->text('login_subtitle')->nullable();
-            $table->string('login_image')->nullable();
-            $table->string('login_form_title')->nullable();
-            $table->string('login_form_subtitle')->nullable();
+            $table->text('login_image')->nullable();
+            $table->text('login_form_title')->nullable();
+            $table->text('login_form_subtitle')->nullable();
             
             $table->text('register_title')->nullable();
             $table->text('register_subtitle')->nullable();
-            $table->string('register_image')->nullable();
-            $table->string('register_form_title')->nullable();
-            $table->string('register_form_subtitle')->nullable();
+            $table->text('register_image')->nullable();
+            $table->text('register_form_title')->nullable();
+            $table->text('register_form_subtitle')->nullable();
         });
     }
 

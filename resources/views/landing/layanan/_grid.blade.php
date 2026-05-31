@@ -22,9 +22,7 @@
                 }
             }
 
-            $imgSrc = !empty($svc['gambar'])
-                ? asset('storage/' . $svc['gambar'])
-                : ($fallbackImages[$idx % count($fallbackImages)]);
+            $imgSrc = resolveImageUrl($svc['gambar'] ?? null, $fallbackImages[$idx % count($fallbackImages)]);
 
             $badge       = $badgeLabels[$idx % count($badgeLabels)] ?? '';
             $badgeBg     = $badgeColors[$idx % count($badgeColors)];

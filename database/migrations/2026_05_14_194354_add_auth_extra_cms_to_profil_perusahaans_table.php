@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('profil_perusahaans', function (Blueprint $table) {
-            $table->string('auth_badge')->nullable(); // Misal: "Premium Quality"
-            $table->string('footer_copyright')->nullable();
+            $table->text('auth_badge')->nullable(); // Misal: "Premium Quality"
+            $table->text('footer_copyright')->nullable();
         });
     }
 

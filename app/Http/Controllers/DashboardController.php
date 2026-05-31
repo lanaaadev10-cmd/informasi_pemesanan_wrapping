@@ -16,16 +16,15 @@ class DashboardController extends Controller
     public function index()
     {
         // 🚀 Caching Profil & Layanan (Auto-refresh via booted model)
-        $profil = Cache::rememberForever('site_profile', function() {
+        $profil = Cache::remember('site_profile', 3600, function() {
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
 
-
-        $layanans = Cache::rememberForever('site_layanans', function() {
+        $layanans = Cache::remember('site_layanans', 3600, function() {
             return Layanan::all();
         });
 
-        $galeris = Cache::rememberForever('site_galeris', function() {
+        $galeris = Cache::remember('site_galeris_home', 3600, function() {
             return Galeri::latest()->limit(8)->get();
         });
         
@@ -56,7 +55,7 @@ class DashboardController extends Controller
 
     public function profile()
     {
-        $profil = Cache::rememberForever('site_profile', function() {
+        $profil = Cache::remember('site_profile', 3600, function() {
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
 
@@ -68,7 +67,7 @@ class DashboardController extends Controller
      */
     public function tentangKami()
     {
-        $profil = Cache::rememberForever('site_profile', function() {
+        $profil = Cache::remember('site_profile', 3600, function() {
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
 
@@ -80,11 +79,11 @@ class DashboardController extends Controller
      */
     public function layanan()
     {
-        $profil = Cache::rememberForever('site_profile', function() {
+        $profil = Cache::remember('site_profile', 3600, function() {
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
 
-        $layanans = Cache::rememberForever('site_layanans', function() {
+        $layanans = Cache::remember('site_layanans', 3600, function() {
             return Layanan::all();
         });
 

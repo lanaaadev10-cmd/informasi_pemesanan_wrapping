@@ -94,7 +94,7 @@
                 @php
                     $firstItem = $pesanan->details->first();
                     $thumbnail = $firstItem?->layanan->foto_contoh;
-                    $imageUrl = $thumbnail ? asset('storage/' . $thumbnail) : 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=200';
+                    $imageUrl = $thumbnail ? (str_starts_with($thumbnail, 'http') ? $thumbnail : asset('storage/' . $thumbnail)) : 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=200';
                 @endphp
 
                 <div class="flex items-center justify-between gap-4">

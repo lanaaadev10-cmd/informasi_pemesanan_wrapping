@@ -31,7 +31,7 @@
 
     $profil    = \App\Models\ProfilPerusahaan::first();
     $thumbnail = $pesanan->details->first()?->layanan?->foto_contoh;
-    $imageUrl  = $thumbnail ? asset('storage/' . $thumbnail) : null;
+    $imageUrl  = $thumbnail ? (str_starts_with($thumbnail, 'http') ? $thumbnail : asset('storage/' . $thumbnail)) : null;
 @endphp
 
     <style>
