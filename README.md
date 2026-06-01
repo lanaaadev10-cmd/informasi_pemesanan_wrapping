@@ -1,6 +1,6 @@
-<<<<<<< HEAD
-Septa vs Everybody
-=======
+
+SEPTA VS AL
+
 # 🎁 Informasi Pemesanan Wrapping
 
 Sistem informasi pemesanan jasa wrapping berbasis web. Dibangun menggunakan **Laravel 12** dengan **Filament v5** sebagai admin panel, **Blade + Tailwind CSS** untuk frontend, serta **Spatie Permission** dan **Laravel Sanctum** untuk manajemen akses dan autentikasi API.

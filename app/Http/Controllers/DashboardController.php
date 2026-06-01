@@ -2,20 +2,6 @@
 
 namespace App\Http\Controllers;
 
-<<<<<<< HEAD
-use App\Models\ProfilPerusahaan; // Panggil modelnya
-use Illuminate\Http\Request;
-
-class DashboardController extends Controller
-{
-    public function index()
-    {
-        // Ambil data pertama dari database
-        $profil = ProfilPerusahaan::first();
-
-        // Kirim datanya ke file dashboard.blade.php
-        return view('dashboard', compact('profil'));
-=======
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use App\Models\ProfilPerusahaan;
@@ -103,6 +89,5 @@ class DashboardController extends Controller
         });
 
         return view('landing.layanan.index', compact('profil', 'layanans'));
->>>>>>> bf0334c2b14d316dddb6e466f2be6d6502606610
     }
 }

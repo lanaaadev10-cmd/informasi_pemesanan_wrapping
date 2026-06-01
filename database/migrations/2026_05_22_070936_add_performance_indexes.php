@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 1. Indeks untuk Tabel Pesanans
         Schema::table('pesanans', function (Blueprint $table) {
             $table->index('id_user');
             $table->index('status');
@@ -18,16 +19,23 @@ return new class extends Migration
             $table->index(['id_user', 'status']);
         });
 
+        // 2. Indeks untuk Tabel Keranjangs
         Schema::table('keranjangs', function (Blueprint $table) {
             $table->index(['id_user', 'status']);
-            $table->unique(['id_keranjang', 'id_paket']); // Prevent duplicate items
         });
 
+        // 3. PERBAIKAN: Aturan unik dipindah ke detail_keranjangs tempat kolom id_paket berada
+        Schema::table('detail_keranjangs', function (Blueprint $table) {
+            $table->unique(['id_keranjang', 'id_paket'], 'detail_keranjangs_id_keranjang_id_paket_unique');
+        });
+
+        // 4. PERBAIKAN: Mengubah 'status_pembayaran' menjadi 'status' sesuai kolom asli di database
         Schema::table('pembayarans', function (Blueprint $table) {
-            $table->index('status_pembayaran');
-            $table->index(['status_pembayaran', 'updated_at']);
+            $table->index('status');
+            $table->index(['status', 'updated_at']);
         });
 
+        // 5. Indeks untuk Tabel Notifikasis
         Schema::table('notifikasis', function (Blueprint $table) {
             $table->index(['id_user', 'is_read']);
             $table->index(['id_user', 'created_at']);
@@ -48,12 +56,17 @@ return new class extends Migration
 
         Schema::table('keranjangs', function (Blueprint $table) {
             $table->dropIndex(['id_user', 'status']);
-            $table->dropUnique(['id_keranjang', 'id_paket']);
         });
 
+        // Rollback perbaikan di detail_keranjangs
+        Schema::table('detail_keranjangs', function (Blueprint $table) {
+            $table->dropUnique('detail_keranjangs_id_keranjang_id_paket_unique');
+        });
+
+        // Rollback perbaikan di pembayarans
         Schema::table('pembayarans', function (Blueprint $table) {
-            $table->dropIndex(['status_pembayaran']);
-            $table->dropIndex(['status_pembayaran', 'updated_at']);
+            $table->dropIndex(['status']);
+            $table->dropIndex(['status', 'updated_at']);
         });
 
         Schema::table('notifikasis', function (Blueprint $table) {
