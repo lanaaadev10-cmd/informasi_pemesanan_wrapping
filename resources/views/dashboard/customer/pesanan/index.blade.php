@@ -69,7 +69,7 @@
 
                     // Fallback visual car image mapping based on package if order form lacks specific photos
                     $thumbnail = $pesanan->details->first()?->layanan->foto_contoh;
-                    $imageUrl = $thumbnail ? asset('storage/' . $thumbnail) : 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=400';
+                    $imageUrl = $thumbnail ? asset('storage/' . $thumbnail) : asset('images/placeholder.svg');
                 @endphp
 
                 <div class="bg-[#121212] border border-white/5 rounded-[24px] overflow-hidden flex flex-col md:flex-row group hover:border-white/10 transition-all shadow-sm">

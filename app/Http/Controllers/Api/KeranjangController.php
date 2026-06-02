@@ -62,9 +62,10 @@ class KeranjangController extends Controller
                 'data' => new KeranjangResource($keranjang),
             ], 201);
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Gagal menambahkan item ke keranjang.',
                 'data' => null,
             ], 400);
         }
@@ -90,9 +91,10 @@ class KeranjangController extends Controller
                 'data' => new KeranjangResource($keranjang),
             ], 200);
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Gagal memperbarui item keranjang.',
                 'data' => null,
             ], 400);
         }
@@ -114,9 +116,10 @@ class KeranjangController extends Controller
                 'data' => new KeranjangResource($keranjang),
             ], 200);
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Gagal menghapus item dari keranjang.',
                 'data' => null,
             ], 400);
         }
@@ -138,9 +141,10 @@ class KeranjangController extends Controller
                 'data' => new KeranjangResource($keranjang),
             ], 200);
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Gagal mengosongkan keranjang.',
                 'data' => null,
             ], 400);
         }
@@ -169,9 +173,10 @@ class KeranjangController extends Controller
                 ],
             ], 200);
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Terjadi kesalahan.',
             ], 400);
         }
     }
@@ -194,9 +199,10 @@ class KeranjangController extends Controller
                 ],
             ], 200);
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Terjadi kesalahan.',
             ], 400);
         }
     }

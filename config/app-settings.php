@@ -40,6 +40,11 @@ return [
         'chart_months_lookback' => 12,
     ],
 
+    'cart' => [
+        // Max unique items allowed in cart
+        'max_items' => (int) env('CART_MAX_ITEMS', 3),
+    ],
+
     'payment' => [
         // Chunk size for processing multiple payments
         'chunk_size' => 100,

@@ -74,22 +74,14 @@
                 @foreach($keranjang->details as $item)
                     @php
                         // Premium visual fallback selector based on catalog categories
-                        $itemImage = $item->layanan->foto_contoh ? asset('storage/' . $item->layanan->foto_contoh) : '';
-                        if(!$itemImage) {
-                            $fallbacks = [
-                                'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=200&auto=format&fit=crop',
-                                'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=200&auto=format&fit=crop',
-                                'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=200&auto=format&fit=crop'
-                            ];
-                            $itemImage = $fallbacks[$loop->index % count($fallbacks)];
-                        }
+                        $itemImage = $item->layanan->foto_contoh ? asset('storage/' . $item->layanan->foto_contoh) : asset('images/placeholder.svg');
                     @endphp
 
                     <div class="bg-white/[0.01] border border-white/5 rounded-[28px] overflow-hidden p-5 flex flex-col sm:flex-row items-center gap-6 group hover:border-[#f2994a]/25 hover:bg-white/[0.02] transition-all duration-300 relative shadow-md">
                         
                         <!-- Rounded visual thumbnail -->
                         <div class="w-24 h-24 rounded-2xl overflow-hidden bg-white/5 flex items-center justify-center shrink-0 border border-white/5 shadow-inner">
-                            <img src="{{ $itemImage }}" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700">
+                            <img src="{{ $itemImage }}" alt="{{ $item->layanan->nama_layanan }}" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700">
                         </div>
 
                         <!-- Product details -->

@@ -18,7 +18,7 @@ class PesananResource extends JsonResource
             'id_pesanan' => $this->id_pesanan,
             'kode_pesanan' => $this->kode_pesanan,
             'id_user' => $this->id_user,
-            'tanggal_pesan' => $this->tanggal_pesan?->toIso8601String(),
+            'tanggal_pesan' => $this->tanggal_pesan->toIso8601String(),
             'status' => $this->status,
             'status_label' => $this->status ? \App\Enums\OrderStatus::from($this->status)->label() : null,
             'status_badge_color' => $this->status ? \App\Enums\OrderStatus::from($this->status)->badgeColor() : null,

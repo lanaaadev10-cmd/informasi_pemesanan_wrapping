@@ -55,7 +55,7 @@ class PesananService
             }
 
             // Generate unique order code
-            $kodePesanan = 'ORD-' . date('YmdHis') . '-' . Str::random(6);
+            $kodePesanan = 'ORD-' . date('YmdHis') . '-' . strtoupper(Str::random(10));
 
             // Calculate total price
             $totalHarga = $keranjangDetails->sum('subtotal');

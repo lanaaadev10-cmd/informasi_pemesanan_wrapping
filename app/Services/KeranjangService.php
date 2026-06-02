@@ -42,10 +42,10 @@ class KeranjangService
             ->where('id_layanan', $idLayanan)
             ->first();
 
-        // Cek max 3 unique items
+        // Cek max items
         $itemCount = $keranjang->details()->count();
-        if (!$existingItem && $itemCount >= 3) {
-            throw new \Exception('Maksimal hanya 3 paket dalam keranjang.');
+        if (!$existingItem && $itemCount >= $this->getMaxItems()) {
+            throw new \Exception('Maksimal hanya ' . $this->getMaxItems() . ' paket dalam keranjang.');
         }
 
         DB::beginTransaction();
@@ -173,7 +173,7 @@ class KeranjangService
      */
     public function getMaxItems(): int
     {
-        return 3;
+        return config('app-settings.cart.max_items', 3);
     }
 
     /**

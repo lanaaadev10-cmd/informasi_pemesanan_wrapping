@@ -4,73 +4,65 @@
     $statusVal = $pesanan->status instanceof \App\Enums\OrderStatus ? $pesanan->status->value : $pesanan->status;
 @endphp
 
-@section('title', 'Payment Verification - ' . $pesanan->kode_pesanan)
+@section('title', 'Verifikasi Pembayaran - ' . $pesanan->kode_pesanan)
 
 @section('content')
 <div class="max-w-6xl mx-auto py-8 text-white space-y-8 relative overflow-hidden">
-    <!-- Ambient glowing backdrop -->
     <div class="absolute top-0 right-10 w-[500px] h-[400px] bg-[#f2994a]/5 rounded-full blur-[130px] pointer-events-none z-0"></div>
 
-    <!-- Header & Step Indicator -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 z-10 relative border-b border-white/5 pb-6">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-[#f2994a]">Payment Verification</h1>
+            <h1 class="text-2xl font-bold tracking-tight text-[#f2994a]">Verifikasi Pembayaran</h1>
         </div>
         
-        <!-- Step 4 Indicator -->
         <div class="flex items-center gap-4">
-            <span class="text-[10px] text-gray-500 font-medium">Step 4 of 4</span>
+            <span class="text-[10px] text-gray-500 font-medium">Langkah 4 dari 4</span>
             <div class="flex gap-1.5">
                 <div class="w-8 h-1 bg-[#f2994a] rounded-full"></div>
                 <div class="w-8 h-1 bg-[#f2994a] rounded-full"></div>
                 <div class="w-8 h-1 bg-[#f2994a] rounded-full"></div>
                 <div class="w-12 h-1 bg-[#f2994a] rounded-full shadow-[0_0_8px_rgba(242,153,74,0.6)]"></div>
             </div>
-            <span class="text-[10px] text-[#f2994a] font-bold">Manual Payment</span>
+            <span class="text-[10px] text-[#f2994a] font-bold">Pembayaran Manual</span>
         </div>
     </div>
 
-    <!-- Two Column Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 z-10 relative">
         
-        <!-- LEFT COLUMN: Transfer Details -->
         <div class="lg:col-span-7 space-y-6">
             <div class="bg-[#121212] border border-white/5 rounded-3xl p-8 shadow-lg">
                 <div class="flex items-center gap-3 mb-6">
                     <i class="ph ph-bank text-[#f2994a] text-2xl"></i>
-                    <h2 class="text-xl font-bold text-white">Transfer Details</h2>
+                    <h2 class="text-xl font-bold text-white">Detail Transfer</h2>
                 </div>
                 
                 <p class="text-xs text-gray-400 mb-8 leading-relaxed">
-                    Please complete your payment by transferring the exact amount to our official bank account below.
+                    Silakan selesaikan pembayaran Anda dengan mentransfer jumlah yang sesuai ke rekening bank resmi kami di bawah ini.
                 </p>
 
-                <!-- Bank Info Box -->
                 <div class="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 relative overflow-hidden mb-6">
-                    <!-- Subtle pattern or glow inside -->
                     <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
                     
                     <div class="grid grid-cols-3 gap-y-6 relative z-10">
-                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">Bank Name</div>
+                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">Nama Bank</div>
                         <div class="col-span-2 text-right text-xs font-bold text-white">BCA (Bank Central Asia)</div>
                         
-                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest flex items-center">Account Number</div>
+                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest flex items-center">No. Rekening</div>
                         <div class="col-span-2 text-right flex items-center justify-end gap-3">
                             <span class="text-xl md:text-2xl font-mono font-black text-white tracking-widest">123-456-7890</span>
-                            <button onclick="copyToClipboard('1234567890')" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-white" title="Copy Account Number">
+                            <button onclick="copyToClipboard('1234567890')" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-white" title="Salin Nomor Rekening">
                                 <i class="ph ph-copy text-sm"></i>
                             </button>
                         </div>
 
-                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">Account Holder</div>
+                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">Atas Nama</div>
                         <div class="col-span-2 text-right text-xs font-bold text-white">PT Wapping Indonesia</div>
                     </div>
                 </div>
 
-                <!-- Total Amount Box -->
                 <div class="bg-[#241710] border border-[#f2994a]/30 rounded-2xl p-6 flex justify-between items-center mb-6">
                     <div>
-                        <span class="text-[9px] font-bold text-[#f2994a]/70 uppercase tracking-widest block mb-1">Total Amount to Pay</span>
+                        <span class="text-[9px] font-bold text-[#f2994a]/70 uppercase tracking-widest block mb-1">Total yang Harus Dibayar</span>
                         <span class="text-2xl font-bold text-[#f2994a]">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
                     </div>
                     <div class="w-12 h-12 bg-[#f2994a]/10 rounded-xl flex items-center justify-center text-[#f2994a]">
@@ -78,23 +70,21 @@
                     </div>
                 </div>
 
-                <!-- Info Alert -->
                 <div class="flex gap-3 text-[10px] text-gray-400 bg-white/5 rounded-xl p-4 border border-white/5">
                     <i class="ph-fill ph-info text-[#f2994a] text-lg shrink-0"></i>
                     <p class="leading-relaxed">
-                        <strong class="text-gray-300">Important:</strong> Ensure you transfer the exact amount. Payments are typically verified within 30 minutes of proof upload during working hours (09:00 - 18:00).
+                        <strong class="text-gray-300">Penting:</strong> Pastikan Anda mentransfer jumlah yang sesuai. Pembayaran biasanya diverifikasi dalam 30 menit setelah upload bukti selama jam kerja (09:00 - 18:00).
                     </p>
                 </div>
             </div>
 
-            <!-- Order Summary Box -->
             <div class="bg-[#121212] border border-white/5 rounded-3xl p-6 shadow-sm">
-                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-4">Order Summary</span>
+                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-4">Ringkasan Pesanan</span>
                 
                 @php
                     $firstItem = $pesanan->details->first();
                     $thumbnail = $firstItem?->layanan->foto_contoh;
-                    $imageUrl = $thumbnail ? asset('storage/' . $thumbnail) : 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=200';
+                    $imageUrl = $thumbnail ? asset('storage/' . $thumbnail) : asset('images/placeholder.svg');
                 @endphp
 
                 <div class="flex items-center justify-between gap-4">
@@ -112,7 +102,7 @@
                     
                     <div class="shrink-0 hidden sm:block">
                         <span class="bg-[#f2994a]/10 border border-[#f2994a]/30 text-[#f2994a] text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
-                            Waiting Payment
+                            Menunggu Pembayaran
                         </span>
                     </div>
                 </div>
@@ -124,8 +114,8 @@
             <div class="bg-[#121212] border border-white/5 rounded-3xl p-8 shadow-lg lg:sticky lg:top-8">
 
                 @if($statusVal === 'menunggu_pembayaran')
-                    <h2 class="text-xl font-bold text-white mb-2">Proof of Payment</h2>
-                    <p class="text-xs text-gray-400 mb-6">Upload a screenshot or photo of your bank transfer receipt.</p>
+                    <h2 class="text-xl font-bold text-white mb-2">Upload Bukti Pembayaran</h2>
+                    <p class="text-xs text-gray-400 mb-6">Upload screenshot atau foto bukti transfer bank Anda.</p>
 
                     <form action="{{ route('pesanan.upload-bukti', $pesanan->id_pesanan) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
@@ -137,8 +127,8 @@
                                 <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-[#f2994a]/20 group-hover:text-[#f2994a] transition-colors">
                                     <i class="ph ph-cloud-arrow-up text-2xl text-gray-400 group-hover:text-[#f2994a]"></i>
                                 </div>
-                                <p class="text-[11px] font-medium text-gray-300 mb-1">Drag and drop file here<br>or browse files from device</p>
-                                <p class="text-[9px] text-gray-500 uppercase tracking-widest">PNG, JPG, GIF (Max 5MB)</p>
+                                <p class="text-[11px] font-medium text-gray-300 mb-1">Seret file ke sini<br>atau klik untuk memilih file</p>
+                                <p class="text-[9px] text-gray-500 uppercase tracking-widest">PNG, JPG, GIF (Maks 5MB)</p>
                             </div>
 
                             <!-- Preview Image Container (Hidden by default) -->
@@ -163,10 +153,10 @@
                         <!-- Buttons -->
                         <div class="pt-4 space-y-4">
                             <button type="submit" class="w-full py-4 bg-[#f2994a] hover:bg-[#e28a44] text-black font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] active:scale-95 flex justify-center items-center gap-2">
-                                <i class="ph-bold ph-check-circle text-base"></i> Confirm Payment
+                                <i class="ph-bold ph-check-circle text-base"></i> Konfirmasi Pembayaran
                             </button>
                             <a href="{{ route('pesanan.index') }}" class="block text-center text-[10px] text-gray-400 hover:text-white transition-colors">
-                                Cancel & Return to Dashboard
+                                Batal & Kembali ke Dashboard
                             </a>
                         </div>
                     </form>

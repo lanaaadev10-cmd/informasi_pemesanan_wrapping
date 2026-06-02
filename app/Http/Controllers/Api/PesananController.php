@@ -9,6 +9,7 @@ use App\Services\PesananService;
 use App\Models\Pesanan;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Pesanan (Orders) Controller
@@ -68,9 +69,10 @@ class PesananController extends Controller
                 'data' => new PesananResource($pesanan),
             ], 201);
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Gagal membuat pesanan. Silakan periksa kembali data Anda.',
                 'data' => null,
             ], 400);
         }
@@ -85,7 +87,6 @@ class PesananController extends Controller
         try {
             $pesanan = $this->pesananService->getOrderDetails($id);
 
-            // Authorization: user dapat hanya melihat pesanan miliknya, admin bisa semua
             $this->authorize('view', $pesanan);
 
             return response()->json([
@@ -100,9 +101,10 @@ class PesananController extends Controller
                 'data' => null,
             ], 403);
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Detail pesanan tidak ditemukan.',
                 'data' => null,
             ], 404);
         }
@@ -117,7 +119,6 @@ class PesananController extends Controller
         try {
             $pesanan = Pesanan::findOrFail($id);
 
-            // Authorization
             $this->authorize('update', $pesanan);
 
             $pesanan = $this->pesananService->cancelOrder($pesanan);
@@ -134,9 +135,10 @@ class PesananController extends Controller
                 'data' => null,
             ], 403);
         } catch (\Exception $e) {
+            report($e);
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Pesanan tidak dapat dibatalkan. Silakan hubungi admin.',
                 'data' => null,
             ], 400);
         }
@@ -151,13 +153,8 @@ class PesananController extends Controller
         try {
             $pesanan = Pesanan::findOrFail($id);
 
-            // Authorization
             $this->authorize('view', $pesanan);
 
-            // Generate PDF invoice
-            // Implementation depends on your PDF library (TCPDF, DomPDF, etc)
-            // For now, return JSON invoice data
-            
             return response()->json([
                 'status' => 'success',
                 'message' => 'Invoice berhasil diambil',
@@ -169,10 +166,17 @@ class PesananController extends Controller
                     'form' => $pesanan->form,
                 ],
             ], 200);
-        } catch (\Exception $e) {
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => $e->getMessage(),
+                'message' => 'Pesanan tidak ditemukan.',
+                'data' => null,
+            ], 404);
+        } catch (\Exception $e) {
+            report($e);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil invoice. Silakan coba lagi.',
                 'data' => null,
             ], 400);
         }
