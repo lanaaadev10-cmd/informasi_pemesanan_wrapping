@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Pembayaran;
 use App\Models\Pesanan;
 use App\Enums\PaymentStatus;
+use App\Enums\OrderStatus;
 use App\Events\PaymentUploaded;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -21,6 +22,9 @@ use Illuminate\Support\Facades\DB;
  */
 class PembayaranService
 {
+    public function __construct(
+        protected PesananService $pesananService,
+    ) {}
     /**
      * Process payment upload
      */
@@ -47,16 +51,15 @@ class PembayaranService
             ]);
         }
 
+        // Store file first (file system has no transaction rollback)
+        $path = $file->store(
+            'bukti_transfer',
+            'public'
+        );
+
         DB::beginTransaction();
         try {
-            // Store file
-            $path = $file->storeAs(
-                'payments/' . $pesanan->id_pesanan,
-                'proof_' . time() . '.' . $file->extension(),
-                'public'
-            );
-
-            // Update payment record
+            // Update payment record with file path
             $pembayaran->update([
                 'bukti_transfer' => $path,
                 'status_pembayaran' => PaymentStatus::PENDING->value,
@@ -71,6 +74,8 @@ class PembayaranService
             return $pembayaran;
         } catch (\Exception $e) {
             DB::rollBack();
+            // Clean up file if DB commit fails
+            Storage::disk('public')->delete($path);
             throw $e;
         }
     }
@@ -94,14 +99,15 @@ class PembayaranService
                 'tanggal_pembayaran' => now(),
             ]);
 
-            // Update pesanan status to sedang diproses
+            // Update pesanan status via PesananService (state machine validation)
             $pesanan = $pembayaran->pesanan;
-            $pesanan->update(['status' => \App\Enums\OrderStatus::SEDANG_DIPROSES->value]);
+            $this->pesananService->updateStatus(
+                $pesanan,
+                OrderStatus::SEDANG_DIPROSES->value,
+                $catatan
+            );
 
             DB::commit();
-
-            // Emit events
-            event(new \App\Events\PaymentVerified($pesanan->load(['details', 'form', 'user'])));
 
             return $pembayaran->fresh();
         } catch (\Exception $e) {
@@ -121,20 +127,24 @@ class PembayaranService
 
         DB::beginTransaction();
         try {
+            // Hapus bukti transfer jika ada
+            $this->deletePaymentProof($pembayaran);
+
             $pembayaran->update([
                 'status_pembayaran' => PaymentStatus::REJECTED->value,
             ]);
 
-            // Update pesanan status kembali ke menunggu pembayaran
+            // Update pesanan status via PesananService (state machine validation)
             $pesanan = $pembayaran->pesanan;
-            $pesanan->update([
-                'status' => \App\Enums\OrderStatus::MENUNGGU_PEMBAYARAN->value,
-                'catatan_admin' => $alasan,
-            ]);
+            $this->pesananService->updateStatus(
+                $pesanan,
+                OrderStatus::MENUNGGU_PEMBAYARAN->value,
+                $alasan
+            );
 
             DB::commit();
 
-            return $pembayaran;
+            return $pembayaran->fresh();
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

@@ -16,7 +16,6 @@ use Filament\Panel;
 
 class User extends Authenticatable implements FilamentUser
 {
-    use Notifiable, HasRoles;
     use HasFactory, Notifiable, HasRoles, HasApiTokens;
 
     protected $fillable = [

@@ -174,6 +174,12 @@
                 </div>
             @endforeach
         </div>
+
+        @if ($pesanans instanceof \Illuminate\Pagination\LengthAwarePaginator)
+            <div class="mt-6">
+                {{ $pesanans->links() }}
+            </div>
+        @endif
     @endif
 </div>
 @endsection

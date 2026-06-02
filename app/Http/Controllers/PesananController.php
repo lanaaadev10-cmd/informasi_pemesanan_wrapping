@@ -50,7 +50,7 @@ class PesananController extends Controller
             ]);
         }
 
-        $pesanans = $query->get();
+        $pesanans = $query->paginate(10);
 
         return view('dashboard.customer.pesanan.index', compact('pesanans'));
     }

@@ -114,60 +114,8 @@ class Pesanan extends Model
 
 
     // =============================================
-    //  BOOT - Otomatisasi Notifikasi
+    //  NOTES - Notifikasi di-handle oleh Event & Listener
+    //  Lihat: app/Events/ & app/Listeners/ & EventServiceProvider.php
+    //  Alasan: Mencegah duplikasi notifikasi dari model booted + service events
     // =============================================
-    protected static function booted()
-    {
-        static::created(function ($pesanan) {
-            // Notifikasi ke user: pesanan berhasil dibuat
-            Notifikasi::create([
-                'id_user'    => $pesanan->id_user,
-                'id_pesanan' => $pesanan->id_pesanan,
-                'judul'      => '✅ Pesanan Berhasil Dibuat',
-                'pesan'      => 'Pesanan #' . $pesanan->kode_pesanan . ' telah diterima. Tunggu konfirmasi dari admin kami.',
-                'tipe'       => 'pesanan',
-                'is_read'    => false,
-            ]);
-        });
-
-        static::updated(function ($pesanan) {
-            if (!$pesanan->wasChanged('status')) return;
-
-            $notifikasiUser = match ((string) $pesanan->status) {
-                self::STATUS_MENUNGGU_PEMBAYARAN => [
-                    'judul' => '🔔 Pesanan Dikonfirmasi — Silakan Bayar',
-                    'pesan' => 'Pesanan #' . $pesanan->kode_pesanan . ' telah dikonfirmasi admin. Silakan lakukan pembayaran untuk memulai pengerjaan.',
-                ],
-                self::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => null,
-                self::STATUS_DIKONFIRMASI => [
-                    'judul' => '💳 Pembayaran Terverifikasi — Invoice Tersedia',
-                    'pesan' => 'Pembayaran Anda untuk pesanan #' . $pesanan->kode_pesanan . ' telah diverifikasi. Anda sekarang dapat mengunduh invoice.',
-                ],
-                self::STATUS_SEDANG_DIPROSES => [
-                    'judul' => '🔧 Pesanan Sedang Diproses',
-                    'pesan' => 'Kendaraan Anda untuk pesanan #' . $pesanan->kode_pesanan . ' sedang dalam tahap pengerjaan oleh tim kami.',
-                ],
-                self::STATUS_SELESAI => [
-                    'judul' => '🎉 Pesanan Selesai!',
-                    'pesan' => 'Halo! Pengerjaan kendaraan Anda untuk pesanan #' . $pesanan->kode_pesanan . ' telah selesai. Silakan ambil di toko kami. Terima kasih!',
-                ],
-                self::STATUS_DITOLAK => [
-                    'judul' => '❌ Pesanan Ditolak',
-                    'pesan' => 'Maaf, pesanan #' . $pesanan->kode_pesanan . ' tidak dapat diproses. Silakan hubungi admin untuk informasi lebih lanjut.',
-                ],
-                default => null,
-            };
-
-            if ($notifikasiUser) {
-                Notifikasi::create([
-                    'id_user'    => $pesanan->id_user,
-                    'id_pesanan' => $pesanan->id_pesanan,
-                    'judul'      => $notifikasiUser['judul'],
-                    'pesan'      => $notifikasiUser['pesan'],
-                    'tipe'       => 'info',
-                    'is_read'    => false,
-                ]);
-            }
-        });
-    }
 }

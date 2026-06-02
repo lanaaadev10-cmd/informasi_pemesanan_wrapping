@@ -25,9 +25,9 @@ class AppServiceProvider extends ServiceProvider
             return new PesananService($app->make(KeranjangService::class));
         });
 
-        // Register Pembayaran Service
+        // Register Pembayaran Service (depends on PesananService)
         $this->app->singleton(PembayaranService::class, function ($app) {
-            return new PembayaranService();
+            return new PembayaranService($app->make(PesananService::class));
         });
 
         // Register Notifikasi Service

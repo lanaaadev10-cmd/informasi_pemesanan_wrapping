@@ -98,48 +98,4 @@ Route::middleware('throttle:60,5')->group(function () {
 
 });
 
-// --- RUTE API (DENGAN THROTTLE BERBEDA) ---
-Route::middleware(['auth', 'throttle:60,1'])->prefix('api')->group(function () {
-    // Keranjang API
-    Route::get('/keranjang', [\App\Http\Controllers\Api\KeranjangApiController::class, 'index'])->name('api.keranjang.index');
-    Route::post('/keranjang/tambah', [\App\Http\Controllers\Api\KeranjangApiController::class, 'tambah'])->name('api.keranjang.tambah');
-    Route::patch('/keranjang/{id}', [\App\Http\Controllers\Api\KeranjangApiController::class, 'update'])->name('api.keranjang.update');
-    Route::delete('/keranjang/{id}', [\App\Http\Controllers\Api\KeranjangApiController::class, 'hapus'])->name('api.keranjang.hapus');
-    Route::delete('/keranjang', [\App\Http\Controllers\Api\KeranjangApiController::class, 'kosongkan'])->name('api.keranjang.kosongkan');
-
-    // Layanan API (Katalog)
-    Route::get('/layanans', [\App\Http\Controllers\Api\LayananApiController::class, 'index'])->name('api.layanans.index');
-    Route::get('/layanans/categories', [\App\Http\Controllers\Api\LayananApiController::class, 'categories'])->name('api.layanans.categories');
-    Route::get('/layanans/{id}', [\App\Http\Controllers\Api\LayananApiController::class, 'show'])->name('api.layanans.show');
-    Route::get('/layanans/kategori/{kategori}', [\App\Http\Controllers\Api\LayananApiController::class, 'byCategory'])->name('api.layanans.byCategory');
-
-    // Pesanan API
-    Route::get('/pesanan', [\App\Http\Controllers\Api\PesananApiController::class, 'index'])->name('api.pesanan.index');
-    Route::post('/pesanan', [\App\Http\Controllers\Api\PesananApiController::class, 'store'])->name('api.pesanan.store');
-    Route::get('/pesanan/{id}', [\App\Http\Controllers\Api\PesananApiController::class, 'show'])->name('api.pesanan.show');
-    Route::get('/pesanan/{id}/status', [\App\Http\Controllers\Api\PesananApiController::class, 'status'])->name('api.pesanan.status');
-    Route::post('/pesanan/{id}/upload-bukti', [\App\Http\Controllers\Api\PesananApiController::class, 'uploadBukti'])->name('api.pesanan.uploadBukti');
-    Route::get('/pesanan/{id}/timeline', [\App\Http\Controllers\Api\PesananApiController::class, 'timeline'])->name('api.pesanan.timeline');
-
-    // Pembayaran API
-    Route::get('/pembayaran/{pesanan_id}', [\App\Http\Controllers\Api\PembayaranApiController::class, 'show'])->name('api.pembayaran.show');
-    Route::post('/pembayaran/{pesanan_id}/verify', [\App\Http\Controllers\Api\PembayaranApiController::class, 'verify'])->name('api.pembayaran.verify');
-    Route::get('/pembayaran/methods', [\App\Http\Controllers\Api\PembayaranApiController::class, 'methods'])->name('api.pembayaran.methods');
-
-    // User Profile API
-    Route::get('/user/profile', [\App\Http\Controllers\Api\UserProfileApiController::class, 'show'])->name('api.user.profile.show');
-    Route::patch('/user/profile', [\App\Http\Controllers\Api\UserProfileApiController::class, 'update'])->name('api.user.profile.update');
-    Route::patch('/user/password', [\App\Http\Controllers\Api\UserProfileApiController::class, 'updatePassword'])->name('api.user.password.update');
-    Route::delete('/user/profile', [\App\Http\Controllers\Api\UserProfileApiController::class, 'destroy'])->name('api.user.profile.destroy');
-    Route::get('/user/dashboard/stats', [\App\Http\Controllers\Api\UserProfileApiController::class, 'dashboardStats'])->name('api.user.dashboard.stats');
-
-    // Notifikasi API
-    Route::get('/notifikasi', [\App\Http\Controllers\Api\NotifikasiApiController::class, 'index'])->name('api.notifikasi.index');
-    Route::get('/notifikasi/unread', [\App\Http\Controllers\Api\NotifikasiApiController::class, 'unread'])->name('api.notifikasi.unread');
-    Route::get('/notifikasi/{id}', [\App\Http\Controllers\Api\NotifikasiApiController::class, 'show'])->name('api.notifikasi.show');
-    Route::patch('/notifikasi/{id}', [\App\Http\Controllers\Api\NotifikasiApiController::class, 'markAsRead'])->name('api.notifikasi.markAsRead');
-    Route::patch('/notifikasi/mark-all-read', [\App\Http\Controllers\Api\NotifikasiApiController::class, 'markAllAsRead'])->name('api.notifikasi.markAllAsRead');
-    Route::delete('/notifikasi/{id}', [\App\Http\Controllers\Api\NotifikasiApiController::class, 'destroy'])->name('api.notifikasi.destroy');
-    Route::delete('/notifikasi', [\App\Http\Controllers\Api\NotifikasiApiController::class, 'deleteAll'])->name('api.notifikasi.deleteAll');
-});
 require __DIR__.'/auth.php';
