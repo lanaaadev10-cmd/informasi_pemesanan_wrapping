@@ -133,7 +133,7 @@ class TentangKamiResource extends Resource
     public static function canCreate(): bool { return false; }
     public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool { return false; }
 
-    protected static function shouldRegisterNavigation(): bool
+    public static function shouldRegisterNavigation(): bool
     {
         return true;
     }
