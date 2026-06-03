@@ -39,7 +39,7 @@
             </div>
 
             <div class="text-right space-y-1">
-                <span class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest">Estimasi Selesai</span>
+                <span class="block text-[9px] font-bold text-gray-500 uppercase tracking-widest">{{ $profil->label_estimasi_selesai ?? 'Estimasi Selesai' }}</span>
                 <span class="block text-sm font-extrabold text-white font-mono">{{ $estimasiSelesai }}</span>
             </div>
         </div>
@@ -79,7 +79,7 @@
                 </p>
             </div>
             <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 bg-[#f2994a] hover:bg-[#e28a44] text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-xl transition-all shadow-md active:scale-95">
-                <i class="ph-bold ph-palette text-xs"></i> Pilih Layanan
+                <i class="ph-bold ph-palette text-xs"></i> {{ $profil->cta_pilih_layanan ?? 'Pilih Layanan' }}
             </a>
         </div>
     </div>

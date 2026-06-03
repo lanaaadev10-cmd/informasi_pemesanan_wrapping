@@ -7,9 +7,9 @@
 
     <div class="max-w-7xl mx-auto relative z-10">
         <div class="text-center mb-16" data-aos="fade-up">
-            <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block mb-3">Keunggulan Layanan</span>
+            <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block mb-3">{{ $profil->home_section_keunggulan_badge ?? 'Keunggulan Layanan' }}</span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
-                Mengapa Memilih <span class="relative inline-block pb-2">Wapping<span class="absolute bottom-0 left-0 w-full h-[3px] bg-[#f2994a] rounded-full"></span></span>?
+                {!! $profil->home_section_keunggulan_title ?? 'Mengapa Memilih <span class="relative inline-block pb-2">Wapping<span class="absolute bottom-0 left-0 w-full h-[3px] bg-[#f2994a] rounded-full"></span></span>?' !!}
             </h2>
         </div>
 
@@ -27,7 +27,7 @@
                 </div>
                 <div class="pt-8">
                     <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#f2994a] hover:text-[#e28a44] transition-all group-hover:translate-x-1">
-                        Selengkapnya <i class="ph-bold ph-arrow-right"></i>
+                        {{ $profil->cta_selengkapnya ?? 'Selengkapnya' }} <i class="ph-bold ph-arrow-right"></i>
                     </a>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="pt-2">
                         <a href="https://wa.me/{{ $waNumber }}" class="inline-block bg-black text-[#f2994a] hover:bg-black/90 hover:text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
-                            Cek Syarat &amp; Ketentuan
+                            {{ $profil->cta_cek_syarat ?? 'Cek Syarat &amp; Ketentuan' }}
                         </a>
                     </div>
                 </div>

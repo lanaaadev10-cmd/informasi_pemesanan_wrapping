@@ -34,13 +34,13 @@
         
         @if($keranjang && $keranjang->details->isNotEmpty())
             <div class="flex items-center shrink-0">
-                <form action="{{ route('keranjang.kosongkan') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengosongkan seluruh isi keranjang?')">
+                <form action="{{ route('keranjang.kosongkan') }}" method="POST" onsubmit="return confirm('{{ $profil->alert_konfirmasi_kosongkan ?? 'Apakah Anda yakin ingin mengosongkan seluruh isi keranjang?' }}')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" 
                             class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 hover:border-red-500/35 text-red-400 hover:text-red-300 rounded-2xl font-bold text-[10px] tracking-wider uppercase transition-all active:scale-95 shadow-sm">
                         <i class="ph-bold ph-trash-simple text-xs"></i>
-                        <span>Kosongkan Keranjang</span>
+                            <span>{{ $profil->cta_kosongkan ?? 'Kosongkan Keranjang' }}</span>
                     </button>
                 </form>
             </div>
@@ -57,12 +57,12 @@
                     <i class="ph-bold ph-shopping-bag text-3xl text-gray-500"></i>
                 </div>
                 <div class="space-y-2">
-                    <h3 class="text-xl font-bold text-white">Keranjang Kosong</h3>
-                    <p class="text-gray-400 text-xs font-light leading-relaxed">Sepertinya Anda belum memilih layanan wrapping premium terbaik untuk kendaraan Anda.</p>
+                    <h3 class="text-xl font-bold text-white">{{ $profil->empty_keranjang_title ?? 'Keranjang Kosong' }}</h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed">{{ $profil->empty_keranjang_desc ?? 'Sepertinya Anda belum memilih layanan wrapping premium terbaik untuk kendaraan Anda.' }}</p>
                 </div>
                 <a href="{{ route('katalog.user') }}" 
                    class="inline-flex items-center gap-2 px-6 py-3.5 bg-[#f2994a] hover:bg-[#e28a44] text-black rounded-2xl font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-105 active:scale-95">
-                    Explore Layanan &rarr;
+                    {{ $profil->cta_explore_layanan ?? 'Explore Layanan' }} &rarr;
                 </a>
             </div>
         </div>
@@ -97,13 +97,13 @@
                                 </div>
 
                                 <!-- Delete button from figma -->
-                                <form action="{{ route('keranjang.hapus', $item->id_detail) }}" method="POST" class="shrink-0" onsubmit="return confirm('Hapus layanan ini dari keranjang?')">
+                                <form action="{{ route('keranjang.hapus', $item->id_detail) }}" method="POST" class="shrink-0" onsubmit="return confirm('{{ $profil->alert_hapus_keranjang ?? 'Hapus layanan ini dari keranjang?' }}')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" 
                                             class="flex items-center gap-1.5 text-xs text-red-500/80 hover:text-red-400 font-bold transition-all px-3 py-1.5 rounded-xl hover:bg-red-500/5 active:scale-95">
                                         <i class="ph ph-trash-simple text-sm"></i>
-                                        <span>Hapus</span>
+                                        <span>{{ $profil->cta_hapus ?? 'Hapus' }}</span>
                                     </button>
                                 </form>
                             </div>
@@ -153,7 +153,7 @@
 
                                 <!-- Subtotal calculation display -->
                                 <div class="text-right">
-                                    <span class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">Subtotal</span>
+                                    <span class="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-0.5">{{ $profil->label_subtotal ?? 'Subtotal' }}</span>
                                     <span id="subtotal-{{ $item->id_detail }}" 
                                           class="text-[#f2994a] text-lg font-black"
                                           data-unit-price="{{ $item->harga_satuan }}">
@@ -178,7 +178,7 @@
                     <div class="w-10 h-10 rounded-full bg-[#f2994a]/5 group-hover:bg-[#f2994a]/10 flex items-center justify-center text-[#f2994a] transition-all">
                         <i class="ph ph-plus text-base"></i>
                     </div>
-                    <span class="text-xs font-bold text-white tracking-wider uppercase">Tambah Layanan Lainnya</span>
+                    <span class="text-xs font-bold text-white tracking-wider uppercase">{{ $profil->cta_tambah_lainnya ?? 'Tambah Layanan Lainnya' }}</span>
                 </a>
             </div>
 
@@ -201,7 +201,7 @@
                         <div class="absolute -right-12 -top-12 w-48 h-48 bg-[#f2994a]/5 blur-[70px] rounded-full pointer-events-none"></div>
 
                         <h3 class="text-lg font-bold mb-8 flex items-center gap-2.5 relative z-10">
-                            <span class="text-lg">🧾</span> Ringkasan Pesanan
+                            <span class="text-lg">🧾</span> {{ $profil->section_ringkasan_pesanan ?? 'Ringkasan Pesanan' }}
                         </h3>
 
                         <!-- Detailed rows breakdown -->

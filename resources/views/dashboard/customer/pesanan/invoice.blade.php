@@ -29,7 +29,6 @@
         default             => ucfirst(str_replace('_', ' ', $metodeStr)),
     };
 
-    $profil    = \App\Models\ProfilPerusahaan::first();
     $thumbnail = $pesanan->details->first()?->layanan?->foto_contoh;
     $imageUrl  = $thumbnail ? asset('storage/' . $thumbnail) : null;
 @endphp
@@ -365,7 +364,7 @@
 {{-- Action Bar --}}
 <div class="action-bar">
     <a href="{{ url()->previous() }}">
-        <i class="ph-bold ph-arrow-left"></i> Kembali
+        <i class="ph-bold ph-arrow-left"></i> {{ $profil->cta_kembali ?? 'Kembali' }}
     </a>
     <div style="text-align:center; flex:1;">
         <span style="font-size:11px; color:#555;">Invoice #WAP-{{ $pesanan->kode_pesanan }}</span>
@@ -393,7 +392,7 @@
             <div class="invoice-meta">
                 <div class="invoice-label">Invoice</div>
                 <div class="invoice-number">#WAP-{{ $pesanan->kode_pesanan }}</div>
-                <div class="badge-lunas">✓ LUNAS</div>
+                <div class="badge-lunas">✓ {{ $profil->status_lunas ?? 'LUNAS' }}</div>
             </div>
         </div>
         <div class="header-stats">
@@ -402,7 +401,7 @@
                 <div class="stat-value">{{ $tglBayar }}</div>
             </div>
             <div class="stat-item">
-                <div class="stat-label">Metode Pembayaran</div>
+                <div class="stat-label">{{ $profil->label_metode_pembayaran ?? 'Metode Pembayaran' }}</div>
                 <div class="stat-value">{{ $metodeLabel }}</div>
             </div>
             <div class="stat-item">
@@ -423,7 +422,7 @@
     {{-- BILLED TO + VEHICLE INFO --}}
     <div class="info-row">
         <div class="info-card">
-            <div class="info-section-label">Billed To</div>
+            <div class="info-section-label">{{ $profil->invoice_billed_to ?? 'Billed To' }}</div>
             <div class="info-name">{{ $pesanan->form?->nama_pemesan ?? $pesanan->user->name }}</div>
             <div class="info-detail">
                 {{ $pesanan->user->email }}<br>
@@ -434,7 +433,7 @@
             </div>
         </div>
         <div class="info-card">
-            <div class="info-section-label">Spesifikasi Kendaraan</div>
+            <div class="info-section-label">{{ $profil->invoice_spesifikasi ?? 'Spesifikasi Kendaraan' }}</div>
             <div class="info-name">{{ $pesanan->form?->model_kendaraan ?? '-' }}</div>
             <div class="info-detail">
                 Warna: {{ $pesanan->form?->warna_kendaraan ?? '-' }}<br>
@@ -449,10 +448,10 @@
         <table>
             <thead>
                 <tr>
-                    <th style="text-align:left;">Layanan</th>
+                    <th style="text-align:left;">{{ $profil->section_pilih_layanan ?? 'Layanan' }}</th>
                     <th>Qty</th>
                     <th>Harga Satuan</th>
-                    <th>Subtotal</th>
+                    <th>{{ $profil->label_subtotal ?? 'Subtotal' }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -477,15 +476,15 @@
     <div class="totals-section">
         <div class="totals-box">
             <div class="total-row">
-                <span>Subtotal Layanan</span>
+                <span>{{ $profil->label_subtotal ?? 'Subtotal Layanan' }}</span>
                 <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
             </div>
             <div class="total-row">
-                <span>Biaya Administrasi</span>
+                <span>{{ $profil->label_biaya_admin ?? 'Biaya Administrasi' }}</span>
                 <span>Rp 0</span>
             </div>
             <div class="total-grand">
-                <div class="total-grand-label">Total<br>Tagihan</div>
+                <div class="total-grand-label">{{ $profil->label_total_tagihan ?? 'Total Tagihan' }}</div>
                 <div class="total-grand-amount">Rp {{ number_format($totalFinal, 0, ',', '.') }}</div>
             </div>
         </div>
@@ -494,15 +493,15 @@
     {{-- FOOTER --}}
     <div class="invoice-footer">
         <div>
-            <div class="footer-printed">Dicetak: {{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }} WIB</div>
+            <div class="footer-printed">{{ $profil->label_dicetak ?? 'Dicetak' }}: {{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }} WIB</div>
         </div>
         <div class="footer-note">
-            Dokumen ini berlaku sah tanpa tanda tangan basah<br>
+            {{ $profil->invoice_legal ?? 'Dokumen ini berlaku sah tanpa tanda tangan basah' }}<br>
             Invoice #WAP-{{ $pesanan->kode_pesanan }}
         </div>
         <div>
             <div class="footer-brand">{{ $profil?->nama_perusahaan ?? 'WAPPING' }}</div>
-            <div class="footer-brand-sub">Thank you for your trust</div>
+            <div class="footer-brand-sub">{{ $profil->invoice_thankyou ?? 'Thank you for your trust' }}</div>
         </div>
     </div>
 

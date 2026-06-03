@@ -1,7 +1,7 @@
 <!-- Layanan Cepat Section -->
 <div class="space-y-6">
     <div class="flex justify-between items-center">
-        <h3 class="text-lg font-bold text-white tracking-tight">Layanan Cepat</h3>
+        <h3 class="text-lg font-bold text-white tracking-tight">{{ $profil->section_layanan_cepat ?? 'Layanan Cepat' }}</h3>
         <a href="{{ route('katalog.user') }}" class="text-[10px] font-bold text-[#f2994a] uppercase tracking-widest hover:underline flex items-center gap-1">
             Lihat Semua Layanan <i class="ph-bold ph-caret-right text-xs"></i>
         </a>

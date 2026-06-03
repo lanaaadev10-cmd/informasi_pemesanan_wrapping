@@ -18,6 +18,7 @@
         $accentColor = $profil->accent_color ?? '#f2994a';
         $galeriTitle = $profil->galeri_hero_title ?? 'Precision Mastery Gallery';
         $galeriDesc = $profil->galeri_hero_desc ?? 'Explore our curated selection of high-end automotive transformations. From matte finishes to protective layers, witness the art of precision in every detail.';
+        $galeriFilterAll = $profil->galeri_filter_all_label ?? 'All Works';
     @endphp
 
     <style>

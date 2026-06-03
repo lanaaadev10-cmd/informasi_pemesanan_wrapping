@@ -2,19 +2,19 @@
     <div class="lg:col-span-3 space-y-6">
         <div>
             <h2 class="text-2xl sm:text-3xl font-black text-white mb-3 italic">
-                Mengapa Memilih Kami?
+                {{ $profil?->layanan_section_mengapa_title ?? 'Mengapa Memilih Kami?' }}
             </h2>
             <p class="text-gray-400 text-sm leading-relaxed max-w-lg">
-                Kami menggunakan keahlian teknis dengan material terbaik dunia untuk memastikan aset Anda terlindung sempurna. Setiap pengerjaan dilakukan di ruangan steril dengan kontrol suhu untuk hasil yang maksimal tanpa gelembung udara.
+                {{ $profil?->layanan_section_mengapa_desc ?? 'Kami menggunakan keahlian teknis dengan material terbaik dunia untuk memastikan aset Anda terlindung sempurna. Setiap pengerjaan dilakukan di ruangan steril dengan kontrol suhu untuk hasil yang maksimal tanpa gelembung udara.' }}
             </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2 text-xs sm:text-sm font-semibold text-gray-300">
             @php
                 $benefitTags = [
-                    ['icon' => '🔧', 'text' => 'Instalatur Bersertifikat'],
-                    ['icon' => '🏠', 'text' => 'Ruangan Steril'],
-                    ['icon' => '✅', 'text' => 'Quality Control 3 Lapis'],
+                    ['icon' => '🔧', 'text' => $profil->layanan_benefit_1_label ?? 'Instalatur Bersertifikat'],
+                    ['icon' => '🏠', 'text' => $profil->layanan_benefit_2_label ?? 'Ruangan Steril'],
+                    ['icon' => '✅', 'text' => $profil->layanan_benefit_3_label ?? 'Quality Control 3 Lapis'],
                 ];
             @endphp
             @foreach($benefitTags as $tag)

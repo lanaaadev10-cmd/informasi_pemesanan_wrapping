@@ -110,30 +110,30 @@
             
             {{-- Menu Navigasi Desktop --}}
             <div class="hidden md:flex items-center gap-10">
-                <a href="{{ route('home') }}" class="text-sm font-medium {{ Request::routeIs('home') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">Beranda</a>
-                <a href="{{ route('layanan') }}" class="text-sm font-medium {{ Request::routeIs('layanan') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">Layanan</a>
-                <a href="{{ route('galeri.user') }}" class="text-sm font-medium {{ Request::routeIs('galeri.user') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">Galeri</a>
-                <a href="{{ route('tentang-kami') }}" class="text-sm font-medium {{ Request::routeIs('tentang-kami') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">Tentang Kami</a>
+                <a href="{{ route('home') }}" class="text-sm font-medium {{ Request::routeIs('home') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ $profil->nav_beranda ?? 'Beranda' }}</a>
+                <a href="{{ route('layanan') }}" class="text-sm font-medium {{ Request::routeIs('layanan') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ $profil->nav_layanan ?? 'Layanan' }}</a>
+                <a href="{{ route('galeri.user') }}" class="text-sm font-medium {{ Request::routeIs('galeri.user') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ $profil->nav_galeri ?? 'Galeri' }}</a>
+                <a href="{{ route('tentang-kami') }}" class="text-sm font-medium {{ Request::routeIs('tentang-kami') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ $profil->nav_tentang_kami ?? 'Tentang Kami' }}</a>
                 
                 @if($is_frontend)
                     <div class="flex items-center gap-4 border-l pl-6 border-white/10">
                         @guest
                             <a href="{{ route('login') }}" class="text-sm font-bold text-gray-300 hover:text-[#f2994a] transition-colors">
-                                Masuk
+                                {{ $profil->nav_masuk ?? 'Masuk' }}
                             </a>
                             <a href="{{ route('register') }}" class="px-6 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider text-black bg-[#f2994a] hover:bg-[#e28a44] transition-all hover:scale-105 shadow-md">
-                                Daftar
+                                {{ $profil->nav_daftar ?? 'Daftar' }}
                             </a>
                         @endguest
                         @auth
                             <a href="{{ route('katalog.user') }}" class="px-6 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider text-black bg-[#f2994a] hover:bg-[#e28a44] transition-all hover:scale-105 shadow-md">
-                                Pemesanan
+                                {{ $profil->nav_pemesanan ?? 'Pemesanan' }}
                             </a>
-                            <a href="{{ route('dashboard') }}" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all" title="Dashboard">
+                            <a href="{{ route('dashboard') }}" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all" title="{{ $profil->nav_dashboard ?? 'Dashboard' }}">
                                 <i class="ph-bold ph-user-circle text-xl text-[#f2994a]"></i>
                             </a>
                             <a href="{{ route('logout.get') }}" class="text-sm font-bold text-red-500 hover:text-red-400 transition-colors">
-                                Keluar
+                                {{ $profil->nav_keluar ?? 'Keluar' }}
                             </a>
                         @endauth
                     </div>
@@ -151,11 +151,11 @@
                         <div class="flex items-center gap-6 border-l pl-8 border-gray-100">
                             <a href="{{ route('dashboard') }}" class="text-sm font-bold text-gray-900 flex items-center gap-2">
                                 <i class="ph ph-user-circle text-lg"></i>
-                                Dashboard
+                                {{ $profil->nav_dashboard ?? 'Dashboard' }}
                             </a>
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="text-sm font-bold text-red-500 hover:text-red-600">Keluar</button>
+                                <button type="submit" class="text-sm font-bold text-red-500 hover:text-red-600">{{ $profil->nav_keluar ?? 'Keluar' }}</button>
                             </form>
                         </div>
                     @endauth
@@ -175,25 +175,25 @@
              @click.outside="mobileMenuOpen = false">
             <div class="p-8 space-y-6">
                 <div class="space-y-1">
-                    <a href="{{ route('home') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('home') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-600') }} transition-colors">Beranda</a>
-                    <a href="{{ route('layanan') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('layanan') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">Layanan</a>
-                    <a href="{{ route('galeri.user') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('galeri.user') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">Galeri</a>
-                    <a href="{{ route('tentang-kami') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('tentang-kami') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">Tentang Kami</a>
+                    <a href="{{ route('home') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('home') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-600') }} transition-colors">{{ $profil->nav_beranda ?? 'Beranda' }}</a>
+                    <a href="{{ route('layanan') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('layanan') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">{{ $profil->nav_layanan ?? 'Layanan' }}</a>
+                    <a href="{{ route('galeri.user') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('galeri.user') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">{{ $profil->nav_galeri ?? 'Galeri' }}</a>
+                    <a href="{{ route('tentang-kami') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('tentang-kami') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">{{ $profil->nav_tentang_kami ?? 'Tentang Kami' }}</a>
                 </div>
                 
                 <div class="pt-6 border-t {{ $is_frontend ? 'border-white/5' : 'border-gray-100' }}">
                     @if($is_frontend)
                         @guest
                             <div class="grid grid-cols-2 gap-4">
-                                <a href="{{ route('login') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-white/5 rounded-2xl font-bold text-gray-300 border border-white/10 transition-colors hover:bg-white/10">Masuk</a>
-                                <a href="{{ route('register') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 btn-premium text-white rounded-2xl font-bold shadow-lg transition-transform hover:scale-105">Daftar</a>
+                                <a href="{{ route('login') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-white/5 rounded-2xl font-bold text-gray-300 border border-white/10 transition-colors hover:bg-white/10">{{ $profil->nav_masuk ?? 'Masuk' }}</a>
+                                <a href="{{ route('register') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 btn-premium text-white rounded-2xl font-bold shadow-lg transition-transform hover:scale-105">{{ $profil->nav_daftar ?? 'Daftar' }}</a>
                             </div>
                         @endguest
                         @auth
                             <div class="grid grid-cols-1 gap-4">
-                                <a href="{{ route('katalog.user') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-[#f2994a] text-black font-extrabold rounded-2xl shadow-lg uppercase tracking-wider text-sm transition-transform hover:scale-105">Pemesanan</a>
-                                <a href="{{ route('dashboard') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-white/5 rounded-2xl font-bold text-gray-300 border border-white/10 transition-colors hover:bg-white/10">Dashboard</a>
-                                <a href="{{ route('logout.get') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-red-500/10 text-red-500 rounded-2xl font-bold border border-red-500/20 transition-colors hover:bg-red-500/20">Keluar</a>
+                                <a href="{{ route('katalog.user') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-[#f2994a] text-black font-extrabold rounded-2xl shadow-lg uppercase tracking-wider text-sm transition-transform hover:scale-105">{{ $profil->nav_pemesanan ?? 'Pemesanan' }}</a>
+                                <a href="{{ route('dashboard') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-white/5 rounded-2xl font-bold text-gray-300 border border-white/10 transition-colors hover:bg-white/10">{{ $profil->nav_dashboard ?? 'Dashboard' }}</a>
+                                <a href="{{ route('logout.get') }}" @click="mobileMenuOpen = false" class="flex items-center justify-center py-4 bg-red-500/10 text-red-500 rounded-2xl font-bold border border-red-500/20 transition-colors hover:bg-red-500/20">{{ $profil->nav_keluar ?? 'Keluar' }}</a>
                             </div>
                         @endauth
                     @else
@@ -212,7 +212,7 @@
                                 </a>
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="w-full py-4 text-center text-lg font-bold text-red-500 bg-red-50 rounded-2xl transition-colors hover:bg-red-100">Keluar</button>
+                                    <button type="submit" class="w-full py-4 text-center text-lg font-bold text-red-500 bg-red-50 rounded-2xl transition-colors hover:bg-red-100">{{ $profil->nav_keluar ?? 'Keluar' }}</button>
                                 </form>
                             </div>
                         @endauth
@@ -243,10 +243,10 @@
 
                 {{-- Horizontal Nav Links --}}
                 <div class="flex flex-wrap justify-center gap-8 md:gap-12 mb-10 text-sm font-medium text-gray-400">
-                    <a href="{{ route('profil.perusahaan') }}" class="hover:text-[#f2994a] transition-all">Tentang Kami</a>
-                    <a href="{{ route('katalog.user') }}" class="hover:text-[#f2994a] transition-all">Layanan</a>
-                    <a href="#" class="hover:text-[#f2994a] transition-all">Kebijakan Privasi</a>
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '') }}" class="hover:text-[#f2994a] transition-all">Hubungi Kami</a>
+                    <a href="{{ route('profil.perusahaan') }}" class="hover:text-[#f2994a] transition-all">{{ $profil->footer_tentang ?? 'Tentang Kami' }}</a>
+                    <a href="{{ route('katalog.user') }}" class="hover:text-[#f2994a] transition-all">{{ $profil->footer_layanan ?? 'Layanan' }}</a>
+                    <a href="#" class="hover:text-[#f2994a] transition-all">{{ $profil->footer_kebijakan_privasi ?? 'Kebijakan Privasi' }}</a>
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '') }}" class="hover:text-[#f2994a] transition-all">{{ $profil->footer_hubungi_kami ?? 'Hubungi Kami' }}</a>
                 </div>
 
                 {{-- Social Icons --}}
@@ -282,7 +282,7 @@
 
                 {{-- Copyright Notice --}}
                 <div class="pt-8 border-t border-white/5 text-gray-500 text-xs font-medium">
-                    <p>&copy; 2026 {{ $profil->nama_perusahaan ?? 'Wapping' }} Premium Wrapping. Hak Cipta Dilindungi.</p>
+                    <p>{{ $profil->footer_copyright ?? '&copy; 2026 Wapping Premium Wrapping. Hak Cipta Dilindungi.' }}</p>
                 </div>
             </div>
         </footer>
@@ -297,14 +297,14 @@
                         </p>
                     </div>
                     <div>
-                        <h5 class="font-bold text-gray-900 mb-8 tracking-widest uppercase text-xs">Navigasi</h5>
+                        <h5 class="font-bold text-gray-900 mb-8 tracking-widest uppercase text-xs">{{ $profil->footer_navigasi ?? 'Navigasi' }}</h5>
                         <ul class="space-y-4 text-sm font-medium text-gray-500">
-                            <li><a href="{{ route('home') }}" class="hover:text-orange-600 transition-all">Beranda</a></li>
-                            <li><a href="{{ route('profil.perusahaan') }}" class="hover:text-orange-600 transition-all">Profil Perusahaan</a></li>
+                            <li><a href="{{ route('home') }}" class="hover:text-orange-600 transition-all">{{ $profil->nav_beranda ?? 'Beranda' }}</a></li>
+                            <li><a href="{{ route('profil.perusahaan') }}" class="hover:text-orange-600 transition-all">{{ $profil->nav_profil_perusahaan ?? 'Profil Perusahaan' }}</a></li>
                         </ul>
                     </div>
                     <div>
-                        <h5 class="font-bold text-gray-900 mb-8 tracking-widest uppercase text-xs">Hubungi Kami</h5>
+                        <h5 class="font-bold text-gray-900 mb-8 tracking-widest uppercase text-xs">{{ $profil->footer_hubungi_kami ?? 'Hubungi Kami' }}</h5>
                         <ul class="space-y-4 text-sm font-medium text-gray-500">
                             <li class="flex items-center gap-3">
                                 <i class="ph ph-envelope-simple text-orange-600 text-lg"></i>
@@ -317,7 +317,7 @@
                         </ul>
                     </div>
                     <div>
-                        <h5 class="font-bold text-gray-900 mb-8 tracking-widest uppercase text-xs">Lokasi Kami</h5>
+                        <h5 class="font-bold text-gray-900 mb-8 tracking-widest uppercase text-xs">{{ $profil->footer_lokasi ?? 'Lokasi Kami' }}</h5>
                         <p class="text-gray-500 text-sm leading-relaxed italic">
                             {{ $profil->alamat ?? 'Alamat belum diatur' }}
                         </p>
@@ -325,13 +325,13 @@
                 </div>
                 
                 <div class="pt-12 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-400 font-medium">
-                    <p>&copy; 2026 {{ $profil->nama_perusahaan ?? 'Dantie Sticker' }}. All rights reserved.</p>
+                    <p>{{ $profil->footer_copyright ?? '&copy; 2026 Dantie Sticker. All rights reserved.' }}</p>
                     <div class="flex gap-6 items-center">
                         @if($profil && $profil->instagram_url)
-                            <a href="{{ $profil->instagram_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-instagram-logo"></i> Instagram</a>
+                            <a href="{{ $profil->instagram_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-instagram-logo"></i> {{ $profil->footer_instagram ?? 'Instagram' }}</a>
                         @endif
                         @if($profil && $profil->facebook_url)
-                            <a href="{{ $profil->facebook_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-facebook-logo"></i> Facebook</a>
+                            <a href="{{ $profil->facebook_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-facebook-logo"></i> {{ $profil->footer_facebook ?? 'Facebook' }}</a>
                         @endif
                         @if($profil && $profil->tiktok_url)
                             <a href="{{ $profil->tiktok_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-tiktok-logo"></i> TikTok</a>

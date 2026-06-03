@@ -1,7 +1,7 @@
 <!-- Paket Layanan Section dengan Carousel -->
 <div class="space-y-4">
     <div class="flex justify-between items-center">
-        <h3 class="text-lg font-bold text-white tracking-tight">Paket Layanan Kami</h3>
+        <h3 class="text-lg font-bold text-white tracking-tight">{{ $profil->section_paket_kami ?? 'Paket Layanan Kami' }}</h3>
         <a href="{{ route('katalog.user') }}" class="text-[10px] font-bold text-[#f2994a] uppercase tracking-widest hover:underline flex items-center gap-1">
             Lihat Semua <i class="ph-bold ph-caret-right text-xs"></i>
         </a>
@@ -93,7 +93,7 @@
                                     <button class="flex-1 py-2 px-3 bg-[#f2994a] text-white rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/90 transition-all duration-200 order-now-btn"
                                             data-package-id="{{ $package->id_layanan }}"
                                             data-package-name="{{ $package->nama_layanan }}">
-                                        <i class="ph-bold ph-lightning-fill mr-1"></i> Pesan
+                                        <i class="ph-bold ph-lightning-fill mr-1"></i> {{ $profil->cta_pesan ?? 'Pesan' }}
                                     </button>
                                 </div>
                             </div>

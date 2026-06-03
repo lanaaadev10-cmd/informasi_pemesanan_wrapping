@@ -6,7 +6,7 @@
     <div class="space-y-12 z-10 relative" data-aos="fade-up">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-8">
             <div class="space-y-3">
-                <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">Tim Kami</span>
+                <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">{{ $profil->tentang_kami_tim_badge ?? 'Tim Kami' }}</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
                     {{ $profil->tentang_kami_team_title ?? 'Dibalik Setiap Detail Sempurna.' }}
                 </h2>

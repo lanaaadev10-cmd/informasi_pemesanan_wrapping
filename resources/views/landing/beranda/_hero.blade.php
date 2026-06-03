@@ -27,10 +27,10 @@
                 <!-- CTAs -->
                 <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
                     <a href="https://wa.me/{{ $waNumber }}" class="btn-premium px-8 py-4 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-widest text-black flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(242,153,74,0.3)]">
-                        Pesan Sekarang <i class="ph-bold ph-arrow-right text-base"></i>
+                        {{ $profil->cta_pesan_sekarang ?? 'Pesan Sekarang' }} <i class="ph-bold ph-arrow-right text-base"></i>
                     </a>
                     <a href="#mahakarya" class="px-8 py-4 rounded-xl border border-white/20 text-white font-bold text-xs sm:text-sm uppercase tracking-widest bg-white/5 hover:bg-white/10 hover:border-white/40 transition-all">
-                        Lihat Portofolio
+                        {{ $profil->cta_lihat_semua ?? 'Lihat Portofolio' }}
                     </a>
                 </div>
                 <!-- Micro Stats -->

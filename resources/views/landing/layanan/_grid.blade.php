@@ -86,7 +86,7 @@
 
                 <a href="{{ route('katalog.user') }}" class="block text-center font-extrabold text-[0.72rem] tracking-[0.1em] uppercase py-3.5 px-5 rounded-xl transition-opacity duration-200 hover:opacity-88 hover:scale-102 mt-2"
                    style="background:var(--accent);color:#0a0a0a">
-                    Pesan Sekarang
+                    {{ $profil->layanan_card_pesan_button ?? 'Pesan Sekarang' }}
                 </a>
             </div>
         </div>
@@ -97,7 +97,7 @@
     <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-500 mx-auto mb-4">
         <i class="ph-bold ph-package text-2xl text-[var(--accent)]"></i>
     </div>
-    <h4 class="text-base font-bold text-white mb-1">admin belum menambahkan</h4>
-    <p class="text-xs text-gray-500 font-light">Admin belum menambahkan paket layanan saat ini.</p>
+    <h4 class="text-base font-bold text-white mb-1">{{ $profil->layanan_empty_state_title ?? 'admin belum menambahkan' }}</h4>
+    <p class="text-xs text-gray-500 font-light">{{ $profil->layanan_empty_state_desc ?? 'Admin belum menambahkan paket layanan saat ini.' }}</p>
 </div>
 @endif

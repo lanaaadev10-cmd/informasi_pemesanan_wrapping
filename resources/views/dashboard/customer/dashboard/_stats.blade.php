@@ -6,7 +6,7 @@
     <div class="space-y-6">
         <!-- Tag & Icon -->
         <div class="flex justify-between items-center">
-            <span class="text-[9px] font-bold text-[#f2994a] uppercase tracking-widest font-mono">Member Status</span>
+            <span class="text-[9px] font-bold text-[#f2994a] uppercase tracking-widest font-mono">{{ $profil->label_member_status ?? 'Member Status' }}</span>
             <div class="w-8 h-8 rounded-lg bg-[#f2994a]/10 border border-[#f2994a]/20 flex items-center justify-center text-[#f2994a]">
                 <i class="ph-bold ph-crown text-base"></i>
             </div>

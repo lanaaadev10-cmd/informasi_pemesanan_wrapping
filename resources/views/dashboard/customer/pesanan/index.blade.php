@@ -51,8 +51,8 @@
             <div class="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center text-gray-500 mx-auto mb-6">
                 <i class="ph-bold ph-package text-3xl"></i>
             </div>
-            <h3 class="text-xl font-bold mb-2">{{ $isPembayaranTab ? 'Belum Ada Tagihan Pembayaran' : 'Belum Ada Pesanan' }}</h3>
-            <p class="text-xs text-gray-400 mb-6">{{ $isPembayaranTab ? 'Anda tidak memiliki pesanan yang menunggu pembayaran saat ini.' : 'Anda belum melakukan pesanan layanan pembungkusan.' }}</p>
+            <h3 class="text-xl font-bold mb-2">{{ $isPembayaranTab ? ($profil->empty_pesanan_title ?? 'Belum Ada Tagihan Pembayaran') : ($profil->empty_pesanan_title ?? 'Belum Ada Pesanan') }}</h3>
+            <p class="text-xs text-gray-400 mb-6">{{ $isPembayaranTab ? ($profil->empty_pesanan_desc ?? 'Anda tidak memiliki pesanan yang menunggu pembayaran saat ini.') : ($profil->empty_pesanan_desc ?? 'Anda belum melakukan pesanan layanan pembungkusan.') }}</p>
             <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#f2994a] hover:bg-[#e28a44] text-black rounded-xl font-bold text-xs uppercase tracking-wider transition-all">
                 Mulai Proyek Baru &rarr;
             </a>
@@ -87,23 +87,23 @@
                                 </span>
                             @elseif($statusVal === 'menunggu_pembayaran')
                                 <span class="bg-red-500/10 border border-red-500/50 text-red-400 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                                    Menunggu Pembayaran
+                                    {{ $profil->status_menunggu_pembayaran ?? 'Menunggu Pembayaran' }}
                                 </span>
                             @elseif($statusVal === 'menunggu_verifikasi_pembayaran')
                                 <span class="bg-yellow-500/10 border border-yellow-500/50 text-yellow-400 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                                    Verifikasi Pembayaran
+                                    {{ $profil->status_verifikasi_pembayaran ?? 'Verifikasi Pembayaran' }}
                                 </span>
                             @elseif($isSelesai)
                                 <span class="bg-emerald-500/10 border border-emerald-500/50 text-emerald-400 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                                    Selesai
+                                    {{ $profil->status_pesanan_selesai ?? 'Selesai' }}
                                 </span>
                             @elseif($isDitolak)
                                 <span class="bg-red-900/20 border border-red-600/50 text-red-400 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                                    Ditolak
+                                    {{ $profil->status_pesanan_ditolak ?? 'Ditolak' }}
                                 </span>
                             @else
                                 <span class="bg-[#1a1105] border border-[#f2994a]/50 text-[#f2994a] text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                                    Sedang Dikerjakan
+                                    {{ $profil->status_dikerjakan ?? 'Sedang Dikerjakan' }}
                                 </span>
                             @endif
                         </div>
@@ -125,12 +125,12 @@
                                     @elseif($isMenungguPembayaran)
                                         Dipesan pada: {{ \Carbon\Carbon::parse($pesanan->tanggal_pesan)->translatedFormat('d M Y') }}
                                     @else
-                                        Estimasi Selesai: {{ \Carbon\Carbon::parse($pesanan->form->jadwal_pengerjaan ?? $pesanan->tanggal_pesan)->addDays(5)->translatedFormat('d M Y') }}
+                                        {{ $profil->label_estimasi_selesai ?? 'Estimasi Selesai' }}: {{ \Carbon\Carbon::parse($pesanan->form->jadwal_pengerjaan ?? $pesanan->tanggal_pesan)->addDays(5)->translatedFormat('d M Y') }}
                                     @endif
                                 </p>
                             </div>
                             <div class="text-left sm:text-right">
-                                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">Total Tagihan</span>
+                                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">{{ $profil->label_total_tagihan ?? 'Total Tagihan' }}</span>
                                 <span class="text-[#f2994a] font-bold text-xl">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
                             </div>
                         </div>
@@ -140,11 +140,11 @@
 
                             <div class="flex items-center gap-6 w-full sm:w-auto text-[11px] font-medium text-gray-400">
                                 <a href="{{ route('pesanan.show', $pesanan->id_pesanan) }}" class="flex items-center gap-1.5 hover:text-white transition-colors">
-                                    <i class="ph-bold ph-eye text-sm"></i> Lihat Detail
+                                    <i class="ph-bold ph-eye text-sm"></i> {{ $profil->cta_detail ?? 'Lihat Detail' }}
                                 </a>
                                 @if(!$isMenungguPembayaran && !$isDitolak && $statusVal !== 'menunggu_konfirmasi_admin')
                                     <a href="{{ route('pesanan.invoice', $pesanan->id_pesanan) }}" class="flex items-center gap-1.5 hover:text-white transition-colors">
-                                        <i class="ph-bold ph-download-simple text-sm"></i> Unduh Invoice
+                                        <i class="ph-bold ph-download-simple text-sm"></i> {{ $profil->cta_unduh_invoice ?? 'Unduh Invoice' }}
                                     </a>
                                 @endif
                             </div>
@@ -152,11 +152,11 @@
                             <div class="flex items-center gap-4 w-full sm:w-auto shrink-0">
                                 @if($statusVal === 'menunggu_pembayaran')
                                     <a href="{{ route('pesanan.show', $pesanan->id_pesanan) }}" class="flex-1 sm:flex-none text-center px-6 py-2.5 bg-[#f2994a] hover:bg-[#e28a44] text-black font-bold text-[10px] uppercase tracking-wider rounded-lg transition-all active:scale-95 shadow-md">
-                                        Bayar Sekarang
+                                        {{ $profil->cta_bayar_sekarang ?? 'Bayar Sekarang' }}
                                     </a>
                                 @elseif($isSelesai || $isDitolak)
                                     <a href="{{ route('katalog.user') }}" class="flex-1 sm:flex-none text-center px-6 py-2.5 border border-white/10 hover:border-white/30 text-white font-bold text-[10px] uppercase tracking-wider rounded-lg transition-all active:scale-95 bg-white/5">
-                                        Pesan Lagi
+                                        {{ $profil->cta_pesan_lagi ?? 'Pesan Lagi' }}
                                     </a>
                                 @else
                                     <!-- Progress Dots Placeholder for Sedang Dikerjakan -->

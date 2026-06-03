@@ -17,7 +17,7 @@ class RiwayatPesananResource extends Resource
     protected static ?string $navigationLabel = 'Riwayat Transaksi';
     protected static ?string $pluralLabel = 'Riwayat Transaksi';
     protected static string|null|\UnitEnum $navigationGroup = 'Manajemen Transaksi';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function table(Table $table): Table
     {

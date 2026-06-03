@@ -10,7 +10,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
 
 class PesananForm
@@ -23,27 +22,35 @@ class PesananForm
                     ->schema([
                         Section::make('Informasi Pesanan')
                             ->columnSpan(2)
+                            ->icon('heroicon-o-document-text')
+                            ->description('Kode pesanan, pelanggan, tanggal, dan total harga.')
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
                                         TextInput::make('kode_pesanan')
                                             ->disabled()
-                                            ->label('ID Pesanan'),
+                                            ->label('ID Pesanan')
+                                            ->helperText('Kode unik pesanan (otomatis dari sistem).'),
                                         Select::make('id_user')
                                             ->relationship('user', 'name')
                                             ->disabled()
-                                            ->label('Pelanggan'),
+                                            ->label('Pelanggan')
+                                            ->helperText('Nama pelanggan yang melakukan pemesanan.'),
                                         DatePicker::make('tanggal_pesan')
-                                            ->disabled(),
+                                            ->disabled()
+                                            ->helperText('Tanggal pesanan dibuat.'),
                                         TextInput::make('total_harga')
                                             ->numeric()
                                             ->prefix('Rp')
-                                            ->disabled(),
+                                            ->disabled()
+                                            ->helperText('Total harga pesanan (otomatis dari sistem).'),
                                     ]),
                             ]),
 
                         Section::make('Status & Kendali')
                             ->columnSpan(1)
+                            ->icon('heroicon-o-check-circle')
+                            ->description('Atur status pesanan dan catatan untuk pelanggan.')
                             ->schema([
                                 Select::make('status')
                                     ->options([
@@ -56,64 +63,79 @@ class PesananForm
                                         'dibatalkan'         => 'Dibatalkan',
                                     ])
                                     ->required()
-                                    ->native(false),
+                                    ->native(false)
+                                    ->helperText('Ubah status pesanan sesuai perkembangan.'),
                                 Textarea::make('catatan_admin')
                                     ->label('Catatan Admin (Akan dilihat user)')
-                                    ->placeholder('Masukkan catatan jika ada...'),
+                                    ->placeholder('Masukkan catatan jika ada...')
+                                    ->helperText('Catatan ini akan terlihat oleh pelanggan.'),
                             ]),
 
-                        // Fieldset untuk mengedit Data Kendaraan & Jadwal Sesi (relasi ke form_pesanans)
-                        Fieldset::make('Data Kendaraan & Jadwal Sesi')
+                        Section::make('Data Kendaraan & Jadwal Sesi')
+                            ->description('Informasi kendaraan pelanggan dan jadwal pengerjaan.')
+                            ->icon('heroicon-o-truck')
                             ->relationship('form')
                             ->columnSpan(3)
+                            ->collapsible()
                             ->schema([
                                 Grid::make(3)
                                     ->schema([
                                         TextInput::make('model_kendaraan')
-                                            ->label('Merk & Model Kendaraan')
+                                            ->label('Merk & Model Kendaraan *')
                                             ->placeholder('Contoh: Porsche 911 GT3')
-                                            ->required(),
+                                            ->required()
+                                            ->helperText('Merk dan model kendaraan pelanggan.'),
                                         TextInput::make('warna_kendaraan')
-                                            ->label('Warna Dasar')
+                                            ->label('Warna Dasar *')
                                             ->placeholder('Contoh: Chalk White')
-                                            ->required(),
+                                            ->required()
+                                            ->helperText('Warna asli kendaraan sebelum di-wrapping.'),
                                         TextInput::make('nomor_polisi')
-                                            ->label('Nomor Polisi')
+                                            ->label('Nomor Polisi *')
                                             ->placeholder('Contoh: B 911 RSR')
-                                            ->required(),
+                                            ->required()
+                                            ->helperText('Nomor polisi kendaraan untuk identifikasi.'),
                                         TextInput::make('tahun_produksi')
-                                            ->label('Tahun Produksi')
+                                            ->label('Tahun Produksi *')
                                             ->numeric()
                                             ->placeholder('Contoh: 2023')
-                                            ->required(),
+                                            ->required()
+                                            ->helperText('Tahun pembuatan kendaraan.'),
                                         Select::make('lokasi_pengerjaan')
-                                            ->label('Workshop / Lokasi Pengerjaan')
+                                            ->label('Workshop / Lokasi Pengerjaan *')
                                             ->options([
                                                 'toko' => 'Studio HQ (Wapping Premium)',
                                                 'rumah' => 'Home Service',
                                             ])
                                             ->required()
-                                            ->native(false),
+                                            ->native(false)
+                                            ->helperText('Pilih lokasi pengerjaan yang diinginkan pelanggan.'),
                                         DateTimePicker::make('jadwal_pengerjaan')
-                                            ->label('Tanggal Mulai Sesi (Jadwal)')
+                                            ->label('Tanggal Mulai Sesi *')
                                             ->displayFormat('d M Y, H:i')
-                                            ->required(),
+                                            ->required()
+                                            ->helperText('Jadwal mulai pengerjaan.'),
                                         TextInput::make('estimasi_durasi')
-                                            ->label('Estimasi Durasi')
+                                            ->label('Estimasi Durasi *')
                                             ->placeholder('Contoh: 4 - 5 Hari Kerja')
                                             ->default('4 - 5 Hari Kerja')
                                             ->required()
-                                            ->columnSpan(1),
+                                            ->columnSpan(1)
+                                            ->helperText('Perkiraan lama waktu pengerjaan.'),
                                         Textarea::make('alamat_pengiriman')
-                                            ->label('Alamat Lengkap Pengerjaan / Penjemputan')
+                                            ->label('Alamat Lengkap *')
                                             ->placeholder('Masukkan alamat lengkap...')
                                             ->required()
-                                            ->columnSpan(2),
+                                            ->columnSpan(2)
+                                            ->helperText('Alamat penjemputan/pengerjaan jika home service.'),
                                     ]),
                             ]),
 
                         Section::make('Detail Item Pesanan')
                             ->columnSpan(3)
+                            ->icon('heroicon-o-shopping-bag')
+                            ->description('Daftar layanan yang dipesan oleh pelanggan.')
+                            ->collapsible()
                             ->schema([
                                 Placeholder::make('items_placeholder')
                                     ->label('')
@@ -134,8 +156,11 @@ class PesananForm
                                     }),
                             ]),
 
-                        Section::make('Bukti Pembayaran')
+                        Section::make('Informasi Pembayaran')
                             ->columnSpan(3)
+                            ->icon('heroicon-o-credit-card')
+                            ->description('Detail pembayaran dan bukti transfer dari pelanggan.')
+                            ->collapsible()
                             ->schema([
                                 Placeholder::make('payment_info')
                                     ->label('')

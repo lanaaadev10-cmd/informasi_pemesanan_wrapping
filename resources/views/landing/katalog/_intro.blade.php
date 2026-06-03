@@ -17,7 +17,7 @@
                 class="filter-btn px-5 py-2.5 rounded-full accent-bg text-black font-extrabold text-xs border transition-all duration-300 shadow-md active:scale-95"
                 style="border-color: var(--accent-color); box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 10%, transparent);"
                 data-category="all">
-            All
+            {{ $profil->katalog_filter_all_label ?? 'All' }}
         </button>
         @foreach(['Matte', 'Gloss', 'Satin', 'PPF'] as $finishType)
             <button onclick="filterKatalog('{{ strtolower($finishType) }}')"

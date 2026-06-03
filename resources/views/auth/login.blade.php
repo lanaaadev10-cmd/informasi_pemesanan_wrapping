@@ -1,52 +1,3 @@
-<<<<<<< HEAD
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
-=======
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -74,9 +25,13 @@
         <!-- 1. Left Form Column -->
         <div class="w-full md:w-1/2 p-8 lg:p-12 bg-[#0c0c0c] flex flex-col justify-center order-2 md:order-1">
             <div class="space-y-8">
+                <!-- Back to Home -->
+                <a href="{{ url('/') }}" class="inline-flex items-center gap-1 text-[10px] text-gray-500 hover:text-[#f2994a] transition-colors font-medium">
+                    <i class="ph ph-arrow-left text-sm"></i> {{ $profil->cta_kembali ?? 'Kembali ke Beranda' }}
+                </a>
                 <!-- Title Block -->
                 <div class="space-y-2">
-                    <h2 class="text-2xl font-bold text-white tracking-tight">Selamat Datang Kembali</h2>
+                    <h2 class="text-2xl font-bold text-white tracking-tight">{{ $profil->auth_selamat_datang ?? 'Selamat Datang Kembali' }}</h2>
                     <p class="text-xs text-gray-400 font-light leading-relaxed">
                         Silakan masuk ke akun Anda untuk mengelola pemesanan dan katalog layanan premium kami.
                     </p>
@@ -91,7 +46,7 @@
 
                     <!-- Email Address -->
                     <div class="space-y-1.5">
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Email</label>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ $profil->form_email ?? 'Email' }}</label>
                         <div class="relative">
                             <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
                             <input type="email" name="email" value="{{ old('email') }}" required autofocus
@@ -106,7 +61,7 @@
                         <div class="flex justify-between items-center">
                             <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kata Sandi</label>
                             @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}" class="text-[9px] font-bold text-[#f2994a] hover:underline uppercase tracking-wider">Lupa Sandi?</a>
+                                <a href="{{ route('password.request') }}" class="text-[9px] font-bold text-[#f2994a] hover:underline uppercase tracking-wider">{{ $profil->form_lupa_sandi ?? 'Lupa Sandi?' }}</a>
                             @endif
                         </div>
                         <div class="relative">
@@ -122,13 +77,13 @@
                     <div class="flex items-center gap-3 pt-1">
                         <input type="checkbox" name="remember" id="remember_me" class="rounded bg-[#161616] border-white/5 text-[#f2994a] focus:ring-[#f2994a]">
                         <label for="remember_me" class="text-[10px] text-gray-400 font-light">
-                            Ingat saya di perangkat ini
+                            {{ $profil->form_ingat_saya ?? 'Ingat saya di perangkat ini' }}
                         </label>
                     </div>
 
                     <!-- Submit Button -->
                     <button type="submit" class="w-full py-4 bg-[#f2994a] text-black font-extrabold text-xs uppercase tracking-widest rounded-xl hover:bg-[#e28a44] transition-all flex items-center justify-center gap-2 active:scale-95 shadow-[0_4px_20px_rgba(242,153,74,0.3)]">
-                        Masuk Sekarang <i class="ph-bold ph-arrow-right text-sm"></i>
+                        {{ $profil->cta_masuk_sekarang ?? 'Masuk Sekarang' }} <i class="ph-bold ph-arrow-right text-sm"></i>
                     </button>
 
                     <!-- Bottom Switch Link -->
@@ -182,4 +137,3 @@
     </div>
 </body>
 </html>
->>>>>>> bf0334c2b14d316dddb6e466f2be6d6502606610

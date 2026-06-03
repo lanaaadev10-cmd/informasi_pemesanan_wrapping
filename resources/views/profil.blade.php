@@ -5,10 +5,10 @@
 @section('content')
     <!-- Hero Section -->
     <section class="max-w-7xl mx-auto px-6 text-center mb-24" data-aos="fade-up">
-        <span class="text-orange-600 font-bold text-xs uppercase tracking-[0.3em] mb-6 block">Identity & Excellence</span>
+        <span class="text-orange-600 font-bold text-xs uppercase tracking-[0.3em] mb-6 block">{{ $profil->profil_section_title ?? 'Identity & Excellence' }}</span>
         <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold text-gray-900 leading-[1.1] tracking-tight mb-8">
             {{ $profil->nama_perusahaan ?? 'Dantie Sticker' }} <br> 
-            <span class="text-gradient">Wrapping Solutions</span>
+            <span class="text-gradient">{{ $profil->profil_banner_heading ?? 'Wrapping Solutions' }}</span>
         </h1>
         <p class="max-w-3xl mx-auto text-gray-500 text-lg md:text-xl leading-relaxed mb-10">
             {{ $profil->deskripsi ?? 'Kami hadir dengan dedikasi penuh untuk memberikan hasil terbaik bagi bisnis dan kendaraan Anda melalui inovasi stiker yang tak tertandingi.' }}
@@ -19,19 +19,19 @@
     <section class="max-w-5xl mx-auto px-6 mb-24 grid grid-cols-2 md:grid-cols-4 gap-8" data-aos="fade-up">
         <div class="text-center">
             <h4 class="text-4xl font-bold text-gray-900 mb-2">5+</h4>
-            <p class="text-gray-500 text-sm font-medium">Tahun Pengalaman</p>
+            <p class="text-gray-500 text-sm font-medium">{{ $profil->profil_stat_label ?? 'Tahun Pengalaman' }}</p>
         </div>
         <div class="text-center border-l border-gray-100">
             <h4 class="text-4xl font-bold text-gray-900 mb-2">1.2k+</h4>
-            <p class="text-gray-500 text-sm font-medium">Project Selesai</p>
+            <p class="text-gray-500 text-sm font-medium">{{ $profil->profil_stat_label ?? 'Project Selesai' }}</p>
         </div>
         <div class="text-center border-l border-gray-100">
             <h4 class="text-4xl font-bold text-gray-900 mb-2">99%</h4>
-            <p class="text-gray-500 text-sm font-medium">Kepuasan Pelanggan</p>
+            <p class="text-gray-500 text-sm font-medium">{{ $profil->profil_stat_label ?? 'Kepuasan Pelanggan' }}</p>
         </div>
         <div class="text-center border-l border-gray-100">
             <h4 class="text-4xl font-bold text-gray-900 mb-2">24h</h4>
-            <p class="text-gray-500 text-sm font-medium">Support Standby</p>
+            <p class="text-gray-500 text-sm font-medium">{{ $profil->profil_stat_label ?? 'Support Standby' }}</p>
         </div>
     </section>
 
@@ -44,13 +44,9 @@
                     <i class="ph-bold ph-eye text-2xl"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-extrabold text-gray-900 mb-4">Visi Kami</h2>
+                    <h2 class="text-2xl font-extrabold text-gray-900 mb-4">{{ $profil->profil_legal_visi_title ?? 'Visi Kami' }}</h2>
                     <div class="text-gray-600 leading-relaxed prose prose-orange max-w-none">
-                        @if($profil && $profil->visi)
-                            {!! $profil->visi !!}
-                        @else
-                            <p>Menjadi perusahaan jasa wrapping dan stiker terdepan di Indonesia dengan kualitas internasional serta inovasi berkelanjutan.</p>
-                        @endif
+                        {!! $profil->visi ?? '<p>Menjadi perusahaan jasa wrapping dan stiker terdepan di Indonesia dengan kualitas internasional serta inovasi berkelanjutan.</p>' !!}
                     </div>
                 </div>
             </div>
@@ -61,17 +57,9 @@
                     <i class="ph-bold ph-target text-2xl"></i>
                 </div>
                 <div>
-                    <h2 class="text-2xl font-extrabold text-gray-900 mb-4">Misi Kami</h2>
+                    <h2 class="text-2xl font-extrabold text-gray-900 mb-4">{{ $profil->profil_legal_misi_title ?? 'Misi Kami' }}</h2>
                     <div class="text-gray-600 leading-relaxed prose prose-orange max-w-none">
-                        @if($profil && $profil->misi)
-                            {!! $profil->misi !!}
-                        @else
-                            <ul class="list-disc pl-5 space-y-2">
-                                <li>Memberikan layanan wrapping berkualitas premium dan presisi tinggi.</li>
-                                <li>Mengutamakan kepuasan pelanggan melalui pelayanan profesional.</li>
-                                <li>Menggunakan bahan berstandar dunia dan teknologi cetak terkini.</li>
-                            </ul>
-                        @endif
+                        {!! $profil->misi ?? '<ul class="list-disc pl-5 space-y-2"><li>Memberikan layanan wrapping berkualitas premium dan presisi tinggi.</li><li>Mengutamakan kepuasan pelanggan melalui pelayanan profesional.</li><li>Menggunakan bahan berstandar dunia dan teknologi cetak terkini.</li></ul>' !!}
                     </div>
                 </div>
             </div>
@@ -84,20 +72,11 @@
             <div class="grid md:grid-cols-3 gap-10 items-start">
                 <div class="md:col-span-1">
                     <span class="text-orange-600 font-bold text-xs uppercase tracking-widest mb-4 block">Tentang Kami</span>
-                    <h2 class="text-3xl font-extrabold text-gray-900 leading-tight">Sejarah & <br>Perjalanan</h2>
+                    <h2 class="text-3xl font-extrabold text-gray-900 leading-tight">{{ $profil->profil_legal_sejarah_title ?? 'Sejarah & Perjalanan' }}</h2>
                     <div class="w-16 h-1 bg-orange-500 mt-6 rounded-full"></div>
                 </div>
                 <div class="md:col-span-2 text-gray-600 leading-relaxed prose prose-orange max-w-none">
-                    @if($profil && $profil->sejarah)
-                        {!! $profil->sejarah !!}
-                    @else
-                        <p class="mb-4">
-                            Didirikan dengan dedikasi penuh terhadap dunia otomotif dan stiker, kami memulai perjalanan sebagai studio kecil dengan fokus pada kerapian dan kualitas. Melalui kerja keras dan kepuasan pelanggan yang terus terjaga, kami terus tumbuh dan dipercaya oleh ribuan pemilik kendaraan dan bisnis.
-                        </p>
-                        <p>
-                            Kami terus berinvestasi pada teknologi mesin cetak terbaru dan melatih tim installer profesional agar setiap sudut stiker teraplikasi secara presisi dan tahan lama.
-                        </p>
-                    @endif
+{!! $profil->sejarah ?? '<p class="mb-4">Didirikan dengan dedikasi penuh terhadap dunia otomotif dan stiker, kami memulai perjalanan sebagai studio kecil dengan fokus pada kerapatan dan kualitas. Melalui kerja keras dan kepuasan pelanggan yang terus terjaga, kami terus tumbuh dan dipercaya oleh ribuan pemilik kendaraan dan bisnis.</p><p>Kami terus berinvestasi pada teknologi mesin cetak terbaru dan melatih tim installer profesional agar setiap sudut stiker teraplikasi secara presisi dan tahan lama.</p>' !!}
                 </div>
             </div>
         </div>
@@ -111,7 +90,7 @@
                 <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all">
                     <i class="ph-bold ph-map-pin text-2xl"></i>
                 </div>
-                <h3 class="font-bold text-gray-900 mb-2">Lokasi</h3>
+                <h3 class="font-bold text-gray-900 mb-2">{{ $profil->footer_lokasi ?? 'Lokasi' }}</h3>
                 <p class="text-gray-500 text-sm leading-relaxed">{{ $profil->alamat ?? 'Jl. Raya Wrapping No. 77, Malang, Jawa Timur' }}</p>
             </div>
             
@@ -120,7 +99,7 @@
                 <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all">
                     <i class="ph-bold ph-envelope text-2xl"></i>
                 </div>
-                <h3 class="font-bold text-gray-900 mb-2">Email</h3>
+                <h3 class="font-bold text-gray-900 mb-2">{{ $profil->form_email ?? 'Email' }}</h3>
                 <p class="text-gray-500 text-sm leading-relaxed">
                     <a href="mailto:{{ $profil->email ?? 'info@dantiesticker.com' }}" class="hover:text-orange-600 transition-colors">
                         {{ $profil->email ?? 'info@dantiesticker.com' }}
@@ -133,7 +112,7 @@
                 <div class="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all">
                     <i class="ph-bold ph-whatsapp-logo text-2xl"></i>
                 </div>
-                <h3 class="font-bold text-gray-900 mb-2">WhatsApp</h3>
+                <h3 class="font-bold text-gray-900 mb-2">{{ $profil->nav_whatsapp ?? 'WhatsApp' }}</h3>
                 <p class="text-gray-500 text-sm leading-relaxed mb-3">
                     {{ $profil->nomor_telepon ?? '081234567890' }}
                 </p>
@@ -155,7 +134,7 @@
                             <i class="ph-bold ph-compass text-xl"></i>
                         </div>
                         <div>
-                            <h4 class="font-bold text-gray-900">Temukan Kami</h4>
+                            <h4 class="font-bold text-gray-900">{{ $profil->label_temukan_kami ?? 'Temukan Kami' }}</h4>
                             <p class="text-xs text-gray-500">Klik pin maps untuk navigasi langsung</p>
                         </div>
                     </div>

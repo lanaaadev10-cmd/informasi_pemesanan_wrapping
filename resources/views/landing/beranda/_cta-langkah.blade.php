@@ -20,11 +20,11 @@
                     <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-4">
                         <a href="https://wa.me/{{ $waNumber }}"
                            class="btn-premium px-8 py-4 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider text-black flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(242,153,74,0.3)]">
-                            <i class="ph-bold ph-whatsapp-logo text-lg"></i> Hubungi WhatsApp
+                            <i class="ph-bold ph-whatsapp-logo text-lg"></i> {{ $profil->cta_hubungi_wa ?? 'Hubungi WhatsApp' }}
                         </a>
                         <a href="{{ route('katalog.user') }}"
                            class="px-8 py-4 rounded-xl border border-white/10 text-white font-bold text-xs sm:text-sm uppercase tracking-wider bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all">
-                            Pelajari Prosedur
+                            {{ $profil->cta_pelajari ?? 'Pelajari Prosedur' }}
                         </a>
                     </div>
                 </div>
@@ -33,8 +33,8 @@
                 <div class="lg:col-span-5">
                     <div class="bg-[#181818] border border-white/5 rounded-3xl p-8 space-y-6 shadow-xl relative overflow-hidden group hover:border-[#f2994a]/25 transition-all">
                         <div class="flex justify-between items-center pb-4 border-b border-white/5">
-                            <h4 class="text-xs font-bold text-[#f2994a] tracking-widest uppercase">Langkah Mudah</h4>
-                            <span class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Fast Process</span>
+                            <h4 class="text-xs font-bold text-[#f2994a] tracking-widest uppercase">{{ $profil->home_cta_langkah_badge ?? 'Langkah Mudah' }}</h4>
+                            <span class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">{{ $profil->home_cta_langkah_tagline ?? 'Fast Process' }}</span>
                         </div>
                         <div class="space-y-6">
                             @foreach([

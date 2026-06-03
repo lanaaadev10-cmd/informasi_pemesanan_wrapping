@@ -12,7 +12,7 @@
 
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 z-10 relative border-b border-white/5 pb-6">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-[#f2994a]">Verifikasi Pembayaran</h1>
+            <h1 class="text-2xl font-bold tracking-tight text-[#f2994a]">{{ $profil->status_verifikasi_pembayaran ?? 'Verifikasi Pembayaran' }}</h1>
         </div>
         
         <div class="flex items-center gap-4">
@@ -44,25 +44,25 @@
                     <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
                     
                     <div class="grid grid-cols-3 gap-y-6 relative z-10">
-                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">Nama Bank</div>
+                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">{{ $profil->label_nama_bank ?? 'Nama Bank' }}</div>
                         <div class="col-span-2 text-right text-xs font-bold text-white">BCA (Bank Central Asia)</div>
                         
-                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest flex items-center">No. Rekening</div>
+                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest flex items-center">{{ $profil->label_no_rekening ?? 'No. Rekening' }}</div>
                         <div class="col-span-2 text-right flex items-center justify-end gap-3">
                             <span class="text-xl md:text-2xl font-mono font-black text-white tracking-widest">123-456-7890</span>
-                            <button onclick="copyToClipboard('1234567890')" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-white" title="Salin Nomor Rekening">
+                            <button onclick="copyToClipboard('1234567890')" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-white" title="{{ $profil->cta_salin_rekening ?? 'Salin Nomor Rekening' }}">
                                 <i class="ph ph-copy text-sm"></i>
                             </button>
                         </div>
 
-                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">Atas Nama</div>
+                        <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">{{ $profil->label_atas_nama ?? 'Atas Nama' }}</div>
                         <div class="col-span-2 text-right text-xs font-bold text-white">PT Wapping Indonesia</div>
                     </div>
                 </div>
 
                 <div class="bg-[#241710] border border-[#f2994a]/30 rounded-2xl p-6 flex justify-between items-center mb-6">
                     <div>
-                        <span class="text-[9px] font-bold text-[#f2994a]/70 uppercase tracking-widest block mb-1">Total yang Harus Dibayar</span>
+                        <span class="text-[9px] font-bold text-[#f2994a]/70 uppercase tracking-widest block mb-1">{{ $profil->label_total_bayar ?? 'Total yang Harus Dibayar' }}</span>
                         <span class="text-2xl font-bold text-[#f2994a]">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
                     </div>
                     <div class="w-12 h-12 bg-[#f2994a]/10 rounded-xl flex items-center justify-center text-[#f2994a]">
@@ -79,7 +79,7 @@
             </div>
 
             <div class="bg-[#121212] border border-white/5 rounded-3xl p-6 shadow-sm">
-                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-4">Ringkasan Pesanan</span>
+                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-4">{{ $profil->section_ringkasan_pesanan ?? 'Ringkasan Pesanan' }}</span>
                 
                 @php
                     $firstItem = $pesanan->details->first();
@@ -102,7 +102,7 @@
                     
                     <div class="shrink-0 hidden sm:block">
                         <span class="bg-[#f2994a]/10 border border-[#f2994a]/30 text-[#f2994a] text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full">
-                            Menunggu Pembayaran
+                            {{ $profil->status_menunggu_pembayaran ?? 'Menunggu Pembayaran' }}
                         </span>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
             <div class="bg-[#121212] border border-white/5 rounded-3xl p-8 shadow-lg lg:sticky lg:top-8">
 
                 @if($statusVal === 'menunggu_pembayaran')
-                    <h2 class="text-xl font-bold text-white mb-2">Upload Bukti Pembayaran</h2>
+                    <h2 class="text-xl font-bold text-white mb-2">{{ $profil->section_upload_bukti ?? 'Upload Bukti Pembayaran' }}</h2>
                     <p class="text-xs text-gray-400 mb-6">Upload screenshot atau foto bukti transfer bank Anda.</p>
 
                     <form action="{{ route('pesanan.upload-bukti', $pesanan->id_pesanan) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
@@ -143,7 +143,7 @@
 
                         <!-- Optional Fields -->
                         <div class="space-y-2">
-                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-1">Metode Pembayaran (Manual Transfer)</label>
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-1">{{ $profil->label_metode_pembayaran ?? 'Metode Pembayaran' }} (Manual Transfer)</label>
                             <select name="metode_pembayaran" required class="w-full bg-[#1a1a1a] border border-white/5 rounded-xl px-4 py-3.5 text-white text-xs focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
                                 <option value="transfer_bank" selected>Transfer Bank (Manual)</option>
                                 <option value="transfer_e_wallet">E-Wallet Transfer (Manual)</option>
@@ -153,10 +153,10 @@
                         <!-- Buttons -->
                         <div class="pt-4 space-y-4">
                             <button type="submit" class="w-full py-4 bg-[#f2994a] hover:bg-[#e28a44] text-black font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] active:scale-95 flex justify-center items-center gap-2">
-                                <i class="ph-bold ph-check-circle text-base"></i> Konfirmasi Pembayaran
+                                <i class="ph-bold ph-check-circle text-base"></i> {{ $profil->cta_konfirmasi_pembayaran ?? 'Konfirmasi Pembayaran' }}
                             </button>
                             <a href="{{ route('pesanan.index') }}" class="block text-center text-[10px] text-gray-400 hover:text-white transition-colors">
-                                Batal & Kembali ke Dashboard
+                                {{ $profil->cta_kembali ?? 'Kembali ke Dashboard' }}
                             </a>
                         </div>
                     </form>
@@ -166,9 +166,9 @@
                         <div class="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
                             <i class="ph-fill ph-hourglass-high text-4xl animate-spin-slow"></i>
                         </div>
-                        <h2 class="text-lg font-bold text-white">Menunggu Konfirmasi Admin</h2>
+                        <h2 class="text-lg font-bold text-white">{{ $profil->status_menunggu_konfirmasi ?? 'Menunggu Konfirmasi Admin' }}</h2>
                         <p class="text-xs text-gray-400 leading-relaxed px-4">Admin sedang memproses pesanan Anda. Anda akan menerima notifikasi segera setelah disetujui.</p>
-                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">Kembali ke Dashboard</a>
+                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">{{ $profil->cta_kembali ?? 'Kembali ke Dashboard' }}</a>
                     </div>
 
                 @elseif($statusVal === 'menunggu_verifikasi_pembayaran')
@@ -176,9 +176,9 @@
                         <div class="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center text-yellow-400 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
                             <i class="ph-fill ph-clock text-4xl animate-pulse"></i>
                         </div>
-                        <h2 class="text-lg font-bold text-white">Bukti Pembayaran Diterima</h2>
+                        <h2 class="text-lg font-bold text-white">{{ $profil->status_bukti_diterima ?? 'Bukti Pembayaran Diterima' }}</h2>
                         <p class="text-xs text-gray-400 leading-relaxed px-4">Admin sedang memverifikasi bukti pembayaran Anda. Biasanya selesai dalam 30 menit.</p>
-                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">Kembali ke Dashboard</a>
+                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">{{ $profil->cta_kembali ?? 'Kembali ke Dashboard' }}</a>
                     </div>
 
                 @elseif($statusVal === 'sedang_diproses' || $statusVal === 'dikonfirmasi')
@@ -186,12 +186,12 @@
                         <div class="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                             <i class="ph-fill ph-check-circle text-4xl"></i>
                         </div>
-                        <h2 class="text-lg font-bold text-white">Pembayaran Berhasil Diverifikasi</h2>
+                        <h2 class="text-lg font-bold text-white">{{ $profil->status_pembayaran_terverifikasi ?? 'Pembayaran Berhasil Diverifikasi' }}</h2>
                         <p class="text-xs text-gray-400 leading-relaxed px-4">Pembayaran Anda telah dikonfirmasi. Kendaraan Anda masuk antrean pengerjaan.</p>
                         <a href="{{ route('pesanan.invoice', $pesanan->id_pesanan) }}" target="_blank" class="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-md active:scale-95">
-                            <i class="ph-bold ph-file-pdf text-lg"></i> Unduh Invoice PDF
+                            <i class="ph-bold ph-file-pdf text-lg"></i> {{ $profil->cta_unduh_invoice ?? 'Unduh Invoice PDF' }}
                         </a>
-                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">Kembali ke Dashboard</a>
+                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">{{ $profil->cta_kembali ?? 'Kembali ke Dashboard' }}</a>
                     </div>
 
                 @elseif($statusVal === 'selesai')
@@ -199,12 +199,12 @@
                         <div class="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                             <i class="ph-fill ph-check-circle text-4xl"></i>
                         </div>
-                        <h2 class="text-lg font-bold text-white">Pesanan Selesai</h2>
+                        <h2 class="text-lg font-bold text-white">{{ $profil->status_pesanan_selesai ?? 'Pesanan Selesai' }}</h2>
                         <p class="text-xs text-gray-400 leading-relaxed px-4">Pengerjaan pesanan Anda telah selesai. Silakan ambil kendaraan Anda.</p>
                         <a href="{{ route('pesanan.invoice', $pesanan->id_pesanan) }}" target="_blank" class="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-md active:scale-95">
-                            <i class="ph-bold ph-file-pdf text-lg"></i> Unduh Invoice PDF
+                            <i class="ph-bold ph-file-pdf text-lg"></i> {{ $profil->cta_unduh_invoice ?? 'Unduh Invoice PDF' }}
                         </a>
-                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">Kembali ke Dashboard</a>
+                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">{{ $profil->cta_kembali ?? 'Kembali ke Dashboard' }}</a>
                     </div>
 
                 @elseif($statusVal === 'ditolak')
@@ -212,9 +212,9 @@
                         <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center text-red-400 shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                             <i class="ph-fill ph-x-circle text-4xl"></i>
                         </div>
-                        <h2 class="text-lg font-bold text-white">Pesanan Ditolak</h2>
+                        <h2 class="text-lg font-bold text-white">{{ $profil->status_pesanan_ditolak ?? 'Pesanan Ditolak' }}</h2>
                         <p class="text-xs text-gray-400 leading-relaxed px-4">{{ $pesanan->catatan_admin ?? 'Pesanan Anda telah ditolak oleh admin. Silakan hubungi customer service untuk info lebih lanjut.' }}</p>
-                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">Kembali ke Dashboard</a>
+                        <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">{{ $profil->cta_kembali ?? 'Kembali ke Dashboard' }}</a>
                     </div>
                 @endif
 
@@ -236,7 +236,7 @@
 <script>
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
-            alert('Nomor Rekening berhasil disalin: ' + text);
+            alert('{{ $profil->alert_rekening_disalin ?? 'Nomor Rekening berhasil disalin' }}: ' + text);
         });
     }
 

@@ -72,56 +72,56 @@
         <!-- Navigation Menu -->
         <nav class="flex-grow p-6 space-y-1.5 overflow-y-auto">
             <a href="{{ route('dashboard') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('dashboard') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-layout text-lg"></i> Beranda
+                <i class="ph-bold ph-layout text-lg"></i> {{ $profil->nav_beranda ?? 'Beranda' }}
             </a>
             
             <div class="pt-5 pb-2">
-                <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">Belanja</span>
+                <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_belanja ?? 'Belanja' }}</span>
             </div>
 
             <a href="{{ route('katalog.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('katalog.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-tag text-lg"></i> Katalog Layanan
+                <i class="ph-bold ph-tag text-lg"></i> {{ $profil->section_katalog_layanan ?? 'Katalog Layanan' }}
             </a>
             <a href="{{ route('keranjang.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('keranjang.index') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }} relative">
-                <i class="ph-bold ph-shopping-cart text-lg"></i> Keranjang
+                <i class="ph-bold ph-shopping-cart text-lg"></i> {{ $profil->nav_keranjang ?? 'Keranjang' }}
                 <span data-cart-badge class="hidden absolute -top-2 -right-2 min-w-[20px] h-[20px] px-1.5 bg-[#f2994a] text-black text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-lg">0</span>
             </a>
 
             <div class="pt-5 pb-2">
-                <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">Manajemen</span>
+                <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_manajemen ?? 'Manajemen' }}</span>
             </div>
 
             <a href="{{ route('pesanan.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('pesanan.index') && !request()->has('status') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-folder text-lg"></i> Riwayat Pesanan
+                <i class="ph-bold ph-folder text-lg"></i> {{ $profil->nav_riwayat_pesanan ?? 'Riwayat Pesanan' }}
             </a>
             <a href="{{ route('pesanan.index', ['status' => 'menunggu_pembayaran']) }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ request('status') == 'menunggu_pembayaran' ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-credit-card text-lg"></i> Pembayaran
+                <i class="ph-bold ph-credit-card text-lg"></i> {{ $profil->nav_pembayaran ?? 'Pembayaran' }}
             </a>
 
             <div class="pt-5 pb-2">
-                <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">Pengaturan</span>
+                <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_pengaturan ?? 'Pengaturan' }}</span>
             </div>
 
             <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('profile.edit') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-user text-lg"></i> Profil Saya
+                <i class="ph-bold ph-user text-lg"></i> {{ $profil->nav_profil_saya ?? 'Profil Saya' }}
             </a>
             
             <div class="h-[1px] bg-white/5 my-4"></div>
             
             <a href="{{ route('profil.perusahaan') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('profil.perusahaan') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-buildings text-lg"></i> Profil Perusahaan
+                <i class="ph-bold ph-buildings text-lg"></i> {{ $profil->nav_profil_perusahaan ?? 'Profil Perusahaan' }}
             </a>
             <a href="{{ route('galeri.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('galeri.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-image-square text-lg"></i> Galeri Portofolio
+                <i class="ph-bold ph-image-square text-lg"></i> {{ $profil->sidebar_galeri_portofolio ?? 'Galeri Portofolio' }}
             </a>
             <a href="{{ route('katalog.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('katalog.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-tag text-lg"></i> Layanan & Paket
+                <i class="ph-bold ph-tag text-lg"></i> {{ $profil->sidebar_layanan_paket ?? 'Layanan & Paket' }}
             </a>
 
             <!-- CTA Pesan Layanan di Sidebar -->
             <div class="pt-6">
                 <a href="{{ route('katalog.user') }}" class="flex items-center justify-center gap-2 py-3 bg-[#ffd8a8]/90 hover:bg-[#ffd8a8] text-black font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_4px_15px_rgba(255,216,168,0.2)] hover:scale-[1.02] active:scale-95">
-                    <i class="ph-bold ph-plus-circle text-sm"></i> Pesan Layanan Baru
+                    <i class="ph-bold ph-plus-circle text-sm"></i> {{ $profil->sidebar_pesan_baru ?? 'Pesan Layanan Baru' }}
                 </a>
             </div>
         </nav>
@@ -129,7 +129,7 @@
         <!-- Bottom Actions (Support & Settings) -->
         <div class="p-6 border-t border-white/5 space-y-1">
             <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '') }}" target="_blank" class="flex items-center gap-4 px-4 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider text-gray-400 hover:text-white hover:bg-white/[0.02] transition-all">
-                <i class="ph-bold ph-question text-base"></i> Bantuan
+                <i class="ph-bold ph-question text-base"></i> {{ $profil->nav_bantuan ?? 'Bantuan' }}
             </a>
             <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 px-4 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider text-gray-400 hover:text-white hover:bg-white/[0.02] transition-all">
                 <i class="ph-bold ph-gear text-base"></i> Pengaturan
@@ -139,7 +139,7 @@
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="w-full py-3 text-red-500 font-extrabold text-[10px] uppercase tracking-widest bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl transition-all active:scale-95">
-                        Keluar
+                        {{ $profil->nav_keluar ?? 'Keluar' }}
                     </button>
                 </form>
             </div>
@@ -213,7 +213,7 @@
         <!-- Footer matching mockup style -->
         <footer class="p-6 md:p-8 border-t border-white/5 bg-[#080808] text-[10px] text-gray-500 font-medium">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-                <p>&copy; 2026 Wapping Premium Service. All rights reserved.</p>
+                <p>{{ $profil->footer_copyright ?? '&copy; 2026 Wapping Premium Service. All rights reserved.' }}</p>
                 <div class="flex items-center gap-6">
                     <a href="#" class="hover:text-white transition-colors">Support</a>
                     <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
@@ -230,28 +230,28 @@
             {{-- Beranda --}}
             <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('dashboard') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
                 <i class="ph-bold ph-layout text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">Beranda</span>
+                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->nav_beranda ?? 'Beranda' }}</span>
             </a>
             {{-- Katalog --}}
             <a href="{{ route('katalog.user') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('katalog.user') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
                 <i class="ph-bold ph-tag text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">Katalog</span>
+                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->section_katalog_layanan ?? 'Katalog' }}</span>
             </a>
             {{-- Keranjang --}}
             <a href="{{ route('keranjang.index') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('keranjang.index') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }} relative">
                 <i class="ph-bold ph-shopping-cart text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">Keranjang</span>
+                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->nav_keranjang ?? 'Keranjang' }}</span>
                 <span data-cart-badge-mobile class="hidden absolute top-0 right-1 min-w-[18px] h-[18px] px-1 bg-[#f2994a] text-black text-[8px] font-extrabold rounded-full flex items-center justify-center shadow-lg">0</span>
             </a>
             {{-- Pesanan --}}
             <a href="{{ route('pesanan.index') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('pesanan.index') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
                 <i class="ph-bold ph-folder text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">Pesanan</span>
+                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->nav_riwayat_pesanan ?? 'Pesanan' }}</span>
             </a>
             {{-- Menu Lebih (Hamburger) --}}
             <button onclick="bukaMenu()" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all text-gray-500 hover:text-white">
                 <i class="ph-bold ph-list text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">Menu</span>
+                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->nav_manajemen ?? 'Menu' }}</span>
             </button>
         </div>
     </nav>

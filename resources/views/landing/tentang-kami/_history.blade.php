@@ -7,9 +7,9 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             <!-- Left: Description -->
             <div class="space-y-6 lg:col-span-5">
-                <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">Sejarah Kami</span>
+                <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">{{ $profil->tentang_kami_sejarah_badge ?? 'Sejarah Kami' }}</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-                    Satu Dekade Dedikasi pada Perfeksi.
+                    {{ $profil->tentang_kami_sejarah_title ?? 'Satu Dekade Dedikasi pada Perfeksi.' }}
                 </h2>
                 <div class="text-gray-400 space-y-4 leading-relaxed text-sm sm:text-base">
                     @if($profil->sejarah)

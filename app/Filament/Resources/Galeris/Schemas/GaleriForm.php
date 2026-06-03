@@ -7,69 +7,78 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class GaleriForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->components([
-            TextInput::make('judul')
-                ->label('Judul Pekerjaan')
-                ->placeholder('Contoh: Sticker Custom Premium untuk Mobil Avanza')
-                ->required()
-                ->maxLength(255)
-                ->columnSpan(2)
-                ->helperText('Judul yang menarik untuk galeri/portofolio. Akan ditampilkan di halaman galeri.'),
+        return $schema
+            ->components([
+                Section::make('Informasi Portofolio')
+                    ->description('Judul, kategori, dan deskripsi pekerjaan.')
+                    ->icon('heroicon-o-document-text')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('judul')
+                                    ->label('Judul Pekerjaan *')
+                                    ->placeholder('Contoh: Sticker Custom Premium untuk Mobil Avanza')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->helperText('Judul yang menarik untuk galeri/portofolio.'),
+                                TextInput::make('sub_judul')
+                                    ->label('Sub Judul')
+                                    ->placeholder('Contoh: Premium Design dengan Tinta Berkualitas')
+                                    ->maxLength(255)
+                                    ->helperText('Detail tambahan atau kategori jenis pekerjaan.'),
+                            ]),
+                        Textarea::make('deskripsi')
+                            ->label('Deskripsi Pekerjaan')
+                            ->placeholder('Tuliskan detail cerita, proses, dan pencapaian di balik pekerjaan ini...')
+                            ->rows(5)
+                            ->helperText('Cerita lengkap tentang pekerjaan ini. Jelaskan proses, material yang digunakan, dan hasil akhir.'),
+                    ]),
 
-            TextInput::make('sub_judul')
-                ->label('Sub Judul (Opsional)')
-                ->placeholder('Contoh: Premium Design dengan Tinta Berkualitas')
-                ->maxLength(255)
-                ->columnSpan(1)
-                ->helperText('Detail tambahan atau kategori jenis pekerjaan.'),
-
-            Textarea::make('deskripsi')
-                ->label('Deskripsi Pekerjaan')
-                ->placeholder('Tuliskan detail cerita, proses, dan pencapaian di balik pekerjaan ini...')
-                ->rows(5)
-                ->columnSpanFull()
-                ->helperText('Cerita lengkap tentang pekerjaan ini. Jelaskan proses, material yang digunakan, dan hasil akhir.'),
-
-            FileUpload::make('foto')
-                ->label('Foto Utama Galeri')
-                ->image()
-                ->imageEditor()
-                ->directory('galeri')
-                ->disk('public')
-                ->maxSize(10240)
-                ->required()
-                ->columnSpanFull()
-                ->helperText('Format: JPG, PNG, WebP. Maksimal 10MB. Ukuran rekomendasi: 1200x800px untuk hasil optimal di website.'),
-
-            TextInput::make('kategori')
-                ->label('Kategori')
-                ->placeholder('Contoh: Sticker, Wrapping, Vinyl Wrapping, Desain Khusus')
-                ->columnSpan(1)
-                ->helperText('Kategori pekerjaan. Digunakan untuk filter dan organisir di galeri.'),
-
-            TextInput::make('badge_text')
-                ->label('Teks Badge (Label)')
-                ->placeholder('Contoh: Featured, Best Seller, Recommended, Premium')
-                ->columnSpan(1)
-                ->helperText('Label khusus yang akan ditampilkan di sudut foto sebagai penanda spesial.'),
-
-            DatePicker::make('tanggal_upload')
-                ->label('Tanggal Upload')
-                ->required()
-                ->columnSpan(1)
-                ->helperText('Tanggal pekerjaan ini selesai/dipublikasikan.'),
-
-            Toggle::make('is_featured')
-                ->label('Tampilkan sebagai Featured?')
-                ->columnSpan(1)
-                ->helperText('Jika aktif, pekerjaan ini akan ditampilkan di bagian "Featured Works" di halaman utama galeri.')
-                ->default(false),
-        ]);
+                Section::make('Visual & Kategori')
+                    ->description('Foto utama, kategori, badge, dan tanggal upload.')
+                    ->icon('heroicon-o-photo')
+                    ->collapsible()
+                    ->schema([
+                        FileUpload::make('foto')
+                            ->label('Foto Utama Galeri *')
+                            ->image()
+                            ->imageEditor()
+                            ->directory('galeri')
+                            ->disk('public')
+                            ->maxSize(10240)
+                            ->required()
+                            ->helperText('Format: JPG, PNG, WebP. Maksimal 10MB. Ukuran rekomendasi: 1200x800px.'),
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('kategori')
+                                    ->label('Kategori')
+                                    ->placeholder('Contoh: Sticker, Wrapping, Vinyl Wrapping')
+                                    ->helperText('Kategori pekerjaan. Digunakan untuk filter dan organisir di galeri.'),
+                                TextInput::make('badge_text')
+                                    ->label('Teks Badge (Label)')
+                                    ->placeholder('Contoh: Featured, Best Seller, Premium')
+                                    ->helperText('Label khusus yang akan ditampilkan di sudut foto.'),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
+                                DatePicker::make('tanggal_upload')
+                                    ->label('Tanggal Upload *')
+                                    ->required()
+                                    ->helperText('Tanggal pekerjaan ini selesai/dipublikasikan.'),
+                                Toggle::make('is_featured')
+                                    ->label('Tampilkan sebagai Featured?')
+                                    ->default(false)
+                                    ->helperText('Jika aktif, akan ditampilkan di bagian "Featured Works".'),
+                            ]),
+                    ]),
+            ]);
     }
 }

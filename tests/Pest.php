@@ -26,10 +26,7 @@ beforeEach(function () {
         '--class' => \Database\Seeders\RolesTableSeeder::class,
     ]);
 
-    // Pastikan konten CMS/profil tersedia saat homepage di-render
-    \Illuminate\Support\Facades\Artisan::call('db:seed', [
-        '--class' => \Database\Seeders\ProfilPerusahaanSeeder::class,
-    ]);
+    // Pastikan Settings tersedia — cukup gunakan nilai default (nullable) di Settings classes
 });
 
 /*

@@ -69,8 +69,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Notifications
     Route::prefix('notifikasi')->group(function () {
-        Route::get('/', [NotifikasiController::class, 'index']);
-        Route::get('/unread-count', [NotifikasiController::class, 'unreadCount']);
+        Route::get('/', [NotifikasiController::class, 'index'])->name('api.notifikasi.index');
+        Route::get('/unread-count', [NotifikasiController::class, 'unreadCount'])->name('api.notifikasi.unread');
+        Route::post('/mark-all-read', [NotifikasiController::class, 'markAllAsRead'])->name('api.notifikasi.markAllAsRead');
         Route::post('/{notifikasi}/read', [NotifikasiController::class, 'markAsRead']);
         Route::delete('/{notifikasi}', [NotifikasiController::class, 'destroy']);
     });

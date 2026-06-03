@@ -16,49 +16,49 @@
                         case 'menunggu_konfirmasi_admin':
                             $icon = 'ph-clock';
                             $iconBg = 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500';
-                            $title = 'Menunggu Konfirmasi';
+                            $title = $profil->status_menunggu_konfirmasi ?? 'Menunggu Konfirmasi';
                             $desc = 'Pesanan #' . $order->kode_pesanan . ' (' . ($order->form->model_kendaraan ?? 'Kendaraan') . ') sedang ditinjau oleh admin';
                             $rightCol = '<span class="block text-xs font-extrabold text-white font-mono">Rp ' . number_format($order->total_harga, 0, ',', '.') . '</span>';
                             break;
                         case 'menunggu_pembayaran':
                             $icon = 'ph-wallet';
                             $iconBg = 'bg-blue-500/10 border-blue-500/20 text-blue-500';
-                            $title = 'Menunggu Pembayaran';
+                            $title = $profil->status_menunggu_pembayaran ?? 'Menunggu Pembayaran';
                             $desc = 'Silakan lakukan pembayaran untuk pesanan #' . $order->kode_pesanan;
-                            $rightCol = '<a href="' . route('pesanan.show', $order->id_pesanan) . '" class="block text-xs font-extrabold text-blue-400 hover:underline">Bayar Sekarang</a>';
+                            $rightCol = '<a href="' . route('pesanan.show', $order->id_pesanan) . '" class="block text-xs font-extrabold text-blue-400 hover:underline">' . ($profil->cta_bayar_sekarang ?? 'Bayar Sekarang') . '</a>';
                             break;
                         case 'menunggu_verifikasi_pembayaran':
                             $icon = 'ph-hourglass-high';
                             $iconBg = 'bg-orange-500/10 border-orange-500/20 text-orange-500';
-                            $title = 'Verifikasi Pembayaran';
+                            $title = $profil->status_verifikasi_pembayaran ?? 'Verifikasi Pembayaran';
                             $desc = 'Bukti pembayaran pesanan #' . $order->kode_pesanan . ' sedang diverifikasi';
                             $rightCol = '<span class="block text-xs font-extrabold text-orange-400 font-mono">Menunggu</span>';
                             break;
                         case 'dikonfirmasi':
                             $icon = 'ph-check-circle';
                             $iconBg = 'bg-green-500/10 border-green-500/20 text-green-500';
-                            $title = 'Pesanan Dikonfirmasi';
+                            $title = $profil->status_dikonfirmasi ?? 'Pesanan Dikonfirmasi';
                             $desc = 'Pembayaran terverifikasi untuk pesanan #' . $order->kode_pesanan;
-                            $rightCol = '<span class="block text-xs font-extrabold text-green-500 font-mono">Lunas</span>';
+                            $rightCol = '<span class="block text-xs font-extrabold text-green-500 font-mono">' . ($profil->status_lunas ?? 'Lunas') . '</span>';
                             break;
                         case 'sedang_diproses':
                             $icon = 'ph-wrench';
                             $iconBg = 'bg-amber-500/10 border-amber-500/20 text-amber-500';
-                            $title = 'Sedang Dikerjakan';
+                            $title = $profil->status_dikerjakan ?? 'Sedang Dikerjakan';
                             $desc = 'Kendaraan pesanan #' . $order->kode_pesanan . ' (' . ($order->form->model_kendaraan ?? 'Kendaraan') . ') sedang dikerjakan';
                             $rightCol = '<span class="block text-xs font-extrabold text-amber-500 font-mono uppercase">Proses</span>';
                             break;
                         case 'selesai':
                             $icon = 'ph-check-square';
                             $iconBg = 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500';
-                            $title = 'Pengerjaan Selesai';
+                            $title = $profil->status_pengerjaan_selesai ?? 'Pengerjaan Selesai';
                             $desc = 'Layanan selesai untuk pesanan #' . $order->kode_pesanan;
-                            $rightCol = '<span class="block text-xs font-extrabold text-emerald-500 font-mono uppercase">Selesai</span>';
+                            $rightCol = '<span class="block text-xs font-extrabold text-emerald-500 font-mono uppercase">' . ($profil->status_pesanan_selesai ?? 'Selesai') . '</span>';
                             break;
                         case 'ditolak':
                             $icon = 'ph-x-circle';
                             $iconBg = 'bg-red-500/10 border-red-500/20 text-red-500';
-                            $title = 'Pesanan Ditolak';
+                            $title = $profil->status_pesanan_ditolak ?? 'Pesanan Ditolak';
                             $desc = 'Pesanan #' . $order->kode_pesanan . ' ditolak';
                             $rightCol = '<span class="block text-xs font-extrabold text-red-500 font-mono uppercase">Ditolak</span>';
                             break;

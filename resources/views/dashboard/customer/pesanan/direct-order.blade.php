@@ -98,7 +98,7 @@
             <!-- Order Summary -->
             <div class="bg-white/[0.01] border border-white/5 rounded-2xl p-6 shadow-lg sticky top-24">
 
-                <h3 class="text-lg font-bold text-white mb-6">Ringkasan Pesanan</h3>
+                <h3 class="text-lg font-bold text-white mb-6">{{ $profil->section_ringkasan_pesanan ?? 'Ringkasan Pesanan' }}</h3>
 
                 <div class="space-y-4 mb-6 pb-6 border-b border-white/5">
                     <div class="flex justify-between items-center">
@@ -127,7 +127,7 @@
                     <!-- Add to Cart -->
                     <button id="add-to-cart-btn"
                             class="w-full py-3 px-4 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg font-bold text-xs uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200">
-                        <i class="ph-bold ph-shopping-cart-simple mr-2"></i> Tambah ke Keranjang
+                        <i class="ph-bold ph-shopping-cart-simple mr-2"></i> {{ $profil->cta_tambah_keranjang ?? 'Tambah ke Keranjang' }}
                     </button>
 
                     <!-- Direct Checkout -->
@@ -146,7 +146,7 @@
                     <!-- Back Button -->
                     <a href="{{ route('dashboard') }}"
                        class="w-full py-2 px-4 bg-white/5 border border-white/10 text-white rounded-lg font-bold text-xs uppercase tracking-wide hover:bg-white/10 transition-all text-center">
-                        Kembali
+                        {{ $profil->cta_kembali ?? 'Kembali' }}
                     </a>
                 </div>
 
@@ -156,14 +156,14 @@
                         <i class="ph-bold ph-shield-check text-[#f2994a] text-lg shrink-0 mt-0.5"></i>
                         <div>
                             <p class="text-[9px] font-bold text-white uppercase tracking-widest">Aman & Terpercaya</p>
-                            <p class="text-[10px] text-gray-400 mt-1">Pembayaran aman dengan enkripsi tingkat bank</p>
+                            <p class="text-[10px] text-gray-400 mt-1">{{ $profil->layanan_pembayaran_aman ?? 'Pembayaran aman dengan enkripsi tingkat bank' }}</p>
                         </div>
                     </div>
                     <div class="flex items-start gap-3">
                         <i class="ph-bold ph-check-circle text-[#f2994a] text-lg shrink-0 mt-0.5"></i>
                         <div>
                             <p class="text-[9px] font-bold text-white uppercase tracking-widest">Garansi Kepuasan</p>
-                            <p class="text-[10px] text-gray-400 mt-1">Garansi 1 tahun untuk semua layanan</p>
+                            <p class="text-[10px] text-gray-400 mt-1">{{ $profil->layanan_garansi_text ?? 'Garansi 1 tahun untuk semua layanan' }}</p>
                         </div>
                     </div>
                 </div>

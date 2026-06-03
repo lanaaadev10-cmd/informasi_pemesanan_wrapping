@@ -8,8 +8,8 @@
             <i class="ph ph-seal-check text-lg"></i>
         </div>
         <div>
-            <h5 class="text-xs font-bold text-white uppercase tracking-wider">Premium Films</h5>
-            <p class="text-[10px] text-gray-500 mt-1 leading-normal font-light">We only use top-tier 3M, Avery, and Inozetek materials.</p>
+            <h5 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profil->katalog_feature_1_title ?? 'Premium Films' }}</h5>
+            <p class="text-[10px] text-gray-500 mt-1 leading-normal font-light">{{ $profil->katalog_feature_1_desc ?? 'We only use top-tier 3M, Avery, and Inozetek materials.' }}</p>
         </div>
     </div>
     
@@ -18,8 +18,8 @@
             <i class="ph ph-wrench text-lg"></i>
         </div>
         <div>
-            <h5 class="text-xs font-bold text-white uppercase tracking-wider">Expert Installers</h5>
-            <p class="text-[10px] text-gray-500 mt-1 leading-normal font-light">Certified technicians with 10+ years of collective experience.</p>
+            <h5 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profil->katalog_feature_2_title ?? 'Expert Installers' }}</h5>
+            <p class="text-[10px] text-gray-500 mt-1 leading-normal font-light">{{ $profil->katalog_feature_2_desc ?? 'Certified technicians with 10+ years of collective experience.' }}</p>
         </div>
     </div>
 
@@ -28,8 +28,8 @@
             <i class="ph ph-shield-check text-lg"></i>
         </div>
         <div>
-            <h5 class="text-xs font-bold text-white uppercase tracking-wider">Warranty</h5>
-            <p class="text-[10px] text-gray-500 mt-1 leading-normal font-light">Full warranty on both material and labor defects.</p>
+            <h5 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profil->katalog_feature_3_title ?? 'Warranty' }}</h5>
+            <p class="text-[10px] text-gray-500 mt-1 leading-normal font-light">{{ $profil->katalog_feature_3_desc ?? 'Full warranty on both material and labor defects.' }}</p>
         </div>
     </div>
 
@@ -38,8 +38,8 @@
             <i class="ph ph-leaf text-lg"></i>
         </div>
         <div>
-            <h5 class="text-xs font-bold text-white uppercase tracking-wider">Eco-Friendly</h5>
-            <p class="text-[10px] text-gray-500 mt-1 leading-normal font-light">Sustainable practices and non-toxic application methods.</p>
+            <h5 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profil->katalog_feature_4_title ?? 'Eco-Friendly' }}</h5>
+            <p class="text-[10px] text-gray-500 mt-1 leading-normal font-light">{{ $profil->katalog_feature_4_desc ?? 'Sustainable practices and non-toxic application methods.' }}</p>
         </div>
     </div>
 </div>

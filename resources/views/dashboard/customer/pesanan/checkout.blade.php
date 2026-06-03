@@ -1,6 +1,6 @@
 @extends('layouts.dashboard_customer')
 
-@section('title', 'Konfirmasi Pemesanan')
+@section('title', $profil->cta_konfirmasi_pemesanan ?? 'Konfirmasi Pemesanan')
 
 @php
     $accentColor = $profil->accent_color ?? '#f2994a';
@@ -68,8 +68,8 @@
 
     <!-- Page Title -->
     <div class="z-10 relative space-y-1">
-        <h2 id="page-title" class="text-3xl font-medium tracking-tight text-white">Data Kendaraan & Jadwal</h2>
-        <p id="page-subtitle" class="text-sm text-gray-400">Harap lengkapi informasi kendaraan dan jadwal penyerahan sebelum tinjauan.</p>
+        <h2 id="page-title" class="text-3xl font-medium tracking-tight text-white">{{ $profil->section_data_kendaraan ?? 'Data Kendaraan & Jadwal' }}</h2>
+        <p id="page-subtitle" class="text-sm text-gray-400">{{ $profil->checkout_lengkapi_prompt ?? 'Harap lengkapi informasi kendaraan dan jadwal penyerahan sebelum tinjauan.' }}</p>
     </div>
 
     <!-- Main Content Area -->
@@ -89,29 +89,29 @@
                     <!-- Kolom 1 -->
                     <div class="space-y-6">
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">Merk & Model Kendaraan <span class="text-red-500">*</span></label>
+                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_merk_kendaraan ?? 'Merk & Model Kendaraan *' }}</label>
                             <input type="text" id="input_merk" name="model_kendaraan" placeholder="Contoh: Porsche 911 GT3 (992)" required
                                    class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">Warna Dasar Kendaraan <span class="text-red-500">*</span></label>
+                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_warna_kendaraan ?? 'Warna Dasar Kendaraan *' }}</label>
                             <input type="text" id="input_warna" name="warna_kendaraan" placeholder="Contoh: Chalk White" required
                                    class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="space-y-2">
-                                <label class="text-xs font-medium text-gray-400 px-1">Nomor Polisi <span class="text-red-500">*</span></label>
+                                <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_nomor_polisi ?? 'Nomor Polisi *' }}</label>
                                 <input type="text" id="input_nopol" name="nomor_polisi" placeholder="B 911 RSR" required
                                        class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner uppercase">
                             </div>
                             <div class="space-y-2">
-                                <label class="text-xs font-medium text-gray-400 px-1">Tahun Produksi <span class="text-red-500">*</span></label>
+                                <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_tahun_produksi ?? 'Tahun Produksi *' }}</label>
                                 <input type="number" id="input_tahun" name="tahun_produksi" placeholder="2023" required
                                        class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">Nama Pemesan <span class="text-red-500">*</span></label>
+                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_nama_pemesan ?? 'Nama Pemesan *' }}</label>
                             <input type="text" id="input_nama" name="nama_pemesan" value="{{ auth()->user()->name }}" required
                                    class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
                         </div>
@@ -120,36 +120,36 @@
                     <!-- Kolom 2 -->
                     <div class="space-y-6">
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">Lokasi Pengerjaan (Workshop) <span class="text-red-500">*</span></label>
+                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_lokasi_pengerjaan ?? 'Lokasi Pengerjaan (Workshop) *' }}</label>
                             <div class="grid grid-cols-2 gap-3">
                                 <label class="cursor-pointer group h-full">
                                     <input type="radio" name="lokasi_pengerjaan" value="toko" class="peer hidden" checked onchange="updateLokasiLabel()">
                                     <div class="h-full border border-white/10 peer-checked:border-[#f2994a] bg-[#1c1c1c] peer-checked:bg-[#f2994a]/5 rounded-xl px-4 py-3 flex items-center justify-between transition-all hover:bg-white/5">
-                                        <span class="text-xs font-medium text-gray-400 peer-checked:text-white">Studio HQ</span>
+                                        <span class="text-xs font-medium text-gray-400 peer-checked:text-white">{{ $profil->form_studio_hq ?? 'Studio HQ' }}</span>
                                         <i class="ph-bold ph-check-circle text-[#f2994a] opacity-0 peer-checked:opacity-100"></i>
                                     </div>
                                 </label>
                                 <label class="cursor-pointer group h-full">
                                     <input type="radio" name="lokasi_pengerjaan" value="rumah" class="peer hidden" onchange="updateLokasiLabel()">
                                     <div class="h-full border border-white/10 peer-checked:border-[#f2994a] bg-[#1c1c1c] peer-checked:bg-[#f2994a]/5 rounded-xl px-4 py-3 flex items-center justify-between transition-all hover:bg-white/5">
-                                        <span class="text-xs font-medium text-gray-400 peer-checked:text-white">Home Service</span>
+                                        <span class="text-xs font-medium text-gray-400 peer-checked:text-white">{{ $profil->form_home_service ?? 'Home Service' }}</span>
                                         <i class="ph-bold ph-check-circle text-[#f2994a] opacity-0 peer-checked:opacity-100"></i>
                                     </div>
                                 </label>
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">Alamat Pengerjaan / Penjemputan <span class="text-red-500">*</span></label>
+                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_alamat_pengerjaan ?? 'Alamat Pengerjaan / Penjemputan *' }}</label>
                             <textarea id="input_alamat" name="alamat_pengiriman" rows="2" placeholder="Wapping Premium - Jakarta Selatan (Atau alamat lengkap Anda)..." required
                                       class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner"></textarea>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">Tanggal Mulai Sesi <span class="text-red-500">*</span></label>
+                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_tanggal_mulai ?? 'Tanggal Mulai Sesi *' }}</label>
                             <input type="datetime-local" id="input_jadwal" name="jadwal_pengerjaan" required
                                    class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner [color-scheme:dark]">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">WhatsApp <span class="text-red-500">*</span></label>
+                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_whatsapp ?? 'WhatsApp *' }}</label>
                             <input type="text" name="no_hp" placeholder="08XXXXXXXXXX" required
                                    class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
                         </div>
@@ -162,7 +162,7 @@
 
                 <div class="flex justify-end pt-6 mt-4 border-t border-white/5 relative z-10">
                     <button type="button" onclick="goToStep(3)" class="px-8 py-3.5 bg-[#f2994a] hover:bg-[#e28a44] rounded-xl text-black font-medium text-sm transition-all hover:shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-[1.02] active:scale-95 flex items-center gap-2">
-                        Lanjutkan ke Review <i class="ph-bold ph-arrow-right text-lg"></i>
+                        {{ $profil->cta_lanjutkan_review ?? 'Lanjutkan ke Review' }} <i class="ph-bold ph-arrow-right text-lg"></i>
                     </button>
                 </div>
             </div>
@@ -180,7 +180,7 @@
                         <div class="flex justify-between items-center border-b border-white/5 pb-4">
                             <div class="flex items-center gap-3">
                                 <i class="ph ph-stack text-[#f2994a] text-2xl"></i>
-                                <h3 class="text-white font-medium text-lg">Layanan Terpilih</h3>
+                                <h3 class="text-white font-medium text-lg">{{ $profil->section_layanan_terpilih ?? 'Layanan Terpilih' }}</h3>
                             </div>
                         </div>
                         
@@ -217,27 +217,27 @@
                         <div class="flex justify-between items-center border-b border-white/5 pb-4">
                             <div class="flex items-center gap-3">
                                 <i class="ph ph-car-profile text-[#f2994a] text-2xl"></i>
-                                <h3 class="text-white font-medium text-lg">Detail Kendaraan</h3>
+                                <h3 class="text-white font-medium text-lg">{{ $profil->section_detail_kendaraan ?? 'Detail Kendaraan' }}</h3>
                             </div>
                             <button type="button" onclick="goToStep(2)" class="flex items-center gap-1.5 text-gray-400 hover:text-white text-xs font-medium transition-colors">
-                                <i class="ph-bold ph-pencil-simple"></i> Edit
+                                <i class="ph-bold ph-pencil-simple"></i> {{ $profil->cta_edit ?? 'Edit' }}
                             </button>
                         </div>
                         <div class="grid grid-cols-2 gap-y-8 gap-x-4">
                             <div>
-                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Merk & Model</span>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">{{ $profil->form_merk_kendaraan ?? 'Merk & Model' }}</span>
                                 <span id="review-merk" class="text-gray-200 font-medium text-sm"></span>
                             </div>
                             <div>
-                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Nomor Polisi</span>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">{{ $profil->form_nomor_polisi ?? 'Nomor Polisi' }}</span>
                                 <span id="review-nopol" class="text-gray-200 font-medium text-sm"></span>
                             </div>
                             <div>
-                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Warna Dasar</span>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">{{ $profil->form_warna_kendaraan ?? 'Warna Dasar' }}</span>
                                 <span id="review-warna" class="text-gray-200 font-medium text-sm"></span>
                             </div>
                             <div>
-                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Tahun Produksi</span>
+                                <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">{{ $profil->form_tahun_produksi ?? 'Tahun Produksi' }}</span>
                                 <span id="review-tahun" class="text-gray-200 font-medium text-sm"></span>
                             </div>
                         </div>
@@ -248,17 +248,17 @@
                         <div class="flex justify-between items-center border-b border-white/5 pb-4">
                             <div class="flex items-center gap-3">
                                 <i class="ph ph-calendar-blank text-[#f2994a] text-2xl"></i>
-                                <h3 class="text-white font-medium text-lg">Jadwal Sesi</h3>
+                                <h3 class="text-white font-medium text-lg">{{ $profil->section_jadwal_sesi ?? 'Jadwal Sesi' }}</h3>
                             </div>
                             <button type="button" onclick="goToStep(2)" class="flex items-center gap-1.5 text-gray-400 hover:text-white text-xs font-medium transition-colors">
-                                <i class="ph-bold ph-pencil-simple"></i> Edit
+                                <i class="ph-bold ph-pencil-simple"></i> {{ $profil->cta_edit ?? 'Edit' }}
                             </button>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <div class="flex items-start gap-3">
                                 <i class="ph ph-calendar text-gray-400 text-xl mt-0.5"></i>
                                 <div>
-                                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Tanggal Mulai</span>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">{{ $profil->form_tanggal_mulai ?? 'Tanggal Mulai' }}</span>
                                     <span id="review-jadwal" class="text-gray-200 font-medium text-xs leading-relaxed block max-w-[150px]"></span>
                                 </div>
                             </div>
@@ -284,7 +284,7 @@
                 <!-- Kanan: Rincian Biaya (Col 4) -->
                 <div class="lg:col-span-4 relative">
                     <div class="bg-[#121212] border border-white/5 rounded-[24px] p-6 sm:p-8 space-y-8 shadow-lg lg:sticky lg:top-24">
-                        <h3 class="text-white font-medium text-lg">Rincian Biaya</h3>
+                        <h3 class="text-white font-medium text-lg">{{ $profil->section_rincian_biaya ?? 'Rincian Biaya' }}</h3>
                         
                         <div class="space-y-4">
                             @foreach($keranjang->details as $item)
@@ -305,16 +305,16 @@
                         @endphp
 
                         <div class="bg-[#1a1a1a] border border-white/5 rounded-xl p-5 flex justify-between items-center shadow-inner mt-4">
-                            <span class="text-gray-400 text-xs font-medium">Total<br>Pembayaran</span>
+                            <span class="text-gray-400 text-xs font-medium">{{ $profil->label_total_tagihan ?? 'Total Pembayaran' }}</span>
                             <span class="text-[#f2994a] text-xl font-medium tracking-tight">Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
                         </div>
 
                         <div class="pt-2">
                             <button type="submit" onclick="prepareSubmit()" class="w-full py-4 bg-[#f2994a] hover:bg-[#e28a44] rounded-xl text-black font-medium text-sm transition-all hover:shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2">
-                                Konfirmasi Pemesanan <i class="ph-bold ph-arrow-right"></i>
+                                {{ $profil->cta_konfirmasi_pemesanan ?? 'Konfirmasi Pemesanan' }} <i class="ph-bold ph-arrow-right"></i>
                             </button>
                             <p class="text-center text-[9px] text-gray-500 leading-relaxed mt-5 px-2">
-                                Dengan mengklik Konfirmasi, Anda menyetujui Syarat & Ketentuan serta Kebijakan Pembatalan kami.
+                                {{ $profil->checkout_terms_text ?? 'Dengan mengklik Konfirmasi, Anda menyetujui Syarat & Ketentuan serta Kebijakan Pembatalan kami.' }}
                             </p>
                         </div>
                     </div>
@@ -374,7 +374,7 @@
                 }
             });
             if (!allValid) {
-                alert('Harap lengkapi semua data wajib bertanda bintang merah (*).');
+                alert('{{ $profil->alert_lengkapi_data ?? 'Harap lengkapi semua data wajib bertanda bintang merah (*).' }}');
                 return; // Stop if validation fails
             }
 
@@ -414,8 +414,8 @@
         const subtitle = document.getElementById('page-subtitle');
         
         if (step === 3) {
-            title.innerText = "Konfirmasi Pemesanan";
-            subtitle.innerText = "Harap tinjau kembali detail pesanan Anda sebelum melanjutkan ke pembayaran.";
+            title.innerText = "{{ $profil->cta_konfirmasi_pemesanan ?? 'Konfirmasi Pemesanan' }}";
+            subtitle.innerText = "{{ $profil->checkout_review_prompt ?? 'Harap tinjau kembali detail pesanan Anda sebelum melanjutkan ke pembayaran.' }}";
             
             // Step 2 becomes completed
             document.getElementById('step-circle-2').innerHTML = '<i class="ph-bold ph-check"></i>';
@@ -427,8 +427,8 @@
             document.getElementById('step-circle-3').className = "w-10 h-10 rounded-full bg-[#f2994a] text-black font-bold flex items-center justify-center text-sm shadow-[0_0_15px_rgba(242,153,74,0.4)] transition-all scale-110";
             document.getElementById('step-label-3').className = "text-[10px] font-bold text-[#f2994a] transition-all text-center";
         } else if (step === 2) {
-            title.innerText = "Data Kendaraan & Jadwal";
-            subtitle.innerText = "Harap lengkapi informasi kendaraan dan jadwal penyerahan sebelum tinjauan.";
+            title.innerText = "{{ $profil->section_data_kendaraan ?? 'Data Kendaraan & Jadwal' }}";
+            subtitle.innerText = "{{ $profil->checkout_lengkapi_prompt ?? 'Harap lengkapi informasi kendaraan dan jadwal penyerahan sebelum tinjauan.' }}";
             
             // Step 2 becomes active again
             document.getElementById('step-circle-2').innerHTML = '<i class="ph-bold ph-pencil-simple text-lg"></i>';

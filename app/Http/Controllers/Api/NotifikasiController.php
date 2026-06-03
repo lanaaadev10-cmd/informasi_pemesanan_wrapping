@@ -99,6 +99,22 @@ class NotifikasiController extends Controller
     }
 
     /**
+     * POST /api/notifikasi/mark-all-read
+     * Mark all notifications as read
+     */
+    public function markAllAsRead()
+    {
+        Notifikasi::where('id_user', auth()->id())
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Semua notifikasi ditandai sebagai terbaca.',
+        ], 200);
+    }
+
+    /**
      * DELETE /api/notifikasi/:id
      * Delete notification
      */

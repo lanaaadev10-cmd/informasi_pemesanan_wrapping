@@ -8,13 +8,13 @@
     <div class="max-w-7xl mx-auto relative z-10">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16" data-aos="fade-up">
             <div class="space-y-3">
-                <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block">Showcase Portofolio</span>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Mahakarya Kami</h2>
-                <p class="text-gray-500 text-sm max-w-lg">Berikut adalah hasil pengerjaan car wrapping premium dari tim ahli profesional kami.</p>
+                <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block">{{ $profil->home_section_portofolio_badge ?? 'Showcase Portofolio' }}</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">{{ $profil->home_section_portofolio_title ?? 'Mahakarya Kami' }}</h2>
+                <p class="text-gray-500 text-sm max-w-lg">{{ $profil->home_section_portofolio_desc ?? 'Berikut adalah hasil pengerjaan car wrapping premium dari tim ahli profesional kami.' }}</p>
             </div>
             <div class="flex-shrink-0">
                 <a href="{{ route('galeri.user') }}" class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#f2994a] hover:text-[#e28a44] transition-all group">
-                    Lihat Semua <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    {{ $profil->cta_lihat_semua ?? 'Lihat Semua' }} <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
                 </a>
             </div>
         </div>

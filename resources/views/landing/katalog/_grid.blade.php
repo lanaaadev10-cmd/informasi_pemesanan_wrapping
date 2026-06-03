@@ -79,7 +79,7 @@
                                     @if($wideItem->tipe_layanan == 'fix')
                                         Rp {{ number_format($wideItem->harga, 0, ',', '.') }}
                                     @else
-                                        Custom Pricing
+                                        {{ $profil->katalog_harga_custom_label ?? 'Custom Pricing' }}
                                     @endif
                                 </span>
                             </div>
@@ -92,7 +92,7 @@
                                 <input type="hidden" name="direct_checkout" value="1">
                                 <button type="submit" 
                                         class="flex items-center gap-2 bg-[#f2994a] hover:bg-[#e28a44] text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-2xl transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-105 active:scale-95">
-                                    <i class="ph-bold ph-phone text-xs"></i> Book Discovery Call
+                                    <i class="ph-bold ph-phone text-xs"></i> {{ $profil->katalog_card_book_button ?? 'Book Discovery Call' }}
                                 </button>
                             </form>
                         </div>
@@ -144,9 +144,8 @@
                                 @if($mediumItem->tipe_layanan == 'fix')
                                     Rp {{ number_format($mediumItem->harga, 0, ',', '.') }}
                                 @else
-                                    Custom Price
-                                @endif
-                            </span>
+                                    {{ $profil->katalog_harga_custom_label ?? 'Custom Price' }}
+                                </span>
 
                             <!-- Add to Cart Circular Plus Button -->
                             <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
@@ -224,9 +223,8 @@
                                 @if($item->tipe_layanan == 'fix')
                                     Rp {{ number_format($item->harga, 0, ',', '.') }}
                                 @else
-                                    Custom Price
-                                @endif
-                            </span>
+                                    {{ $profil->katalog_harga_custom_label ?? 'Custom Price' }}
+                                </span>
 
                             <!-- Add to Cart Circular Plus Button -->
                             <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
@@ -251,8 +249,8 @@
             <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-500 mx-auto mb-4">
                 <i class="ph-bold ph-sketch-logo text-2xl"></i>
             </div>
-            <h4 class="text-base font-bold text-white mb-1">Catalog Empty</h4>
-            <p class="text-xs text-gray-500 font-light">We are drafting premium finishes collections at the moment.</p>
+            <h4 class="text-base font-bold text-white mb-1">{{ $profil->katalog_empty_state_title ?? 'Catalog Empty' }}</h4>
+            <p class="text-xs text-gray-500 font-light">{{ $profil->katalog_empty_state_desc ?? 'We are drafting premium finishes collections at the moment.' }}</p>
         </div>
     @endif
 </div>

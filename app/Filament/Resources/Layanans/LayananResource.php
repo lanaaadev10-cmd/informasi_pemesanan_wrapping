@@ -22,8 +22,8 @@ class LayananResource extends Resource
     // Model yang digunakan: Layanan
     protected static ?string $model = Layanan::class;
 
-    protected static ?string $navigationLabel = 'Edit Katalog Layanan';
-    protected static ?string $pluralLabel = 'Edit Katalog Layanan';
+    protected static ?string $navigationLabel = 'Kelola Paket Layanan';
+    protected static ?string $pluralLabel = 'Kelola Paket Layanan';
     protected static ?string $recordTitleAttribute = 'nama_layanan';
 
     protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
