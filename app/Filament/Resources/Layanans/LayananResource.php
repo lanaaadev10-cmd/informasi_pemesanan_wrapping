@@ -11,7 +11,6 @@ use App\Models\Layanan;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use Filament\Support\Icons\Heroicon;
 
 /**
  * LayananResource
@@ -22,12 +21,13 @@ class LayananResource extends Resource
     // Model yang digunakan: Layanan
     protected static ?string $model = Layanan::class;
 
-    protected static ?string $navigationLabel = 'Kelola Paket Layanan';
-    protected static ?string $pluralLabel = 'Kelola Paket Layanan';
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-shopping-bag';
+    protected static ?string $navigationLabel = 'Edit Katalog Layanan';
+    protected static ?string $pluralLabel = 'Edit Katalog Layanan';
     protected static ?string $recordTitleAttribute = 'nama_layanan';
 
-    protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
-    protected static ?int $navigationSort = 1;
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Konten Website';
+    protected static ?int $navigationSort = 4;
 
     /**
      * Konfigurasi Form (Logika ada di folder Schemas)
@@ -36,6 +36,7 @@ class LayananResource extends Resource
     {
         return $form->schema(LayananForm::schema());
     }
+
     /**
      * Konfigurasi Table (Logika ada di folder Tables)
      */
@@ -43,6 +44,7 @@ class LayananResource extends Resource
     {
         return LayanansTable::configure($table);
     }
+
     /**
      * Definisi Rute Halaman
      */
