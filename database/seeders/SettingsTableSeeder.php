@@ -40,6 +40,13 @@ class SettingsTableSeeder extends Seeder
         foreach ($settingsClasses as $settingsClass) {
             try {
                 $settings = app($settingsClass);
+                $reflection = new \ReflectionClass($settings);
+                $defaults = $reflection->getDefaultProperties();
+
+                foreach ($defaults as $key => $value) {
+                    $settings->{$key} = $value;
+                }
+
                 $settings->save();
             } catch (\Exception $e) {
                 echo "Could not initialize {$settingsClass}: " . $e->getMessage() . "\n";

@@ -96,11 +96,11 @@ class EditHalamanGaleri extends EditRecord
         $this->callHook('beforeSave');
 
         $settings = app(GaleriSettings::class);
-        $defaults = (new \ReflectionClass($settings))->getDefaultProperties();
-        $data = array_merge($defaults, $settings->toArray(), $data);
+        $reflection = new \ReflectionClass($settings);
+        $defaults = $reflection->getDefaultProperties();
 
-        foreach ($data as $key => $value) {
-            $settings->{$key} = $value;
+        foreach ($defaults as $key => $value) {
+            $settings->{$key} = $data[$key] ?? $value;
         }
 
         $settings->save();
