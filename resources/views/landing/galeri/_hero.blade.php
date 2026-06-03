@@ -3,9 +3,9 @@
     Deskripsi: Judul dan deskripsi halaman galeri
 ============================================ --}}
 <section class="relative w-full rounded-[32px] overflow-hidden mb-12 px-2 py-16 sm:py-20 flex items-center justify-center" data-aos="fade-down" data-aos-duration="1000">
-    @if($profil?->galeri_hero_image)
+    @if($galeriHeroImage)
         <div class="absolute inset-0 z-0">
-            <img src="{{ asset('storage/' . $profil->galeri_hero_image) }}"
+            <img src="{{ asset('storage/' . $galeriHeroImage) }}"
                  class="w-full h-full object-cover object-center"
                  alt="Background Galeri">
             <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a0a]/40 to-[#0a0a0a]"></div>

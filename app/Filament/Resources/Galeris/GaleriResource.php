@@ -23,9 +23,8 @@ class GaleriResource extends Resource
 
     protected static ?string $navigationLabel = 'Edit Galeri Pekerjaan';
     protected static ?string $pluralLabel = 'Edit Galeri Pekerjaan';
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-photo';
-    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Konten Website';
-    protected static ?int $navigationSort = 3;
+    protected static string|null|\UnitEnum $navigationGroup = 'Konten';
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'judul';
 

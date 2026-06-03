@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\Pesanan;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class RevenueChartWidget extends ChartWidget
 {
@@ -17,7 +18,12 @@ class RevenueChartWidget extends ChartWidget
         $months = [];
         $revenue = array_fill(0, 12, 0);
 
-        $rawRevenue = Pesanan::selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, SUM(total_harga) as total")
+        $driver = DB::connection()->getDriverName();
+        $dateFormat = $driver === 'sqlite'
+            ? "strftime('%Y-%m', created_at)"
+            : "DATE_FORMAT(created_at, '%Y-%m')";
+
+        $rawRevenue = Pesanan::selectRaw("{$dateFormat} as month, SUM(total_harga) as total")
             ->where('created_at', '>=', Carbon::now()->subMonths(11)->startOfMonth())
             ->where('status', \App\Enums\OrderStatus::SELESAI->value)
             ->groupBy('month')

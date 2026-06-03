@@ -11,8 +11,8 @@ class HalamanGaleriResource extends Resource
     protected static ?string $label = 'Edit Galeri';
     protected static ?string $pluralLabel = 'Edit Galeri';
     protected static ?string $navigationLabel = 'Edit Galeri';
-    protected static string|null|\UnitEnum $navigationGroup = 'Halaman Website';
-    protected static ?int $navigationSort = 4;
+    protected static string|null|\UnitEnum $navigationGroup = 'Website';
+    protected static ?int $navigationSort = 5;
 
     public static function getPages(): array
     {

@@ -41,6 +41,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Settings cache will be cleared manually in Filament pages
     }
 }

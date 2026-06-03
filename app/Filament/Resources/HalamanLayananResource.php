@@ -10,8 +10,8 @@ class HalamanLayananResource extends Resource
     protected static ?string $label = 'Edit Layanan';
     protected static ?string $pluralLabel = 'Edit Layanan';
     protected static ?string $navigationLabel = 'Edit Layanan';
-    protected static string|null|\UnitEnum $navigationGroup = 'Halaman Website';
-    protected static ?int $navigationSort = 3;
+    protected static string|null|\UnitEnum $navigationGroup = 'Website';
+    protected static ?int $navigationSort = 4;
 
     public static function getPages(): array
     {

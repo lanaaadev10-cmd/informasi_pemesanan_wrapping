@@ -145,7 +145,8 @@
                                     Rp {{ number_format($mediumItem->harga, 0, ',', '.') }}
                                 @else
                                     {{ $profil->katalog_harga_custom_label ?? 'Custom Price' }}
-                                </span>
+                                @endif
+                            </span>
 
                             <!-- Add to Cart Circular Plus Button -->
                             <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
@@ -224,7 +225,8 @@
                                     Rp {{ number_format($item->harga, 0, ',', '.') }}
                                 @else
                                     {{ $profil->katalog_harga_custom_label ?? 'Custom Price' }}
-                                </span>
+                                @endif
+                            </span>
 
                             <!-- Add to Cart Circular Plus Button -->
                             <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">

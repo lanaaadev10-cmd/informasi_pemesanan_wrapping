@@ -5,8 +5,8 @@
 @section('content')
 <div class="max-w-5xl mx-auto py-12 px-6">
     <div class="mb-16" data-aos="fade-down">
-        <h1 class="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">Pengaturan <span class="text-orange-600 italic">Akun.</span></h1>
-        <p class="text-gray-400 mt-2 font-medium italic">Kelola identitas dan keamanan akses akun Anda secara terpusat.</p>
+        <h1 class="text-4xl md:text-5xl font-black text-white tracking-tight">Pengaturan <span class="text-[#f2994a] italic">Akun.</span></h1>
+        <p class="text-white/70 mt-2 font-medium italic">Kelola identitas dan keamanan akses akun Anda secara terpusat.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
@@ -41,29 +41,29 @@
         </div>
 
         <div class="lg:col-span-8 space-y-12">
-            <section id="profil" class="soft-card p-10 md:p-12 relative overflow-hidden" data-aos="fade-up">
+            <section id="profil" class="soft-card p-10 md:p-12 relative overflow-hidden bg-[#151515] border border-white/5" data-aos="fade-up">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full"></div>
-                <h3 class="text-2xl font-black text-gray-900 mb-10 flex items-center gap-4">
-                    <i class="ph-fill ph-user-circle text-orange-600 bg-orange-50 p-4 rounded-2xl"></i> Informasi Profil
+                <h3 class="text-2xl font-black text-white mb-10 flex items-center gap-4">
+                    <i class="ph-fill ph-user-circle text-orange-600 bg-white/10 p-4 rounded-2xl"></i> Informasi Profil
                 </h3>
                 <div class="max-w-xl">
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </section>
 
-            <section id="password" class="soft-card p-10 md:p-12 relative overflow-hidden" data-aos="fade-up">
+            <section id="password" class="soft-card p-10 md:p-12 relative overflow-hidden bg-[#151515] border border-white/5" data-aos="fade-up">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full"></div>
-                <h3 class="text-2xl font-black text-gray-900 mb-10 flex items-center gap-4">
-                    <i class="ph-fill ph-lock-key text-orange-600 bg-orange-50 p-4 rounded-2xl"></i> Keamanan Akun
+                <h3 class="text-2xl font-black text-white mb-10 flex items-center gap-4">
+                    <i class="ph-fill ph-lock-key text-orange-600 bg-white/10 p-4 rounded-2xl"></i> Keamanan Akun
                 </h3>
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>
             </section>
 
-            <section id="hapus" class="p-10 md:p-12 rounded-[40px] border-2 border-dashed border-red-100 bg-red-50/30" data-aos="fade-up">
-                <h3 class="text-2xl font-black text-red-600 mb-10 flex items-center gap-4">
-                    <i class="ph-fill ph-warning-circle text-red-600 bg-red-100 p-4 rounded-2xl"></i> Zona Berbahaya
+            <section id="hapus" class="p-10 md:p-12 rounded-[40px] border-2 border-dashed border-red-500/20 bg-red-950/20" data-aos="fade-up">
+                <h3 class="text-2xl font-black text-red-400 mb-10 flex items-center gap-4">
+                    <i class="ph-fill ph-warning-circle text-red-400 bg-red-500/10 p-4 rounded-2xl"></i> Zona Berbahaya
                 </h3>
                 <div class="max-w-xl">
                     @include('profile.partials.delete-user-form')

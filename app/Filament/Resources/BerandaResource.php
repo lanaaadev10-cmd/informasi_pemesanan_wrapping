@@ -15,11 +15,10 @@ class BerandaResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
 
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-home';
     protected static ?string $label = 'Edit Beranda';
     protected static ?string $pluralLabel = 'Edit Beranda';
     protected static ?string $navigationLabel = 'Edit Beranda';
-    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Konten Website';
+    protected static string|null|\UnitEnum $navigationGroup = 'Website';
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
@@ -33,19 +32,23 @@ class BerandaResource extends Resource
                         TextInput::make('home_badge_text')
                             ->label('Badge Text (Atas)')
                             ->placeholder('Contoh: Professional Car Wrapping Indonesia')
+                            ->helperText('Label kecil yang muncul di atas judul hero di halaman utama. Biasanya berisi tag atau kategori.')
                             ->required()
                             ->columnSpanFull(),
                         TextInput::make('home_hero_title_line1')
                             ->label('Judul Hero Baris 1')
                             ->placeholder('Contoh: Elevasi Estetika')
+                            ->helperText('Baris pertama judul utama hero section. Buat menarik dan singkat (max 5 kata).')
                             ->required(),
                         TextInput::make('home_hero_title_line2')
                             ->label('Judul Hero Baris 2')
                             ->placeholder('Contoh: Aset Mewah Anda.')
+                            ->helperText('Baris kedua judul. Lengkapi baris pertama untuk dampak maksimal (max 5 kata).')
                             ->required(),
                         Textarea::make('home_subtitle')
                             ->label('Sub-deskripsi Hero')
                             ->placeholder('Tuliskan deskripsi singkat penawaran...')
+                            ->helperText('Deskripsi singkat di bawah judul. Jelaskan value proposition dalam 2-3 kalimat.')
                             ->required()
                             ->rows(3)
                             ->columnSpanFull(),
@@ -53,16 +56,20 @@ class BerandaResource extends Resource
                     Grid::make(4)->schema([
                         TextInput::make('home_stat1_value')
                             ->label('Statistik 1 Angka')
-                            ->placeholder('Contoh: 500+'),
+                            ->placeholder('Contoh: 500+')
+                            ->helperText('Angka/nilai untuk statistik pertama (contoh: 500+, 10 tahun, 99%).'),
                         TextInput::make('home_stat1_label')
                             ->label('Statistik 1 Label')
-                            ->placeholder('Contoh: Supercars Wrapped'),
+                            ->placeholder('Contoh: Supercars Wrapped')
+                            ->helperText('Deskripsi untuk statistik pertama (contoh: Supercars Wrapped, Clients Satisfied).'),
                         TextInput::make('home_stat2_value')
                             ->label('Statistik 2 Angka')
-                            ->placeholder('Contoh: 5 Tahun'),
+                            ->placeholder('Contoh: 5 Tahun')
+                            ->helperText('Angka/nilai untuk statistik kedua.'),
                         TextInput::make('home_stat2_label')
                             ->label('Statistik 2 Label')
-                            ->placeholder('Contoh: Garansi Material'),
+                            ->placeholder('Contoh: Garansi Material')
+                            ->helperText('Deskripsi untuk statistik kedua.'),
                     ]),
                 ]),
 
@@ -77,9 +84,11 @@ class BerandaResource extends Resource
                             ->schema([
                                 TextInput::make('home_keunggulan_card1_title')
                                     ->label('Judul')
+                                    ->helperText('Judul keunggulan pertama (contoh: Kualitas Premium, Garansi Seumur Hidup).')
                                     ->required(),
                                 Textarea::make('home_keunggulan_card1_desc')
                                     ->label('Deskripsi')
+                                    ->helperText('Penjelasan detail tentang keunggulan ini (1-2 kalimat).')
                                     ->rows(3)
                                     ->required(),
                             ]),
@@ -88,9 +97,11 @@ class BerandaResource extends Resource
                             ->schema([
                                 TextInput::make('home_keunggulan_card2_title')
                                     ->label('Judul')
+                                    ->helperText('Judul keunggulan kedua.')
                                     ->required(),
                                 Textarea::make('home_keunggulan_card2_desc')
                                     ->label('Deskripsi')
+                                    ->helperText('Penjelasan detail tentang keunggulan ini (1-2 kalimat).')
                                     ->rows(3)
                                     ->required(),
                             ]),
@@ -99,9 +110,11 @@ class BerandaResource extends Resource
                             ->schema([
                                 TextInput::make('home_keunggulan_card3_title')
                                     ->label('Judul')
+                                    ->helperText('Judul keunggulan ketiga.')
                                     ->required(),
                                 Textarea::make('home_keunggulan_card3_desc')
                                     ->label('Deskripsi')
+                                    ->helperText('Penjelasan detail tentang keunggulan ini (1-2 kalimat).')
                                     ->rows(3)
                                     ->required(),
                             ]),
@@ -110,9 +123,11 @@ class BerandaResource extends Resource
                             ->schema([
                                 TextInput::make('home_keunggulan_card4_title')
                                     ->label('Judul')
+                                    ->helperText('Judul keunggulan keempat.')
                                     ->required(),
                                 Textarea::make('home_keunggulan_card4_desc')
                                     ->label('Deskripsi')
+                                    ->helperText('Penjelasan detail tentang keunggulan ini (1-2 kalimat).')
                                     ->rows(3)
                                     ->required(),
                             ]),
@@ -130,9 +145,11 @@ class BerandaResource extends Resource
                             ->schema([
                                 TextInput::make('home_step1_title')
                                     ->label('Judul')
+                                    ->helperText('Nama langkah pertama (contoh: Konsultasi, Pilih Warna, Proses).')
                                     ->required(),
                                 Textarea::make('home_step1_desc')
                                     ->label('Deskripsi')
+                                    ->helperText('Penjelasan singkat tentang apa yang terjadi di langkah ini.')
                                     ->rows(3)
                                     ->required(),
                             ]),
@@ -141,9 +158,11 @@ class BerandaResource extends Resource
                             ->schema([
                                 TextInput::make('home_step2_title')
                                     ->label('Judul')
+                                    ->helperText('Nama langkah kedua.')
                                     ->required(),
                                 Textarea::make('home_step2_desc')
                                     ->label('Deskripsi')
+                                    ->helperText('Penjelasan singkat tentang apa yang terjadi di langkah ini.')
                                     ->rows(3)
                                     ->required(),
                             ]),
@@ -152,9 +171,11 @@ class BerandaResource extends Resource
                             ->schema([
                                 TextInput::make('home_step3_title')
                                     ->label('Judul')
+                                    ->helperText('Nama langkah ketiga.')
                                     ->required(),
                                 Textarea::make('home_step3_desc')
                                     ->label('Deskripsi')
+                                    ->helperText('Penjelasan singkat tentang apa yang terjadi di langkah ini.')
                                     ->rows(3)
                                     ->required(),
                             ]),
@@ -169,10 +190,12 @@ class BerandaResource extends Resource
                     TextInput::make('home_cta_title')
                         ->label('Judul CTA')
                         ->placeholder('Contoh: Siap Mengubah Tampilan Kendaraan?')
+                        ->helperText('Judul utama yang mengajak pelanggan mengambil tindakan. Buat menarik dan ringkas.')
                         ->required(),
                     Textarea::make('home_cta_subtitle')
                         ->label('Sub-deskripsi CTA')
                         ->placeholder('Tuliskan deskripsi penawaran untuk memikat pelanggan...')
+                        ->helperText('Deskripsi pendukung CTA. Jelaskan benefit atau penawaran khusus dalam 1-2 kalimat.')
                         ->required()
                         ->rows(3),
                 ]),

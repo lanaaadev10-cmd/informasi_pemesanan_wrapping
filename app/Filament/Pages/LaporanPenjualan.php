@@ -9,7 +9,7 @@ class LaporanPenjualan extends Page
 {
     protected static ?string $navigationLabel = 'Laporan Penjualan';
     protected static ?string $title = 'Laporan Penjualan';
-    protected static string|null|\UnitEnum $navigationGroup = 'Manajemen Transaksi';
+    protected static string|null|\UnitEnum $navigationGroup = 'Transaksi';
     protected static ?int $navigationSort = 2;
 
     protected static ?string $slug = 'laporan-penjualan';

@@ -10,7 +10,7 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Schemas\Components\Section;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,8 +27,9 @@ class EditHalamanGaleri extends EditRecord
         $this->authorizeAccess();
 
         $settings = app(GaleriSettings::class);
-
-        $this->form->fill($settings->toArray());
+        $data = $settings->toArray();
+        $defaults = (new \ReflectionClass($settings))->getDefaultProperties();
+        $this->form->fill(array_merge($defaults, $data));
     }
 
     public function form(Schema $schema): Schema
@@ -43,19 +44,45 @@ class EditHalamanGaleri extends EditRecord
                         ->label('Judul Hero *')
                         ->placeholder('Contoh: Precision Mastery Gallery')
                         ->required()
-                        ->helperText('Judul utama di bagian hero halaman galeri.'),
+                        ->helperText('Judul utama halaman galeri. Ditampilkan besar di bagian atas halaman.'),
                     Textarea::make('galeri_hero_desc')
                         ->label('Deskripsi Hero')
                         ->placeholder('Tuliskan deskripsi galeri...')
                         ->rows(4)
-                        ->helperText('Deskripsi yang ditampilkan di bawah judul hero.'),
-                    FileUpload::make('galeri_hero_image')
-                        ->label('Foto Background Hero')
-                        ->image()
-                        ->disk('public')
-                        ->directory('galeri')
-                        ->maxSize(10240)
-                        ->helperText('Ukuran rekomendasi: 1920x600px. Format: JPG, PNG. Maks: 10MB.'),
+                        ->helperText('Penjelasan singkat tentang galeri. Ceritakan jenis karya/portofolio yang ditampilkan (2-3 kalimat).'),
+                ]),
+
+            Section::make('Filter Kategori')
+                ->description('Atur daftar kategori yang muncul sebagai tombol filter di halaman galeri. Kategori yang diisi di sini akan muncul sebagai pilihan dropdown saat menambah/edit galeri.')
+                ->aside()
+                ->icon('heroicon-o-funnel')
+                ->schema([
+                    TextInput::make('galeri_filter_all_label')
+                        ->label('Label Tombol "Semua"')
+                        ->placeholder('Contoh: All Works')
+                        ->helperText('Teks tombol untuk menampilkan semua item galeri (tanpa filter kategori).'),
+                    Repeater::make('galeri_filter_categories')
+                        ->label('Daftar Kategori')
+                        ->schema([
+                            TextInput::make('slug')
+                                ->label('Slug')
+                                ->placeholder('Contoh: sports-cars')
+                                ->helperText('Identifier unik (tanpa spasi, gunakan dash). Digunakan untuk filtering di URL.')
+                                ->required()
+                                ->distinct()
+                                ->maxLength(255),
+                            TextInput::make('label')
+                                ->label('Label')
+                                ->placeholder('Contoh: Sports Cars')
+                                ->helperText('Nama kategori yang ditampilkan untuk pengguna.')
+                                ->required()
+                                ->maxLength(255),
+                        ])
+                        ->columns(2)
+                        ->addActionLabel('Tambah Kategori')
+                        ->reorderable()
+                        ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
+                        ->collapsible(),
                 ]),
         ]);
     }
@@ -69,6 +96,8 @@ class EditHalamanGaleri extends EditRecord
         $this->callHook('beforeSave');
 
         $settings = app(GaleriSettings::class);
+        $defaults = (new \ReflectionClass($settings))->getDefaultProperties();
+        $data = array_merge($defaults, $settings->toArray(), $data);
 
         foreach ($data as $key => $value) {
             $settings->{$key} = $value;

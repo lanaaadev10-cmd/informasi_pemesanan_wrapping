@@ -7,13 +7,24 @@
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8" id="galeri-grid">
             @foreach($galeri as $userItem)
                 <div class="galeri-item group relative md:col-span-4 rounded-3xl overflow-hidden border border-white/5 bg-white/[0.01] hover:border-[#f2994a]/30 transition-all duration-500 shadow-xl aspect-square"
-                     data-category="all {{ strtolower($userItem->kategori ?? 'sports-cars') }}" data-aos="fade-up" data-aos-duration="1000">
+                     data-category="all {{ strtolower($userItem->kategori ?? '') }}" data-aos="fade-up" data-aos-duration="1000">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10 opacity-80 group-hover:opacity-75 transition-opacity duration-300"></div>
                     <img src="{{ asset('storage/' . $userItem->foto) }}"
                          class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700"
                          alt="{{ $userItem->judul }}">
                     <div class="absolute bottom-0 inset-x-0 p-6 z-20 space-y-2">
-                        <span class="text-[#f2994a] text-xs font-black uppercase tracking-widest font-mono">{{ $userItem->kategori ?? 'Portfolio' }}</span>
+                        <span class="text-[#f2994a] text-xs font-black uppercase tracking-widest font-mono">
+                            @php
+                                $catLabel = $userItem->kategori;
+                                foreach (($galeriFilterCategories ?? []) as $cat) {
+                                    if (($cat['slug'] ?? '') === $userItem->kategori) {
+                                        $catLabel = $cat['label'];
+                                        break;
+                                    }
+                                }
+                            @endphp
+                            {{ $catLabel ?? 'Portfolio' }}
+                        </span>
                         <h3 class="text-white text-lg font-bold group-hover:text-[#f2994a] transition-colors leading-tight">{{ $userItem->judul }}</h3>
                         <p class="text-gray-400 text-xs font-light leading-relaxed line-clamp-2">{{ $userItem->deskripsi }}</p>
                     </div>

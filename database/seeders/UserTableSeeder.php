@@ -18,7 +18,6 @@ class UserTableSeeder extends Seeder
             [
                 'name' => 'Ahmad Fauzi',
                 'password' => Hash::make('kelompok3'),
-                'password' => 'kelompok3', // Karena cast 'hashed' di model User, Laravel akan otomatis melakukan hashing saat save
                 'email_verified_at' => now(),
             ]
         );
@@ -28,22 +27,6 @@ class UserTableSeeder extends Seeder
             ['email' => 'izaldev@gmail.com'],
             ['name' => 'Syahrizaldev','password' => Hash::make('password'),]
         );
-
-        // Ambil role
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $userRole  = Role::firstOrCreate(['name' => 'user']);
-
-        // Ambil semua permission
-        $permissions = Permission::all();
-
-        // Assign permission ke admin
-        $adminRole->syncPermissions($permissions);
-
-        // Assign role ke masing-masing user
-        $admin->assignRole($adminRole);
-        $user->assignRole($userRole);
-    }
-}
 
         // Pastikan role ada
         $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
@@ -59,3 +42,5 @@ class UserTableSeeder extends Seeder
         if (!$user->hasRole('user')) {
             $user->assignRole($userRole);
         }
+    }
+}

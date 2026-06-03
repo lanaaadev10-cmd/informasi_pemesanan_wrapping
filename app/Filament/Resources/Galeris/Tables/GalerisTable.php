@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Galeris\Tables;
 
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use App\Settings\GaleriSettings;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\BadgeColumn;
@@ -29,7 +30,17 @@ class GalerisTable
                     ->label('Kategori')
                     ->searchable()
                     ->badge()
-                    ->color('gray'),
+                    ->color('gray')
+                    ->formatStateUsing(function ($state) {
+                        $settings = app(GaleriSettings::class);
+                        $categories = $settings->galeri_filter_categories ?? [];
+                        foreach ($categories as $cat) {
+                            if (($cat['slug'] ?? '') === $state) {
+                                return $cat['label'];
+                            }
+                        }
+                        return $state ?: '-';
+                    }),
 
                 TextColumn::make('tanggal_upload')
                     ->label('Tanggal Upload')

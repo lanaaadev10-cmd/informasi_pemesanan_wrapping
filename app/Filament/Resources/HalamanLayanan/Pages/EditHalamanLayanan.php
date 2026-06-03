@@ -28,8 +28,9 @@ class EditHalamanLayanan extends EditRecord
         $this->authorizeAccess();
 
         $settings = app(LayananSettings::class);
-
-        $this->form->fill($settings->toArray());
+        $data = $settings->toArray();
+        $defaults = (new \ReflectionClass($settings))->getDefaultProperties();
+        $this->form->fill(array_merge($defaults, $data));
     }
 
     public function form(Schema $schema): Schema
@@ -42,15 +43,18 @@ class EditHalamanLayanan extends EditRecord
                     ->schema([
                         TextInput::make('layanan_hero_title')
                             ->label('Judul Hero *')
-                            ->required(),
+                            ->required()
+                            ->helperText('Judul utama halaman layanan yang ditampilkan di bagian atas.'),
                         Textarea::make('layanan_hero_desc')
                             ->label('Deskripsi Hero')
-                            ->rows(3),
+                            ->rows(3)
+                            ->helperText('Penjelasan singkat tentang layanan/paket yang ditawarkan (2-3 kalimat).'),
                         FileUpload::make('layanan_hero_image')
                             ->label('Foto Background Hero')
                             ->image()
                             ->disk('public')
-                            ->directory('layanan'),
+                            ->directory('layanan')
+                            ->helperText('Gambar latar belakang hero section. Rekomendasi: 1920x600px, max 10MB.'),
                     ]),
 
                 Section::make('Paket Layanan')
@@ -67,27 +71,32 @@ class EditHalamanLayanan extends EditRecord
                                     Grid::make(2)->schema([
                                         TextInput::make("layanan_{$i}_nama")
                                             ->label("Nama *")
-                                            ->required(),
+                                            ->required()
+                                            ->helperText('Nama paket layanan (contoh: Paket Basic, Premium, Eksklusif).'),
                                         TextInput::make("layanan_{$i}_harga")
                                             ->label("Harga *")
-                                            ->required(),
+                                            ->required()
+                                            ->helperText('Harga paket (contoh: Rp 1.000.000 atau Custom).'),
                                     ]),
                                     Textarea::make("layanan_{$i}_deskripsi")
                                         ->label("Deskripsi *")
                                         ->rows(2)
                                         ->required()
-                                        ->columnSpanFull(),
+                                        ->columnSpanFull()
+                                        ->helperText('Penjelasan singkat tentang paket ini (1-2 kalimat).'),
                                     Textarea::make("layanan_{$i}_fitur")
                                         ->label("Fitur (pisahkan per baris) *")
                                         ->rows(3)
                                         ->required()
-                                        ->columnSpanFull(),
+                                        ->columnSpanFull()
+                                        ->helperText('Daftar fitur paket. Setiap baris adalah satu fitur (tekan Enter untuk baris baru).'),
                                     FileUpload::make("layanan_{$i}_gambar")
                                         ->label("Gambar")
                                         ->image()
                                         ->disk('public')
                                         ->directory('layanan')
-                                        ->columnSpanFull(),
+                                        ->columnSpanFull()
+                                        ->helperText('Gambar untuk paket ini (opsional). Format: JPG, PNG. Max 10MB.'),
                                 ]);
                         }
                         return $rows;
@@ -102,21 +111,25 @@ class EditHalamanLayanan extends EditRecord
                         Grid::make(2)->schema([
                             TextInput::make('layanan_garansi_title')
                                 ->label('Judul Garansi *')
-                                ->required(),
+                                ->required()
+                                ->helperText('Judul untuk bagian garansi (contoh: Garansi Kepuasan 100%).'),
                             TextInput::make('layanan_cta_title')
                                 ->label('Judul CTA *')
-                                ->required(),
+                                ->required()
+                                ->helperText('Judul ajakan bertindak (contoh: Siap Memilih Paket?).'),
                         ]),
                         Textarea::make('layanan_garansi_desc')
                             ->label('Deskripsi Garansi *')
                             ->rows(3)
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->helperText('Jelaskan jaminan atau komitmen Anda kepada pelanggan.'),
                         Textarea::make('layanan_cta_desc')
                             ->label('Deskripsi CTA *')
                             ->rows(3)
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->helperText('Deskripsi untuk mendorong pelanggan mengambil tindakan.'),
                     ]),
             ]);
     }
@@ -130,11 +143,11 @@ class EditHalamanLayanan extends EditRecord
         $this->callHook('beforeSave');
 
         $settings = app(LayananSettings::class);
-
+        $defaults = (new \ReflectionClass($settings))->getDefaultProperties();
+        $data = array_merge($defaults, $settings->toArray(), $data);
         foreach ($data as $key => $value) {
             $settings->{$key} = $value;
         }
-
         $settings->save();
 
         $this->callHook('afterSave');

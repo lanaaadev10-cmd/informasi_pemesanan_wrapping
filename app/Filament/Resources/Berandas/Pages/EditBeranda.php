@@ -27,8 +27,9 @@ class EditBeranda extends EditRecord
         $this->authorizeAccess();
 
         $settings = app(HomepageSettings::class);
-
-        $this->form->fill($settings->toArray());
+        $data = $settings->toArray();
+        $defaults = (new \ReflectionClass($settings))->getDefaultProperties();
+        $this->form->fill(array_merge($defaults, $data));
     }
 
     public function form(Schema $schema): Schema
@@ -44,44 +45,44 @@ class EditBeranda extends EditRecord
                             ->label('Badge Text (Atas) *')
                             ->placeholder('Contoh: Professional Car Wrapping Indonesia')
                             ->required()
-                            ->helperText('Teks kecil di atas judul hero.'),
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('home_hero_title_line1')
                                     ->label('Judul Hero Baris 1 *')
                                     ->placeholder('Contoh: Elevasi Estetika')
                                     ->required()
-                                    ->helperText('Baris pertama judul utama di hero section.'),
+                                    ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                 TextInput::make('home_hero_title_line2')
                                     ->label('Judul Hero Baris 2 *')
                                     ->placeholder('Contoh: Aset Mewah Anda.')
                                     ->required()
-                                    ->helperText('Baris kedua judul utama di hero section.'),
+                                    ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                             ]),
                         Textarea::make('home_subtitle')
                             ->label('Sub-deskripsi Hero *')
                             ->placeholder('Tuliskan deskripsi singkat penawaran...')
                             ->required()
                             ->rows(3)
-                            ->helperText('Deskripsi yang muncul di bawah judul hero.'),
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                         Grid::make(4)
                             ->schema([
                                 TextInput::make('home_stat1_value')
                                     ->label('Statistik 1 — Angka')
                                     ->placeholder('Contoh: 500+')
-                                    ->helperText('Nilai statistik pertama (contoh: 500+, 1000+, dll).'),
+                                    ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                 TextInput::make('home_stat1_label')
                                     ->label('Statistik 1 — Label')
                                     ->placeholder('Contoh: Supercars Wrapped')
-                                    ->helperText('Label untuk statistik pertama (contoh: Supercars Wrapped).'),
+                                    ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                 TextInput::make('home_stat2_value')
                                     ->label('Statistik 2 — Angka')
                                     ->placeholder('Contoh: 5 Tahun')
-                                    ->helperText('Nilai statistik kedua (contoh: 5 Tahun, 50+).'),
+                                    ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                 TextInput::make('home_stat2_label')
                                     ->label('Statistik 2 — Label')
                                     ->placeholder('Contoh: Garansi Material')
-                                    ->helperText('Label untuk statistik kedua (contoh: Garansi Material).'),
+                                    ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                             ]),
                     ]),
 
@@ -99,48 +100,48 @@ class EditBeranda extends EditRecord
                                         TextInput::make('home_keunggulan_card1_title')
                                             ->label('Keunggulan 1 — Judul *')
                                             ->required()
-                                            ->helperText('Judul kartu keunggulan pertama.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                         Textarea::make('home_keunggulan_card1_desc')
                                             ->label('Keunggulan 1 — Deskripsi *')
                                             ->rows(3)
                                             ->required()
-                                            ->helperText('Deskripsi kartu keunggulan pertama.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                     ]),
                                 Grid::make(1)
                                     ->schema([
                                         TextInput::make('home_keunggulan_card2_title')
                                             ->label('Keunggulan 2 — Judul *')
                                             ->required()
-                                            ->helperText('Judul kartu keunggulan kedua.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                         Textarea::make('home_keunggulan_card2_desc')
                                             ->label('Keunggulan 2 — Deskripsi *')
                                             ->rows(3)
                                             ->required()
-                                            ->helperText('Deskripsi kartu keunggulan kedua.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                     ]),
                                 Grid::make(1)
                                     ->schema([
                                         TextInput::make('home_keunggulan_card3_title')
                                             ->label('Keunggulan 3 — Judul *')
                                             ->required()
-                                            ->helperText('Judul kartu keunggulan ketiga.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                         Textarea::make('home_keunggulan_card3_desc')
                                             ->label('Keunggulan 3 — Deskripsi *')
                                             ->rows(3)
                                             ->required()
-                                            ->helperText('Deskripsi kartu keunggulan ketiga.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                     ]),
                                 Grid::make(1)
                                     ->schema([
                                         TextInput::make('home_keunggulan_card4_title')
                                             ->label('Keunggulan 4 — Judul *')
                                             ->required()
-                                            ->helperText('Judul kartu keunggulan keempat.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                         Textarea::make('home_keunggulan_card4_desc')
                                             ->label('Keunggulan 4 — Deskripsi *')
                                             ->rows(3)
                                             ->required()
-                                            ->helperText('Deskripsi kartu keunggulan keempat.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                     ]),
                             ]),
                     ]),
@@ -159,36 +160,36 @@ class EditBeranda extends EditRecord
                                         TextInput::make('home_step1_title')
                                             ->label('Langkah 1 — Judul *')
                                             ->required()
-                                            ->helperText('Judul langkah pertama (contoh: Konsultasi & Estimasi).'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                         Textarea::make('home_step1_desc')
                                             ->label('Langkah 1 — Deskripsi *')
                                             ->rows(3)
                                             ->required()
-                                            ->helperText('Penjelasan langkah pertama.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                     ]),
                                 Grid::make(1)
                                     ->schema([
                                         TextInput::make('home_step2_title')
                                             ->label('Langkah 2 — Judul *')
                                             ->required()
-                                            ->helperText('Judul langkah kedua (contoh: Pilihan Wrapping).'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                         Textarea::make('home_step2_desc')
                                             ->label('Langkah 2 — Deskripsi *')
                                             ->rows(3)
                                             ->required()
-                                            ->helperText('Penjelasan langkah kedua.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                     ]),
                                 Grid::make(1)
                                     ->schema([
                                         TextInput::make('home_step3_title')
                                             ->label('Langkah 3 — Judul *')
                                             ->required()
-                                            ->helperText('Judul langkah ketiga (contoh: Pengerjaan Rapi).'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                         Textarea::make('home_step3_desc')
                                             ->label('Langkah 3 — Deskripsi *')
                                             ->rows(3)
                                             ->required()
-                                            ->helperText('Penjelasan langkah ketiga.'),
+                                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                     ]),
                             ]),
                     ]),
@@ -204,13 +205,13 @@ class EditBeranda extends EditRecord
                             ->label('Judul CTA *')
                             ->placeholder('Contoh: Siap Mengubah Tampilan Kendaraan?')
                             ->required()
-                            ->helperText('Judul utama pada banner ajakan bertindak.'),
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                         Textarea::make('home_cta_subtitle')
                             ->label('Sub-deskripsi CTA *')
                             ->placeholder('Tuliskan deskripsi penawaran untuk memikat pelanggan...')
                             ->required()
                             ->rows(3)
-                            ->helperText('Deskripsi pendukung di bawah judul CTA.'),
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                     ]),
             ]);
     }
@@ -224,11 +225,11 @@ class EditBeranda extends EditRecord
         $this->callHook('beforeSave');
 
         $settings = app(HomepageSettings::class);
-
+        $defaults = (new \ReflectionClass($settings))->getDefaultProperties();
+        $data = array_merge($defaults, $settings->toArray(), $data);
         foreach ($data as $key => $value) {
             $settings->{$key} = $value;
         }
-
         $settings->save();
 
         $this->callHook('afterSave');

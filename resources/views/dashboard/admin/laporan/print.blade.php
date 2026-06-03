@@ -26,7 +26,7 @@
     </div>
 
     <div class="header">
-        <h1 class="title">Laporan Penjualan Dantie Stiker</h1>
+        <h1 class="title">Laporan Penjualan {{ $company->nama_perusahaan ?? 'Perusahaan' }}</h1>
         <p>Periode: {{ $title }}</p>
     </div>
 
@@ -74,7 +74,7 @@
     <div style="margin-top: 40px;">
         <p>Dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
         <div style="float: right; text-align: center; width: 200px; margin-top: 20px;">
-            <p>Admin Dantie Stiker</p>
+            <p>Admin {{ $company->nama_perusahaan ?? 'Perusahaan' }}</p>
             <br><br><br>
             <p>( ____________________ )</p>
         </div>

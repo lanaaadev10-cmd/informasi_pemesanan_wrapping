@@ -18,7 +18,7 @@ class LandingFiturResource extends Resource
 
     protected static ?string $navigationLabel = 'Kelola Fitur Beranda';
     protected static ?string $pluralLabel = 'Kelola Fitur Beranda';
-    protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
+    protected static string|null|\UnitEnum $navigationGroup = 'Konten';
     protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'judul';

@@ -21,7 +21,7 @@ class PesananResource extends Resource
 
     protected static ?string $navigationLabel = 'Kelola Pesanan';
     protected static ?string $pluralLabel = 'Pesanan';
-    protected static string|null|\UnitEnum $navigationGroup = 'Manajemen Transaksi';
+    protected static string|null|\UnitEnum $navigationGroup = 'Transaksi';
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema

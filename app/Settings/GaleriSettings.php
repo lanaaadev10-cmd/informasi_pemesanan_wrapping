@@ -8,7 +8,6 @@ class GaleriSettings extends Settings
 {
     public ?string $galeri_hero_title = null;
     public ?string $galeri_hero_desc = null;
-    public ?string $galeri_hero_image = null;
     public ?string $galeri_intro_text = null;
     public ?string $galeri_empty_state_title = null;
     public ?string $galeri_empty_state_desc = null;

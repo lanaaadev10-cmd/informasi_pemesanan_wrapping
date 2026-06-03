@@ -34,13 +34,13 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->databaseNotifications()
             ->navigationGroups([
-                NavigationGroup::make('Halaman Website')
-                    ->icon('heroicon-o-document-text')
+                NavigationGroup::make('Website')
+                    ->icon('heroicon-o-globe-alt')
                     ->collapsed(),
-                NavigationGroup::make('Konten Website')
+                NavigationGroup::make('Konten')
                     ->icon('heroicon-o-photo')
                     ->collapsed(),
-                NavigationGroup::make('Manajemen Transaksi')
+                NavigationGroup::make('Transaksi')
                     ->icon('heroicon-o-credit-card')
                     ->collapsed(),
                 NavigationGroup::make('Pengaturan')

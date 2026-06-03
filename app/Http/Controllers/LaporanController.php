@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
+use App\Settings\CompanySettings;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -30,7 +31,8 @@ class LaporanController extends Controller
 
         $pesanans = $query->latest()->get();
         $totalPendapatan = $pesanans->sum('total_harga');
+        $company = app(CompanySettings::class);
 
-        return view('admin.laporan.print', compact('pesanans', 'title', 'totalPendapatan', 'type'));
+        return view('admin.laporan.print', compact('pesanans', 'title', 'totalPendapatan', 'type', 'company'));
     }
 }

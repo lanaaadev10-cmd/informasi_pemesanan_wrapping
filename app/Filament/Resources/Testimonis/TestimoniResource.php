@@ -18,7 +18,7 @@ class TestimoniResource extends Resource
 
     protected static ?string $navigationLabel = 'Kelola Testimoni';
     protected static ?string $pluralLabel = 'Kelola Testimoni';
-    protected static string|null|\UnitEnum $navigationGroup = 'Konten Website';
+    protected static string|null|\UnitEnum $navigationGroup = 'Konten';
     protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'nama';

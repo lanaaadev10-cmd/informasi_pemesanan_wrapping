@@ -10,8 +10,8 @@ class ContentResource extends Resource
     protected static ?string $label = 'Edit Konten UI';
     protected static ?string $pluralLabel = 'Edit Konten UI';
     protected static ?string $navigationLabel = 'Edit Konten UI';
-    protected static string|null|\UnitEnum $navigationGroup = 'Halaman Website';
-    protected static ?int $navigationSort = 2;
+    protected static string|null|\UnitEnum $navigationGroup = 'Website';
+    protected static ?int $navigationSort = 11;
 
     public static function getPages(): array
     {
