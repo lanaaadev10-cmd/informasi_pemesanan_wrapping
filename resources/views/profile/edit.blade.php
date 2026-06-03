@@ -74,16 +74,16 @@
 </div>
 
 <style>
-    .soft-card input[type="text"], 
-    .soft-card input[type="email"], 
+    .soft-card input[type="text"],
+    .soft-card input[type="email"],
     .soft-card input[type="password"] {
         @apply w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-gray-900 font-bold focus:ring-2 focus:ring-orange-500 outline-none transition-all placeholder:text-gray-300 !important;
     }
-    
+
     .soft-card label {
         @apply text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 px-1 mb-2 block !important;
     }
-    
+
     .soft-card button[type="submit"] {
         @apply px-10 py-4 bg-gray-900 text-white rounded-2xl font-black text-xs tracking-widest uppercase hover:bg-orange-600 transition-all shadow-xl shadow-gray-200 !important;
     }
