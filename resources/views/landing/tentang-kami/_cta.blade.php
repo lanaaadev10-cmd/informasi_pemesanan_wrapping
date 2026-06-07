@@ -17,7 +17,7 @@
         <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '') }}" 
                target="_blank"
-               class="inline-flex items-center justify-center px-8 py-4 text-black font-extrabold rounded-2xl hover:opacity-90 transition-all duration-300 shadow-lg group btn-premium bg-gradient-to-r from-[#e28a44] to-[#f2994a] hover:scale-105 active:scale-95">
+               class="inline-flex items-center justify-center px-8 py-4 text-black font-extrabold rounded-2xl hover:opacity-90 transition-all duration-300 shadow-lg group bg-gradient-to-r from-[#e28a44] to-[#f2994a] hover:scale-105 active:scale-95">
                 <span>{{ $profil->tentang_kami_cta_primary_button ?? 'Hubungi Kami Sekarang' }}</span>
                 <i class="ph-bold ph-arrow-right text-base ml-2 transform group-hover:translate-x-1 transition-transform"></i>
             </a>

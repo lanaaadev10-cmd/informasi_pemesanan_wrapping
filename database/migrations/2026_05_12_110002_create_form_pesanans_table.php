@@ -14,6 +14,18 @@ return new class extends Migration
             $table->string('nama_pemesan');
             $table->text('alamat_pengiriman');
             $table->string('no_hp', 20);
+
+            // Data Kendaraan
+            $table->string('model_kendaraan', 150)->nullable();
+            $table->string('warna_kendaraan', 100)->nullable();
+            $table->string('nomor_polisi', 50)->nullable();
+            $table->string('tahun_produksi', 20)->nullable();
+
+            // Jadwal & Lokasi Pengerjaan
+            $table->string('lokasi_pengerjaan', 150)->nullable();
+            $table->dateTime('jadwal_pengerjaan')->nullable();
+            $table->string('estimasi_durasi', 100)->nullable()->default('4 - 5 Hari Kerja');
+
             $table->text('keterangan_tambahan')->nullable();
             $table->enum('status_verifikasi', [
                 'pending',

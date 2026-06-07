@@ -6,24 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('layanans', function (Blueprint $table) {
             $table->id('id_layanan');
             $table->string('nama_layanan');
+            $table->string('tipe_paket')->nullable();
             $table->text('deskripsi')->nullable();
+            $table->json('fitur')->nullable();
             $table->integer('harga')->nullable();
+            $table->string('kategori')->default('mobil');
+            $table->string('estimasi_waktu', 100)->nullable();
             $table->enum('tipe_layanan', ['fix', 'custom']);
+            $table->string('foto_contoh')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('layanans');

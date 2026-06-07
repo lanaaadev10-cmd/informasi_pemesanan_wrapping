@@ -21,6 +21,7 @@ class Galeri extends Model
         'sub_judul',
         'is_featured',
         'badge_text',
+        'jenis',
     ];
 
     protected static function booted()

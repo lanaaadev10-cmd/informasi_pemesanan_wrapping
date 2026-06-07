@@ -65,7 +65,7 @@
                             @foreach($package->fitur as $fitur)
                             <div class="flex items-start gap-2">
                                 <i class="ph-bold ph-check-circle text-[#f2994a] text-sm mt-0.5 shrink-0"></i>
-                                <span class="text-xs text-gray-300">{{ $fitur }}</span>
+                                <span class="text-xs text-gray-300">{{ $fitur['nama_fitur'] }}</span>
                             </div>
                             @endforeach
                         </div>
@@ -100,10 +100,28 @@
 
                 <h3 class="text-lg font-bold text-white mb-6">{{ $profil->section_ringkasan_pesanan ?? 'Ringkasan Pesanan' }}</h3>
 
-                <div class="space-y-4 mb-6 pb-6 border-b border-white/5">
+                <!-- Quantity Selector -->
+                <div class="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
+                    <span class="text-xs text-gray-400">Jumlah</span>
+                    <div class="flex items-center gap-3 bg-white/5 rounded-xl p-1">
+                        <button type="button" id="qty-dec"
+                                class="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#f2994a] text-white hover:text-black flex items-center justify-center font-bold text-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                                onclick="ubahJumlah(-1)" disabled>
+                            <i class="ph-bold ph-minus"></i>
+                        </button>
+                        <span id="qty-display" class="text-lg font-bold text-white w-8 text-center">1</span>
+                        <button type="button" id="qty-inc"
+                                class="w-8 h-8 rounded-lg bg-white/10 hover:bg-[#f2994a] text-white hover:text-black flex items-center justify-center font-bold text-sm transition-all"
+                                onclick="ubahJumlah(1)">
+                            <i class="ph-bold ph-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-2 mb-4 pb-4 border-b border-white/5">
                     <div class="flex justify-between items-center">
                         <span class="text-xs text-gray-400">Paket</span>
-                        <span class="text-sm font-bold text-white">1x {{ $package->nama_layanan }}</span>
+                        <span class="text-sm font-bold text-white"><span id="qty-label">1</span>x {{ $package->nama_layanan }}</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xs text-gray-400">Harga Satuan</span>
@@ -115,7 +133,7 @@
                     <div class="flex justify-between items-end">
                         <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Total</span>
                         <div class="text-right">
-                            <span class="text-2xl font-black text-[#f2994a]">
+                            <span class="text-2xl font-black text-[#f2994a]" id="total-harga">
                                 Rp {{ number_format($package->harga, 0, ',', '.') }}
                             </span>
                         </div>
@@ -125,17 +143,22 @@
                 <!-- Action Buttons -->
                 <div class="space-y-3">
                     <!-- Add to Cart -->
-                    <button id="add-to-cart-btn"
-                            class="w-full py-3 px-4 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg font-bold text-xs uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200">
-                        <i class="ph-bold ph-shopping-cart-simple mr-2"></i> {{ $profil->cta_tambah_keranjang ?? 'Tambah ke Keranjang' }}
-                    </button>
+                    <form action="{{ route('keranjang.tambah') }}" method="POST" id="form-cart">
+                        @csrf
+                        <input type="hidden" name="id_paket" value="{{ $package->id_layanan }}">
+                        <input type="hidden" name="jumlah" id="input-jumlah-cart" value="1">
+                        <button type="submit"
+                                class="w-full py-3 px-4 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg font-bold text-xs uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200">
+                            <i class="ph-bold ph-shopping-cart-simple mr-2"></i> {{ $profil->cta_tambah_keranjang ?? 'Tambah ke Keranjang' }}
+                        </button>
+                    </form>
 
                     <!-- Direct Checkout -->
-                    <form action="{{ route('pesanan.checkout.store') }}" method="POST" id="direct-checkout-form">
+                    <form action="{{ route('keranjang.tambah') }}" method="POST" id="form-checkout">
                         @csrf
-                        <input type="hidden" name="package_id" value="{{ $package->id_layanan }}">
-                        <input type="hidden" name="quantity" value="1">
-                        <input type="hidden" name="direct_order" value="1">
+                        <input type="hidden" name="id_paket" value="{{ $package->id_layanan }}">
+                        <input type="hidden" name="jumlah" id="input-jumlah-checkout" value="1">
+                        <input type="hidden" name="direct_checkout" value="1">
 
                         <button type="submit"
                                 class="w-full py-3 px-4 bg-[#f2994a] text-black rounded-lg font-bold text-xs uppercase tracking-wide hover:bg-[#e28a44] transition-all duration-200 flex items-center justify-center gap-2">
@@ -177,106 +200,23 @@
 </div>
 
 <!-- Toast Container -->
-<div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
+<div id="toast-container" class="fixed top-4 right-4 z-50"></div>
 
-@push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const addToCartBtn = document.getElementById('add-to-cart-btn');
+    let jumlah = 1;
+    const hargaSatuan = {{ $package->harga }};
 
-        if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', async function(e) {
-                e.preventDefault();
+    function ubahJumlah(delta) {
+        jumlah = Math.max(1, jumlah + delta);
+        document.getElementById('qty-display').textContent = jumlah;
+        document.getElementById('qty-label').textContent = jumlah;
+        document.getElementById('input-jumlah-cart').value = jumlah;
+        document.getElementById('input-jumlah-checkout').value = jumlah;
+        document.getElementById('qty-dec').disabled = jumlah <= 1;
 
-                try {
-                    const response = await fetch('/api/keranjang/item', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        },
-                        body: JSON.stringify({
-                            id_layanan: {{ $package->id_layanan }},
-                            quantity: 1
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        showToast('✓ Paket ditambahkan ke keranjang!', 'success');
-                        addToCartBtn.disabled = true;
-                        addToCartBtn.classList.add('opacity-50');
-
-                        // Redirect ke keranjang setelah 2 detik
-                        setTimeout(() => {
-                            window.location.href = '{{ route("keranjang.index") }}';
-                        }, 2000);
-                    } else if (response.status === 422) {
-                        showToast('⚠ ' + data.message, 'warning');
-                    } else {
-                        showToast('✗ Gagal menambahkan ke keranjang', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    showToast('✗ Terjadi kesalahan', 'error');
-                }
-            });
-        }
-
-        const showToast = (message, type = 'info') => {
-            const container = document.getElementById('toast-container');
-            const toastEl = document.createElement('div');
-
-            const bgColor = type === 'success' ? 'bg-green-500/90' :
-                           type === 'error' ? 'bg-red-500/90' :
-                           type === 'warning' ? 'bg-yellow-500/90' :
-                           'bg-blue-500/90';
-
-            toastEl.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg backdrop-blur-sm mb-2 animate-slide-in`;
-            toastEl.textContent = message;
-
-            container.appendChild(toastEl);
-
-            setTimeout(() => {
-                toastEl.classList.add('animate-slide-out');
-                setTimeout(() => toastEl.remove(), 300);
-            }, 3000);
-        };
-    });
+        const total = hargaSatuan * jumlah;
+        document.getElementById('total-harga').textContent = 'Rp ' + total.toLocaleString('id-ID');
+    }
 </script>
-
-<style>
-    @keyframes slide-in {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    @keyframes slide-out {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-
-    .animate-slide-in {
-        animation: slide-in 0.3s ease-out;
-    }
-
-    .animate-slide-out {
-        animation: slide-out 0.3s ease-out;
-    }
-</style>
-@endpush
 
 @endsection

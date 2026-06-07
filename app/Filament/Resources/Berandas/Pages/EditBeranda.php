@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Model;
 
 class EditBeranda extends EditRecord
@@ -55,9 +56,16 @@ class EditBeranda extends EditRecord
                                     ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                                 TextInput::make('home_hero_title_line2')
                                     ->label('Judul Hero Baris 2 *')
-                                    ->placeholder('Contoh: Aset Mewah Anda.')
-                                    ->required()
-                                    ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                                    ->placeholder('Kendaraan Anda')
+                                    ->required(),
+                                    
+                                FileUpload::make('home_hero_image')
+                                    ->label('Gambar Latar Belakang Hero')
+                                    ->image()
+                                    ->disk('public')
+                                    ->directory('beranda')
+                                    ->helperText('Upload gambar latar belakang hero (opsional). Ukuran rekomendasi: 1920x1080px.')
+                                    ->nullable(),
                             ]),
                         Textarea::make('home_subtitle')
                             ->label('Sub-deskripsi Hero *')
@@ -211,6 +219,76 @@ class EditBeranda extends EditRecord
                             ->placeholder('Tuliskan deskripsi penawaran untuk memikat pelanggan...')
                             ->required()
                             ->rows(3)
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                    ]),
+
+                Section::make('Galeri & Portofolio')
+                    ->description('Atur judul dan deskripsi bagian galeri portofolio di halaman beranda.')
+                    ->aside()
+                    ->icon('heroicon-o-photo')
+                    ->collapsible()
+                    ->collapsed()
+                    ->schema([
+                        TextInput::make('home_section_portofolio_badge')
+                            ->label('Badge Galeri')
+                            ->placeholder('Contoh: Showcase Portofolio')
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                        TextInput::make('home_section_portofolio_title')
+                            ->label('Judul Galeri')
+                            ->placeholder('Contoh: Mahakarya Kami')
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                        Textarea::make('home_section_portofolio_desc')
+                            ->label('Deskripsi Galeri')
+                            ->placeholder('Tuliskan deskripsi singkat bagian galeri...')
+                            ->rows(2)
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                        TextInput::make('home_portofolio_lihat_semua')
+                            ->label('Label Tombol Lihat Semua')
+                            ->placeholder('Contoh: Lihat Semua')
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                    ]),
+
+                Section::make('Kontak, Lokasi & Maps')
+                    ->description('Atur judul, label informasi, dan keterangan peta lokasi kantor.')
+                    ->aside()
+                    ->icon('heroicon-o-map')
+                    ->collapsible()
+                    ->collapsed()
+                    ->schema([
+                        TextInput::make('home_section_kontak_badge')
+                            ->label('Badge Kontak')
+                            ->placeholder('Contoh: Kontak & Lokasi')
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                        TextInput::make('home_section_kontak_title')
+                            ->label('Judul Kontak')
+                            ->placeholder('Contoh: Temukan Kami')
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                        Textarea::make('home_section_kontak_desc')
+                            ->label('Deskripsi Kontak')
+                            ->placeholder('Tuliskan deskripsi singkat bagian kontak...')
+                            ->rows(2)
+                            ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                        Grid::make(4)->schema([
+                            TextInput::make('home_kontak_alamat_label')
+                                ->label('Label Alamat')
+                                ->placeholder('Contoh: Alamat')
+                                ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                            TextInput::make('home_kontak_telepon_label')
+                                ->label('Label Telepon')
+                                ->placeholder('Contoh: Telepon')
+                                ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                            TextInput::make('home_kontak_email_label')
+                                ->label('Label Email')
+                                ->placeholder('Contoh: Email')
+                                ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                            TextInput::make('home_kontak_jam_label')
+                                ->label('Label Jam')
+                                ->placeholder('Contoh: Jam Operasional')
+                                ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                        ]),
+                        TextInput::make('home_kontak_no_map')
+                            ->label('Keterangan Peta Tidak Tersedia')
+                            ->placeholder('Contoh: Peta belum tersedia')
                             ->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                     ]),
             ]);

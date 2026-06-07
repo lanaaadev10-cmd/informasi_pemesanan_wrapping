@@ -3,6 +3,13 @@
 @section('title', 'Profil Perusahaan')
 
 @section('content')
+    @php
+        $imgHero = $profil->tentang_kami_hero_image ?? $profil->profil_hero_image;
+        $imgShop = $profil->tentang_kami_sejarah_image_shop;
+        $imgSupercar = $profil->tentang_kami_sejarah_image_supercar;
+
+        $imgUrl = fn($v) => $v ? (str_starts_with($v, 'http') ? $v : asset('storage/' . $v)) : null;
+    @endphp
     @if(!auth()->check())
         <!-- Spacer untuk Public View agar tidak tertutup Navbar -->
         <div class="h-28"></div>
@@ -17,15 +24,15 @@
         <!-- 1. HEADER SECTION -->
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-10 relative">
             <div>
-                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">ABOUT US</span>
+                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">{{ $profil->tentang_kami_hero_badge ?? ($profil->profil_section_badge ?? 'ABOUT US') }}</span>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-1 bg-gradient-to-r from-white via-white to-gray-500 bg-clip-text text-transparent">
-                    Company Profile
+                    {{ $profil->tentang_kami_hero_title ?? ($profil->profil_section_title ?? 'Company Profile') }}
                 </h1>
             </div>
             <!-- Decorative Live Status Indicator -->
             <div class="flex items-center gap-2.5 bg-white/[0.02] border border-white/5 px-4 py-2 rounded-2xl">
                 <span class="w-2 h-2 rounded-full bg-[#f2994a] animate-pulse"></span>
-                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Premium Wrap Studio</span>
+                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{{ $profil->tentang_kami_hero_badge ?? ($profil->profil_hero_badge ?? ($profil->nama_perusahaan ?? 'Dantie Wrapping')) }}</span>
             </div>
         </div>
 
@@ -35,10 +42,12 @@
             <!-- Left Banner: The Art of Precision (lg:col-span-2) -->
             <div class="lg:col-span-2 relative rounded-[32px] overflow-hidden h-[320px] sm:h-[380px] lg:h-[420px] group shadow-[0_15px_35px_rgba(0,0,0,0.6)] border border-white/5">
                 <!-- Background Image -->
-                <img src="{{ asset('images/hero_car.png') }}" 
+                @if($imgHero)
+                <img src="{{ $imgUrl($imgHero) }}" 
                      width="800" height="420"
                      class="absolute inset-0 w-full h-full object-cover transform scale-100 group-hover:scale-[1.03] transition-transform duration-1000 ease-out z-0" 
-                     alt="The Art of Precision">
+                     alt="{{ $profil->tentang_kami_hero_title ?? ($profil->profil_banner_heading ?? 'The Art of Precision') }}">
+                @endif
                 
                 <!-- Premium Dark Overlay Gradient -->
                 <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10"></div>
@@ -47,13 +56,13 @@
                 <!-- Content Area -->
                 <div class="absolute bottom-0 inset-x-0 p-8 sm:p-10 z-20 space-y-3.5">
                     <span class="bg-[#f2994a]/10 border border-[#f2994a]/20 px-3.5 py-1.5 rounded-full text-[9px] font-extrabold text-[#f2994a] uppercase tracking-widest inline-block">
-                        {{ strtoupper($profil->nama_perusahaan ?? 'Premium Wrap') }}
+                        {{ strtoupper($profil->nama_perusahaan ?? 'Dantie Wrapping') }}
                     </span>
                     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight max-w-xl">
-                        The Art of Precision
+                        {{ $profil->tentang_kami_hero_title ?? ($profil->profil_banner_heading ?? 'The Art of Precision') }}
                     </h2>
                     <p class="text-gray-300 text-xs sm:text-sm font-medium max-w-lg leading-relaxed opacity-90">
-                        {{ $profil->deskripsi ?? 'Transforming high-performance assets into personalized masterpieces through unparalleled craftsmanship.' }}
+                        {{ $profil->tentang_kami_hero_desc ?? ($profil->deskripsi ?? 'Transforming high-performance assets into personalized masterpieces through unparalleled craftsmanship.') }}
                     </p>
                 </div>
             </div>
@@ -71,31 +80,29 @@
                             {{ $profil->stats_projects ?? '98%' }}
                         </span>
                         <span class="block text-[9px] font-extrabold uppercase tracking-widest text-gray-500 mt-1">
-                            Client Satisfaction
+                            {{ $profil->profil_stat_label ?? 'Client Satisfaction' }}
                         </span>
                     </div>
 
                     <p class="text-gray-400 text-xs leading-relaxed font-light mt-4">
-                        Over 5,000 premium vehicles transformed with obsessive attention to every single detail.
+                        {{ $profil->profil_stat_desc ?? 'Over 5,000 premium vehicles transformed with obsessive attention to every single detail.' }}
                     </p>
                 </div>
 
                 <!-- Card 2: Master Craft close-up -->
+                @php $craftImg = $imgShop ?? $imgHero; @endphp
+                @if($craftImg)
                 <div class="relative rounded-[32px] overflow-hidden h-[198px] group shadow-lg border border-white/5">
-                    <!-- Texture Image -->
-                    <img src="{{ asset('images/master_craft_texture.png') }}" 
+                    <img src="{{ $imgUrl($craftImg) }}" 
                          width="400" height="198"
                          class="absolute inset-0 w-full h-full object-cover transform scale-100 group-hover:scale-[1.04] transition-transform duration-700 ease-out z-0" 
                          alt="Master Craft">
-                    
-                    <!-- Texture Gradient -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10"></div>
-                    
-                    <!-- Text Overlay -->
                     <span class="absolute bottom-6 left-6 text-sm font-bold text-white uppercase tracking-widest z-20 bg-black/35 backdrop-blur-sm border border-white/5 px-4 py-2 rounded-full">
-                        Master Craft
+                        {{ $profil->profil_master_craft_label ?? 'Master Craft' }}
                     </span>
                 </div>
+                @endif
 
             </div>
 
@@ -107,25 +114,27 @@
             <!-- Left Side: Core Narrative Text -->
             <div class="lg:col-span-7 space-y-6">
                 <div>
-                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">OUR NARRATIVE</span>
+                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">{{ $profil->tentang_kami_sejarah_badge ?? ($profil->profil_section_narrative_badge ?? 'OUR NARRATIVE') }}</span>
                     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight mt-1">
-                        Legacy of Excellence
+                        {{ $profil->tentang_kami_sejarah_title ?? ($profil->profil_section_narrative_title ?? 'Legacy of Excellence') }}
                     </h2>
                 </div>
                 
                 <div class="space-y-4">
                     <p class="text-gray-400 text-sm leading-relaxed font-light">
-                        Born from a passion for automotive aesthetics and technical perfection, <span class="text-white font-medium">{{ $profil->nama_perusahaan ?? 'LuxWrap Studio' }}</span> began as a boutique workshop dedicated to the world's most exclusive marques. Today, we stand as the industry benchmark for premium vehicle protection and styling.
+                        {!! $profil->sejarah ?? ($profil->profil_narrative_p1 ?? 'Born from a passion for automotive aesthetics and technical perfection, <span class="text-white font-medium">' . ($profil->nama_perusahaan ?? 'LuxWrap Studio') . '</span> began as a boutique workshop dedicated to the world\'s most exclusive marques. Today, we stand as the industry benchmark for premium vehicle protection and styling.') !!}
                     </p>
+                    @if($profil->profil_narrative_p2)
                     <p class="text-gray-400 text-sm leading-relaxed font-light">
-                        Our vision is to redefine the boundary between utility and art. We don't just apply material; we curate an experience that honors the engineering of the asset while reflecting the soul of its owner.
+                        {{ $profil->profil_narrative_p2 }}
                     </p>
+                    @endif
                 </div>
 
                 <!-- Call to action: Opens Vision & Mission Modal -->
                 <button onclick="openHistoryModal()" 
                         class="inline-flex items-center gap-2.5 bg-white/[0.02] border border-white/10 px-6 py-3 rounded-2xl text-xs font-bold text-white hover:bg-white/5 hover:border-white/20 transition-all hover:scale-[1.02] active:scale-98 shadow-sm">
-                    Read Full History <i class="ph ph-arrow-up-right text-xs"></i>
+                    {{ $profil->profil_modal_button_label ?? 'Read Full History' }} <i class="ph ph-arrow-up-right text-xs"></i>
                 </button>
             </div>
 
@@ -135,21 +144,23 @@
                 <!-- Column 1 -->
                 <div class="space-y-4">
                     <!-- Photo 1: Clean detailing workshop / car wrapping -->
+                    @if($imgHero)
                     <div class="relative aspect-square rounded-2xl overflow-hidden border border-white/10 group shadow-lg bg-[#0d0d0d]">
-                        <img src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=400&auto=format&fit=crop" 
+                        <img src="{{ $imgUrl($imgHero) }}" 
                              width="300" height="300"
                              class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-all duration-500" 
-                             alt="Clean Workshop">
+                             alt="Workshop">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                     </div>
+                    @endif
                     
                     <!-- Badge Card 1 -->
                     <div class="bg-white/[0.01] border border-white/5 rounded-2xl p-5 hover:border-[#f2994a]/20 transition-all duration-300 group shadow-sm">
                         <div class="w-8 h-8 rounded-lg bg-[#f2994a]/10 flex items-center justify-center text-[#f2994a] mb-3 group-hover:scale-110 transition-transform">
                             <i class="ph-bold ph-shield-check text-base"></i>
                         </div>
-                        <h4 class="text-xs font-bold text-white mb-1 uppercase tracking-wider">Globus Certification</h4>
-                        <p class="text-[10px] text-gray-500 leading-normal font-light">Certified installers for XPEL, SunTek, and STEK protective films.</p>
+                        <h4 class="text-xs font-bold text-white mb-1 uppercase tracking-wider">{{ $profil->profil_badge_1_title ?? 'Globus Certification' }}</h4>
+                        <p class="text-[10px] text-gray-500 leading-normal font-light">{{ $profil->profil_badge_1_desc ?? 'Certified installers for XPEL, SunTek, and STEK protective films.' }}</p>
                     </div>
                 </div>
 
@@ -160,18 +171,21 @@
                         <div class="w-8 h-8 rounded-lg bg-[#f2994a]/10 flex items-center justify-center text-[#f2994a] mb-3 group-hover:scale-110 transition-transform">
                             <i class="ph-bold ph-wind text-base"></i>
                         </div>
-                        <h4 class="text-xs font-bold text-white mb-1 uppercase tracking-wider">Clean Room Protocol</h4>
-                        <p class="text-[10px] text-gray-500 leading-normal font-light">Multi-stage filtration environment for dust-defect finishes.</p>
+                        <h4 class="text-xs font-bold text-white mb-1 uppercase tracking-wider">{{ $profil->profil_badge_2_title ?? 'Clean Room Protocol' }}</h4>
+                        <p class="text-[10px] text-gray-500 leading-normal font-light">{{ $profil->profil_badge_2_desc ?? 'Multi-stage filtration environment for dust-defect finishes.' }}</p>
                     </div>
                     
-                    <!-- Photo 2: Luxury Car lineup -->
+                    <!-- Photo 2 -->
+                    @php $photo2Img = $imgSupercar ?? $imgHero; @endphp
+                    @if($photo2Img)
                     <div class="relative aspect-square rounded-2xl overflow-hidden border border-white/10 group shadow-lg bg-[#0d0d0d]">
-                        <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=400&auto=format&fit=crop" 
+                        <img src="{{ $imgUrl($photo2Img) }}" 
                              width="300" height="300"
                              class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-all duration-500" 
-                             alt="Luxury Cars">
+                             alt="Workshop">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                     </div>
+                    @endif
                 </div>
 
             </div>
@@ -181,7 +195,7 @@
         <!-- 4. THE THREE PILLARS SECTION -->
         <div class="pt-14 border-t border-white/5 space-y-10 z-10 relative">
             <div class="text-center max-w-xl mx-auto space-y-2">
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">The Three Pillars</h3>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{{ $profil->tentang_kami_values_title ?? ($profil->profil_pillar_section_title ?? 'The Three Pillars') }}</h3>
                 <div class="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#f2994a] to-transparent mx-auto mt-2"></div>
             </div>
 
@@ -193,9 +207,9 @@
                         <div class="w-12 h-12 rounded-xl bg-[#f2994a]/5 flex items-center justify-center text-[#f2994a] group-hover:scale-110 transition-transform duration-300">
                             <i class="ph-bold ph-compass text-xl"></i>
                         </div>
-                        <h4 class="text-base font-bold text-white uppercase tracking-wider">Precision Engineering</h4>
+                        <h4 class="text-base font-bold text-white uppercase tracking-wider">{{ $profil->tentang_kami_values_1_title ?? ($profil->profil_pillar_1_title ?? 'Precision Engineering') }}</h4>
                         <p class="text-gray-400 text-xs sm:text-sm leading-relaxed font-light">
-                            Every edge is tucked, every corner is seamless. We utilize CAD-designed templates and surgical application techniques for a factory-level finish.
+                            {{ $profil->tentang_kami_values_1_desc ?? ($profil->profil_pillar_1_desc ?? 'Every edge is tucked, every corner is seamless. We utilize CAD-designed templates and surgical application techniques for a factory-level finish.') }}
                         </p>
                     </div>
                 </div>
@@ -206,9 +220,9 @@
                         <div class="w-12 h-12 rounded-xl bg-[#f2994a]/5 flex items-center justify-center text-[#f2994a] group-hover:scale-110 transition-transform duration-300">
                             <i class="ph-bold ph-gem text-xl"></i>
                         </div>
-                        <h4 class="text-base font-bold text-white uppercase tracking-wider">Bespoke Materials</h4>
+                        <h4 class="text-base font-bold text-white uppercase tracking-wider">{{ $profil->tentang_kami_values_2_title ?? ($profil->profil_pillar_2_title ?? 'Bespoke Materials') }}</h4>
                         <p class="text-gray-400 text-xs sm:text-sm leading-relaxed font-light">
-                            We source only the highest grade polymers and adhesives from world-leading suppliers, ensuring longevity and paint protection without compromise.
+                            {{ $profil->tentang_kami_values_2_desc ?? ($profil->profil_pillar_2_desc ?? 'We source only the highest grade polymers and adhesives from world-leading suppliers, ensuring longevity and paint protection without compromise.') }}
                         </p>
                     </div>
                 </div>
@@ -219,9 +233,9 @@
                         <div class="w-12 h-12 rounded-xl bg-[#f2994a]/5 flex items-center justify-center text-[#f2994a] group-hover:scale-110 transition-transform duration-300">
                             <i class="ph-bold ph-sparkles text-xl"></i>
                         </div>
-                        <h4 class="text-base font-bold text-white uppercase tracking-wider">White-Glove Service</h4>
+                        <h4 class="text-base font-bold text-white uppercase tracking-wider">{{ $profil->tentang_kami_values_3_title ?? ($profil->profil_pillar_3_title ?? 'White-Glove Service') }}</h4>
                         <p class="text-gray-400 text-xs sm:text-sm leading-relaxed font-light">
-                            From initial consultation to final inspection, our process is designed for transparency and peace of mind. We provide full digital documentation of every project.
+                            {{ $profil->tentang_kami_values_3_desc ?? ($profil->profil_pillar_3_desc ?? 'From initial consultation to final inspection, our process is designed for transparency and peace of mind. We provide full digital documentation of every project.') }}
                         </p>
                     </div>
                 </div>
@@ -235,12 +249,12 @@
             <!-- Left Info Panel (lg:col-span-5) -->
             <div class="lg:col-span-5 space-y-6 flex flex-col justify-between">
                 <div class="space-y-3">
-                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">GLOBAL NETWORK</span>
+                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">{{ $profil->profil_global_badge ?? 'GLOBAL NETWORK' }}</span>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                        Global Studio Network
+                        {{ $profil->profil_global_title ?? 'Global Studio Network' }}
                     </h3>
                     <p class="text-gray-400 text-xs sm:text-sm font-light leading-relaxed">
-                        Our signature quality is available across major hubs. Visit any of our studios for a private viewing of our material catalogs and current projects.
+                        {{ $profil->profil_global_desc ?? 'Our signature quality is available across major hubs. Visit any of our studios for a private viewing of our material catalogs and current projects.' }}
                     </p>
                 </div>
 
@@ -252,8 +266,8 @@
                             <i class="ph-bold ph-map-pin text-lg"></i>
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Los Angeles HQ</h4>
-                            <p class="text-[10px] text-gray-500 mt-1 font-light">{{ $profil->alamat ?? '7821 Sunset Blvd, CA' }}</p>
+                        <h4 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profil->profil_location_1_name ?? 'Los Angeles HQ' }}</h4>
+                        <p class="text-[10px] text-gray-500 mt-1 font-light">{{ $profil->profil_location_1_addr ?? ($profil->alamat ?? '7821 Sunset Blvd, CA') }}</p>
                         </div>
                     </div>
 
@@ -263,8 +277,8 @@
                             <i class="ph-bold ph-map-pin text-lg"></i>
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Dubai Creative Hub</h4>
-                            <p class="text-[10px] text-gray-500 mt-1 font-light">2042 Meydan Rd, Meydan City, Dubai</p>
+                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profil->profil_location_2_name ?? 'Dubai Creative Hub' }}</h4>
+                            <p class="text-[10px] text-gray-500 mt-1 font-light">{{ $profil->profil_location_2_addr ?? '2042 Meydan Rd, Meydan City, Dubai' }}</p>
                         </div>
                     </div>
                 </div>
@@ -274,10 +288,12 @@
             <div class="lg:col-span-7">
                 <div class="bg-[#0b0b0b] border border-white/5 rounded-[32px] overflow-hidden aspect-[16/10] relative group shadow-[0_15px_30px_rgba(0,0,0,0.5)]">
                     <!-- Glowing map image -->
-                    <img src="{{ asset('images/studio_network_map.png') }}" 
+                    @if($imgHero)
+                    <img src="{{ $imgUrl($imgHero) }}" 
                          width="600" height="375"
                          class="w-full h-full object-cover transform scale-100 group-hover:scale-[1.02] transition-transform duration-700 z-0" 
                          alt="Studio Network Map">
+                    @endif
                     
                     <!-- Soft glass border gloss -->
                     <div class="absolute inset-0 border border-white/10 rounded-[32px] pointer-events-none z-10"></div>
@@ -302,8 +318,8 @@
             <!-- Modal Body -->
             <div class="space-y-6">
                 <div>
-                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">OUR NARRATIVE</span>
-                    <h3 class="text-2xl font-extrabold text-white tracking-tight mt-1">Corporate History & Vision</h3>
+                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">{{ $profil->tentang_kami_sejarah_badge ?? ($profil->profil_section_narrative_badge ?? 'OUR NARRATIVE') }}</span>
+                    <h3 class="text-2xl font-extrabold text-white tracking-tight mt-1">{{ $profil->tentang_kami_sejarah_title ?? ($profil->profil_modal_history_title ?? ($profil->profil_legal_title_modal ?? 'Corporate History & Vision')) }}</h3>
                 </div>
 
                 <!-- Vision & Mission -->
@@ -312,7 +328,7 @@
                     <div class="space-y-3 p-5 rounded-2xl bg-white/[0.01] border border-white/5">
                         <div class="flex items-center gap-2 text-[#f2994a]">
                             <i class="ph-bold ph-eye text-lg"></i>
-                            <h4 class="text-xs font-bold uppercase tracking-widest">Our Vision</h4>
+                            <h4 class="text-xs font-bold uppercase tracking-widest">{{ $profil->profil_legal_visi_title ?? 'Our Vision' }}</h4>
                         </div>
                         <div class="text-gray-400 text-xs leading-relaxed font-light space-y-2">
                             {!! $profil->visi ?? 'Menjadi penyedia layanan wrapping dan stiker terpercaya dengan inovasi, kualitas, dan kepuasan pelanggan sebagai prioritas utama.' !!}
@@ -323,7 +339,7 @@
                     <div class="space-y-3 p-5 rounded-2xl bg-white/[0.01] border border-white/5">
                         <div class="flex items-center gap-2 text-[#f2994a]">
                             <i class="ph-bold ph-target text-lg"></i>
-                            <h4 class="text-xs font-bold uppercase tracking-widest">Our Mission</h4>
+                            <h4 class="text-xs font-bold uppercase tracking-widest">{{ $profil->profil_legal_misi_title ?? 'Our Mission' }}</h4>
                         </div>
                         <div class="text-gray-400 text-xs leading-relaxed font-light space-y-2">
                             {!! $profil->misi ?? 'Memberikan solusi wrapping dan stiker berkualitas tinggi dengan harga kompetitif, layanan excellent, dan dukungan purna jual terbaik.' !!}
@@ -333,13 +349,15 @@
 
                 <!-- Long narrative history -->
                 <div class="pt-5 border-t border-white/5 space-y-4">
-                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">Perjalanan Kami</h4>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profil->profil_legal_sejarah_title ?? 'Perjalanan Kami' }}</h4>
                     <p class="text-gray-400 text-xs leading-relaxed font-light">
-                        Didirikan dengan komitmen teguh terhadap kualitas estetika dan perlindungan kendaraan, kami tumbuh menjadi pilihan utama bagi pemilik kendaraan mewah. Dari sebuah bengkel kecil dengan impian besar, kini kami mengoperasikan studio modern dengan standar clean-room berkelas dunia.
+                        {!! $profil->sejarah ?? ($profil->profil_sejarah_p1 ?? 'Didirikan dengan komitmen teguh terhadap kualitas estetika dan perlindungan kendaraan, kami tumbuh menjadi pilihan utama bagi pemilik kendaraan mewah. Dari sebuah bengkel kecil dengan impian besar, kini kami mengoperasikan studio modern dengan standar clean-room berkelas dunia.') !!}
                     </p>
+                    @if($profil->profil_sejarah_p2)
                     <p class="text-gray-400 text-xs leading-relaxed font-light">
-                        Setiap pengerjaan diawasi dengan ketat oleh teknisi bersertifikasi internasional. Kami bermitra dengan merek premium terkemuka secara global untuk menjamin ketahanan, kejernihan, dan keindahan proteksi bodi kendaraan Anda tanpa kompromi sedikit pun.
+                        {{ $profil->profil_sejarah_p2 }}
                     </p>
+                    @endif
                 </div>
             </div>
 

@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class HalamanGaleriResource extends Resource
 {
-    protected static ?string $label = 'Edit Galeri';
-    protected static ?string $pluralLabel = 'Edit Galeri';
-    protected static ?string $navigationLabel = 'Edit Galeri';
-    protected static string|null|\UnitEnum $navigationGroup = 'Website';
-    protected static ?int $navigationSort = 5;
+    protected static ?string $label = 'Kelola Halaman Galeri';
+    protected static ?string $pluralLabel = 'Kelola Halaman Galeri';
+    protected static ?string $navigationLabel = 'Kelola Halaman Galeri';
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Landing Page';
+    protected static ?int $navigationSort = 3;
 
     public static function getPages(): array
     {

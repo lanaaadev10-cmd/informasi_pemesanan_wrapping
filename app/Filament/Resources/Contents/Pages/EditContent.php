@@ -18,7 +18,7 @@ class EditContent extends EditRecord
 {
     protected static string $resource = ContentResource::class;
 
-    protected static ?string $title = 'Edit Konten UI';
+    protected static ?string $title = 'Kelola Sistem';
 
     public function mount($record = null): void
     {
@@ -188,7 +188,7 @@ class EditContent extends EditRecord
                             TextInput::make('form_tanggal_mulai')->label('Tanggal Mulai')->helperText('Label untuk tanggal mulai.'),
                             TextInput::make('form_whatsapp')->label('WhatsApp')->helperText('Label untuk nomor WhatsApp.'),
                             TextInput::make('form_studio_hq')->label('Studio HQ')->helperText('Label checkbox studio HQ.'),
-                            TextInput::make('form_home_service')->label('Home Service')->helperText('Label checkbox home service.'),
+
                             TextInput::make('form_lupa_sandi')->label('Lupa Sandi')->helperText('Label link lupa sandi.'),
                             TextInput::make('form_ingat_saya')->label('Ingat Saya')->helperText('Label checkbox ingat saya.'),
                             TextInput::make('form_kode_promo')->label('Kode Promo')->helperText('Label field kode promo.'),

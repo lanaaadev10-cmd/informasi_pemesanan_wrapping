@@ -6,90 +6,48 @@ use Illuminate\Support\Facades\Cache;
 
 class CacheService
 {
-    const CACHE_DURATION = 60 * 60 * 24; // 24 hours
+    const TTL_24H = 86400;
+    const TTL_1H  = 3600;
 
-    // Settings caches
-    const GALERI_SETTINGS = 'galeri_settings';
-    const LAYANAN_SETTINGS = 'layanan_settings';
-    const COMPANY_SETTINGS = 'company_settings';
-    const LAYOUT_SETTINGS = 'layout_settings';
-    const CONTENT_SETTINGS = 'content_settings';
+    const PREFIX_SETTINGS = 'settings_';
+    const PREFIX_MODEL    = 'model_';
 
-    /**
-     * Get cached setting atau fetch dari database
-     */
-    public static function remember($key, $callback)
+    public static function remember(string $key, callable $callback, int $ttl = self::TTL_24H): mixed
     {
-        return Cache::remember($key, self::CACHE_DURATION, $callback);
+        return Cache::remember($key, $ttl, $callback);
     }
 
-    /**
-     * Clear all application caches
-     */
-    public static function clearAll()
-    {
-        Cache::forget(self::GALERI_SETTINGS);
-        Cache::forget(self::LAYANAN_SETTINGS);
-        Cache::forget(self::COMPANY_SETTINGS);
-        Cache::forget(self::LAYOUT_SETTINGS);
-        Cache::forget(self::CONTENT_SETTINGS);
-    }
-
-    /**
-     * Clear specific cache
-     */
-    public static function clear($key)
+    public static function clear(string $key): void
     {
         Cache::forget($key);
     }
 
-    /**
-     * Get gallery settings dengan cache
-     */
-    public static function getGaleriSettings()
+    public static function clearGroup(string $group): void
     {
-        return self::remember(self::GALERI_SETTINGS, function () {
-            return app(\App\Settings\GaleriSettings::class);
-        });
+        Cache::forget(self::PREFIX_SETTINGS . $group);
     }
 
-    /**
-     * Get layanan settings dengan cache
-     */
-    public static function getLayananSettings()
+    public static function clearAllSettings(): void
     {
-        return self::remember(self::LAYANAN_SETTINGS, function () {
-            return app(\App\Settings\LayananSettings::class);
-        });
+        $groups = [
+            'company', 'homepage', 'layanan', 'galeri', 'tentang_kami',
+            'katalog', 'pesanan', 'keranjang_checkout', 'dashboard_customer',
+            'profil_page', 'content', 'layout',
+        ];
+        foreach ($groups as $group) {
+            self::clearGroup($group);
+        }
     }
 
-    /**
-     * Get company settings dengan cache
-     */
-    public static function getCompanySettings()
+    public static function getSettings(string $group, string $class): mixed
     {
-        return self::remember(self::COMPANY_SETTINGS, function () {
-            return app(\App\Settings\CompanySettings::class);
-        });
+        return self::remember(self::PREFIX_SETTINGS . $group, function () use ($class) {
+            return app($class);
+        }, self::TTL_24H);
     }
 
-    /**
-     * Get layout settings dengan cache
-     */
-    public static function getLayoutSettings()
+    public static function clearModel(string $key): void
     {
-        return self::remember(self::LAYOUT_SETTINGS, function () {
-            return app(\App\Settings\LayoutSettings::class);
-        });
-    }
-
-    /**
-     * Get content settings dengan cache
-     */
-    public static function getContentSettings()
-    {
-        return self::remember(self::CONTENT_SETTINGS, function () {
-            return app(\App\Settings\ContentSettings::class);
-        });
+        Cache::forget(self::PREFIX_MODEL . $key);
     }
 }

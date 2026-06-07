@@ -10,6 +10,8 @@ return new class extends Migration
     {
         Schema::create('team_members', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('profil_perusahaan_id')->default(1);
+            $table->foreign('profil_perusahaan_id')->references('id')->on('profil_perusahaans')->onDelete('cascade');
             $table->string('nama');
             $table->string('jabatan')->nullable();
             $table->text('bio')->nullable();

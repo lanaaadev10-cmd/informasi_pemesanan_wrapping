@@ -48,4 +48,8 @@
     {{-- 4. CTA + Langkah Mudah Section --}}
     @include('landing.beranda._cta-langkah')
 
+    {{-- 5. Kontak & Lokasi Section --}}
+    @include('landing.beranda._kontak')
+
 @endsection
+

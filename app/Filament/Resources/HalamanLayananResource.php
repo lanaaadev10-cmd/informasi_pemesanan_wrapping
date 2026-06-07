@@ -7,11 +7,11 @@ use App\Filament\Resources\HalamanLayanan\Pages\EditHalamanLayanan;
 
 class HalamanLayananResource extends Resource
 {
-    protected static ?string $label = 'Edit Layanan';
-    protected static ?string $pluralLabel = 'Edit Layanan';
-    protected static ?string $navigationLabel = 'Edit Layanan';
-    protected static string|null|\UnitEnum $navigationGroup = 'Website';
-    protected static ?int $navigationSort = 4;
+    protected static ?string $label = 'Kelola Halaman Layanan';
+    protected static ?string $pluralLabel = 'Kelola Halaman Layanan';
+    protected static ?string $navigationLabel = 'Kelola Halaman Layanan';
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Landing Page';
+    protected static ?int $navigationSort = 2;
 
     public static function getPages(): array
     {
