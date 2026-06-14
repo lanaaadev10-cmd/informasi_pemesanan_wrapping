@@ -73,11 +73,11 @@ class PesananService
             foreach ($keranjangDetails as $cartItem) {
                 DetailPesanan::create([
                     'id_pesanan' => $pesanan->id_pesanan,
-                    'id_layanan' => $cartItem->id_layanan,
-                    'quantity' => $cartItem->quantity,
+                    'id_paket' => $cartItem->id_paket,
+                    'jumlah' => $cartItem->jumlah,
                     'harga_satuan' => $cartItem->harga_satuan,
                     'subtotal' => $cartItem->subtotal,
-                    'custom_data' => $cartItem->custom_data,
+                    'catatan_custom' => $cartItem->catatan_custom,
                 ]);
             }
 
@@ -87,8 +87,6 @@ class PesananService
                 'nama_pemesan' => $data['nama_pemesan'],
                 'no_hp' => $data['no_hp'],
                 'alamat_pengiriman' => $data['alamat_pengiriman'],
-                'kota_pengiriman' => $data['kota_pengiriman'],
-                'metode_pembayaran' => $data['metode_pembayaran'],
                 'keterangan_tambahan' => $data['keterangan_tambahan'] ?? null,
             ]);
 
@@ -122,10 +120,7 @@ class PesananService
         $newStatusEnum = OrderStatus::from($newStatus);
 
         // Validate transition
-        if (!in_array($newStatusEnum, array_map(
-            fn($status) => $status,
-            $currentStatus->validTransitions()
-        ))) {
+        if (!in_array($newStatusEnum, $currentStatus->validTransitions())) {
             throw new \Exception(
                 "Transisi tidak diizinkan dari {$currentStatus->label()} ke {$newStatusEnum->label()}"
             );

@@ -26,7 +26,7 @@ class PesananApiController extends Controller
         $status = $request->get('status');
 
         $query = Pesanan::where('id_user', $userId)
-            ->with(['details.layanan', 'formPesanan', 'pembayaran']);
+            ->with(['details.layanan', 'form', 'pembayaran']);
 
         if ($status) {
             $query->where('status', $status);
@@ -80,7 +80,7 @@ class PesananApiController extends Controller
             'id_user' => $userId,
             'kode_pesanan' => 'PES-' . time() . '-' . rand(1000, 9999),
             'tanggal_pesan' => now()->toDateString(),
-            'status' => 'menunggu_verifikasi',
+            'status' => 'menunggu_konfirmasi_admin',
             'total_harga' => $totalHarga,
         ]);
 
@@ -100,7 +100,7 @@ class PesananApiController extends Controller
             'nama_pemesan' => $request->nama_pemesan,
             'no_hp' => $request->no_hp,
             'alamat_pengiriman' => $request->alamat_pengiriman,
-            'status_verifikasi' => 'menunggu',
+            'status_verifikasi' => 'pending',
             'keterangan_tambahan' => $request->keterangan_tambahan,
         ]);
 
@@ -135,7 +135,7 @@ class PesananApiController extends Controller
     {
         $pesanan = Pesanan::where('id_pesanan', $id)
             ->where('id_user', Auth::id())
-            ->with(['details.layanan', 'formPesanan', 'pembayaran'])
+            ->with(['details.layanan', 'form', 'pembayaran'])
             ->first();
 
         if (!$pesanan) {
@@ -163,12 +163,12 @@ class PesananApiController extends Controller
                         'catatan_custom' => $detail->catatan_custom,
                     ];
                 }),
-                'form_pesanan' => $pesanan->formPesanan ? [
-                    'nama_pemesan' => $pesanan->formPesanan->nama_pemesan,
-                    'no_hp' => $pesanan->formPesanan->no_hp,
-                    'alamat_pengiriman' => $pesanan->formPesanan->alamat_pengiriman,
-                    'status_verifikasi' => $pesanan->formPesanan->status_verifikasi,
-                    'keterangan_tambahan' => $pesanan->formPesanan->keterangan_tambahan,
+                'form_pesanan' => $pesanan->form ? [
+                    'nama_pemesan' => $pesanan->form->nama_pemesan,
+                    'no_hp' => $pesanan->form->no_hp,
+                    'alamat_pengiriman' => $pesanan->form->alamat_pengiriman,
+                    'status_verifikasi' => $pesanan->form->status_verifikasi,
+                    'keterangan_tambahan' => $pesanan->form->keterangan_tambahan,
                 ] : null,
                 'pembayaran' => $pesanan->pembayaran ? [
                     'metode_pembayaran' => $pesanan->pembayaran->metode_pembayaran,
@@ -235,13 +235,13 @@ class PesananApiController extends Controller
             $file = $request->file('bukti_transfer');
             $path = $file->store('pembayaran', 'public');
 
-            $pesanan->update(['status' => 'menunggu_konfirmasi']);
+            $pesanan->update(['status' => 'menunggu_verifikasi_pembayaran']);
 
             $pesanan->pembayaran()->updateOrCreate(
                 ['id_pesanan' => $pesanan->id_pesanan],
                 [
                     'bukti_transfer' => $path,
-                    'status' => 'menunggu_verifikasi',
+                    'status' => 'menunggu_pembayaran',
                     'tgl_bayar' => now()->toDateString(),
                 ]
             );
@@ -290,26 +290,26 @@ class PesananApiController extends Controller
 
         $timeline = [
             [
-                'status' => 'menunggu_verifikasi',
-                'label' => 'Menunggu Verifikasi',
+                'status' => 'menunggu_konfirmasi_admin',
+                'label' => 'Pesanan Dibuat',
                 'completed' => true,
                 'date' => $pesanan->tanggal_pesan,
             ],
             [
-                'status' => 'diverifikasi',
-                'label' => 'Terverifikasi',
-                'completed' => in_array($pesanan->status, ['diverifikasi', 'menunggu_pembayaran', 'dibayar', 'selesai']),
-            ],
-            [
                 'status' => 'menunggu_pembayaran',
-                'label' => 'Menunggu Pembayaran',
-                'completed' => in_array($pesanan->status, ['menunggu_pembayaran', 'dibayar', 'selesai']),
+                'label' => 'Dikonfirmasi Admin',
+                'completed' => in_array($pesanan->status, ['menunggu_pembayaran', 'menunggu_verifikasi_pembayaran', 'dikonfirmasi', 'sedang_diproses', 'selesai']),
             ],
             [
-                'status' => 'dibayar',
+                'status' => 'dikonfirmasi',
                 'label' => 'Pembayaran Terverifikasi',
-                'completed' => in_array($pesanan->status, ['dibayar', 'selesai']),
-                'date' => $pesanan->pembayaran->tgl_bayar ?? null,
+                'completed' => in_array($pesanan->status, ['dikonfirmasi', 'sedang_diproses', 'selesai']),
+                'date' => $pesanan->pembayaran?->tgl_bayar ?? null,
+            ],
+            [
+                'status' => 'sedang_diproses',
+                'label' => 'Sedang Diproses',
+                'completed' => in_array($pesanan->status, ['sedang_diproses', 'selesai']),
             ],
             [
                 'status' => 'selesai',

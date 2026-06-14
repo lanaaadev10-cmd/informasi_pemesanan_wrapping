@@ -199,6 +199,101 @@ class BerandaResource extends Resource
                         ->required()
                         ->rows(3),
                 ]),
+
+            Section::make('Tombol Hero')
+                ->description('Mengatur teks pada tombol di bagian hero.')
+                ->aside()
+                ->collapsible()
+                ->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('home_hero_cta_primary')
+                            ->label('Tombol Utama (Primary)')
+                            ->placeholder('Contoh: Pesan Sekarang')
+                            ->helperText('Teks tombol utama di hero section yang mengarah ke WhatsApp.'),
+                        TextInput::make('home_hero_cta_secondary')
+                            ->label('Tombol Kedua (Secondary)')
+                            ->placeholder('Contoh: Lihat Portofolio')
+                            ->helperText('Teks tombol kedua di hero section yang mengarah ke portofolio.'),
+                    ]),
+                ]),
+
+            Section::make('Header Keunggulan')
+                ->description('Mengatur badge, judul, dan teks selengkapnya di bagian keunggulan.')
+                ->aside()
+                ->collapsible()
+                ->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('home_section_keunggulan_badge')
+                            ->label('Badge Keunggulan')
+                            ->placeholder('Contoh: Keunggulan Layanan')
+                            ->helperText('Label kecil di atas judul section keunggulan.')
+                            ->columnSpanFull(),
+                        TextInput::make('home_section_keunggulan_title')
+                            ->label('Judul Section Keunggulan')
+                            ->placeholder('Contoh: Mengapa Memilih Wapping?')
+                            ->helperText('Judul utama bagian keunggulan. Bisa menggunakan HTML <span> untuk highlight.')
+                            ->columnSpanFull(),
+                        TextInput::make('home_card_selengkapnya')
+                            ->label('Teks "Selengkapnya"')
+                            ->placeholder('Contoh: Selengkapnya')
+                            ->helperText('Teks link pada card keunggulan pertama.'),
+                    ]),
+                ]),
+
+            Section::make('Header Portofolio')
+                ->description('Mengatur badge, judul, deskripsi, dan teks lihat semua di bagian portofolio.')
+                ->aside()
+                ->collapsible()
+                ->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('home_section_portofolio_badge')
+                            ->label('Badge Portofolio')
+                            ->placeholder('Contoh: Showcase Portofolio')
+                            ->helperText('Label kecil di atas judul section portofolio.')
+                            ->columnSpanFull(),
+                        TextInput::make('home_section_portofolio_title')
+                            ->label('Judul Section Portofolio')
+                            ->placeholder('Contoh: Mahakarya Kami')
+                            ->helperText('Judul utama bagian portofolio.')
+                            ->columnSpanFull(),
+                        Textarea::make('home_section_portofolio_desc')
+                            ->label('Deskripsi Section Portofolio')
+                            ->placeholder('Contoh: Berikut adalah hasil pengerjaan car wrapping premium...')
+                            ->helperText('Deskripsi singkat di bawah judul portofolio.')
+                            ->rows(2)
+                            ->columnSpanFull(),
+                        TextInput::make('home_portofolio_lihat_semua')
+                            ->label('Teks "Lihat Semua"')
+                            ->placeholder('Contoh: Lihat Semua')
+                            ->helperText('Teks link untuk melihat semua portofolio.'),
+                    ]),
+                ]),
+
+            Section::make('Header CTA Langkah')
+                ->description('Mengatur badge, tagline, dan teks tombol di bagian CTA langkah mudah.')
+                ->aside()
+                ->collapsible()
+                ->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('home_cta_langkah_badge')
+                            ->label('Badge Langkah')
+                            ->placeholder('Contoh: Langkah Mudah')
+                            ->helperText('Label kecil di dalam kotak langkah-langkah.')
+                            ->columnSpanFull(),
+                        TextInput::make('home_cta_langkah_tagline')
+                            ->label('Tagline Langkah')
+                            ->placeholder('Contoh: Fast Process')
+                            ->helperText('Tagline pendamping badge langkah.'),
+                        TextInput::make('home_cta_wa_button')
+                            ->label('Teks Tombol WhatsApp')
+                            ->placeholder('Contoh: Hubungi WhatsApp')
+                            ->helperText('Teks pada tombol CTA yang mengarah ke WhatsApp.'),
+                        TextInput::make('home_cta_pelajari_button')
+                            ->label('Teks Tombol Pelajari')
+                            ->placeholder('Contoh: Pelajari Prosedur')
+                            ->helperText('Teks pada tombol kedua CTA yang mengarah ke katalog.'),
+                    ]),
+                ]),
         ]);
     }
 

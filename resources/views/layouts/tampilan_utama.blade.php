@@ -97,7 +97,7 @@
                         <i class="ph-bold ph-sketch-logo text-2xl"></i>
                     </div>
                 @else
-                    @if($profil && $profil->logo)
+                    @if(!empty($profil->logo))
                         <img src="{{ asset('storage/' . $profil->logo) }}" alt="Logo" width="40" height="40" class="h-10 w-auto">
                     @else
                         <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center text-white">
@@ -251,7 +251,7 @@
 
                 {{-- Social Icons --}}
                 <div class="flex justify-center gap-6 mb-10">
-                    @if($profil && $profil->instagram_url)
+                    @if(!empty($profil->instagram_url))
                         <a href="{{ $profil->instagram_url }}" target="_blank" aria-label="Instagram" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-[#f2994a] hover:border-[#f2994a] hover:bg-white/10 transition-all duration-300">
                             <i class="ph-bold ph-instagram-logo text-lg"></i>
                         </a>
@@ -260,7 +260,7 @@
                             <i class="ph-bold ph-instagram-logo text-lg"></i>
                         </a>
                     @endif
-                    @if($profil && $profil->email)
+                    @if(!empty($profil->email))
                         <a href="mailto:{{ $profil->email }}" aria-label="Email" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-[#f2994a] hover:border-[#f2994a] hover:bg-white/10 transition-all duration-300">
                             <i class="ph-bold ph-envelope text-lg"></i>
                         </a>
@@ -269,7 +269,7 @@
                             <i class="ph-bold ph-envelope text-lg"></i>
                         </a>
                     @endif
-                    @if($profil && $profil->nomor_telepon)
+                    @if(!empty($profil->nomor_telepon))
                         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon) }}" target="_blank" aria-label="WhatsApp" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-[#f2994a] hover:border-[#f2994a] hover:bg-white/10 transition-all duration-300">
                             <i class="ph-bold ph-whatsapp-logo text-lg"></i>
                         </a>
@@ -327,16 +327,16 @@
                 <div class="pt-12 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-400 font-medium">
                     <p>{{ $profil->footer_copyright ?? '&copy; 2026 Dantie Sticker. All rights reserved.' }}</p>
                     <div class="flex gap-6 items-center">
-                        @if($profil && $profil->instagram_url)
+                        @if(!empty($profil->instagram_url))
                             <a href="{{ $profil->instagram_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-instagram-logo"></i> {{ $profil->footer_instagram ?? 'Instagram' }}</a>
                         @endif
-                        @if($profil && $profil->facebook_url)
+                        @if(!empty($profil->facebook_url))
                             <a href="{{ $profil->facebook_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-facebook-logo"></i> {{ $profil->footer_facebook ?? 'Facebook' }}</a>
                         @endif
-                        @if($profil && $profil->tiktok_url)
+                        @if(!empty($profil->tiktok_url))
                             <a href="{{ $profil->tiktok_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-tiktok-logo"></i> TikTok</a>
                         @endif
-                        @if($profil && $profil->whatsapp_link)
+                        @if(!empty($profil->whatsapp_link))
                             <a href="{{ $profil->whatsapp_link }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-whatsapp-logo"></i> WhatsApp</a>
                         @endif
                     </div>

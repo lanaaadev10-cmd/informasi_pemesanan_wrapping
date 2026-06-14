@@ -12,7 +12,7 @@
                     {{ $profil->tentang_kami_sejarah_title ?? 'Satu Dekade Dedikasi pada Perfeksi.' }}
                 </h2>
                 <div class="text-gray-400 space-y-4 leading-relaxed text-sm sm:text-base">
-                    @if($profil->sejarah)
+                    @if(!empty($profil->sejarah))
                         {!! $profil->sejarah !!}
                     @else
                         <p>

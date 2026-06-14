@@ -41,13 +41,13 @@ class AdminDashboardController extends Controller
                 ->addBinding([$thisMonth, $thisMonth])
                 ->first();
 
-            $pendingPayments = Pembayaran::where('status_pembayaran', 'pending')->count();
+            $pendingPayments = Pembayaran::where('status', 'menunggu_pembayaran')->count();
             $totalCustomers = User::whereDoesntHave('roles')->count();
 
             // Top services
             $topServicesLimit = config('app-settings.dashboard.top_services_limit', 5);
             $topServices = DB::table('detail_pesanans')
-                ->join('layanans', 'detail_pesanans.id_layanan', '=', 'layanans.id_layanan')
+                ->join('layanans', 'detail_pesanans.id_paket', '=', 'layanans.id_layanan')
                 ->select('layanans.nama_layanan', DB::raw('COUNT(*) as total_orders'))
                 ->groupBy('layanans.id_layanan', 'layanans.nama_layanan')
                 ->orderByDesc('total_orders')

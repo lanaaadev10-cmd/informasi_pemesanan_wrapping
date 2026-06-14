@@ -54,7 +54,7 @@
                             {{ $package->kategori ?? 'Layanan Premium' }}
                         </span>
                         <h2 class="text-2xl font-bold text-white mb-2">{{ $package->nama_layanan }}</h2>
-                        <p class="text-gray-400 text-sm leading-relaxed">{{ $package->deskripsi ?? 'Deskripsi layanan' }}</p>
+                        <p class="text-gray-400 text-sm leading-relaxed">{!! $package->deskripsi ?? 'Deskripsi layanan' !!}</p>
                     </div>
 
                     <!-- Features -->

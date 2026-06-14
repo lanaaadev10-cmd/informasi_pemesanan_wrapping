@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Settings\BerandaSettings;
 use App\Settings\CompanySettings;
 use App\Settings\ContentSettings;
 use App\Settings\DashboardCustomerSettings;
@@ -22,7 +21,6 @@ class SettingsTableSeeder extends Seeder
     public function run(): void
     {
         $settingsClasses = [
-            BerandaSettings::class,
             CompanySettings::class,
             ContentSettings::class,
             DashboardCustomerSettings::class,
@@ -47,6 +45,7 @@ class SettingsTableSeeder extends Seeder
                     $settings->{$key} = $value;
                 }
 
+                $settings->settingsConfig()->resetDefaultValueLoadedProperties();
                 $settings->save();
             } catch (\Exception $e) {
                 echo "Could not initialize {$settingsClass}: " . $e->getMessage() . "\n";

@@ -18,7 +18,7 @@
                 </h3>
 
                 <p class="text-sm mb-3">
-                    {{ $item->deskripsi }}
+                    {!! $item->deskripsi !!}
                 </p>
 
                 @if($item->tipe_layanan == 'fix')

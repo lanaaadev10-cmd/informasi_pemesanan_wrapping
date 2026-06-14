@@ -15,7 +15,7 @@
         $heroTitle = $profil->tentang_kami_hero_title ?? 'Precision in Every Layer';
         $heroDesc = $profil->tentang_kami_hero_desc ?? 'Satu pilihan terbaik untuk menjaga kendaraan Anda tetap berkilau dan melindunginya dari goresan, jamur, serta kotoran jalanan demi performa yang selalu cemerlang.';
 
-        $teamMembers = $profil->tentang_kami_team_members;
+        $teamMembers = $profil->tentang_kami_team_members ?? [];
         if (empty($teamMembers)) {
             $teamMembers = [
                 [
@@ -61,7 +61,7 @@
     <div class="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden rounded-[32px] sm:rounded-[48px] {{ auth()->check() ? 'mt-4' : '-mt-24 sm:-mt-32' }}">
        <!-- Background Image with studio lights -->
         <div class="absolute inset-0 z-0">
-            <img src="{{ $profil->tentang_kami_hero_image ? asset('storage/' . $profil->tentang_kami_hero_image) : 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=2070&auto=format&fit=crop' }}" 
+            <img src="{{ !empty($profil->tentang_kami_hero_image) ? asset('storage/' . $profil->tentang_kami_hero_image) : 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=2070&auto=format&fit=crop' }}" 
                 class="w-full h-full object-cover object-center" 
                  alt="Premium Wrapping Car">
             <!-- Dark Studio Overlays -->
@@ -100,7 +100,7 @@
                             Satu Dekade Dedikasi pada Perfeksi.
                         </h2>
                         <div class="text-gray-400 space-y-4 leading-relaxed text-sm sm:text-base">
-                            @if($profil->sejarah)
+                            @if(!empty($profil->sejarah))
                                 {!! $profil->sejarah !!}
                             @else
                                 <p>
@@ -162,7 +162,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-white">Visi Kami</h3>
                     <div class="text-gray-400 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none">
-                        @if($profil->visi)
+                        @if(!empty($profil->visi))
                             {!! $profil->visi !!}
                         @else
                             <p>Menjadi studio wrapping terdepan yang dikenal dengan kualitas premium dan inovasi berkelanjutan dalam industri modifikasi estetika kendaraan.</p>
@@ -179,7 +179,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-white">Misi Kami</h3>
                     <div class="text-gray-400 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none">
-                        @if($profil->misi)
+                        @if(!empty($profil->misi))
                             {!! $profil->misi !!}
                         @else
                             <p>Memberikan solusi wrapping berkualitas tinggi dengan menggunakan material premium dunia, teknik instalasi presisi, dan komitmen layanan pelanggan yang tiada tanding.</p>

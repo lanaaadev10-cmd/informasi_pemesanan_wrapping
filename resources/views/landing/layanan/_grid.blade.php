@@ -61,7 +61,7 @@
 
                 @if(!empty($svc['deskripsi']))
                     <p class="text-gray-500 text-xs leading-relaxed line-clamp-3">
-                        {{ $svc['deskripsi'] }}
+                        {!! $svc['deskripsi'] !!}
                     </p>
                 @endif
 

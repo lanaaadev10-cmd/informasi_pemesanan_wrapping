@@ -15,7 +15,7 @@
         $heroTitle = $profil->tentang_kami_hero_title ?? 'Precision in Every Layer';
         $heroDesc = $profil->tentang_kami_hero_desc ?? 'Satu pilihan terbaik untuk menjaga kendaraan Anda tetap berkilau dan melindunginya dari goresan, jamur, serta kotoran jalanan demi performa yang selalu cemerlang.';
 
-        $teamMembers = $profil->tentang_kami_team_members;
+        $teamMembers = $profil->tentang_kami_team_members ?? [];
         if (empty($teamMembers)) {
             $teamMembers = [
                 [

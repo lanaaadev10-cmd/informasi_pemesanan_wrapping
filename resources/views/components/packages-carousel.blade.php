@@ -50,7 +50,7 @@
                                     {{ $package->nama_layanan }}
                                 </h4>
                                 <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">
-                                    {{ $package->deskripsi ?? 'Deskripsi layanan' }}
+                                    {!! $package->deskripsi ?? 'Deskripsi layanan' !!}
                                 </p>
                             </div>
 

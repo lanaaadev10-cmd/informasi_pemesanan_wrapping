@@ -68,7 +68,7 @@
                             {{ $wideItem->nama_layanan }}
                         </h3>
                         <p class="katalog-desc text-gray-400 text-xs sm:text-sm font-light max-w-lg leading-relaxed">
-                            {{ $wideItem->deskripsi }}
+                            {!! $wideItem->deskripsi !!}
                         </p>
 
                         <!-- Footer row pricing & actions -->
@@ -135,7 +135,7 @@
                             {{ $mediumItem->nama_layanan }}
                         </h3>
                         <p class="katalog-desc text-gray-400 text-xs font-light leading-relaxed line-clamp-2">
-                            {{ $mediumItem->deskripsi }}
+                            {!! $mediumItem->deskripsi !!}
                         </p>
 
                         <!-- Footer row pricing & actions -->
@@ -213,7 +213,7 @@
                                     {{ $item->nama_layanan }}
                                 </h4>
                                 <p class="katalog-desc text-gray-400 text-xs font-light leading-relaxed line-clamp-3">
-                                    {{ $item->deskripsi }}
+                                    {!! $item->deskripsi !!}
                                 </p>
                             </div>
                         </div>

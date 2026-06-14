@@ -26,14 +26,14 @@ class AdminPembayaranController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 20);
-        $status = $request->get('status', 'pending');
+        $status = $request->get('status', 'menunggu_pembayaran');
 
         $pembayarans = Pembayaran::with([
             'pesanan:id_pesanan,kode_pesanan,id_user,status,total_harga,tanggal_pesan',
             'pesanan.user:id,name,email,no_hp',
-            'pesanan.details:id_detail,id_pesanan,id_layanan,quantity,harga_satuan',
+            'pesanan.details:id_detail,id_pesanan,id_paket,jumlah,harga_satuan',
         ])
-            ->where('status_pembayaran', $status)
+            ->where('status', $status)
             ->orderByDesc('updated_at')
             ->paginate($perPage);
 

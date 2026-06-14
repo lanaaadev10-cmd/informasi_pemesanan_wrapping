@@ -45,9 +45,8 @@ class PembayaranService
             $pembayaran = Pembayaran::create([
                 'id_pesanan' => $pesanan->id_pesanan,
                 'metode_pembayaran' => $metodeFromForm,
-                'nomor_referensi' => 'REF-' . Str::random(12),
                 'jumlah_bayar' => $pesanan->total_harga,
-                'status_pembayaran' => PaymentStatus::PENDING->value,
+                'status' => PaymentStatus::PENDING->value,
             ]);
         }
 
@@ -62,7 +61,7 @@ class PembayaranService
             // Update payment record with file path
             $pembayaran->update([
                 'bukti_transfer' => $path,
-                'status_pembayaran' => PaymentStatus::PENDING->value,
+                'status' => PaymentStatus::PENDING->value,
             ]);
 
             DB::commit();
@@ -90,19 +89,27 @@ class PembayaranService
             // Lock payment record to prevent concurrent verification
             $pembayaran = Pembayaran::lockForUpdate()->find($pembayaran->id_pembayaran);
 
-            if ($pembayaran->status_pembayaran !== PaymentStatus::PENDING->value) {
+            if ($pembayaran->status !== PaymentStatus::PENDING->value) {
                 throw new \Exception('Payment tidak dalam status pending');
             }
 
             $pembayaran->update([
-                'status_pembayaran' => PaymentStatus::VERIFIED->value,
-                'tanggal_pembayaran' => now(),
+                'status' => PaymentStatus::VERIFIED->value,
+                'tgl_bayar' => now(),
             ]);
 
             // Update pesanan status via PesananService (state machine validation)
+            // Step 1: Konfirmasi pembayaran (menunggu_verifikasi_pembayaran -> dikonfirmasi)
             $pesanan = $pembayaran->pesanan;
             $this->pesananService->updateStatus(
                 $pesanan,
+                OrderStatus::DIKONFIRMASI->value,
+                $catatan
+            );
+
+            // Step 2: Mulai proses (dikonfirmasi -> sedang_diproses)
+            $this->pesananService->updateStatus(
+                $pesanan->fresh(),
                 OrderStatus::SEDANG_DIPROSES->value,
                 $catatan
             );
@@ -121,7 +128,7 @@ class PembayaranService
      */
     public function rejectPayment(Pembayaran $pembayaran, string $alasan): Pembayaran
     {
-        if ($pembayaran->status_pembayaran !== PaymentStatus::PENDING->value) {
+        if ($pembayaran->status !== PaymentStatus::PENDING->value) {
             throw new \Exception('Payment tidak dalam status pending');
         }
 
@@ -131,7 +138,7 @@ class PembayaranService
             $this->deletePaymentProof($pembayaran);
 
             $pembayaran->update([
-                'status_pembayaran' => PaymentStatus::REJECTED->value,
+                'status' => PaymentStatus::REJECTED->value,
             ]);
 
             // Update pesanan status via PesananService (state machine validation)

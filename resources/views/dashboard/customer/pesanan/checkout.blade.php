@@ -121,26 +121,15 @@
                     <div class="space-y-6">
                         <div class="space-y-2">
                             <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_lokasi_pengerjaan ?? 'Lokasi Pengerjaan (Workshop) *' }}</label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <label class="cursor-pointer group h-full">
-                                    <input type="radio" name="lokasi_pengerjaan" value="toko" class="peer hidden" checked onchange="updateLokasiLabel()">
-                                    <div class="h-full border border-white/10 peer-checked:border-[#f2994a] bg-[#1c1c1c] peer-checked:bg-[#f2994a]/5 rounded-xl px-4 py-3 flex items-center justify-between transition-all hover:bg-white/5">
-                                        <span class="text-xs font-medium text-gray-400 peer-checked:text-white">{{ $profil->form_studio_hq ?? 'Studio HQ' }}</span>
-                                        <i class="ph-bold ph-check-circle text-[#f2994a] opacity-0 peer-checked:opacity-100"></i>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer group h-full">
-                                    <input type="radio" name="lokasi_pengerjaan" value="rumah" class="peer hidden" onchange="updateLokasiLabel()">
-                                    <div class="h-full border border-white/10 peer-checked:border-[#f2994a] bg-[#1c1c1c] peer-checked:bg-[#f2994a]/5 rounded-xl px-4 py-3 flex items-center justify-between transition-all hover:bg-white/5">
-                                        <span class="text-xs font-medium text-gray-400 peer-checked:text-white">{{ $profil->form_home_service ?? 'Home Service' }}</span>
-                                        <i class="ph-bold ph-check-circle text-[#f2994a] opacity-0 peer-checked:opacity-100"></i>
-                                    </div>
-                                </label>
+                            <input type="hidden" name="lokasi_pengerjaan" value="toko">
+                            <div class="flex items-center gap-3 p-4 border border-[#f2994a]/30 bg-[#f2994a]/5 rounded-xl">
+                                <i class="ph-bold ph-buildings text-[#f2994a] text-lg"></i>
+                                <span class="text-sm font-medium text-white">{{ $profil->form_studio_hq ?? 'Di Bengkel' }}</span>
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_alamat_pengerjaan ?? 'Alamat Pengerjaan / Penjemputan *' }}</label>
-                            <textarea id="input_alamat" name="alamat_pengiriman" rows="2" placeholder="Wapping Premium - Jakarta Selatan (Atau alamat lengkap Anda)..." required
+                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_alamat_pengerjaan ?? 'Alamat Anda *' }}</label>
+                            <textarea id="input_alamat" name="alamat_pengiriman" rows="2" placeholder="Masukkan alamat lengkap Anda..." required
                                       class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner"></textarea>
                         </div>
                         <div class="space-y-2">
@@ -342,13 +331,7 @@
 
 <script>
     function updateLokasiLabel() {
-        const t = document.querySelector('input[name="lokasi_pengerjaan"]:checked').value;
-        const almt = document.getElementById('input_alamat');
-        if(t === 'toko') {
-            almt.placeholder = "Contoh: Menggunakan Studio Wapping Premium (Otomatis terisi jika kosong)";
-        } else {
-            almt.placeholder = "Masukkan alamat rumah/lokasi lengkap Anda...";
-        }
+        // Lokasi pengerjaan sudah tetap
     }
 
     function formatTanggal(isoString) {
@@ -386,13 +369,7 @@
             
             document.getElementById('review-jadwal').innerText = formatTanggal(document.getElementById('input_jadwal').value);
             
-            const tipeLok = document.querySelector('input[name="lokasi_pengerjaan"]:checked').value;
-            const almtValue = document.getElementById('input_alamat').value;
-            if(tipeLok === 'toko') {
-                document.getElementById('review-lokasi').innerHTML = 'Wapping Premium HQ<br><span class="text-[9px] text-gray-500 leading-tight">Studio Jakarta Selatan</span>';
-            } else {
-                document.getElementById('review-lokasi').innerHTML = 'Home Service<br><span class="text-[9px] text-gray-500 leading-tight block truncate max-w-[200px]" title="'+almtValue+'">'+almtValue+'</span>';
-            }
+            document.getElementById('review-lokasi').innerHTML = 'Dantie Setiker<br><span class="text-[9px] text-gray-500 leading-tight">Jl. Abu Hasan No.7, Area Sawah, Kedaleman, Kec. Rogojampi, Kabupaten Banyuwangi</span>';
         }
 
         // Hide all panels

@@ -102,14 +102,13 @@ class PesananForm
                                             ->required()
                                             ->helperText('Tahun pembuatan kendaraan.'),
                                         Select::make('lokasi_pengerjaan')
-                                            ->label('Workshop / Lokasi Pengerjaan *')
+                                            ->label('Lokasi Pengerjaan *')
                                             ->options([
-                                                'toko' => 'Studio HQ (Wapping Premium)',
-                                                'rumah' => 'Home Service',
+                                                'toko' => 'Di Bengkel (Wapping Premium)',
                                             ])
                                             ->required()
                                             ->native(false)
-                                            ->helperText('Pilih lokasi pengerjaan yang diinginkan pelanggan.'),
+                                            ->helperText('Lokasi pengerjaan pelanggan.'),
                                         DateTimePicker::make('jadwal_pengerjaan')
                                             ->label('Tanggal Mulai Sesi *')
                                             ->displayFormat('d M Y, H:i')

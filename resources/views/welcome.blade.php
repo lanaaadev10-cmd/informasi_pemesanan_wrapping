@@ -7,7 +7,7 @@
     <section class="max-w-7xl mx-auto px-6 pt-12 pb-24 text-center" data-aos="fade-up">
         <span class="text-orange-600 font-bold text-xs uppercase tracking-[0.3em] mb-6 block">Premium Sticker & Wrapping</span>
         <h1 class="text-4xl sm:text-6xl md:text-8xl font-extrabold text-gray-900 leading-[1.1] md:leading-[1] tracking-tighter mb-8">
-            @if($profil->home_title)
+            @if(!empty($profil->home_title))
                 {!! nl2br(e($profil->home_title)) !!}
             @else
                 Make these <br> 
@@ -30,7 +30,7 @@
         <div class="relative max-w-5xl mx-auto" data-aos="zoom-in" data-aos-delay="200">
             <div class="absolute -inset-10 bg-orange-600/5 blur-[100px] rounded-full pointer-events-none"></div>
             <div class="soft-card p-4 overflow-hidden shadow-2xl relative">
-                @if($profil->home_hero_image)
+                @if(!empty($profil->home_hero_image))
                     <img src="{{ asset('storage/' . $profil->home_hero_image) }}" 
                          class="w-full h-auto rounded-2xl" alt="Featured Work">
                 @else

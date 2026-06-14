@@ -11,9 +11,9 @@ use Illuminate\Validation\Rules\Enum as EnumRule;
  */
 enum PaymentStatus: string
 {
-    case PENDING = 'pending';
-    case VERIFIED = 'verified';
-    case REJECTED = 'rejected';
+    case PENDING = 'menunggu_pembayaran';
+    case VERIFIED = 'sudah_dibayar';
+    case REJECTED = 'ditolak';
     case EXPIRED = 'expired';
 
     public function label(): string

@@ -79,7 +79,7 @@ class PesananController extends Controller
             'no_hp'               => 'required|string|max:20',
             'model_kendaraan'     => 'required|string|max:100',
             'warna_kendaraan'     => 'required|string|max:100',
-            'lokasi_pengerjaan'   => 'required|string|in:toko,rumah',
+            'lokasi_pengerjaan'   => 'required|string|in:toko',
             'jadwal_pengerjaan'   => 'required|date',
             'keterangan_tambahan' => 'nullable|string|max:500',
         ]);

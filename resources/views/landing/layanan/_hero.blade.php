@@ -1,5 +1,5 @@
 <div class="relative w-full rounded-[32px] overflow-hidden flex items-center justify-center py-24 sm:py-32">
-    @if($profil?->layanan_hero_image)
+    @if(!empty($profil->layanan_hero_image))
         <div class="absolute inset-0 z-0">
             <img src="{{ asset('storage/' . $profil->layanan_hero_image) }}"
                  class="w-full h-full object-cover object-center"
@@ -20,7 +20,7 @@
             {{ $profil?->layanan_hero_title ?? 'Precision in Every Layer.' }}
         </h1>
 
-        @if($profil?->layanan_hero_desc)
+        @if(!empty($profil->layanan_hero_desc))
             <p class="text-base leading-relaxed max-w-[42rem] mx-auto text-[var(--accent)]">
                 {{ $profil->layanan_hero_desc }}
             </p>

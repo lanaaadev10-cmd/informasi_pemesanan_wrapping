@@ -3,7 +3,7 @@
 @foreach($layanan as $item)
     <div style="border:1px solid #ccc; padding:5px; margin:5px;">
         <h3>{{ $item->nama_layanan }}</h3>
-        <p>{{ $item->deskripsi }}</p>
+        <p>{!! $item->deskripsi !!}</p>
 // oke baik
         @if($item->tipe_layanan == 'fix')
             <p>Rp {{ number_format($item->harga) }}</p>

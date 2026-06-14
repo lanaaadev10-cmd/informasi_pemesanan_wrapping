@@ -11,7 +11,7 @@
             </div>
             <h3 class="text-2xl font-bold text-white">{{ $profil->tentang_kami_visi_title ?? 'Visi Kami' }}</h3>
             <div class="text-gray-400 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none">
-                @if($profil->visi)
+                @if(!empty($profil->visi))
                     {!! $profil->visi !!}
                 @else
                     <p>Menjadi studio wrapping terdepan yang dikenal dengan kualitas premium dan inovasi berkelanjutan dalam industri modifikasi estetika kendaraan.</p>
@@ -28,7 +28,7 @@
             </div>
             <h3 class="text-2xl font-bold text-white">{{ $profil->tentang_kami_misi_title ?? 'Misi Kami' }}</h3>
             <div class="text-gray-400 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none">
-                @if($profil->misi)
+                @if(!empty($profil->misi))
                     {!! $profil->misi !!}
                 @else
                     <p>Memberikan solusi wrapping berkualitas tinggi dengan menggunakan material premium dunia, teknik instalasi presisi, dan komitmen layanan pelanggan yang tiada tanding.</p>

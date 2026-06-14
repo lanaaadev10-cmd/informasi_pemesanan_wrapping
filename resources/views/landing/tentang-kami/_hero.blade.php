@@ -5,7 +5,7 @@
 <div class="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden rounded-[32px] sm:rounded-[48px] {{ auth()->check() ? 'mt-4' : '-mt-24 sm:-mt-32' }}">
     <!-- Background Image with studio lights -->
     <div class="absolute inset-0 z-0">
-        <img src="{{ $profil->tentang_kami_hero_image ? asset('storage/' . $profil->tentang_kami_hero_image) : 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=2070&auto=format&fit=crop' }}" 
+        <img src="{{ !empty($profil->tentang_kami_hero_image) ? asset('storage/' . $profil->tentang_kami_hero_image) : 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=2070&auto=format&fit=crop' }}" 
              class="w-full h-full object-cover object-center" 
              alt="Premium Wrapping Car">
         <!-- Dark Studio Overlays -->

@@ -125,7 +125,7 @@
     </section>
 
     <!-- Google Maps Location Section -->
-    @if($profil && $profil->maps_url)
+    @if(!empty($profil->maps_url))
         <section class="max-w-7xl mx-auto px-6 mb-32" data-aos="fade-up">
             <div class="soft-card overflow-hidden">
                 <div class="p-6 bg-gray-50 border-b border-gray-100 flex justify-between items-center flex-wrap gap-4">
