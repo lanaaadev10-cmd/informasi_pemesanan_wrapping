@@ -65,7 +65,7 @@
                             @foreach($package->fitur as $fitur)
                             <div class="flex items-start gap-2">
                                 <i class="ph-bold ph-check-circle text-[#f2994a] text-sm mt-0.5 shrink-0"></i>
-                                <span class="text-xs text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '') : $fitur }}</span>
+                                <span class="text-xs text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '-') : $fitur }}</span>
                             </div>
                             @endforeach
                         </div>
@@ -126,6 +126,7 @@
                 <div class="space-y-3">
                     <!-- Add to Cart -->
                     <button id="add-to-cart-btn"
+                            data-id-layanan="{{ $package->id_layanan }}"
                             class="w-full py-3 px-4 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg font-bold text-xs uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200">
                         <i class="ph-bold ph-shopping-cart-simple mr-2"></i> Tambah ke Keranjang
                     </button>
@@ -196,7 +197,7 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         },
                         body: JSON.stringify({
-                            id_layanan: {{ $package->id_layanan }},
+                            id_layanan: Number(addToCartBtn.dataset.idLayanan),
                             quantity: 1
                         })
                     });

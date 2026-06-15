@@ -70,8 +70,8 @@
                 <!-- Total Amount Box -->
                 <div class="bg-[#241710] border border-[#f2994a]/30 rounded-2xl p-6 flex justify-between items-center mb-6">
                     <div>
-                        <span class="text-[9px] font-bold text-[#f2994a]/70 uppercase tracking-widest block mb-1">Total Amount to Pay</span>
-                        <span class="text-2xl font-bold text-[#f2994a]">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
+                        <span class="text-[9px] font-bold text-[#f2994a]/70 uppercase tracking-widest block mb-1">{{ $profil->label_total_bayar ?? 'Total yang Harus Dibayar' }}</span>
+                        <span class="text-2xl font-bold text-[#f2994a]">Rp {{ number_format((float) $pesanan->total_harga, 0, ',', '.') }}</span>
                     </div>
                     <div class="w-12 h-12 bg-[#f2994a]/10 rounded-xl flex items-center justify-center text-[#f2994a]">
                         <i class="ph ph-wallet text-2xl"></i>
@@ -93,8 +93,8 @@
                 
                 @php
                     $firstItem = $pesanan->details->first();
-                    $thumbnail = $firstItem?->layanan->foto_contoh;
-                    $imageUrl = $thumbnail ? (str_starts_with($thumbnail, 'http') ? $thumbnail : asset('storage/' . $thumbnail)) : 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=200';
+                    $thumbnail = $firstItem?->layanan?->foto_contoh;
+                    $imageUrl = $thumbnail ? asset('storage/' . $thumbnail) : asset('images/placeholder.svg');
                 @endphp
 
                 <div class="flex items-center justify-between gap-4">
@@ -104,7 +104,7 @@
                         </div>
                         <div>
                             <h4 class="text-sm font-bold text-white leading-tight mb-1">
-                                {{ $pesanan->form->model_kendaraan ?? 'Kendaraan Wapping' }} - {{ $firstItem?->layanan->nama_layanan ?? 'Custom Wrap' }}
+                                {{ $pesanan->form?->model_kendaraan ?? 'Kendaraan Wapping' }} - {{ $firstItem?->layanan?->nama_layanan ?? 'Custom Wrap' }}
                             </h4>
                             <span class="text-[10px] text-gray-500 font-mono">Project ID: #{{ $pesanan->kode_pesanan }}</span>
                         </div>
@@ -243,11 +243,22 @@
     </div>
 </div>
 
+@php $copyMsg = $profil->alert_rekening_disalin ?? 'Nomor Rekening berhasil disalin'; @endphp
 <script>
     function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('Nomor Rekening berhasil disalin: ' + text);
-        });
+
+        var msg = '{{ $copyMsg }}';
+        (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
+            .then(function () { alert(msg + ': ' + text); })
+            .catch(function () {
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                alert(msg + ': ' + text);
+            });
     }
 
     function previewFile() {
