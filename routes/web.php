@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GaleriController;
 
-// [TAMBAHAN FUNGSI] Proteksi Keamanan: Membatasi user agar tidak refresh berlebihan (Maks. 60x dalam 5 menit)
-Route::middleware('throttle:60,5')->group(function () {
+// [TAMBAHAN FUNGSI] Proteksi Keamanan: Membatasi user agar tidak refresh berlebihan (Maks. 300x dalam 5 menit)
+Route::middleware('throttle:300,5')->group(function () {
 
     // rute ke publik
     // [KEAMANAN] Endpoint metrics hanya bisa diakses dari localhost

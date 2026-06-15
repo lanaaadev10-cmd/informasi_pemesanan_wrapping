@@ -60,7 +60,7 @@
                                 @foreach(array_slice($package->fitur, 0, 2) as $fitur)
                                 <div class="flex items-center gap-2">
                                     <i class="ph-bold ph-check-circle text-[#f2994a] text-xs"></i>
-                                    <span class="text-[10px] text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '') : $fitur }}</span>
+                                    <span class="text-[10px] text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '-') : $fitur }}</span>
                                 </div>
                                 @endforeach
                                 @if(count($package->fitur) > 2)
