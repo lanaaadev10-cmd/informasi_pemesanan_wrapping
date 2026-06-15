@@ -10,8 +10,8 @@ class DashboardCustomerResource extends Resource
     protected static ?string $label = 'Dashboard Customer';
     protected static ?string $pluralLabel = 'Dashboard Customer';
     protected static ?string $navigationLabel = 'Dashboard Customer';
-    protected static string|null|\UnitEnum $navigationGroup = 'Website';
-    protected static ?int $navigationSort = 9;
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola User Dashboard';
+    protected static ?int $navigationSort = 4;
 
     public static function getPages(): array
     {

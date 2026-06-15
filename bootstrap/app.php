@@ -10,13 +10,21 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function () {
+            //
+        },
     )
+    ->withCommands([])
     ->withMiddleware(function (Middleware $middleware) {
         // Percaya pada proxy Ngrok agar aset CSS/JS dimuat menggunakan HTTPS
         $middleware->trustProxies(at: '*');
         
         // Configure CORS
         $middleware->statefulApi();
+
+        $middleware->web(append: [
+            \App\Http\Middleware\ShareSettingsToViews::class,
+        ]);
 
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,

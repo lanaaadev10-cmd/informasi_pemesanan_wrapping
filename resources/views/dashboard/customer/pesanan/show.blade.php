@@ -45,18 +45,18 @@
                     
                     <div class="grid grid-cols-3 gap-y-6 relative z-10">
                         <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">{{ $profil->label_nama_bank ?? 'Nama Bank' }}</div>
-                        <div class="col-span-2 text-right text-xs font-bold text-white">BCA (Bank Central Asia)</div>
+                        <div class="col-span-2 text-right text-xs font-bold text-white">{{ $profil->pesanan_nama_bank ?? 'BCA (Bank Central Asia)' }}</div>
                         
                         <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest flex items-center">{{ $profil->label_no_rekening ?? 'No. Rekening' }}</div>
                         <div class="col-span-2 text-right flex items-center justify-end gap-3">
-                            <span class="text-xl md:text-2xl font-mono font-black text-white tracking-widest">123-456-7890</span>
-                            <button onclick="copyToClipboard('1234567890')" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-white" title="{{ $profil->cta_salin_rekening ?? 'Salin Nomor Rekening' }}">
+                            <span class="text-xl md:text-2xl font-mono font-black text-white tracking-widest">{{ $profil->pesanan_nomor_rekening ?? '123-456-7890' }}</span>
+                            <button onclick="copyToClipboard('{{ str_replace('-', '', $profil->pesanan_nomor_rekening ?? '1234567890') }}')" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-white" title="{{ $profil->cta_salin_rekening ?? 'Salin Nomor Rekening' }}">
                                 <i class="ph ph-copy text-sm"></i>
                             </button>
                         </div>
 
                         <div class="col-span-1 text-[9px] font-bold text-gray-500 uppercase tracking-widest">{{ $profil->label_atas_nama ?? 'Atas Nama' }}</div>
-                        <div class="col-span-2 text-right text-xs font-bold text-white">PT Wapping Indonesia</div>
+                        <div class="col-span-2 text-right text-xs font-bold text-white">{{ $profil->pesanan_atas_nama ?? 'PT Wapping Indonesia' }}</div>
                     </div>
                 </div>
 
@@ -120,7 +120,7 @@
                     <form action="{{ route('pesanan.upload-bukti', $pesanan->id_pesanan) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
-                        <!-- Drag & Drop Upload Area -->
+                        <!-- Upload bukti pembayaran -->
                         <div class="relative group">
                             <input type="file" name="bukti_transfer" id="bukti-input" required accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="previewFile()">
                             <div id="drop-zone" class="w-full aspect-[4/3] bg-[#1a1a1a] border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center p-6 text-center group-hover:border-[#f2994a]/50 group-hover:bg-[#f2994a]/5 transition-all">
@@ -164,7 +164,7 @@
                 @elseif($statusVal === 'menunggu_konfirmasi_admin')
                     <div class="flex flex-col items-center justify-center text-center py-12 space-y-4">
                         <div class="w-20 h-20 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
-                            <i class="ph-fill ph-hourglass-high text-4xl animate-spin-slow"></i>
+                            <i class="ph-fill ph-hourglass-high text-4xl animate-[spin_3s_linear_infinite]"></i>
                         </div>
                         <h2 class="text-lg font-bold text-white">{{ $profil->status_menunggu_konfirmasi ?? 'Menunggu Konfirmasi Admin' }}</h2>
                         <p class="text-xs text-gray-400 leading-relaxed px-4">Admin sedang memproses pesanan Anda. Anda akan menerima notifikasi segera setelah disetujui.</p>
@@ -236,7 +236,35 @@
 <script>
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
-            alert('{{ $profil->alert_rekening_disalin ?? 'Nomor Rekening berhasil disalin' }}: ' + text);
+            Swal.fire({
+                icon: 'success',
+                title: 'Nomor Rekening Tersalin!',
+                html: `
+                    <div style="text-align:left;color:#d1d5db;font-size:12px;line-height:1.8;">
+                        <p style="margin-bottom:12px;padding:10px;background:rgba(34,197,94,0.1);border-radius:8px;">
+                            <strong style="color:#22c55e;">✅ Opsi 1 - DP (Uang Muka):</strong><br>
+                            <span style="color:#9ca3af;">Anda dapat melakukan pembayaran DP sebesar 50% dari total harga untuk mengkonfirmasi pesanan. Sisa pembayaran dilunasi saat pengambilan kendaraan.</span>
+                        </p>
+                        <p style="padding:10px;background:rgba(242,153,74,0.1);border-radius:8px;">
+                            <strong style="color:#f2994a;">✅ Opsi 2 - Pembayaran Penuh:</strong><br>
+                            <span style="color:#9ca3af;">Lakukan pembayaran 100% untuk mempercepat proses pengerjaan kendaraan Anda.</span>
+                        </p>
+                    </div>
+                `,
+                confirmButtonText: 'Mengerti',
+                confirmButtonColor: '#f2994a',
+                timer: 5000,
+                timerProgressBar: true,
+                customClass: { popup: 'swal-dark', title: 'swal-title' }
+            });
+        }).catch(() => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal',
+                text: 'Tidak dapat menyalin nomor rekening. Silakan coba manual.',
+                confirmButtonColor: '#f2994a',
+                customClass: { popup: 'swal-dark', title: 'swal-title' }
+            });
         });
     }
 
@@ -285,7 +313,7 @@
     
     <!-- Countdown progress bar -->
     <div class="absolute bottom-0 left-0 right-0 h-1 bg-emerald-950 rounded-b-2xl overflow-hidden">
-        <div id="toast-progress" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 w-full transition-all duration-5000 ease-linear"></div>
+        <div id="toast-progress" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 w-full transition-all duration-[5000ms] ease-linear"></div>
     </div>
 </div>
 
@@ -325,12 +353,5 @@
 </script>
 @endif
 
-<style>
-    .animate-spin-slow {
-        animation: spin 3s linear infinite;
-    }
-    .duration-5000 {
-        transition-duration: 5000ms;
-    }
-</style>
+
 @endsection

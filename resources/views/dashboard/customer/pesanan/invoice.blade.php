@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css" />
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+    @vite(['resources/css/app.css'])
 
 @php
     $subtotal   = $pesanan->details->sum('subtotal');
@@ -34,477 +35,165 @@
 @endphp
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', Arial, sans-serif;
-            background: #0a0a0a;
-            color: #fff;
-            min-height: 100vh;
-        }
-
-        /* ── Floating Action Bar (screen only) ──────────── */
-        .action-bar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 999;
-            background: rgba(10,10,10,0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            padding: 14px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .action-bar a {
-            color: #888;
-            text-decoration: none;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: color .2s;
-        }
-        .action-bar a:hover { color: #fff; }
-        .btn-print {
-            background: #f2994a;
-            color: #000;
-            border: none;
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 10px 22px;
-            border-radius: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background .2s, transform .1s;
-            box-shadow: 0 4px 20px rgba(242,153,74,0.35);
-        }
-        .btn-print:hover { background: #e28a44; }
-        .btn-print:active { transform: scale(0.97); }
-
-        /* ── Invoice Wrapper ────────────────────────────── */
-        .invoice-wrapper {
-            max-width: 860px;
-            margin: 80px auto 60px;
-            padding: 0 16px;
-        }
-
-        /* ── CARD base ──────────────────────────────────── */
-        .card {
-            background: #111;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        /* ── HEADER CARD ────────────────────────────────── */
-        .invoice-header {
-            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 16px;
-            border: 1px solid rgba(242,153,74,0.15);
-            position: relative;
-            overflow: hidden;
-        }
-        .invoice-header::before {
-            content: '';
-            position: absolute;
-            top: -80px; right: -80px;
-            width: 300px; height: 300px;
-            background: rgba(242,153,74,0.06);
-            border-radius: 50%;
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 32px;
-        }
-        .brand-name {
-            font-size: 28px;
-            font-weight: 900;
-            color: #f2994a;
-            letter-spacing: -1px;
-            line-height: 1;
-        }
-        .brand-sub {
-            font-size: 10px;
-            color: #555;
-            letter-spacing: 2.5px;
-            text-transform: uppercase;
-            margin-top: 5px;
-        }
-        .brand-contact {
-            font-size: 10px;
-            color: #555;
-            margin-top: 10px;
-            line-height: 1.8;
-        }
-        .invoice-meta { text-align: right; }
-        .invoice-label {
-            font-size: 9px;
-            color: #555;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-        .invoice-number {
-            font-size: 20px;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: -0.5px;
-        }
-        .badge-lunas {
-            display: inline-block;
-            background: #f2994a;
-            color: #000;
-            font-size: 9px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            padding: 5px 14px;
-            border-radius: 30px;
-            margin-top: 10px;
-        }
-        .header-stats {
-            display: flex;
-            gap: 32px;
-            flex-wrap: wrap;
-            padding-top: 24px;
-            border-top: 1px solid rgba(255,255,255,0.06);
-        }
-        .stat-item {}
-        .stat-label {
-            font-size: 9px;
-            color: #555;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        .stat-value {
-            font-size: 13px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        /* ── TWO COLUMN INFO ────────────────────────────── */
-        .info-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-        @media (max-width: 600px) {
-            .info-row { grid-template-columns: 1fr; }
-        }
-        .info-card {
-            background: #111;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 22px 24px;
-        }
-        .info-section-label {
-            font-size: 9px;
-            color: #555;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-        .info-name {
-            font-size: 15px;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 6px;
-        }
-        .info-detail {
-            font-size: 11px;
-            color: #666;
-            line-height: 1.9;
-        }
-
-        /* ── VEHICLE CARD ───────────────────────────────── */
-        .vehicle-card {
-            background: #111;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 22px 24px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-        }
-        .vehicle-img {
-            width: 120px;
-            height: 76px;
-            border-radius: 12px;
-            object-fit: cover;
-            border: 1px solid rgba(255,255,255,0.06);
-            flex-shrink: 0;
-        }
-
-        /* ── TABLE ──────────────────────────────────────── */
-        .table-card {
-            background: #111;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
-        .table-card table { width: 100%; border-collapse: collapse; }
-        .table-card thead tr {
-            background: #0a0a0a;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .table-card th {
-            padding: 14px 20px;
-            font-size: 9px;
-            font-weight: 800;
-            color: #f2994a;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        .table-card th:not(:first-child) { text-align: right; }
-        .table-card td {
-            padding: 18px 20px;
-            font-size: 12px;
-            vertical-align: top;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-        .table-card tbody tr:last-child td { border-bottom: none; }
-        .table-card td:not(:first-child) { text-align: right; }
-        .td-name { font-weight: 700; color: #fff; font-size: 13px; }
-        .td-note { font-size: 10px; color: #555; margin-top: 3px; }
-        .td-price { color: #888; }
-        .td-subtotal { font-weight: 800; color: #fff; }
-
-        /* ── TOTAL SECTION ──────────────────────────────── */
-        .totals-section {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 16px;
-        }
-        .totals-box {
-            background: #111;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 24px;
-            width: 320px;
-        }
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .total-row:last-of-type { border-bottom: none; }
-        .total-row span:first-child { color: #666; }
-        .total-row span:last-child { color: #ccc; font-weight: 600; }
-        .total-grand {
-            background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
-            border: 1px solid rgba(242,153,74,0.2);
-            border-radius: 12px;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 14px;
-        }
-        .total-grand-label {
-            font-size: 9px;
-            font-weight: 800;
-            color: #555;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        .total-grand-amount {
-            font-size: 22px;
-            font-weight: 900;
-            color: #f2994a;
-        }
-
-        /* ── FOOTER ─────────────────────────────────────── */
-        .invoice-footer {
-            background: #0a0a0a;
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 20px 28px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .footer-printed { font-size: 10px; color: #444; }
-        .footer-note { font-size: 9px; color: #333; text-align: center; }
-        .footer-brand { font-size: 16px; font-weight: 900; color: #f2994a; text-align: right; }
-        .footer-brand-sub { font-size: 9px; color: #444; letter-spacing: 2px; text-transform: uppercase; }
-
-        /* ── PRINT STYLES ───────────────────────────────── */
         @media print {
             @page { size: A4; margin: 10mm 12mm; }
-            body { background: #0a0a0a !important; color: #fff !important; print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
-            .action-bar { display: none !important; }
-            .invoice-wrapper { margin: 0 auto; padding: 0; max-width: 100%; }
         }
     </style>
 </head>
-<body>
+<body class="bg-[#0a0a0a] text-white min-h-screen" style="font-family:'Inter',Arial,sans-serif;print-color-adjust:exact;-webkit-print-color-adjust:exact">
 
-{{-- Action Bar --}}
-<div class="action-bar">
-    <a href="{{ url()->previous() }}">
-        <i class="ph-bold ph-arrow-left"></i> {{ $profil->cta_kembali ?? 'Kembali' }}
-    </a>
-    <div style="text-align:center; flex:1;">
-        <span style="font-size:11px; color:#555;">Invoice #WAP-{{ $pesanan->kode_pesanan }}</span>
+    {{-- Action Bar (hidden on print) --}}
+    <div class="print:hidden fixed top-0 left-0 right-0 z-[999] bg-[#0a0a0a]/95 backdrop-blur-[12px] border-b border-white/[0.06] px-6 py-3.5 flex items-center justify-between gap-3">
+        <a href="{{ url()->previous() }}" class="text-[#888] hover:text-white text-xs flex items-center gap-1.5 transition-colors no-underline">
+            <i class="ph-bold ph-arrow-left"></i>
+            <span>{{ $profil->cta_kembali ?? 'Kembali' }}</span>
+        </a>
+        <div class="text-center flex-1">
+            <span class="text-[11px] text-[#555]">Invoice #WAP-{{ $pesanan->kode_pesanan }}</span>
+        </div>
+        <button onclick="window.print()"
+                class="bg-[#f2994a] hover:bg-[#e28a44] active:scale-[0.97] text-black font-extrabold text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-all shadow-[0_4px_20px_rgba(242,153,74,0.35)] border-none font-['Inter',sans-serif]">
+            <i class="ph-bold ph-printer"></i>
+            <span>Download / Print</span>
+        </button>
     </div>
-    <button class="btn-print" onclick="window.print()">
-        <i class="ph-bold ph-printer"></i> Download / Print
-    </button>
-</div>
 
-<div class="invoice-wrapper">
+    {{-- Invoice Content --}}
+    <div class="max-w-[860px] mx-auto mt-20 mb-16 px-4 print:mt-0 print:mb-0 print:max-w-full print:px-0">
 
-    {{-- HEADER --}}
-    <div class="invoice-header">
-        <div class="header-top">
+        {{-- HEADER --}}
+        <div class="relative overflow-hidden bg-gradient-to-br from-[#0f0f0f] to-[#1a1a1a] rounded-[20px] p-10 mb-4 border border-[#f2994a]/15">
+            <div class="absolute -top-20 -right-20 w-[300px] h-[300px] bg-[rgba(242,153,74,0.06)] rounded-full pointer-events-none"></div>
+
+            <div class="flex justify-between items-start flex-wrap gap-5 mb-8 relative z-10">
+                <div>
+                    <div class="text-[28px] font-black text-[#f2994a] tracking-tight leading-none">{{ $profil?->nama_perusahaan ?? 'DANTIE WRAPPING' }}</div>
+                    <div class="text-[10px] text-[#555] tracking-[2.5px] uppercase mt-1">Premium Vehicle Wrapping</div>
+                    @if($profil)
+                    <div class="text-[10px] text-[#555] mt-2.5 leading-relaxed">
+                        {{ $profil->alamat ?? '' }}<br>
+                        {{ $profil->nomor_telepon ?? '' }} &nbsp;·&nbsp; {{ $profil->email ?? '' }}
+                    </div>
+                    @endif
+                </div>
+                <div class="text-right">
+                    <div class="text-[9px] text-[#555] tracking-[2px] uppercase mb-1.5">Invoice</div>
+                    <div class="text-xl font-black text-white tracking-tight">#WAP-{{ $pesanan->kode_pesanan }}</div>
+                    <div class="inline-block bg-[#f2994a] text-black text-[9px] font-black tracking-wider uppercase px-3.5 py-1 rounded-full mt-2.5">✓ {{ $profil->status_lunas ?? 'LUNAS' }}</div>
+                </div>
+            </div>
+
+            <div class="flex gap-8 flex-wrap pt-6 border-t border-white/[0.06] relative z-10">
+                <div>
+                    <div class="text-[9px] text-[#555] tracking-[1.5px] uppercase mb-1">Tanggal Bayar</div>
+                    <div class="text-[13px] font-bold text-white">{{ $tglBayar }}</div>
+                </div>
+                <div>
+                    <div class="text-[9px] text-[#555] tracking-[1.5px] uppercase mb-1">{{ $profil->label_metode_pembayaran ?? 'Metode Pembayaran' }}</div>
+                    <div class="text-[13px] font-bold text-white">{{ $metodeLabel }}</div>
+                </div>
+                <div>
+                    <div class="text-[9px] text-[#555] tracking-[1.5px] uppercase mb-1">Jadwal Pengerjaan</div>
+                    <div class="text-[13px] font-bold text-white">
+                        {{ $pesanan->form?->jadwal_pengerjaan
+                            ? \Carbon\Carbon::parse($pesanan->form->jadwal_pengerjaan)->translatedFormat('d F Y')
+                            : '-' }}
+                    </div>
+                </div>
+                <div>
+                    <div class="text-[9px] text-[#555] tracking-[1.5px] uppercase mb-1">No. Order</div>
+                    <div class="text-[13px] font-bold text-white">{{ $pesanan->kode_pesanan }}</div>
+                </div>
+            </div>
+        </div>
+
+        {{-- BILLED TO + VEHICLE INFO --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div class="bg-[#111] border border-white/[0.06] rounded-2xl px-6 py-5">
+                <div class="text-[9px] text-[#555] tracking-wider uppercase mb-3">{{ $profil->invoice_billed_to ?? 'Billed To' }}</div>
+                <div class="text-[15px] font-extrabold text-white mb-1.5">{{ $pesanan->form?->nama_pemesan ?? $pesanan->user->name }}</div>
+                <div class="text-[11px] text-[#666] leading-relaxed">
+                    {{ $pesanan->user->email }}<br>
+                    {{ $pesanan->form?->no_hp ?? '-' }}<br>
+                    @if($pesanan->form?->alamat_pengiriman)
+                    {{ $pesanan->form->alamat_pengiriman }}
+                    @endif
+                </div>
+            </div>
+            <div class="bg-[#111] border border-white/[0.06] rounded-2xl px-6 py-5">
+                <div class="text-[9px] text-[#555] tracking-wider uppercase mb-3">{{ $profil->invoice_spesifikasi ?? 'Spesifikasi Kendaraan' }}</div>
+                <div class="text-[15px] font-extrabold text-white mb-1.5">{{ $pesanan->form?->model_kendaraan ?? '-' }}</div>
+                <div class="text-[11px] text-[#666] leading-relaxed">
+                    Warna: {{ $pesanan->form?->warna_kendaraan ?? '-' }}<br>
+                    No. Polisi: {{ $pesanan->form?->nomor_polisi ?? '-' }}<br>
+                    Lokasi: {{ ucfirst($pesanan->form?->lokasi_pengerjaan ?? '-') }}
+                </div>
+            </div>
+        </div>
+
+        {{-- LINE ITEMS TABLE --}}
+        <div class="bg-[#111] border border-white/[0.06] rounded-2xl overflow-hidden mb-4">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-[#0a0a0a] border-b border-white/[0.06]">
+                        <th class="px-5 py-3.5 text-[9px] font-extrabold text-[#f2994a] tracking-wider uppercase text-left">{{ $profil->section_pilih_layanan ?? 'Layanan' }}</th>
+                        <th class="px-5 py-3.5 text-[9px] font-extrabold text-[#f2994a] tracking-wider uppercase text-right">Qty</th>
+                        <th class="px-5 py-3.5 text-[9px] font-extrabold text-[#f2994a] tracking-wider uppercase text-right">Harga Satuan</th>
+                        <th class="px-5 py-3.5 text-[9px] font-extrabold text-[#f2994a] tracking-wider uppercase text-right">{{ $profil->label_subtotal ?? 'Subtotal' }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($pesanan->details as $item)
+                    <tr class="border-b border-white/[0.04] last:border-b-0">
+                        <td class="px-5 py-[18px] text-left align-top">
+                            <div class="text-[13px] font-bold text-white">{{ $item->layanan?->nama_layanan ?? $item->layanan?->nama_paket ?? '-' }}</div>
+                            @if($item->catatan_custom ?? null)
+                            <div class="text-[10px] text-[#555] mt-0.5">{{ $item->catatan_custom }}</div>
+                            @endif
+                        </td>
+                        <td class="px-5 py-[18px] text-right align-top text-[#888] font-semibold">{{ $item->jumlah }}x</td>
+                        <td class="px-5 py-[18px] text-right align-top text-[#888]">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
+                        <td class="px-5 py-[18px] text-right align-top font-extrabold text-white">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        {{-- TOTALS --}}
+        <div class="flex justify-end mb-4">
+            <div class="bg-[#111] border border-white/[0.06] rounded-2xl p-6 w-[320px] max-w-full">
+                <div class="flex justify-between text-xs py-2 border-b border-white/[0.05]">
+                    <span class="text-[#666]">{{ $profil->label_subtotal ?? 'Subtotal Layanan' }}</span>
+                    <span class="text-[#ccc] font-semibold">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
+                </div>
+                <div class="flex justify-between text-xs py-2 border-b border-white/[0.05]">
+                    <span class="text-[#666]">{{ $profil->label_biaya_admin ?? 'Biaya Administrasi' }}</span>
+                    <span class="text-[#ccc] font-semibold">Rp 0</span>
+                </div>
+                <div class="bg-gradient-to-br from-[#0f0f0f] to-[#1a1a1a] border border-[#f2994a]/20 rounded-xl px-5 py-4 flex justify-between items-center mt-3.5">
+                    <span class="text-[9px] font-extrabold text-[#555] tracking-wider uppercase">{{ $profil->label_total_tagihan ?? 'Total Tagihan' }}</span>
+                    <span class="text-[22px] font-black text-[#f2994a]">Rp {{ number_format($totalFinal, 0, ',', '.') }}</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- FOOTER --}}
+        <div class="bg-[#0a0a0a] border border-white/[0.05] rounded-2xl px-7 py-5 flex justify-between items-center flex-wrap gap-3">
             <div>
-                <div class="brand-name">{{ $profil?->nama_perusahaan ?? 'WAPPING STUDIO' }}</div>
-                <div class="brand-sub">Premium Vehicle Wrapping</div>
-                @if($profil)
-                <div class="brand-contact">
-                    {{ $profil->alamat ?? '' }}<br>
-                    {{ $profil->nomor_telepon ?? '' }} &nbsp;·&nbsp; {{ $profil->email ?? '' }}
-                </div>
-                @endif
+                <div class="text-[10px] text-[#444]">{{ $profil->label_dicetak ?? 'Dicetak' }}: {{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }} WIB</div>
             </div>
-            <div class="invoice-meta">
-                <div class="invoice-label">Invoice</div>
-                <div class="invoice-number">#WAP-{{ $pesanan->kode_pesanan }}</div>
-                <div class="badge-lunas">✓ {{ $profil->status_lunas ?? 'LUNAS' }}</div>
+            <div class="text-[9px] text-[#333] text-center">
+                {{ $profil->invoice_legal ?? 'Dokumen ini berlaku sah tanpa tanda tangan basah' }}<br>
+                Invoice #WAP-{{ $pesanan->kode_pesanan }}
+            </div>
+            <div class="text-right">
+                <div class="text-base font-black text-[#f2994a]">{{ $profil?->nama_perusahaan ?? 'WAPPING' }}</div>
+                <div class="text-[9px] text-[#444] tracking-wider uppercase">{{ $profil->invoice_thankyou ?? 'Thank you for your trust' }}</div>
             </div>
         </div>
-        <div class="header-stats">
-            <div class="stat-item">
-                <div class="stat-label">Tanggal Bayar</div>
-                <div class="stat-value">{{ $tglBayar }}</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">{{ $profil->label_metode_pembayaran ?? 'Metode Pembayaran' }}</div>
-                <div class="stat-value">{{ $metodeLabel }}</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">Jadwal Pengerjaan</div>
-                <div class="stat-value">
-                    {{ $pesanan->form?->jadwal_pengerjaan
-                        ? \Carbon\Carbon::parse($pesanan->form->jadwal_pengerjaan)->translatedFormat('d F Y')
-                        : '-' }}
-                </div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-label">No. Order</div>
-                <div class="stat-value">{{ $pesanan->kode_pesanan }}</div>
-            </div>
-        </div>
+
     </div>
 
-    {{-- BILLED TO + VEHICLE INFO --}}
-    <div class="info-row">
-        <div class="info-card">
-            <div class="info-section-label">{{ $profil->invoice_billed_to ?? 'Billed To' }}</div>
-            <div class="info-name">{{ $pesanan->form?->nama_pemesan ?? $pesanan->user->name }}</div>
-            <div class="info-detail">
-                {{ $pesanan->user->email }}<br>
-                {{ $pesanan->form?->no_hp ?? '-' }}<br>
-                @if($pesanan->form?->alamat_pengiriman)
-                {{ $pesanan->form->alamat_pengiriman }}
-                @endif
-            </div>
-        </div>
-        <div class="info-card">
-            <div class="info-section-label">{{ $profil->invoice_spesifikasi ?? 'Spesifikasi Kendaraan' }}</div>
-            <div class="info-name">{{ $pesanan->form?->model_kendaraan ?? '-' }}</div>
-            <div class="info-detail">
-                Warna: {{ $pesanan->form?->warna_kendaraan ?? '-' }}<br>
-                No. Polisi: {{ $pesanan->form?->nomor_polisi ?? '-' }}<br>
-                Lokasi: {{ ucfirst($pesanan->form?->lokasi_pengerjaan ?? '-') }}
-            </div>
-        </div>
-    </div>
-
-    {{-- LINE ITEMS TABLE --}}
-    <div class="table-card">
-        <table>
-            <thead>
-                <tr>
-                    <th style="text-align:left;">{{ $profil->section_pilih_layanan ?? 'Layanan' }}</th>
-                    <th>Qty</th>
-                    <th>Harga Satuan</th>
-                    <th>{{ $profil->label_subtotal ?? 'Subtotal' }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($pesanan->details as $item)
-                <tr>
-                    <td>
-                        <div class="td-name">{{ $item->layanan?->nama_layanan ?? $item->layanan?->nama_paket ?? '-' }}</div>
-                        @if($item->catatan_custom ?? null)
-                        <div class="td-note">{{ $item->catatan_custom }}</div>
-                        @endif
-                    </td>
-                    <td style="color:#888; font-weight:600;">{{ $item->jumlah }}x</td>
-                    <td class="td-price">Rp {{ number_format($item->harga_satuan, 0, ',', '.') }}</td>
-                    <td class="td-subtotal">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-
-    {{-- TOTALS --}}
-    <div class="totals-section">
-        <div class="totals-box">
-            <div class="total-row">
-                <span>{{ $profil->label_subtotal ?? 'Subtotal Layanan' }}</span>
-                <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
-            </div>
-            <div class="total-row">
-                <span>{{ $profil->label_biaya_admin ?? 'Biaya Administrasi' }}</span>
-                <span>Rp 0</span>
-            </div>
-            <div class="total-grand">
-                <div class="total-grand-label">{{ $profil->label_total_tagihan ?? 'Total Tagihan' }}</div>
-                <div class="total-grand-amount">Rp {{ number_format($totalFinal, 0, ',', '.') }}</div>
-            </div>
-        </div>
-    </div>
-
-    {{-- FOOTER --}}
-    <div class="invoice-footer">
-        <div>
-            <div class="footer-printed">{{ $profil->label_dicetak ?? 'Dicetak' }}: {{ \Carbon\Carbon::now()->translatedFormat('d F Y, H:i') }} WIB</div>
-        </div>
-        <div class="footer-note">
-            {{ $profil->invoice_legal ?? 'Dokumen ini berlaku sah tanpa tanda tangan basah' }}<br>
-            Invoice #WAP-{{ $pesanan->kode_pesanan }}
-        </div>
-        <div>
-            <div class="footer-brand">{{ $profil?->nama_perusahaan ?? 'WAPPING' }}</div>
-            <div class="footer-brand-sub">{{ $profil->invoice_thankyou ?? 'Thank you for your trust' }}</div>
-        </div>
-    </div>
-
-</div>
 </body>
 </html>

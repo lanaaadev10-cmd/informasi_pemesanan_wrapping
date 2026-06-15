@@ -2,7 +2,7 @@
     BAGIAN: Tim Kami
     Deskripsi: Grid profil tim dan mekanik professional wrapping
 ============================================ --}}
-@if($showTeam)
+@if($showTeam && count($teamMembers) > 0)
     <div class="space-y-12 z-10 relative" data-aos="fade-up">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-8">
             <div class="space-y-3">

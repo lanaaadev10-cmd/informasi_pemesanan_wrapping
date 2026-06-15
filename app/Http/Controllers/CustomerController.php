@@ -7,13 +7,6 @@ use App\Models\Galeri;
 
 class CustomerController extends Controller
 {
-    public function katalog()
-    {
-        $layanan = Layanan::all();
-
-        return view('landing.katalog.index', compact('layanan'));
-    }
-
     public function dashboard()
     {
         $layanans = Layanan::all();

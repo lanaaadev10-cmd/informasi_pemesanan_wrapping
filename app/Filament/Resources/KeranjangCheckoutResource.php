@@ -7,11 +7,11 @@ use App\Filament\Resources\KeranjangCheckout\Pages\EditKeranjangCheckout;
 
 class KeranjangCheckoutResource extends Resource
 {
-    protected static ?string $label = 'Keranjang & Checkout';
-    protected static ?string $pluralLabel = 'Keranjang & Checkout';
-    protected static ?string $navigationLabel = 'Keranjang & Checkout';
-    protected static string|null|\UnitEnum $navigationGroup = 'Website';
-    protected static ?int $navigationSort = 10;
+    protected static ?string $label = 'Kelola Keranjang';
+    protected static ?string $pluralLabel = 'Kelola Keranjang';
+    protected static ?string $navigationLabel = 'Kelola Keranjang';
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola User Dashboard';
+    protected static ?int $navigationSort = 1;
 
     public static function getPages(): array
     {

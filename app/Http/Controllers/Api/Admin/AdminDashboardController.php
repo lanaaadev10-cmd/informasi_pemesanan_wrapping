@@ -44,6 +44,15 @@ class AdminDashboardController extends Controller
             $pendingPayments = Pembayaran::where('status_pembayaran', 'pending')->count();
             $totalCustomers = User::whereDoesntHave('roles')->count();
 
+            $totalOnlineOrders = Pesanan::online()->count();
+            $totalOfflineOrders = Pesanan::offline()->count();
+            $totalOnlineRevenue = Pesanan::online()
+                ->whereIn('status', ['dibayar', 'selesai'])
+                ->sum('total_harga');
+            $totalOfflineRevenue = Pesanan::offline()
+                ->whereIn('status', ['dibayar', 'selesai'])
+                ->sum('total_harga');
+
             // Top services
             $topServicesLimit = config('app-settings.dashboard.top_services_limit', 5);
             $topServices = DB::table('detail_pesanans')
@@ -66,6 +75,10 @@ class AdminDashboardController extends Controller
                     'pending_payments' => $pendingPayments,
                     'total_customers' => $totalCustomers,
                     'top_services' => $topServices,
+                    'total_online_orders' => (int) ($totalOnlineOrders ?? 0),
+                    'total_offline_orders' => (int) ($totalOfflineOrders ?? 0),
+                    'total_online_revenue' => (float) ($totalOnlineRevenue ?? 0),
+                    'total_offline_revenue' => (float) ($totalOfflineRevenue ?? 0),
                 ],
             ], 200);
         });

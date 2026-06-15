@@ -64,6 +64,14 @@ class EditPesananSetting extends EditRecord
                     ->schema([
                         TextInput::make('pesanan_new_order_button_label')->label('Tombol Pesan Baru')->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
                     ]),
+
+                Section::make('Informasi Bank')
+                    ->icon('heroicon-o-building-library')
+                    ->schema([
+                        TextInput::make('pesanan_nama_bank')->label('Nama Bank')->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                        TextInput::make('pesanan_nomor_rekening')->label('Nomor Rekening')->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                        TextInput::make('pesanan_atas_nama')->label('Atas Nama')->helperText(fn ($state) => 'Saat ini: ' . ($state ?: '-')),
+                    ]),
             ]);
     }
 

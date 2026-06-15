@@ -27,7 +27,7 @@
                 </div>
                 <div class="pt-8">
                     <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#f2994a] hover:text-[#e28a44] transition-all group-hover:translate-x-1">
-                        {{ $profil->cta_selengkapnya ?? 'Selengkapnya' }} <i class="ph-bold ph-arrow-right"></i>
+                        {{ $profil->home_card_selengkapnya ?? 'Selengkapnya' }} <i class="ph-bold ph-arrow-right"></i>
                     </a>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="pt-2">
                         <a href="https://wa.me/{{ $waNumber }}" class="inline-block bg-black text-[#f2994a] hover:bg-black/90 hover:text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
-                            {{ $profil->cta_cek_syarat ?? 'Cek Syarat &amp; Ketentuan' }}
+                            {{ $profil->home_cta_cek_syarat ?? 'Cek Syarat &amp; Ketentuan' }}
                         </a>
                     </div>
                 </div>

@@ -49,58 +49,10 @@ class EditHalamanLayanan extends EditRecord
                             ->label('Deskripsi Hero')
                             ->rows(3)
                             ->helperText('Penjelasan singkat tentang layanan/paket yang ditawarkan (2-3 kalimat).'),
-                        FileUpload::make('layanan_hero_image')
-                            ->label('Foto Background Hero')
-                            ->image()
-                            ->disk('public')
-                            ->directory('layanan')
-                            ->helperText('Gambar latar belakang hero section. Rekomendasi: 1920x600px, max 10MB.'),
+                        
                     ]),
 
-                Section::make('Paket Layanan')
-                    ->description('Atur 4 paket layanan yang ditampilkan di halaman layanan.')
-                    ->icon('heroicon-o-gift')
-                    ->collapsible()
-                    ->collapsed()
-                    ->schema(function () {
-                        $rows = [];
-                        for ($i = 1; $i <= 4; $i++) {
-                            $rows[] = Section::make("Paket $i")
-                                ->compact()
-                                ->schema([
-                                    Grid::make(2)->schema([
-                                        TextInput::make("layanan_{$i}_nama")
-                                            ->label("Nama *")
-                                            ->required()
-                                            ->helperText('Nama paket layanan (contoh: Paket Basic, Premium, Eksklusif).'),
-                                        TextInput::make("layanan_{$i}_harga")
-                                            ->label("Harga *")
-                                            ->required()
-                                            ->helperText('Harga paket (contoh: Rp 1.000.000 atau Custom).'),
-                                    ]),
-                                    Textarea::make("layanan_{$i}_deskripsi")
-                                        ->label("Deskripsi *")
-                                        ->rows(2)
-                                        ->required()
-                                        ->columnSpanFull()
-                                        ->helperText('Penjelasan singkat tentang paket ini (1-2 kalimat).'),
-                                    Textarea::make("layanan_{$i}_fitur")
-                                        ->label("Fitur (pisahkan per baris) *")
-                                        ->rows(3)
-                                        ->required()
-                                        ->columnSpanFull()
-                                        ->helperText('Daftar fitur paket. Setiap baris adalah satu fitur (tekan Enter untuk baris baru).'),
-                                    FileUpload::make("layanan_{$i}_gambar")
-                                        ->label("Gambar")
-                                        ->image()
-                                        ->disk('public')
-                                        ->directory('layanan')
-                                        ->columnSpanFull()
-                                        ->helperText('Gambar untuk paket ini (opsional). Format: JPG, PNG. Max 10MB.'),
-                                ]);
-                        }
-                        return $rows;
-                    }),
+// Paket Layanan diatur via Manajemen Layanan & Paket (section removed)
 
                 Section::make('Garansi & CTA')
                     ->description('Atur bagian garansi dan ajakan bertindak.')

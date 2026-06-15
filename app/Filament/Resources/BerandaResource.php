@@ -15,10 +15,10 @@ class BerandaResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
 
-    protected static ?string $label = 'Edit Beranda';
-    protected static ?string $pluralLabel = 'Edit Beranda';
-    protected static ?string $navigationLabel = 'Edit Beranda';
-    protected static string|null|\UnitEnum $navigationGroup = 'Website';
+    protected static ?string $label = 'Kelola Halaman Beranda';
+    protected static ?string $pluralLabel = 'Kelola Halaman Beranda';
+    protected static ?string $navigationLabel = 'Kelola Halaman Beranda';
+    protected static string|null|\UnitEnum $navigationGroup = 'Kelola Landing Page';
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema

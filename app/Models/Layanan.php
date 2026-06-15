@@ -18,16 +18,17 @@ class Layanan extends Model
         'harga',
         'tipe_layanan',
         'foto_contoh',
-        'harga',
-        'tipe_layanan',
         'tipe_paket',
         'fitur',
         'kategori',
         'estimasi_waktu',
+        'biaya_layanan',
+        'biaya_layanan_label',
     ];
 
     protected $casts = [
         'fitur' => 'array',
+        'biaya_layanan' => 'integer',
     ];
 
     protected static function booted()

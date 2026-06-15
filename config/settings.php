@@ -35,7 +35,7 @@ return [
      */
     'repositories' => [
         'database' => [
-            'type' => Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository::class,
+            'type' => App\Settings\Repositories\CachedDatabaseSettingsRepository::class,
             'model' => null,
             'table' => null,
             'connection' => null,
@@ -61,16 +61,12 @@ return [
      * additional prefix.
      */
     'cache' => [
-        'enabled' => (bool)env('SETTINGS_CACHE_ENABLED', false),
-        'store' => null,
-        'prefix' => null,
-        'ttl' => null,
+        'enabled' => (bool)env('SETTINGS_CACHE_ENABLED', true),
+        'store' => env('SETTINGS_CACHE_STORE', 'file'),
+        'prefix' => 'spatie_settings',
+        'ttl' => 86400,
 
-        /*
-         * When enabled, uses Laravel's memoized cache driver (requires Laravel 12.9+)
-         * to keep resolved values in memory during a single request.
-         */
-        'memo' => env('SETTINGS_CACHE_MEMO', false),
+        'memo' => env('SETTINGS_CACHE_MEMO', true),
     ],
 
     /*

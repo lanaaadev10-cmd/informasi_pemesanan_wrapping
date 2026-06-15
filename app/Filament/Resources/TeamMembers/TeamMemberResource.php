@@ -16,10 +16,11 @@ class TeamMemberResource extends Resource
 {
     protected static ?string $model = TeamMember::class;
 
-    protected static ?string $navigationLabel = 'Kelola Tim';
-    protected static ?string $pluralLabel = 'Kelola Tim';
-    protected static string|null|\UnitEnum $navigationGroup = 'Konten';
-    protected static ?int $navigationSort = 5;
+    protected static ?string $label = 'Manajemen Anggota Tim';
+    protected static ?string $pluralLabel = 'Manajemen Anggota Tim';
+    protected static ?string $navigationLabel = 'Manajemen Anggota Tim';
+    protected static string|null|\UnitEnum $navigationGroup = 'Manajemen Tim & Perusahaan';
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'nama';
 

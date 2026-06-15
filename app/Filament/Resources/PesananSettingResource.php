@@ -7,11 +7,11 @@ use App\Filament\Resources\PesananSetting\Pages\EditPesananSetting;
 
 class PesananSettingResource extends Resource
 {
-    protected static ?string $label = 'Halaman Pesanan';
-    protected static ?string $pluralLabel = 'Halaman Pesanan';
-    protected static ?string $navigationLabel = 'Halaman Pesanan';
-    protected static string|null|\UnitEnum $navigationGroup = 'Website';
-    protected static ?int $navigationSort = 7;
+    protected static ?string $label = 'Manajemen Pembayaran';
+    protected static ?string $pluralLabel = 'Manajemen Pembayaran';
+    protected static ?string $navigationLabel = 'Manajemen Pembayaran';
+    protected static string|null|\UnitEnum $navigationGroup = 'Laporan & Pembayaran';
+    protected static ?int $navigationSort = 2;
 
     public static function getPages(): array
     {

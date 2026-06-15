@@ -104,12 +104,12 @@ class PesananForm
                                         Select::make('lokasi_pengerjaan')
                                             ->label('Workshop / Lokasi Pengerjaan *')
                                             ->options([
-                                                'toko' => 'Studio HQ (Wapping Premium)',
-                                                'rumah' => 'Home Service',
+                                                'toko' => 'Dantie Wrapping (Studio)',
                                             ])
                                             ->required()
                                             ->native(false)
-                                            ->helperText('Pilih lokasi pengerjaan yang diinginkan pelanggan.'),
+                                            ->disabled()
+                                            ->default('toko'),
                                         DateTimePicker::make('jadwal_pengerjaan')
                                             ->label('Tanggal Mulai Sesi *')
                                             ->displayFormat('d M Y, H:i')
@@ -127,7 +127,7 @@ class PesananForm
                                             ->placeholder('Masukkan alamat lengkap...')
                                             ->required()
                                             ->columnSpan(2)
-                                            ->helperText('Alamat penjemputan/pengerjaan jika home service.'),
+                                            ->helperText('Alamat lengkap pelanggan.'),
                                     ]),
                             ]),
 

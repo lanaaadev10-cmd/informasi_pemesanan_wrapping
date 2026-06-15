@@ -7,11 +7,11 @@ use App\Filament\Resources\Contents\Pages\EditContent;
 
 class ContentResource extends Resource
 {
-    protected static ?string $label = 'Edit Konten UI';
-    protected static ?string $pluralLabel = 'Edit Konten UI';
-    protected static ?string $navigationLabel = 'Edit Konten UI';
-    protected static string|null|\UnitEnum $navigationGroup = 'Website';
-    protected static ?int $navigationSort = 11;
+    protected static ?string $label = 'Kelola Sistem';
+    protected static ?string $pluralLabel = 'Kelola Sistem';
+    protected static ?string $navigationLabel = 'Kelola Sistem';
+    protected static string|null|\UnitEnum $navigationGroup = 'Pengaturan Sistem';
+    protected static ?int $navigationSort = 3;
 
     public static function getPages(): array
     {
