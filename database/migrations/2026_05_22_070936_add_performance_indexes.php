@@ -18,7 +18,7 @@ return new class extends Migration
             $table->index(['id_user', 'status']);
         });
 
-        Schema::table('keranjangs', function (Blueprint $table) {
+            Schema::table('keranjangs', function (Blueprint $table) {
             $table->index(['id_user', 'status']);
         });
 
@@ -49,7 +49,7 @@ return new class extends Migration
             $table->dropIndex(['id_user', 'status']);
         });
 
-        Schema::table('keranjangs', function (Blueprint $table) {
+            Schema::table('keranjangs', function (Blueprint $table) {
             $table->dropIndex(['id_user', 'status']);
         });
 

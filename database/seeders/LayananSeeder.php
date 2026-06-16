@@ -2,106 +2,74 @@
 
 namespace Database\Seeders;
 
-use App\Models\Layanan;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class LayananSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        $layanans = [
+        DB::table('layanans')->insert([
             [
-                'nama_layanan'   => 'Full Body Wrap Standard',
-                'tipe_paket'     => 'Standard',
-                'deskripsi'      => 'Pembungkus bodi kendaraan menyeluruh dengan bahan vinyl berkualitas pilihan warna solid.',
-                'fitur'          => [
-                    'Bahan Vinyl Lokal',
-                    'Anti Goresan',
+                'nama_layanan' => 'Wrapping Full Body Mobil',
+                'tipe_paket' => 'Premium',
+                'deskripsi' => 'Layanan wrapping seluruh body kendaraan menggunakan material premium dengan hasil presisi dan elegan.',
+                'fitur' => json_encode([
+                    'Material Premium',
                     'Garansi 1 Tahun',
-                    'Pilihan Warna Solid',
-                    'Pengerjaan Rapi',
-                ],
-                'harga'          => 3500000,
-                'kategori'       => 'mobil',
-                'estimasi_waktu' => '3-5 Hari Kerja',
-                'foto_contoh'    => 'layanan/Full body wrap.jpg',
-                'tipe_layanan'   => 'fix',
+                    'Pengerjaan Presisi',
+                    'Konsultasi Gratis'
+                ]),
+                'harga' => 8500000,
+                'kategori' => 'mobil',
+                'estimasi_waktu' => '3 Hari',
+                'tipe_layanan' => 'fix',
+                'foto_contoh' => 'layanan/admin/01KSKMP4B5GFE2QYS2V4GP09JX.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
-            [
-                'nama_layanan'   => 'Partial Wrap Kap Mesin',
-                'tipe_paket'     => 'Standard',
-                'deskripsi'      => 'Pemasangan vinyl pada bagian kap mesin kendaraan untuk tampilan sporty dan perlindungan cat.',
-                'fitur'          => [
-                    'Bahan Vinyl Import',
-                    'Anti UV',
-                    'Garansi 1 Tahun',
-                    'Finishing Glossy/Matte',
-                    'Pemasangan Presisi',
-                ],
-                'harga'          => 850000,
-                'kategori'       => 'mobil',
-                'estimasi_waktu' => '1-2 Hari Kerja',
-                'foto_contoh'    => 'layanan/Partial Wrap Kap Mesin.jpg',
-                'tipe_layanan'   => 'fix',
-            ],
-            [
-                'nama_layanan'   => 'Wrapping Motor Full Body',
-                'tipe_paket'     => 'Premium',
-                'deskripsi'      => 'Pembungkus bodi motor secara menyeluruh dengan bahan vinyl premium tahan lama.',
-                'fitur'          => [
-                    'Bahan Vinyl 3M',
-                    'Anti UV & Goresan',
-                    'Garansi 2 Tahun',
-                    'Free Desain Custom',
-                    'Pengerjaan Profesional',
-                ],
-                'harga'          => 1500000,
-                'kategori'       => 'motor',
-                'estimasi_waktu' => '2-3 Hari Kerja',
-                'foto_contoh'    => 'layanan/Wrapping Motor Full Body.jpg',
-                'tipe_layanan'   => 'fix',
-            ],
-            [
-                'nama_layanan'   => 'Sticker Branding Kendaraan',
-                'tipe_paket'     => 'Custom',
-                'deskripsi'      => 'Pemasangan sticker branding usaha atau promosi pada kendaraan roda dua maupun roda empat.',
-                'fitur'          => [
-                    'Cetak Digital Resolusi Tinggi',
-                    'Bahan Anti Air',
-                    'Free Desain Logo',
-                    'Warna Tajam & Tahan Lama',
-                    'Konsultasi Desain Gratis',
-                ],
-                'harga'          => 500000,
-                'kategori'       => 'motor',
-                'estimasi_waktu' => '1-2 Hari Kerja',
-                'foto_contoh'    => 'layanan/Sticker Branding Kendaraan.jpg',
-                'tipe_layanan'   => 'custom',
-            ],
-            [
-                'nama_layanan'   => 'Roof Wrap & Panoramic',
-                'tipe_paket'     => 'Standard',
-                'deskripsi'      => 'Pemasangan vinyl khusus pada bagian atap kendaraan untuk tampilan dua warna yang stylish.',
-                'fitur'          => [
-                    'Bahan Vinyl Import',
-                    'Anti UV',
-                    'Garansi 1 Tahun',
-                    'Pilihan Warna Beragam',
-                    'Pemasangan Bubble-Free',
-                ],
-                'harga'          => 950000,
-                'kategori'       => 'mobil',
-                'estimasi_waktu' => '1 Hari Kerja',
-                'foto_contoh'    => 'layanan/Roof Wrap & Panoramic.jpg',
-                'tipe_layanan'   => 'fix',
-            ],
-        ];
 
-        foreach ($layanans as $layanan) {
-            Layanan::updateOrCreate(
-                ['nama_layanan' => $layanan['nama_layanan']],
-                $layanan
-            );
-        }
+            [
+                'nama_layanan' => 'Wrapping Motor',
+                'tipe_paket' => 'Standard',
+                'deskripsi' => 'Wrapping motor sport dengan pilihan warna dan desain sesuai kebutuhan pelanggan.',
+                'fitur' => json_encode([
+                    'Custom Design',
+                    'Material Berkualitas',
+                    'Finishing Rapi',
+                    'Garansi 6 Bulan'
+                ]),
+                'harga' => 1500000,
+                'kategori' => 'motor',
+                'estimasi_waktu' => '1 Hari',
+                'tipe_layanan' => 'fix',
+                'foto_contoh' => 'layanan/admin/01KSKMM0TH4NYPD739VDWB5N23.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            [
+                'nama_layanan' => 'Custom Sticker Branding',
+                'tipe_paket' => 'Custom',
+                'deskripsi' => 'Pembuatan sticker branding kendaraan untuk kebutuhan promosi usaha dan perusahaan.',
+                'fitur' => json_encode([
+                    'Desain Custom',
+                    'Survey Lokasi',
+                    'Material Outdoor',
+                    'Konsultasi Gratis'
+                ]),
+                'harga' => null,
+                'kategori' => 'mobil',
+                'estimasi_waktu' => '2-5 Hari',
+                'tipe_layanan' => 'custom',
+                'foto_contoh' => 'layanan/admin/01KSKMR6RC7Y6A9174986N716D.jpg',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
     }
 }
