@@ -60,7 +60,7 @@
                                 @foreach(array_slice($package->fitur, 0, 2) as $fitur)
                                 <div class="flex items-center gap-2">
                                     <i class="ph-bold ph-check-circle text-[#f2994a] text-xs"></i>
-                                    <span class="text-[10px] text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '-') : $fitur }}</span>
+                                    <span class="text-[10px] text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '') : $fitur }}</span>
                                 </div>
                                 @endforeach
                                 @if(count($package->fitur) > 2)
@@ -94,7 +94,7 @@
                                     <button class="flex-1 py-2 px-3 bg-[#f2994a] text-white rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/90 transition-all duration-200 order-now-btn"
                                             data-package-id="{{ $package->id_layanan }}"
                                             data-package-name="{{ $package->nama_layanan }}">
-                                        <i class="ph-bold ph-lightning-fill mr-1"></i> Pesan
+                                        <i class="ph-bold ph-lightning-fill mr-1"></i> Pesan Sekarang
                                     </button>
                                 </div>
                             </div>

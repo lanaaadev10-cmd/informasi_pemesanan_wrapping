@@ -65,7 +65,7 @@
                             @foreach($package->fitur as $fitur)
                             <div class="flex items-start gap-2">
                                 <i class="ph-bold ph-check-circle text-[#f2994a] text-sm mt-0.5 shrink-0"></i>
-                                <span class="text-xs text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '-') : $fitur }}</span>
+                                <span class="text-xs text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? '') : $fitur }}</span>
                             </div>
                             @endforeach
                         </div>

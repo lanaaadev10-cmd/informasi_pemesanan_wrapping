@@ -129,18 +129,18 @@
                                         <i class="ph-bold ph-check-circle text-[#f2994a] opacity-0 peer-checked:opacity-100"></i>
                                     </div>
                                 </label>
-                                <label class="cursor-pointer group h-full">
+                                <!-- <label class="cursor-pointer group h-full">
                                     <input type="radio" name="lokasi_pengerjaan" value="rumah" class="peer hidden" onchange="updateLokasiLabel()">
                                     <div class="h-full border border-white/10 peer-checked:border-[#f2994a] bg-[#1c1c1c] peer-checked:bg-[#f2994a]/5 rounded-xl px-4 py-3 flex items-center justify-between transition-all hover:bg-white/5">
                                         <span class="text-xs font-medium text-gray-400 peer-checked:text-white">Home Service</span>
                                         <i class="ph-bold ph-check-circle text-[#f2994a] opacity-0 peer-checked:opacity-100"></i>
                                     </div>
-                                </label>
+                                </label> -->
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">Alamat Pengerjaan / Penjemputan <span class="text-red-500">*</span></label>
-                            <textarea id="input_alamat" name="alamat_pengiriman" rows="2" placeholder="Wapping Premium - Jakarta Selatan (Atau alamat lengkap Anda)..." required
+                            <label class="text-xs font-medium text-gray-400 px-1">Alamat Anda <span class="text-red-500">*</span></label>
+                            <textarea id="input_alamat" name="alamat_pengiriman" rows="2" placeholder="Masukkan alamat lengkap Anda..." required
                                       class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner"></textarea>
                         </div>
                         <div class="space-y-2">
@@ -273,7 +273,7 @@
                                 <i class="ph ph-map-pin text-gray-400 text-xl mt-0.5"></i>
                                 <div>
                                     <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Workshop</span>
-                                    <span id="review-lokasi" class="text-gray-200 font-medium text-xs leading-relaxed block">Wapping Premium - HQ</span>
+                                    <span id="review-lokasi" class="text-gray-200 font-medium text-xs leading-relaxed block">Dantie Stiker</span>
                                 </div>
                             </div>
                         </div>
@@ -389,7 +389,7 @@
             const tipeLok = document.querySelector('input[name="lokasi_pengerjaan"]:checked').value;
             const almtValue = document.getElementById('input_alamat').value;
             if(tipeLok === 'toko') {
-                document.getElementById('review-lokasi').innerHTML = 'Wapping Premium HQ<br><span class="text-[9px] text-gray-500 leading-tight">Studio Jakarta Selatan</span>';
+                document.getElementById('review-lokasi').innerHTML = 'Dantie Stiker<br><span class="text-[9px] text-gray-500 leading-tight">Jl. Abu Hasan No.7, Area Sawah, Kedaleman, Kec. Rogojampi, Kabupaten Banyuwangi</span>';
             } else {
                 document.getElementById('review-lokasi').innerHTML = 'Home Service<br><span class="text-[9px] text-gray-500 leading-tight block truncate max-w-[200px]" title="'+almtValue+'">'+almtValue+'</span>';
             }

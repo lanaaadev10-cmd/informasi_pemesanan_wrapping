@@ -1,3 +1,4 @@
+<!-- Login customer -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -29,7 +30,7 @@
                 <div class="space-y-2">
                     <h2 class="text-2xl font-bold text-white tracking-tight">Selamat Datang Kembali</h2>
                     <p class="text-xs text-gray-400 font-light leading-relaxed">
-                        Silakan masuk ke akun Anda untuk mengelola pemesanan dan katalog layanan premium kami.
+                        Silakan masuk ke akun Anda untuk melakukan pemesanan.
                     </p>
                 </div>
 
@@ -47,7 +48,7 @@
                             <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
                             <input type="email" name="email" value="{{ old('email') }}" required autofocus
                                    class="w-full pl-12 pr-4 py-3.5 bg-[#161616] border border-white/5 rounded-xl focus:ring-1 focus:ring-[#f2994a] focus:border-[#f2994a] text-white text-xs placeholder-gray-600 transition-all outline-none"
-                                   placeholder="email@premiumwrap.id">
+                                   placeholder="emailAnda@gmail.com">
                         </div>
                         <x-input-error :messages="$errors->get('email')" class="mt-1.5 text-xs text-red-500 font-medium" />
                     </div>
@@ -65,6 +66,9 @@
                             <input type="password" name="password" required 
                                    class="w-full pl-12 pr-4 py-3.5 bg-[#161616] border border-white/5 rounded-xl focus:ring-1 focus:ring-[#f2994a] focus:border-[#f2994a] text-white text-xs placeholder-gray-600 transition-all outline-none"
                                    placeholder="••••••••">
+                            <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 hover:text-white transition-colors">
+                                <i class="ph ph-eye text-lg"></i>
+                            </button>
                         </div>
                         <x-input-error :messages="$errors->get('password')" class="mt-1.5 text-xs text-red-500 font-medium" />
                     </div>
@@ -92,14 +96,14 @@
         </div>
 
         <!-- 2. Right Visual Column ( Tesla Model S or Ferrari Gold instead of lambo ) -->
-        <div class="w-full md:w-1/2 p-8 lg:p-12 flex flex-col justify-between text-white relative min-h-[400px] md:min-h-[620px] bg-cover bg-center order-1 md:order-2" style="background-image: url('{{ asset('images/tesla_model_s.png') }}');">
+        <div class="w-full md:w-1/2 p-8 lg:p-12 flex flex-col justify-between text-white relative min-h-[400px] md:min-h-[620px] bg-cover bg-center order-1 md:order-2" style="background-image: url({{ asset('images/tesla_model_s.png') }});">
             <!-- Heavy Dark Gradient Overlays -->
             <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/75 via-[#0a0a0a]/85 to-[#0a0a0a] z-0"></div>
 
             <!-- Header logo -->
             <div class="z-10">
                 <a href="/" class="inline-flex items-center gap-2">
-                    <span class="font-extrabold text-lg tracking-widest text-[#f2994a] uppercase">PREMIUM WRAP</span>
+                    <span class="font-extrabold text-lg tracking-widest text-[#f2994a] uppercase">DANTIE WARP</span>
                 </a>
             </div>
 
@@ -107,7 +111,7 @@
             <div class="z-10 space-y-8 mt-auto">
                 <div class="space-y-3">
                     <p class="text-gray-300 text-xs sm:text-sm font-light leading-relaxed max-w-sm">
-                        Luxury is in the details. Protect your vehicle with the ultimate matte or glossy shield.
+                        Pemasangan skotlet presisi dan profesional.
                     </p>
                     
                     <!-- Circular Avatars -->
@@ -117,19 +121,32 @@
                             <img class="w-7 h-7 rounded-full border border-black object-cover" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop" alt="Client 2">
                             <img class="w-7 h-7 rounded-full border border-black object-cover" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=100&auto=format&fit=crop" alt="Client 3">
                         </div>
-                        <span class="text-[10px] text-gray-400 font-medium">Bergabung dengan 500+ pemilik aset premium</span>
+                        <span class="text-[10px] text-gray-400 font-medium">Berkolaborasi dengan para ahli wrapping</span>
                     </div>
                 </div>
 
                 <!-- Gold Bordered Testimonial Block -->
                 <div class="border border-[#f2994a]/30 rounded-2xl p-5 bg-[#0a0a0a]/40 backdrop-blur-sm max-w-md">
                     <p class="text-xs text-gray-200 leading-relaxed font-light italic">
-                        "Layanan car wrapping terbaik yang pernah saya temukan. Hasil kilapnya seperti cermin."
+                        "Hasil pengerjaan sangat presisi dan detail."
                     </p>
-                    <span class="text-[10px] text-[#f2994a] font-bold block mt-3 uppercase tracking-wider">— Siska A., Luxury Sedan Owner</span>
+                    <span class="text-[10px] text-[#f2994a] font-bold block mt-3 uppercase tracking-wider">— Asep roberto, Ahli Modifikasi</span>
                 </div>
             </div>
         </div>
     </div>
+<script>
+    function togglePassword(inputName, btn) {
+        const input = document.querySelector(`input[name="${inputName}"]`);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'ph ph-eye-slash text-lg';
+        } else {
+            input.type = 'password';
+            icon.className = 'ph ph-eye text-lg';
+        }
+    }
+</script>
 </body>
 </html>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Layanan;
 use App\Models\Galeri;
 
@@ -24,7 +25,7 @@ class CustomerController extends Controller
         $layanans = Layanan::all();
         $galeris = Galeri::latest()->limit(8)->get();
 
-        $latestOrders = \App\Models\Pesanan::where('id_user', auth()->id())
+        $latestOrders = \App\Models\Pesanan::where('id_user', Auth::id())
             ->with(['form', 'details.layanan'])
             ->latest()
             ->limit(5)

@@ -36,8 +36,8 @@
         {{-- Action links --}}
         <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             
-                href="{{ $createUserUrl }}"
-                class="group flex items-center gap-3.5 rounded-lg border border-gray-100 bg-gray-50 px-4 py-3.5 transition-all hover:border-primary-200 hover:bg-primary-50 dark:border-white/10 dark:bg-white/5 dark:hover:border-primary-500/30 dark:hover:bg-primary-500/10"
+                <a href="{{ $createUserUrl }}"
+                   class="group flex items-center gap-3.5 rounded-lg border border-gray-100 bg-gray-50 px-4 py-3.5 transition-all hover:border-primary-200 hover:bg-primary-50 dark:border-white/10 dark:bg-white/5 dark:hover:border-primary-500/30 dark:hover:bg-primary-500/10"
             >
                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600 transition-colors group-hover:bg-primary-100 dark:bg-primary-500/10 dark:text-primary-400 dark:group-hover:bg-primary-500/20">
                     <x-filament::icon name="heroicon-m-user-plus" class="h-4.5 w-4.5" />
@@ -50,8 +50,8 @@
             </a>
 
             
-                href="{{ $listUserUrl }}"
-                class="group flex items-center gap-3.5 rounded-lg border border-gray-100 bg-gray-50 px-4 py-3.5 transition-all hover:border-emerald-200 hover:bg-emerald-50 dark:border-white/10 dark:bg-white/5 dark:hover:border-emerald-500/30 dark:hover:bg-emerald-500/10"
+                <a href="{{ $listUserUrl }}"
+                   class="group flex items-center gap-3.5 rounded-lg border border-gray-100 bg-gray-50 px-4 py-3.5 transition-all hover:border-emerald-200 hover:bg-emerald-50 dark:border-white/10 dark:bg-white/5 dark:hover:border-emerald-500/30 dark:hover:bg-emerald-500/10"
             >
                 <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors group-hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:group-hover:bg-emerald-500/20">
                     <x-filament::icon name="heroicon-m-users" class="h-4.5 w-4.5" />

@@ -10,7 +10,7 @@
     
     @if($keranjang && $keranjang->details->isNotEmpty())
         <div class="flex items-center shrink-0">
-            <form action="{{ route('keranjang.kosongkan') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin mengosongkan seluruh isi keranjang?')">
+            <form action="{{ route('keranjang.kosongkan') }}" method="POST" onsubmit="return confirmEmptyCart(event, this)">
                 @csrf
                 @method('DELETE')
                 <button type="submit" 
