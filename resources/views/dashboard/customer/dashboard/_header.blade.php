@@ -5,7 +5,7 @@
             {{ $profil->dashboard_title ?? 'Halo' }}, {{ Auth::user()->name }}
         </h1>
         <p class="text-xs text-gray-400 font-light mt-1">
-            {{ $profil->dashboard_subtitle ?? 'Pantau status pengerjaan kendaraan premium Anda di sini.' }}
+            {{ $profil->dashboard_subtitle ?? 'Pantau status pengerjaan kendaraan Anda di sini.' }}
         </p>
     </div>
 </div>

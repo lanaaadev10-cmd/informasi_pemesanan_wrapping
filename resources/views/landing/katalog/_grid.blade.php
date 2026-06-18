@@ -92,7 +92,7 @@
                                 <input type="hidden" name="direct_checkout" value="1">
                                 <button type="submit" 
                                         class="flex items-center gap-2 bg-[#f2994a] hover:bg-[#e28a44] text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-2xl transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-105 active:scale-95">
-                                    <i class="ph-bold ph-phone text-xs"></i> Book Discovery Call
+                                    <i class="ph-bold ph-shopping-cart text-xs"></i> Pesan Sekarang
                                 </button>
                             </form>
                         </div>

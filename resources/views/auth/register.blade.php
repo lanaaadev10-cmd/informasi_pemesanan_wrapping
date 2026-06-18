@@ -1,3 +1,4 @@
+<!-- Logika tombol untuk register -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -30,7 +31,7 @@
             <!-- Header logo -->
             <div class="z-10">
                 <a href="/" class="inline-flex items-center gap-2">
-                    <span class="font-extrabold text-lg tracking-widest text-[#f2994a] uppercase">PREMIUM WRAP</span>
+                    <span class="font-extrabold text-lg tracking-widest text-[#f2994a] uppercase">DANTIE WRAP</span>
                 </a>
             </div>
 
@@ -38,7 +39,7 @@
             <div class="z-10 space-y-8 mt-auto">
                 <div class="space-y-3">
                     <p class="text-gray-300 text-xs sm:text-sm font-light leading-relaxed max-w-sm">
-                        Precision in every layer. Transform your assets with the world's finest automotive films.
+                        Pemasangan skotlet presisi dan profesional.
                     </p>
                     
                     <!-- Circular Avatars -->
@@ -48,16 +49,16 @@
                             <img class="w-7 h-7 rounded-full border border-black object-cover" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=100&auto=format&fit=crop" alt="Client 2">
                             <img class="w-7 h-7 rounded-full border border-black object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100&auto=format&fit=crop" alt="Client 3">
                         </div>
-                        <span class="text-[10px] text-gray-400 font-medium">Bergabung dengan 500+ pemilik aset premium</span>
+                        <span class="text-[10px] text-gray-400 font-medium">Berkolaborasi dengan para ahli wrapping</span>
                     </div>
                 </div>
 
                 <!-- Gold Bordered Testimonial Block -->
                 <div class="border border-[#f2994a]/30 rounded-2xl p-5 bg-[#0a0a0a]/40 backdrop-blur-sm max-w-md">
                     <p class="text-xs text-gray-200 leading-relaxed font-light italic">
-                        "Hasil pengerjaan sangat presisi dan detail. Benar-benar standar kelas dunia untuk mobil koleksi saya."
+                        "Hasil pengerjaan sangat presisi dan detail."
                     </p>
-                    <span class="text-[10px] text-[#f2994a] font-bold block mt-3 uppercase tracking-wider">— Robert O., Automotive Enthusiast</span>
+                    <span class="text-[10px] text-[#f2994a] font-bold block mt-3 uppercase tracking-wider">— Asep roberto, Ahli Modifikasi</span>
                 </div>
             </div>
         </div>
@@ -67,9 +68,9 @@
             <div class="space-y-8">
                 <!-- Title Block -->
                 <div class="space-y-2">
-                    <h2 class="text-2xl font-bold text-white tracking-tight">Buat Akun Baru</h2>
+                    <h2 class="text-2xl font-bold text-white tracking-tight">Register</h2>
                     <p class="text-xs text-gray-400 font-light leading-relaxed">
-                        Lengkapi detail di bawah untuk memulai pemesanan layanan eksklusif kami.
+                        Silahkan melengkapi data berikut untuk membuat akun baru.
                     </p>
                 </div>
 
@@ -84,7 +85,7 @@
                             <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
                             <input type="text" name="name" :value="old('name')" required autofocus 
                                    class="w-full pl-12 pr-4 py-3 bg-[#161616] border border-white/5 rounded-xl focus:ring-1 focus:ring-[#f2994a] focus:border-[#f2994a] text-white text-xs placeholder-gray-600 transition-all outline-none"
-                                   placeholder="John Doe">
+                                   placeholder="Nama Anda">
                         </div>
                         <x-input-error :messages="$errors->get('name')" class="mt-1.5 text-xs text-red-500 font-medium" />
                     </div>
@@ -96,7 +97,7 @@
                             <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
                             <input type="email" name="email" :value="old('email')" required 
                                    class="w-full pl-12 pr-4 py-3 bg-[#161616] border border-white/5 rounded-xl focus:ring-1 focus:ring-[#f2994a] focus:border-[#f2994a] text-white text-xs placeholder-gray-600 transition-all outline-none"
-                                   placeholder="email@premiumwrap.id">
+                                   placeholder="emailAnda@gmail.com">
                         </div>
                         <x-input-error :messages="$errors->get('email')" class="mt-1.5 text-xs text-red-500 font-medium" />
                     </div>
@@ -107,7 +108,7 @@
                         <div class="relative">
                             <i class="ph ph-phone absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
                             <input type="text" class="w-full pl-12 pr-4 py-3 bg-[#161616] border border-white/5 rounded-xl focus:ring-1 focus:ring-[#f2994a] focus:border-[#f2994a] text-white text-xs placeholder-gray-600 transition-all outline-none"
-                                   placeholder="+62 812-3456-7890">
+                                   placeholder="Nomor Telepon Anda">
                         </div>
                     </div>
 
@@ -121,6 +122,9 @@
                                 <input type="password" name="password" required 
                                        class="w-full pl-12 pr-4 py-3 bg-[#161616] border border-white/5 rounded-xl focus:ring-1 focus:ring-[#f2994a] focus:border-[#f2994a] text-white text-xs placeholder-gray-600 transition-all outline-none"
                                        placeholder="••••••••">
+                                <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 hover:text-white transition-colors">
+                                    <i class="ph ph-eye text-lg"></i>
+                                </button>
                             </div>
                             <x-input-error :messages="$errors->get('password')" class="mt-1.5 text-xs text-red-500 font-medium" />
                         </div>
@@ -133,6 +137,9 @@
                                 <input type="password" name="password_confirmation" required 
                                        class="w-full pl-12 pr-4 py-3 bg-[#161616] border border-white/5 rounded-xl focus:ring-1 focus:ring-[#f2994a] focus:border-[#f2994a] text-white text-xs placeholder-gray-600 transition-all outline-none"
                                        placeholder="••••••••">
+                                <button type="button" onclick="togglePassword('password_confirmation', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 hover:text-white transition-colors">
+                                    <i class="ph ph-eye text-lg"></i>
+                                </button>
                             </div>
                             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1.5 text-xs text-red-500 font-medium" />
                         </div>
@@ -142,7 +149,7 @@
                     <div class="flex items-start gap-3 pt-2">
                         <input type="checkbox" id="terms" required class="mt-0.5 rounded bg-[#161616] border-white/5 text-[#f2994a] focus:ring-[#f2994a]">
                         <label for="terms" class="text-[10px] text-gray-400 leading-normal font-light">
-                            Saya menyetujui Syarat & Ketentuan serta Kebijakan Privasi Premium Wrap Management.
+                            Saya menyetujui Syarat & Ketentuan serta Kebijakan Privasi Dantie Wrap Management.
                         </label>
                     </div>
 
@@ -160,5 +167,18 @@
             </div>
         </div>
     </div>
+<script>
+    function togglePassword(inputName, btn) {
+        const input = document.querySelector(`input[name="${inputName}"]`);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'ph ph-eye-slash text-lg';
+        } else {
+            input.type = 'password';
+            icon.className = 'ph ph-eye text-lg';
+        }
+    }
+</script>
 </body>
 </html>
