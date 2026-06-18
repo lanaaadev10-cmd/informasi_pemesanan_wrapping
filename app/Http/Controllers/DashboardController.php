@@ -59,7 +59,10 @@ class DashboardController extends Controller
             return ProfilPerusahaan::first() ?? new ProfilPerusahaan();
         });
 
-        return view('landing.profil.index', compact('profil'));
+        // Ambil semua CMS config untuk section 'profile' dalam format array
+        $profileCms = companyCmsForAPI('profile'); 
+
+        return view('landing.profil.index', compact('profil', 'profileCms'));
     }
 
     /**

@@ -1,6 +1,6 @@
 @extends(auth()->check() ? 'layouts.dashboard_customer' : 'layouts.tampilan_utama')
 
-@section('title', 'Profil Perusahaan')
+@section('title', $profileCms['page_title'] ?? 'Profil Perusahaan')
 
 @section('content')
     @if(!auth()->check())
@@ -17,15 +17,15 @@
         <!-- 1. HEADER SECTION -->
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-10 relative">
             <div>
-                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">ABOUT US</span>
+                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">{{ $profileCms['header_badge'] ?? 'ABOUT US' }}</span>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-1 bg-gradient-to-r from-white via-white to-gray-500 bg-clip-text text-transparent">
-                    Company Profile
+                    {{ $profileCms['header_title'] ?? 'Company Profile' }}
                 </h1>
             </div>
             <!-- Decorative Live Status Indicator -->
             <div class="flex items-center gap-2.5 bg-white/[0.02] border border-white/5 px-4 py-2 rounded-2xl">
                 <span class="w-2 h-2 rounded-full bg-[#f2994a] animate-pulse"></span>
-                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Premium Wrap Studio</span>
+                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{{ $profileCms['status_badge'] ?? 'Premium Wrap Studio' }}</span>
             </div>
         </div>
 
@@ -50,10 +50,10 @@
                         {{ strtoupper($profil->nama_perusahaan ?? 'Premium Wrap') }}
                     </span>
                     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight max-w-xl">
-                        The Art of Precision
+                        {{ $profileCms['hero_heading'] ?? 'The Art of Precision' }}
                     </h2>
                     <p class="text-gray-300 text-xs sm:text-sm font-medium max-w-lg leading-relaxed opacity-90">
-                        {{ $profil->deskripsi ?? 'Transforming high-performance assets into personalized masterpieces through unparalleled craftsmanship.' }}
+                        {{ $profileCms['hero_description'] ?? ($profil->deskripsi ?? 'Transforming high-performance assets into personalized masterpieces through unparalleled craftsmanship.') }}
                     </p>
                 </div>
             </div>
@@ -71,12 +71,12 @@
                             {{ $profil->stats_projects ?? '98%' }}
                         </span>
                         <span class="block text-[9px] font-extrabold uppercase tracking-widest text-gray-500 mt-1">
-                            Client Satisfaction
+                            {{ $profileCms['stats_label'] ?? 'Client Satisfaction' }}
                         </span>
                     </div>
 
                     <p class="text-gray-400 text-xs leading-relaxed font-light mt-4">
-                        Over 5,000 premium vehicles transformed with obsessive attention to every single detail.
+                        {{ $profileCms['stats_copy'] ?? 'Over 5,000 premium vehicles transformed with obsessive attention to every single detail.' }}
                     </p>
                 </div>
 
@@ -93,7 +93,7 @@
                     
                     <!-- Text Overlay -->
                     <span class="absolute bottom-6 left-6 text-sm font-bold text-white uppercase tracking-widest z-20 bg-black/35 backdrop-blur-sm border border-white/5 px-4 py-2 rounded-full">
-                        Master Craft
+                        {{ $profileCms['master_craft_label'] ?? 'Master Craft' }}
                     </span>
                 </div>
 
@@ -107,9 +107,9 @@
             <!-- Left Side: Core Narrative Text -->
             <div class="lg:col-span-7 space-y-6">
                 <div>
-                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">OUR NARRATIVE</span>
+                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">{{ $profileCms['narrative_badge'] ?? 'OUR NARRATIVE' }}</span>
                     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight mt-1">
-                        Legacy of Excellence
+                        {{ $profileCms['narrative_heading'] ?? 'Legacy of Excellence' }}
                     </h2>
                 </div>
                 
@@ -125,7 +125,7 @@
                 <!-- Call to action: Opens Vision & Mission Modal -->
                 <button onclick="openHistoryModal()" 
                         class="inline-flex items-center gap-2.5 bg-white/[0.02] border border-white/10 px-6 py-3 rounded-2xl text-xs font-bold text-white hover:bg-white/5 hover:border-white/20 transition-all hover:scale-[1.02] active:scale-98 shadow-sm">
-                    Read Full History <i class="ph ph-arrow-up-right text-xs"></i>
+                    {{ $profileCms['read_history_button'] ?? 'Read Full History' }} <i class="ph ph-arrow-up-right text-xs"></i>
                 </button>
             </div>
 
@@ -181,7 +181,7 @@
         <!-- 4. THE THREE PILLARS SECTION -->
         <div class="pt-14 border-t border-white/5 space-y-10 z-10 relative">
             <div class="text-center max-w-xl mx-auto space-y-2">
-                <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">The Three Pillars</h3>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{{ $profileCms['pillars_section_title'] ?? 'The Three Pillars' }}</h3>
                 <div class="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#f2994a] to-transparent mx-auto mt-2"></div>
             </div>
 
@@ -193,9 +193,9 @@
                         <div class="w-12 h-12 rounded-xl bg-[#f2994a]/5 flex items-center justify-center text-[#f2994a] group-hover:scale-110 transition-transform duration-300">
                             <i class="ph-bold ph-compass text-xl"></i>
                         </div>
-                        <h4 class="text-base font-bold text-white uppercase tracking-wider">Precision Engineering</h4>
+                        <h4 class="text-base font-bold text-white uppercase tracking-wider">{{ $profileCms['pillars'][0]['title'] ?? 'Precision Engineering' }}</h4>
                         <p class="text-gray-400 text-xs sm:text-sm leading-relaxed font-light">
-                            Every edge is tucked, every corner is seamless. We utilize CAD-designed templates and surgical application techniques for a factory-level finish.
+                            {{ $profileCms['pillars'][0]['desc'] ?? 'Every edge is tucked, every corner is seamless. We utilize CAD-designed templates and surgical application techniques for a factory-level finish.' }}
                         </p>
                     </div>
                 </div>
@@ -206,9 +206,9 @@
                         <div class="w-12 h-12 rounded-xl bg-[#f2994a]/5 flex items-center justify-center text-[#f2994a] group-hover:scale-110 transition-transform duration-300">
                             <i class="ph-bold ph-gem text-xl"></i>
                         </div>
-                        <h4 class="text-base font-bold text-white uppercase tracking-wider">Bespoke Materials</h4>
+                        <h4 class="text-base font-bold text-white uppercase tracking-wider">{{ $profileCms['pillars'][1]['title'] ?? 'Bespoke Materials' }}</h4>
                         <p class="text-gray-400 text-xs sm:text-sm leading-relaxed font-light">
-                            We source only the highest grade polymers and adhesives from world-leading suppliers, ensuring longevity and paint protection without compromise.
+                            {{ $profileCms['pillars'][1]['desc'] ?? 'We source only the highest grade polymers and adhesives from world-leading suppliers, ensuring longevity and paint protection without compromise.' }}
                         </p>
                     </div>
                 </div>
@@ -235,12 +235,12 @@
             <!-- Left Info Panel (lg:col-span-5) -->
             <div class="lg:col-span-5 space-y-6 flex flex-col justify-between">
                 <div class="space-y-3">
-                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">GLOBAL NETWORK</span>
+                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">{{ $profileCms['network_section_title'] ?? 'GLOBAL STUDIO NETWORK' }}</span>
                     <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                        Global Studio Network
+                        {{ $profileCms['network_section_title'] ?? 'Global Studio Network' }}
                     </h3>
                     <p class="text-gray-400 text-xs sm:text-sm font-light leading-relaxed">
-                        Our signature quality is available across major hubs. Visit any of our studios for a private viewing of our material catalogs and current projects.
+                        {{ $profileCms['network_subtitle'] ?? 'Our signature quality is available across major hubs. Visit any of our studios for a private viewing of our material catalogs and current projects.' }}
                     </p>
                 </div>
 
@@ -252,7 +252,7 @@
                             <i class="ph-bold ph-map-pin text-lg"></i>
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Los Angeles HQ</h4>
+                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profileCms['location_1_name'] ?? 'Los Angeles HQ' }}</h4>
                             <p class="text-[10px] text-gray-500 mt-1 font-light">{{ $profil->alamat ?? '7821 Sunset Blvd, CA' }}</p>
                         </div>
                     </div>
@@ -263,7 +263,7 @@
                             <i class="ph-bold ph-map-pin text-lg"></i>
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Dubai Creative Hub</h4>
+                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profileCms['location_2_name'] ?? 'Dubai Creative Hub' }}</h4>
                             <p class="text-[10px] text-gray-500 mt-1 font-light">2042 Meydan Rd, Meydan City, Dubai</p>
                         </div>
                     </div>
@@ -302,8 +302,8 @@
             <!-- Modal Body -->
             <div class="space-y-6">
                 <div>
-                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">OUR NARRATIVE</span>
-                    <h3 class="text-2xl font-extrabold text-white tracking-tight mt-1">Corporate History & Vision</h3>
+                    <span class="text-[#f2994a] text-[10px] font-bold uppercase tracking-widest block font-mono">{{ $profileCms['history_modal_badge'] ?? 'OUR NARRATIVE' }}</span>
+                    <h3 class="text-2xl font-extrabold text-white tracking-tight mt-1">{{ $profileCms['history_modal_title'] ?? 'Corporate History & Vision' }}</h3>
                 </div>
 
                 <!-- Vision & Mission -->
@@ -312,10 +312,10 @@
                     <div class="space-y-3 p-5 rounded-2xl bg-white/[0.01] border border-white/5">
                         <div class="flex items-center gap-2 text-[#f2994a]">
                             <i class="ph-bold ph-eye text-lg"></i>
-                            <h4 class="text-xs font-bold uppercase tracking-widest">Our Vision</h4>
+                            <h4 class="text-xs font-bold uppercase tracking-widest">{{ $profileCms['vision_label'] ?? 'Our Vision' }}</h4>
                         </div>
                         <div class="text-gray-400 text-xs leading-relaxed font-light space-y-2">
-                            {!! $profil->visi ?? 'Menjadi penyedia layanan wrapping dan stiker terpercaya dengan inovasi, kualitas, dan kepuasan pelanggan sebagai prioritas utama.' !!}
+                            {!! $profil->visi ?? ($profileCms['vision_default'] ?? 'Menjadi penyedia layanan wrapping dan stiker terpercaya dengan inovasi, kualitas, dan kepuasan pelanggan sebagai prioritas utama.') !!}
                         </div>
                     </div>
 
@@ -323,22 +323,22 @@
                     <div class="space-y-3 p-5 rounded-2xl bg-white/[0.01] border border-white/5">
                         <div class="flex items-center gap-2 text-[#f2994a]">
                             <i class="ph-bold ph-target text-lg"></i>
-                            <h4 class="text-xs font-bold uppercase tracking-widest">Our Mission</h4>
+                            <h4 class="text-xs font-bold uppercase tracking-widest">{{ $profileCms['mission_label'] ?? 'Our Mission' }}</h4>
                         </div>
                         <div class="text-gray-400 text-xs leading-relaxed font-light space-y-2">
-                            {!! $profil->misi ?? 'Memberikan solusi wrapping dan stiker berkualitas tinggi dengan harga kompetitif, layanan excellent, dan dukungan purna jual terbaik.' !!}
+                            {!! $profil->misi ?? ($profileCms['mission_default'] ?? 'Memberikan solusi wrapping dan stiker berkualitas tinggi dengan harga kompetitif, layanan excellent, dan dukungan purna jual terbaik.') !!}
                         </div>
                     </div>
                 </div>
 
                 <!-- Long narrative history -->
                 <div class="pt-5 border-t border-white/5 space-y-4">
-                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">Perjalanan Kami</h4>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">{{ $profileCms['history_section_title'] ?? 'Perjalanan Kami' }}</h4>
                     <p class="text-gray-400 text-xs leading-relaxed font-light">
-                        Didirikan dengan komitmen teguh terhadap kualitas estetika dan perlindungan kendaraan, kami tumbuh menjadi pilihan utama bagi pemilik kendaraan mewah. Dari sebuah bengkel kecil dengan impian besar, kini kami mengoperasikan studio modern dengan standar clean-room berkelas dunia.
+                        {{ $profileCms['history_paragraph_1'] ?? 'Didirikan dengan komitmen teguh terhadap kualitas estetika dan perlindungan kendaraan, kami tumbuh menjadi pilihan utama bagi pemilik kendaraan mewah. Dari sebuah bengkel kecil dengan impian besar, kini kami mengoperasikan studio modern dengan standar clean-room berkelas dunia.' }}
                     </p>
                     <p class="text-gray-400 text-xs leading-relaxed font-light">
-                        Setiap pengerjaan diawasi dengan ketat oleh teknisi bersertifikasi internasional. Kami bermitra dengan merek premium terkemuka secara global untuk menjamin ketahanan, kejernihan, dan keindahan proteksi bodi kendaraan Anda tanpa kompromi sedikit pun.
+                        {{ $profileCms['history_paragraph_2'] ?? 'Setiap pengerjaan diawasi dengan ketat oleh teknisi bersertifikasi internasional. Kami bermitra dengan merek premium terkemuka secara global untuk menjamin ketahanan, kejernihan, dan keindahan proteksi bodi kendaraan Anda tanpa kompromi sedikit pun.' }}
                     </p>
                 </div>
             </div>
@@ -346,7 +346,7 @@
         </div>
     </div>
 
-    <!-- Scripting for interactive modal popup -->
+    <!-- 7. SCRIPTING FOR INTERACTIVE MODAL POPUP -->
     <script>
         function openHistoryModal() {
             const modal = document.getElementById('history-modal');
