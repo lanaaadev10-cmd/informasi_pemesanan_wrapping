@@ -19,7 +19,7 @@ class RoleMiddleware
         $roleArray = explode('|', $roles);
 
         // Cek apakah user memiliki salah satu dari role tersebut
-        if (!in_array(Auth::user()->role, $roleArray)) {
+        if (!Auth::user()->hasAnyRole($roleArray)) {
             abort(403, 'AKSES DITOLAK: Anda tidak memiliki wewenang untuk mengakses halaman ini.');
         }
 
