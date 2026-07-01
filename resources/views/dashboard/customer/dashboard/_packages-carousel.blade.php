@@ -21,12 +21,26 @@
 
                         <!-- Image Section -->
                         <div class="relative h-48 bg-gradient-to-br from-[#f2994a]/20 to-transparent overflow-hidden">
-                            @php $pkgImg = resolveImageUrl($package->foto_contoh); @endphp
-                            @if($pkgImg)
-                            <img src="{{ $pkgImg }}"
-                                 alt="{{ $package->nama_layanan }}"
-                                 class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-300">
-                            @else
+                            @php 
+                             // 1. Ambil murni nama filenya saja dari database (menghindari teks folder yang double)
+                            $fileName = basename($package->foto_contoh); 
+        
+                            // 2. Tentukan lokasi fisik file untuk dicek oleh server
+                            $pathDiDalamLayanan = public_path('images/layanan/' . $fileName);
+        
+                            // 3. Cek apakah filenya ada di dalam folder 'layanan'. Jika tidak, arahkan ke folder 'images' utama
+                            if ($package->foto_contoh && file_exists($pathDiDalamLayanan)) {
+                            $pkgImg = asset('images/layanan/' . $fileName);
+                                } else {
+                                 $pkgImg = $package->foto_contoh ? asset('images/' . $fileName) : null;
+                                 }
+                                 @endphp
+    
+                                 @if($pkgImg)
+                                 <img src="{{ $pkgImg }}"
+                                      alt="{{ $package->nama_layanan }}"
+                                      class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-300">
+                                         @else
                             <div class="w-full h-full bg-gradient-to-br from-[#f2994a]/30 to-[#f2994a]/10 flex items-center justify-center">
                                 <i class="ph-bold ph-package text-5xl text-[#f2994a]/40"></i>
                             </div>
