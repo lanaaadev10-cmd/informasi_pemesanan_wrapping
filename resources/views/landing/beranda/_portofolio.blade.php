@@ -20,58 +20,26 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            @forelse($galeris as $galeri)
-                @php
-                    $fotoUrl = resolveImageUrl($galeri->foto, 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=800&auto=format&fit=crop');
-                @endphp
-                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden group hover:border-[#f2994a]/30 transition-all duration-500 shadow-md" data-aos="fade-up" @if($loop->index > 0) data-aos-delay="{{ $loop->index * 100 }}" @endif>
+            @php
+                $portfolioItems = $portfolio ?? config('site.landing.portfolio', []);
+            @endphp
+            @forelse($portfolioItems as $item)
+                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden group hover:border-[#f2994a]/30 transition-all duration-500 shadow-md" data-aos="fade-up">
                     <div class="relative h-64 overflow-hidden">
-                        @if($galeri->badge_text || $galeri->is_featured)
-                            <span class="absolute top-4 left-4 z-20 bg-[#f2994a]/95 text-black font-extrabold text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-md">
-                                {{ $galeri->badge_text ?? 'Unggulan' }}
-                            </span>
-                        @endif
-                        <img src="{{ $fotoUrl }}" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out" alt="{{ $galeri->judul }}">
+                        <span class="absolute top-4 left-4 z-20 bg-[#f2994a]/95 text-black font-extrabold text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-md">
+                            {{ $item['tag'] ?? 'Unggulan' }}
+                        </span>
+                        <img src="{{ asset($item['image'] ?? 'images/landing/hero_car.png') }}" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out" alt="{{ $item['title'] ?? 'Profil Pekerjaan' }}">
                     </div>
                     <div class="p-6 space-y-2">
-                        <h3 class="text-lg font-bold text-white group-hover:text-[#f2994a] transition-all">{{ $galeri->judul }}</h3>
-                        <p class="text-gray-400 text-sm">{{ $galeri->sub_judul ?? $galeri->deskripsi }}</p>
+                        <h3 class="text-lg font-bold text-white group-hover:text-[#f2994a] transition-all">{{ $item['title'] ?? 'Detail Project' }}</h3>
+                        <p class="text-gray-400 text-sm">{{ $item['subtitle'] ?? ($item['description'] ?? '') }}</p>
                     </div>
                 </div>
             @empty
-                <!-- Fallback: Tesla Model S -->
-                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden group hover:border-[#f2994a]/30 transition-all duration-500 shadow-md" data-aos="fade-up">
-                    <div class="relative h-64 overflow-hidden">
-                        <span class="absolute top-4 left-4 z-20 bg-[#f2994a]/95 text-black font-extrabold text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-md">Varian Favorit</span>
-                        <img src="{{ asset('images/tesla_model_s.png') }}" width="400" height="256" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Tesla Model S Wrapping">
-                    </div>
-                    <div class="p-6 space-y-2">
-                        <h3 class="text-lg font-bold text-white group-hover:text-[#f2994a] transition-all">Tesla Model S</h3>
-                        <p class="text-gray-400 text-sm">Luxury Matte Grey / Blue</p>
-                    </div>
-                </div>
-
-                <!-- Fallback: Range Rover -->
-                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden group hover:border-[#f2994a]/30 transition-all duration-500 shadow-md" data-aos="fade-up" data-aos-delay="100">
-                    <div class="relative h-64 overflow-hidden">
-                        <span class="absolute top-4 left-4 z-20 bg-[#f2994a]/95 text-black font-extrabold text-[10px] uppercase tracking-wider px-3.5 py-1.5 rounded-full shadow-md">Sangat Direkomendasikan</span>
-                        <img src="{{ asset('images/range_rover.png') }}" width="400" height="256" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Range Rover Wrapping">
-                    </div>
-                    <div class="p-6 space-y-2">
-                        <h3 class="text-lg font-bold text-white group-hover:text-[#f2994a] transition-all">Range Rover Sport</h3>
-                        <p class="text-gray-400 text-sm">Satin Liquid Silver Wrap</p>
-                    </div>
-                </div>
-
-                <!-- Fallback: Ferrari F8 -->
-                <div class="bg-[#121212] border border-white/5 rounded-3xl overflow-hidden group hover:border-[#f2994a]/30 transition-all duration-500 shadow-md" data-aos="fade-up" data-aos-delay="200">
-                    <div class="relative h-64 overflow-hidden">
-                        <img src="{{ asset('images/ferrari_f8.png') }}" width="400" height="256" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700 ease-out" alt="Ferrari F8 Wrapping">
-                    </div>
-                    <div class="p-6 space-y-2">
-                        <h3 class="text-lg font-bold text-white group-hover:text-[#f2994a] transition-all">Ferrari F8</h3>
-                        <p class="text-gray-400 text-sm">Satin Metallic Gold Yellow</p>
-                    </div>
+                <div class="col-span-1 text-center text-white/70 py-20">
+                    <p class="text-lg font-semibold">Portofolio belum tersedia.</p>
+                    <p class="text-gray-500 text-sm mt-2">Silakan tambahkan item portofolio pada konfigurasi situs.</p>
                 </div>
             @endforelse
         </div>

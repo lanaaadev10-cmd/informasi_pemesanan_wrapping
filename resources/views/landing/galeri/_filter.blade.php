@@ -7,20 +7,23 @@
         <button onclick="filterGaleri('all')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-black font-extrabold text-xs border transition-all duration-300 shadow-lg flex items-center gap-2 active:scale-95" style="background-color:var(--accent-color);border-color:var(--accent-color);box-shadow:0 0 15px color-mix(in srgb,var(--accent-color)10%,transparent)" data-category="all">
             All Works
         </button>
-        <button onclick="filterGaleri('sports-cars')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="sports-cars">
-            Sports Cars
+        <button onclick="filterGaleri('sports')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="sports">
+            Sports
         </button>
-        <button onclick="filterGaleri('luxury-sedans')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="luxury-sedans">
-            Luxury Sedans
+        <button onclick="filterGaleri('suv')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="suv">
+            SUV
         </button>
-        <button onclick="filterGaleri('suvs-trucks')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="suvs-trucks">
-            SUVs & Trucks
+        <button onclick="filterGaleri('city')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="city">
+            City Car
         </button>
-        <button onclick="filterGaleri('satin-finish')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="satin-finish">
-            Satin Finish
+        <button onclick="filterGaleri('motorbike')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="motorbike">
+            Motorbike
         </button>
-        <button onclick="filterGaleri('matte-black')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:border-[#f2994a]/30 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="matte-black">
-            Matte Black
+        <button onclick="filterGaleri('classic')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:border-[#f2994a]/30 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="classic">
+            Classic
+        </button>
+        <button onclick="filterGaleri('sedan')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:border-[#f2994a]/30 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="sedan">
+            Sedan
         </button>
     </div>
 </section>

@@ -3,40 +3,45 @@
 @section('title', 'Beranda')
 
 @section('content')
-    {{-- Ambil nilai dari DB dengan fallback default --}}
     @php
-        $badge       = $profil->home_badge_text         ?? 'Professional Car Wrapping Indonesia';
-        $title1      = $profil->home_hero_title_line1   ?? 'Elevasi Estetika';
-        $title2      = $profil->home_hero_title_line2   ?? 'Aset Mewah Anda.';
-        $subtitle    = $profil->home_subtitle           ?? 'Layanan premium yang melindungi dan memperindah mobil kesayangan Anda. Hubungi kami untuk penawaran terbaik.';
-        $stat1v      = $profil->home_stat1_value        ?? '500+';
-        $stat1l      = $profil->home_stat1_label        ?? 'Supercars Wrapped';
-        $stat2v      = $profil->home_stat2_value        ?? '5 Tahun';
-        $stat2l      = $profil->home_stat2_label        ?? 'Garansi Material';
+        $siteConfig = config('site');
+        $landing = $siteConfig['landing'];
+        $hero = $landing['hero'];
+        $stats = $landing['stats'];
+        $keunggulan = $landing['keunggulan'];
+        $ctaBanner = $landing['cta_banner'];
+        $steps = $landing['steps'];
+        $portfolio = $landing['portfolio'];
+        $brand = $siteConfig['brand'];
 
-        $k1t = $profil->home_keunggulan_card1_title ?? 'Kualitas Material Grade-A';
-        $k1d = $profil->home_keunggulan_card1_desc  ?? 'Kami hanya menggunakan merk premium dunia seperti <span class="text-white font-semibold">Avery Dennison, 3M, dan Teckwrap</span>. Memberikan hasil akhir yang sangat rapi, warna yang tahan lama, serta perlindungan cat orisinil mobil yang maksimal.';
-        $k2t = $profil->home_keunggulan_card2_title ?? 'Teknisi Tersertifikasi';
-        $k2d = $profil->home_keunggulan_card2_desc  ?? 'Dikerjakan oleh tim profesional yang terlatih dan memiliki sertifikasi resmi di bidang car wrapping untuk menjamin ketelitian tinggi.';
-        $k3t = $profil->home_keunggulan_card3_title ?? 'Pengerjaan Tepat Waktu';
-        $k3d = $profil->home_keunggulan_card3_desc  ?? 'Kami menghargai waktu berharga Anda. Dengan SOP terstruktur, kami menjamin kendaraan Anda selesai dikerjakan sesuai estimasi waktu.';
-        $k4t = $profil->home_keunggulan_card4_title ?? 'Garansi Hingga 5 Tahun';
-        $k4d = $profil->home_keunggulan_card4_desc  ?? 'Kami sangat yakin atas kualitas pengerjaan dan ketahanan bahan yang kami berikan. Nikmati perlindungan garansi penuh hingga 5 tahun untuk kepuasan total Anda.';
+        $badge = $hero['badge'];
+        $title1 = $hero['title_1'];
+        $title2 = $hero['title_2'];
+        $subtitle = $hero['subtitle'];
+        $stat1v = $stats[0]['value'];
+        $stat1l = $stats[0]['label'];
+        $stat2v = $stats[1]['value'];
+        $stat2l = $stats[1]['label'];
+        $ctaTitle = $ctaBanner['title'];
+        $ctaSubtitle = $ctaBanner['subtitle'];
+        $s1t = $steps[0]['title'];
+        $s1d = $steps[0]['description'];
+        $s2t = $steps[1]['title'];
+        $s2d = $steps[1]['description'];
+        $s3t = $steps[2]['title'];
+        $s3d = $steps[2]['description'];
 
-        $ctaTitle    = $profil->home_cta_title    ?? 'Siap Mengubah Tampilan Kendaraan?';
-        $ctaSubtitle = $profil->home_cta_subtitle ?? 'Hubungi konsultan desain gratis sekarang. Tim ahli kami akan membantu Anda memilih material dan warna terbaik yang sesuai dengan kepribadian Anda.';
+        $k1t = $keunggulan[0]['title'] ?? 'Kualitas Material Grade-A';
+        $k1d = $keunggulan[0]['description'] ?? 'Kami hanya menggunakan bahan wrapping premium yang tahan lama dan rapi.';
+        $k2t = $keunggulan[1]['title'] ?? 'Teknisi Tersertifikasi';
+        $k2d = $keunggulan[1]['description'] ?? 'Dikerjakan oleh teknisi ahli yang terlatih penuh.';
+        $k3t = $keunggulan[2]['title'] ?? 'Pengerjaan Tepat Waktu';
+        $k3d = $keunggulan[2]['description'] ?? 'Kami menghormati jadwal Anda dengan pengerjaan yang presisi.';
+        $k4t = $keunggulan[3]['title'] ?? 'Garansi Hingga 5 Tahun';
+        $k4d = $keunggulan[3]['description'] ?? 'Nikmati proteksi dan layanan purna jual premium.';
 
-        $s1t = $profil->home_step1_title ?? 'Konsultasi & Estimasi';
-        $s1d = $profil->home_step1_desc  ?? 'Hubungi tim admin kami untuk berkonsultasi mengenai desain & biaya.';
-        $s2t = $profil->home_step2_title ?? 'Pilihan Wrapping';
-        $s2d = $profil->home_step2_desc  ?? 'Tentukan pilihan material, merk premium, dan warna sesuai keinginan Anda.';
-        $s3t = $profil->home_step3_title ?? 'Pengerjaan Rapi';
-        $s3d = $profil->home_step3_desc  ?? 'Bawa mobil Anda ke workshop kami dan serahkan pengerjaan pada ahlinya.';
-
-        $waNumber = preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '628123456789');
+        $waNumber = preg_replace('/[^0-9]/', '', $hero['cta_primary_url']);
     @endphp
-
-    {{-- 1. Hero Section --}}
     @include('landing.beranda._hero')
 
     {{-- 2. Keunggulan Section --}}

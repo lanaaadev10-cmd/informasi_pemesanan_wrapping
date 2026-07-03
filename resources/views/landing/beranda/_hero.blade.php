@@ -2,7 +2,7 @@
     BAGIAN: Hero Section
     Deskripsi: Banner utama halaman beranda
 ============================================ --}}
-<section class="relative min-h-screen pt-32 pb-20 px-6 sm:px-10 lg:px-16 flex items-center overflow-hidden bg-cover bg-center lg:bg-[right_center] bg-no-repeat" style="background-image: url('{{ asset('images/hero_car.png') }}');">
+<section class="relative min-h-screen pt-32 pb-20 px-6 sm:px-10 lg:px-16 flex items-center overflow-hidden bg-cover bg-center lg:bg-[right_center] bg-no-repeat" style="background-image: url('{{ asset(config('site.landing.hero.background_image')) }}');">
     <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/85 to-black lg:bg-gradient-to-r lg:from-[#0a0a0a] lg:via-[#0a0a0a]/75 lg:to-transparent z-0"></div>
     <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-[#f2994a]/10 rounded-full blur-[120px] pointer-events-none z-10"></div>
     <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#e28a44]/5 rounded-full blur-[100px] pointer-events-none z-10"></div>

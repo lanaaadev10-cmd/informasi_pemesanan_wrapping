@@ -22,7 +22,22 @@
                 }
             }
 
-            $imgSrc = resolveImageUrl($svc['gambar'] ?? null, $fallbackImages[$idx % count($fallbackImages)]);
+            $rawImage = $svc['gambar'] ?? null;
+            $imgSrc = null;
+            if (!empty($rawImage)) {
+                if (str_starts_with($rawImage, 'http')) {
+                    $imgSrc = $rawImage;
+                } elseif (file_exists(public_path($rawImage))) {
+                    $imgSrc = asset($rawImage);
+                } elseif (file_exists(public_path('images/' . $rawImage))) {
+                    $imgSrc = asset('images/' . $rawImage);
+                } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($rawImage)) {
+                    $imgSrc = asset('storage/' . $rawImage);
+                } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists('images/' . $rawImage)) {
+                    $imgSrc = asset('storage/images/' . $rawImage);
+                }
+            }
+            $imgSrc = $imgSrc ?: $fallbackImages[$idx % count($fallbackImages)];
 
             $badge       = $badgeLabels[$idx % count($badgeLabels)] ?? '';
             $badgeBg     = $badgeColors[$idx % count($badgeColors)];

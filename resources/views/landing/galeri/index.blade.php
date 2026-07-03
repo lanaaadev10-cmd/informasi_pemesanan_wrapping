@@ -15,9 +15,11 @@
     </style>
 
     @php
-        $accentColor = $profil->accent_color ?? '#f2994a';
-        $galeriTitle = $profil->galeri_hero_title ?? 'Precision Mastery Gallery';
-        $galeriDesc = $profil->galeri_hero_desc ?? 'Explore our curated selection of high-end automotive transformations. From matte finishes to protective layers, witness the art of precision in every detail.';
+        $siteConfig = config('site');
+        $accentColor = $siteConfig['landing']['accent_color'] ?? '#f2994a';
+        $galeriTitle = $siteConfig['galeri']['hero_title'] ?? 'Precision Mastery Gallery';
+        $galeriDesc = $siteConfig['galeri']['hero_desc'] ?? 'Explore our curated selection of high-end automotive transformations. From matte finishes to protective layers, witness the art of precision in every detail.';
+        $galeriItems = $siteConfig['galeri']['items'] ?? [];
     @endphp
 
     <style>

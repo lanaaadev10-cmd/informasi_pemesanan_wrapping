@@ -2,20 +2,23 @@
     BAGIAN: Gallery Grid
     Deskripsi: Grid masonry galeri karya wrapping
 ============================================ --}}
+@php
+    $emptyStateText = config('site.galeri.empty_state_text', 'Admin belum menambahkan karya galeri.');
+@endphp
 <section class="mb-16">
-    @if($galeri && $galeri->count() > 0)
+    @if(!empty($galeriItems))
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8" id="galeri-grid">
-            @foreach($galeri as $userItem)
+            @foreach($galeriItems as $userItem)
                 <div class="galeri-item group relative md:col-span-4 rounded-3xl overflow-hidden border border-white/5 bg-white/[0.01] hover:border-[#f2994a]/30 transition-all duration-500 shadow-xl aspect-square"
-                     data-category="all {{ strtolower($userItem->kategori ?? 'sports-cars') }}" data-aos="fade-up" data-aos-duration="1000">
+                     data-category="all {{ strtolower($userItem['kategori'] ?? 'sports-cars') }}" data-aos="fade-up" data-aos-duration="1000">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10 opacity-80 group-hover:opacity-75 transition-opacity duration-300"></div>
-                    <img src="{{ resolveImageUrl($userItem->foto, '') }}"
+                    <img src="{{ asset($userItem['foto'] ?? 'images/galeri/default.jpg') }}"
                          class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700"
-                         alt="{{ $userItem->judul }}">
+                         alt="{{ $userItem['judul'] ?? 'Galeri' }}">
                     <div class="absolute bottom-0 inset-x-0 p-6 z-20 space-y-2">
-                        <span class="text-[#f2994a] text-xs font-black uppercase tracking-widest font-mono">{{ $userItem->kategori ?? 'Portfolio' }}</span>
-                        <h3 class="text-white text-lg font-bold group-hover:text-[#f2994a] transition-colors leading-tight">{{ $userItem->judul }}</h3>
-                        <p class="text-gray-400 text-xs font-light leading-relaxed line-clamp-2">{{ $userItem->deskripsi }}</p>
+                        <span class="text-[#f2994a] text-xs font-black uppercase tracking-widest font-mono">{{ $userItem['kategori'] ?? 'Portfolio' }}</span>
+                        <h3 class="text-white text-lg font-bold group-hover:text-[#f2994a] transition-colors leading-tight">{{ $userItem['judul'] ?? '' }}</h3>
+                        <p class="text-gray-400 text-xs font-light leading-relaxed line-clamp-2">{{ $userItem['deskripsi'] ?? '' }}</p>
                     </div>
                 </div>
             @endforeach
@@ -28,7 +31,7 @@
                 </svg>
             </div>
             <h3 class="text-white/70 text-lg font-semibold mb-2">Belum Ada Galeri</h3>
-            <p class="text-gray-500 text-sm max-w-md mx-auto">{{ $profil->galeri_empty_state_title ?? 'Admin belum menambahkan karya galeri.' }}</p>
+            <p class="text-gray-500 text-sm max-w-md mx-auto">{{ $emptyStateText }}</p>
         </div>
     @endif
 </section>

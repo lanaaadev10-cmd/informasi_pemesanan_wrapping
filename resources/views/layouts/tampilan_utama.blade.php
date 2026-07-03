@@ -2,14 +2,19 @@
 <html lang="id" class="scroll-smooth">
 <head>
     @php
+        $siteConfig = config('site');
+        $brand = $siteConfig['brand'] ?? [];
+        $navbar = $siteConfig['navbar'] ?? [];
+        $contact = $siteConfig['contact'] ?? [];
         $is_frontend = in_array(Route::currentRouteName(), ['home', 'profil.perusahaan', 'galeri.user', 'katalog.user', 'tentang-kami', 'layanan']);
+        $meta = $siteConfig['meta'] ?? [];
     @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ !empty($profil->meta_description) ? $profil->meta_description : (!empty($profil->deskripsi) ? $profil->deskripsi : 'Penyedia layanan stiker dan wrapping kendaraan premium bergaransi resmi.') }}">
-    <meta name="keywords" content="stiker mobil, wrapping mobil, branding kendaraan, dantie sticker">
-    <meta name="author" content="{{ $profil->nama_perusahaan ?? 'Altra' }}">
-    <title>@yield('title') - {{ $profil->meta_title ?? ($profil->nama_perusahaan ?? 'Official Website') }}</title>
+    <meta name="description" content="{{ $meta['description'] ?? 'Penyedia layanan stiker dan wrapping kendaraan premium bergaransi resmi.' }}">
+    <meta name="keywords" content="{{ $meta['keywords'] ?? 'stiker mobil, wrapping mobil, branding kendaraan' }}">
+    <meta name="author" content="{{ $meta['author'] ?? 'WAPPING' }}">
+    <title>@yield('title') - {{ $meta['title'] ?? 'WAPPING' }}</title>
     
     <!-- Preconnect to external origins to speed up connection handshake -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -97,32 +102,32 @@
                         <i class="ph-bold ph-sketch-logo text-2xl"></i>
                     </div>
                 @else
-                    @if($profil && $profil->logo)
-                        <img src="{{ asset('storage/' . $profil->logo) }}" alt="Logo" width="40" height="40" class="h-10 w-auto">
+                    @if(!empty($brand['logo']))
+                        <img src="{{ asset($brand['logo']) }}" alt="{{ $brand['logo_alt'] ?? 'Logo' }}" width="40" height="40" class="h-10 w-auto">
                     @else
                         <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center text-white">
                             <i class="ph-bold ph-sketch-logo text-2xl"></i>
                         </div>
                     @endif
                 @endif
-                <span class="font-bold text-xl tracking-tight uppercase {{ $is_frontend ? 'text-white' : 'text-gray-900' }}">{{ $profil->nama_perusahaan ?? 'Wapping' }}</span>
+                <span class="font-bold text-xl tracking-tight uppercase {{ $is_frontend ? 'text-white' : 'text-gray-900' }}">{{ $brand['name'] ?? 'WAPPING' }}</span>
             </a>
             
             {{-- Menu Navigasi Desktop --}}
             <div class="hidden md:flex items-center gap-10">
-                <a href="{{ route('home') }}" class="text-sm font-medium {{ Request::routeIs('home') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">Beranda</a>
-                <a href="{{ route('layanan') }}" class="text-sm font-medium {{ Request::routeIs('layanan') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">Layanan</a>
-                <a href="{{ route('galeri.user') }}" class="text-sm font-medium {{ Request::routeIs('galeri.user') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">Galeri</a>
-                <a href="{{ route('tentang-kami') }}" class="text-sm font-medium {{ Request::routeIs('tentang-kami') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">Tentang Kami</a>
+                <a href="{{ route('home') }}" class="text-sm font-medium {{ Request::routeIs('home') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ $navbar['home'] ?? 'Beranda' }}</a>
+                <a href="{{ route('layanan') }}" class="text-sm font-medium {{ Request::routeIs('layanan') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ $navbar['layanan'] ?? 'Layanan' }}</a>
+                <a href="{{ route('galeri.user') }}" class="text-sm font-medium {{ Request::routeIs('galeri.user') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ $navbar['galeri'] ?? 'Galeri' }}</a>
+                <a href="{{ route('tentang-kami') }}" class="text-sm font-medium {{ Request::routeIs('tentang-kami') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ $navbar['tentang_kami'] ?? 'Tentang Kami' }}</a>
                 
                 @if($is_frontend)
                     <div class="flex items-center gap-4 border-l pl-6 border-white/10">
                         @guest
                             <a href="{{ route('login') }}" class="text-sm font-bold text-gray-300 hover:text-[#f2994a] transition-colors">
-                                Masuk
+                                {{ $navbar['login'] ?? 'Masuk' }}
                             </a>
                             <a href="{{ route('register') }}" class="px-6 py-2 rounded-full text-xs font-extrabold uppercase tracking-wider text-black bg-[#f2994a] hover:bg-[#e28a44] transition-all hover:scale-105 shadow-md">
-                                Daftar
+                                {{ $navbar['register'] ?? 'Daftar' }}
                             </a>
                         @endguest
                         @auth
@@ -237,22 +242,20 @@
                         <div class="w-10 h-10 bg-gradient-to-br from-[#e28a44] to-[#f2994a] rounded-xl flex items-center justify-center text-white shadow-lg">
                             <i class="ph-bold ph-sketch-logo text-2xl"></i>
                         </div>
-                        <span class="font-extrabold text-2xl tracking-wider text-white uppercase">{{ $profil->nama_perusahaan ?? 'Wapping' }}</span>
+                        <span class="font-extrabold text-2xl tracking-wider text-white uppercase">{{ $brand['name'] ?? 'Wapping' }}</span>
                     </a>
                 </div>
-
-                {{-- Horizontal Nav Links --}}
                 <div class="flex flex-wrap justify-center gap-8 md:gap-12 mb-10 text-sm font-medium text-gray-400">
-                    <a href="{{ route('profil.perusahaan') }}" class="hover:text-[#f2994a] transition-all">Tentang Kami</a>
-                    <a href="{{ route('katalog.user') }}" class="hover:text-[#f2994a] transition-all">Layanan</a>
+                    <a href="{{ route('profil.perusahaan') }}" class="hover:text-[#f2994a] transition-all">{{ $navbar['tentang_kami'] ?? 'Tentang Kami' }}</a>
+                    <a href="{{ route('katalog.user') }}" class="hover:text-[#f2994a] transition-all">{{ $navbar['layanan'] ?? 'Layanan' }}</a>
                     <a href="#" class="hover:text-[#f2994a] transition-all">Kebijakan Privasi</a>
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '') }}" class="hover:text-[#f2994a] transition-all">Hubungi Kami</a>
+                    <a href="{{ $contact['whatsapp_link'] ?? '#' }}" class="hover:text-[#f2994a] transition-all">Hubungi Kami</a>
                 </div>
 
                 {{-- Social Icons --}}
                 <div class="flex justify-center gap-6 mb-10">
-                    @if($profil && $profil->instagram_url)
-                        <a href="{{ $profil->instagram_url }}" target="_blank" aria-label="Instagram" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-[#f2994a] hover:border-[#f2994a] hover:bg-white/10 transition-all duration-300">
+                    @if(!empty($contact['instagram_url']))
+                        <a href="{{ $contact['instagram_url'] }}" target="_blank" aria-label="Instagram" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-[#f2994a] hover:border-[#f2994a] hover:bg-white/10 transition-all duration-300">
                             <i class="ph-bold ph-instagram-logo text-lg"></i>
                         </a>
                     @else
@@ -260,8 +263,8 @@
                             <i class="ph-bold ph-instagram-logo text-lg"></i>
                         </a>
                     @endif
-                    @if($profil && $profil->email)
-                        <a href="mailto:{{ $profil->email }}" aria-label="Email" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-[#f2994a] hover:border-[#f2994a] hover:bg-white/10 transition-all duration-300">
+                    @if(!empty($contact['email']))
+                        <a href="mailto:{{ $contact['email'] }}" aria-label="Email" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-[#f2994a] hover:border-[#f2994a] hover:bg-white/10 transition-all duration-300">
                             <i class="ph-bold ph-envelope text-lg"></i>
                         </a>
                     @else
@@ -269,8 +272,8 @@
                             <i class="ph-bold ph-envelope text-lg"></i>
                         </a>
                     @endif
-                    @if($profil && $profil->nomor_telepon)
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon) }}" target="_blank" aria-label="WhatsApp" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-[#f2994a] hover:border-[#f2994a] hover:bg-white/10 transition-all duration-300">
+                    @if(!empty($contact['whatsapp_link']))
+                        <a href="{{ $contact['whatsapp_link'] }}" target="_blank" aria-label="WhatsApp" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 hover:text-[#f2994a] hover:border-[#f2994a] hover:bg-white/10 transition-all duration-300">
                             <i class="ph-bold ph-whatsapp-logo text-lg"></i>
                         </a>
                     @else
@@ -282,7 +285,7 @@
 
                 {{-- Copyright Notice --}}
                 <div class="pt-8 border-t border-white/5 text-gray-500 text-xs font-medium">
-                    <p>&copy; 2026 {{ $profil->nama_perusahaan ?? 'Wapping' }} Premium Wrapping. Hak Cipta Dilindungi.</p>
+                    <p>&copy; 2026 {{ $brand['name'] ?? 'Wapping' }} Premium Wrapping. Hak Cipta Dilindungi.</p>
                 </div>
             </div>
         </footer>
@@ -291,9 +294,9 @@
             <div class="max-w-7xl mx-auto px-6">
                 <div class="grid md:grid-cols-4 gap-16 mb-20">
                     <div class="col-span-1 md:col-span-1">
-                        <h5 class="font-bold text-xl text-gray-900 mb-8 uppercase">{{ $profil->nama_perusahaan ?? 'Dantie' }}</h5>
+                        <h5 class="font-bold text-xl text-gray-900 mb-8 uppercase">{{ $brand['name'] ?? 'Dantie' }}</h5>
                         <p class="text-gray-500 leading-relaxed text-sm">
-                            {{ $profil->deskripsi ?? 'Solusi stiker terbaik untuk kendaraan dan bisnis Anda.' }}
+                            {{ $meta['description'] ?? 'Solusi stiker terbaik untuk kendaraan dan bisnis Anda.' }}
                         </p>
                     </div>
                     <div>
@@ -308,36 +311,36 @@
                         <ul class="space-y-4 text-sm font-medium text-gray-500">
                             <li class="flex items-center gap-3">
                                 <i class="ph ph-envelope-simple text-orange-600 text-lg"></i>
-                                {{ $profil->email ?? '-' }}
+                                {{ $contact['email'] ?? '-' }}
                             </li>
                             <li class="flex items-center gap-3">
                                 <i class="ph ph-phone text-orange-600 text-lg"></i>
-                                {{ $profil->nomor_telepon ?? '-' }}
+                                {{ $contact['phone'] ?? '-' }}
                             </li>
                         </ul>
                     </div>
                     <div>
                         <h5 class="font-bold text-gray-900 mb-8 tracking-widest uppercase text-xs">Lokasi Kami</h5>
                         <p class="text-gray-500 text-sm leading-relaxed italic">
-                            {{ $profil->alamat ?? 'Alamat belum diatur' }}
+                            {{ $contact['address'] ?? 'Alamat belum diatur' }}
                         </p>
                     </div>
                 </div>
                 
                 <div class="pt-12 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-400 font-medium">
-                    <p>&copy; 2026 {{ $profil->nama_perusahaan ?? 'Dantie Sticker' }}. All rights reserved.</p>
+                    <p>&copy; {{ date('Y') }} {{ $brand['name'] ?? 'Dantie Sticker' }}. All rights reserved.</p>
                     <div class="flex gap-6 items-center">
-                        @if($profil && $profil->instagram_url)
-                            <a href="{{ $profil->instagram_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-instagram-logo"></i> Instagram</a>
+                        @if(!empty($contact['instagram_url']))
+                            <a href="{{ $contact['instagram_url'] }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-instagram-logo"></i> Instagram</a>
                         @endif
-                        @if($profil && $profil->facebook_url)
-                            <a href="{{ $profil->facebook_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-facebook-logo"></i> Facebook</a>
+                        @if(!empty($contact['facebook_url']))
+                            <a href="{{ $contact['facebook_url'] }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-facebook-logo"></i> Facebook</a>
                         @endif
-                        @if($profil && $profil->tiktok_url)
-                            <a href="{{ $profil->tiktok_url }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-tiktok-logo"></i> TikTok</a>
+                        @if(!empty($contact['tiktok_url']))
+                            <a href="{{ $contact['tiktok_url'] }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-tiktok-logo"></i> TikTok</a>
                         @endif
-                        @if($profil && $profil->whatsapp_link)
-                            <a href="{{ $profil->whatsapp_link }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-whatsapp-logo"></i> WhatsApp</a>
+                        @if(!empty($contact['whatsapp_link']))
+                            <a href="{{ $contact['whatsapp_link'] }}" target="_blank" class="hover:text-orange-600 transition-colors flex items-center gap-1"><i class="ph-bold ph-whatsapp-logo"></i> WhatsApp</a>
                         @endif
                     </div>
                 </div>

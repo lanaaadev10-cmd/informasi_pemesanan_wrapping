@@ -3,6 +3,25 @@
 @section('title', 'Profil Perusahaan')
 
 @section('content')
+    @php
+        $siteConfig = config('site');
+        $profile = $siteConfig['profile'] ?? [];
+        $heroBadge = $profile['hero_badge'] ?? 'ABOUT US';
+        $heroTitle = $profile['hero_title'] ?? 'Company Profile';
+        $heroStatus = $profile['hero_status'] ?? 'Premium Wrap Studio';
+        $companyName = $profile['company_name'] ?? 'WAPPING';
+        $description = $profile['description'] ?? 'WAPPING adalah studio car wrapping premium yang menggabungkan estetika dan proteksi kelas dunia untuk kendaraan Anda.';
+        $statsProjects = $profile['stats_projects'] ?? '98%';
+        $statsLabel = $profile['stats_label'] ?? 'Client Satisfaction';
+        $heroImage = $profile['hero_image'] ?? 'images/landing/hero_car.png';
+        $textureImage = $profile['texture_image'] ?? 'images/landing/master_craft_texture.png';
+        $studioMapImage = $profile['studio_map_image'] ?? 'images/landing/studio_network_map.png';
+        $locations = $profile['locations'] ?? [];
+        $vision = $profile['vision'] ?? 'Menjadi penyedia layanan wrapping dan stiker terpercaya dengan inovasi, kualitas, dan kepuasan pelanggan sebagai prioritas utama.';
+        $mission = $profile['mission'] ?? 'Memberikan solusi wrapping dan stiker berkualitas tinggi dengan harga kompetitif, layanan excellent, dan dukungan purna jual terbaik.';
+        $history = $profile['history'] ?? 'Didirikan dengan komitmen teguh terhadap kualitas estetika dan perlindungan kendaraan, WAPPING tumbuh menjadi pilihan utama bagi pemilik kendaraan mewah. Dari sebuah bengkel kecil dengan impian besar, kini kami mengoperasikan studio modern dengan standar clean-room berkelas dunia.';
+    @endphp
+
     @if(!auth()->check())
         <!-- Spacer untuk Public View agar tidak tertutup Navbar -->
         <div class="h-28"></div>
@@ -17,15 +36,15 @@
         <!-- 1. HEADER SECTION -->
         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-10 relative">
             <div>
-                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">ABOUT US</span>
+                <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">{{ $heroBadge }}</span>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mt-1 bg-gradient-to-r from-white via-white to-gray-500 bg-clip-text text-transparent">
-                    Company Profile
+                    {{ $heroTitle }}
                 </h1>
             </div>
             <!-- Decorative Live Status Indicator -->
             <div class="flex items-center gap-2.5 bg-white/[0.02] border border-white/5 px-4 py-2 rounded-2xl">
                 <span class="w-2 h-2 rounded-full bg-[#f2994a] animate-pulse"></span>
-                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Premium Wrap Studio</span>
+                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{{ $heroStatus }}</span>
             </div>
         </div>
 
@@ -35,10 +54,10 @@
             <!-- Left Banner: The Art of Precision (lg:col-span-2) -->
             <div class="lg:col-span-2 relative rounded-[32px] overflow-hidden h-[320px] sm:h-[380px] lg:h-[420px] group shadow-[0_15px_35px_rgba(0,0,0,0.6)] border border-white/5">
                 <!-- Background Image -->
-                <img src="{{ asset('images/hero_car.png') }}" 
+                <img src="{{ asset($heroImage) }}" 
                      width="800" height="420"
                      class="absolute inset-0 w-full h-full object-cover transform scale-100 group-hover:scale-[1.03] transition-transform duration-1000 ease-out z-0" 
-                     alt="The Art of Precision">
+                     alt="{{ $heroTitle }}">
                 
                 <!-- Premium Dark Overlay Gradient -->
                 <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10"></div>
@@ -47,13 +66,13 @@
                 <!-- Content Area -->
                 <div class="absolute bottom-0 inset-x-0 p-8 sm:p-10 z-20 space-y-3.5">
                     <span class="bg-[#f2994a]/10 border border-[#f2994a]/20 px-3.5 py-1.5 rounded-full text-[9px] font-extrabold text-[#f2994a] uppercase tracking-widest inline-block">
-                        {{ strtoupper($profil->nama_perusahaan ?? 'Premium Wrap') }}
+                        {{ strtoupper($companyName) }}
                     </span>
                     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight max-w-xl">
                         The Art of Precision
                     </h2>
                     <p class="text-gray-300 text-xs sm:text-sm font-medium max-w-lg leading-relaxed opacity-90">
-                        {{ $profil->deskripsi ?? 'Transforming high-performance assets into personalized masterpieces through unparalleled craftsmanship.' }}
+                        {{ $description }}
                     </p>
                 </div>
             </div>
@@ -68,10 +87,10 @@
 
                     <div class="space-y-1">
                         <span class="text-4xl sm:text-5xl font-black text-[#f2994a] tracking-tight group-hover:scale-105 inline-block transition-transform duration-300">
-                            {{ $profil->stats_projects ?? '98%' }}
+                            {{ $statsProjects }}
                         </span>
                         <span class="block text-[9px] font-extrabold uppercase tracking-widest text-gray-500 mt-1">
-                            Client Satisfaction
+                            {{ $statsLabel }}
                         </span>
                     </div>
 
@@ -83,7 +102,7 @@
                 <!-- Card 2: Master Craft close-up -->
                 <div class="relative rounded-[32px] overflow-hidden h-[198px] group shadow-lg border border-white/5">
                     <!-- Texture Image -->
-                    <img src="{{ asset('images/master_craft_texture.png') }}" 
+                    <img src="{{ asset($textureImage) }}" 
                          width="400" height="198"
                          class="absolute inset-0 w-full h-full object-cover transform scale-100 group-hover:scale-[1.04] transition-transform duration-700 ease-out z-0" 
                          alt="Master Craft">
@@ -115,11 +134,11 @@
                 
                 <div class="space-y-4">
                     <p class="text-gray-400 text-sm leading-relaxed font-light">
-                        Born from a passion for automotive aesthetics and technical perfection, <span class="text-white font-medium">{{ $profil->nama_perusahaan ?? 'LuxWrap Studio' }}</span> began as a boutique workshop dedicated to the world's most exclusive marques. Today, we stand as the industry benchmark for premium vehicle protection and styling.
-                    </p>
-                    <p class="text-gray-400 text-sm leading-relaxed font-light">
-                        Our vision is to redefine the boundary between utility and art. We don't just apply material; we curate an experience that honors the engineering of the asset while reflecting the soul of its owner.
-                    </p>
+                            {{ $profile['narrative_paragraphs'][0] ?? '' }}
+                        </p>
+                        <p class="text-gray-400 text-sm leading-relaxed font-light">
+                            {{ $profile['narrative_paragraphs'][1] ?? '' }}
+                        </p>
                 </div>
 
                 <!-- Call to action: Opens Vision & Mission Modal -->
@@ -253,7 +272,7 @@
                         </div>
                         <div>
                             <h4 class="text-xs font-bold text-white uppercase tracking-wider">Los Angeles HQ</h4>
-                            <p class="text-[10px] text-gray-500 mt-1 font-light">{{ $profil->alamat ?? '7821 Sunset Blvd, CA' }}</p>
+                            <p class="text-[10px] text-gray-500 mt-1 font-light">{{ $locations[0]['address'] ?? '7821 Sunset Blvd, CA' }}</p>
                         </div>
                     </div>
 
@@ -263,8 +282,8 @@
                             <i class="ph-bold ph-map-pin text-lg"></i>
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Dubai Creative Hub</h4>
-                            <p class="text-[10px] text-gray-500 mt-1 font-light">2042 Meydan Rd, Meydan City, Dubai</p>
+                            <h4 class="text-xs font-bold text-white uppercase tracking-wider">{{ $locations[1]['title'] ?? 'Dubai Creative Hub' }}</h4>
+                            <p class="text-[10px] text-gray-500 mt-1 font-light">{{ $locations[1]['address'] ?? '2042 Meydan Rd, Meydan City, Dubai' }}</p>
                         </div>
                     </div>
                 </div>
@@ -274,7 +293,7 @@
             <div class="lg:col-span-7">
                 <div class="bg-[#0b0b0b] border border-white/5 rounded-[32px] overflow-hidden aspect-[16/10] relative group shadow-[0_15px_30px_rgba(0,0,0,0.5)]">
                     <!-- Glowing map image -->
-                    <img src="{{ asset('images/studio_network_map.png') }}" 
+                    <img src="{{ asset($studioMapImage) }}" 
                          width="600" height="375"
                          class="w-full h-full object-cover transform scale-100 group-hover:scale-[1.02] transition-transform duration-700 z-0" 
                          alt="Studio Network Map">
@@ -315,7 +334,7 @@
                             <h4 class="text-xs font-bold uppercase tracking-widest">Our Vision</h4>
                         </div>
                         <div class="text-gray-400 text-xs leading-relaxed font-light space-y-2">
-                            {!! $profil->visi ?? 'Menjadi penyedia layanan wrapping dan stiker terpercaya dengan inovasi, kualitas, dan kepuasan pelanggan sebagai prioritas utama.' !!}
+                            {!! $vision !!}
                         </div>
                     </div>
 
@@ -326,7 +345,7 @@
                             <h4 class="text-xs font-bold uppercase tracking-widest">Our Mission</h4>
                         </div>
                         <div class="text-gray-400 text-xs leading-relaxed font-light space-y-2">
-                            {!! $profil->misi ?? 'Memberikan solusi wrapping dan stiker berkualitas tinggi dengan harga kompetitif, layanan excellent, dan dukungan purna jual terbaik.' !!}
+                            {!! $mission !!}
                         </div>
                     </div>
                 </div>
@@ -335,10 +354,7 @@
                 <div class="pt-5 border-t border-white/5 space-y-4">
                     <h4 class="text-xs font-bold text-white uppercase tracking-wider">Perjalanan Kami</h4>
                     <p class="text-gray-400 text-xs leading-relaxed font-light">
-                        Didirikan dengan komitmen teguh terhadap kualitas estetika dan perlindungan kendaraan, kami tumbuh menjadi pilihan utama bagi pemilik kendaraan mewah. Dari sebuah bengkel kecil dengan impian besar, kini kami mengoperasikan studio modern dengan standar clean-room berkelas dunia.
-                    </p>
-                    <p class="text-gray-400 text-xs leading-relaxed font-light">
-                        Setiap pengerjaan diawasi dengan ketat oleh teknisi bersertifikasi internasional. Kami bermitra dengan merek premium terkemuka secara global untuk menjamin ketahanan, kejernihan, dan keindahan proteksi bodi kendaraan Anda tanpa kompromi sedikit pun.
+                        {{ $history }}
                     </p>
                 </div>
             </div>

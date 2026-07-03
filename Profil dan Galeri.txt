@@ -1,0 +1,121 @@
+Dokumentasi Migrasi Konten Publik: Profil dan Galeri
+
+1. Ringkasan perubahan
+   - Konten halaman publik utama (Profil Perusahaan dan Galeri) telah diubah menjadi statis.
+   - Data sekarang dikendalikan oleh file konfigurasi `config/site.php`.
+   - Hal ini menghapus ketergantungan langsung pada data profil perusahaan yang ditarik dari database untuk tampilan publik.
+
+2. Sumber data statis
+   - `config/site.php` kini menyimpan:
+     * informasi brand dan meta situs
+     * data kontak dan link sosial
+     * label navbar / navigasi publik
+     * konten hero, statistik, keunggulan, portofolio landing page
+     * data halaman profil: hero, narasi, visi, misi, sejarah, lokasi, tim
+     * data halaman galeri: judul hero, deskripsi, background hero, daftar item, teks kosong
+
+3. Halaman Profil Perusahaan
+   - `resources/views/landing/profil/index.blade.php` sekarang menggunakan `config('site.profile')`.
+   - Semua referensi ke `$profil` di tampilan publik telah dihapus.
+   - Gambar hero, tekstur, dan peta studio diambil dari konfigurasi.
+   - Konten modal �Sejarah / Visi / Misi� juga sekarang ditarik dari `config/site.php`.
+
+4. Halaman Galeri
+   - `resources/views/landing/galeri/index.blade.php` menggunakan `config('site.galeri.items')` untuk menampilkan karya.
+   - `resources/views/landing/galeri/_grid.blade.php` sudah dirubah untuk menampilkan item statis.
+   - Kondisi kosong menggunakan teks statis dari `config('site.galeri.empty_state_text')`.
+
+5. Tata letak dan footer
+   - `resources/views/layouts/tampilan_utama.blade.php` footer publik sekarang menggunakan data statis dari `config('site.brand')` dan `config('site.contact')`.
+   - Bagian footer telah dibersihkan dari dependensi model `$profil`.
+
+6. Catatan tambahan
+   - Konversi ini hanya mempengaruhi tampilan publik untuk profil dan galeri.
+   - Bagian dashboard atau logic pemesanan yang masih membutuhkan data dinamis tidak diubah.
+   - Jika ingin, konversi berikutnya bisa dilanjutkan untuk halaman beranda, layanan, dan bagian publik lainnya.
+
+Analisis: Error "Call to undefined function resolveImageUrl()" pada katalog layanan
+--------------------------------------------------------------------------
+
+- Gejala yang dilaporkan:
+   * Saat membuka halaman katalog/layanan muncul error PHP: "Call to undefined function resolveImageUrl()".
+   * Trace menunjukkan file Blade: `resources/views/landing/katalog/_grid.blade.php` (baris pemanggilan fungsi).
+
+- Temuan teknis dari pemeriksaan berkas:
+   1. Fungsi `resolveImageUrl()` didefinisikan di `app/helpers.php` dan implementasinya valid.
+   2. `composer.json` berisi bagian `autoload.files` yang menunjuk ke `app/helpers.php`.
+   3. Namun file runtime `vendor/composer/autoload_files.php` (hasil Composer) TIDAK memuat entri untuk `app/helpers.php`.
+       - Konsekuensinya, PHP tidak mengeksekusi/men-include `app/helpers.php` secara otomatis, sehingga fungsi belum didefinisikan saat Blade dikompilasi/diperlihatkan.
+   4. Beberapa view (termasuk `resources/views/landing/layanan/_grid.blade.php` dan `resources/views/landing/katalog/_grid.blade.php`) memanggil `resolveImageUrl()` langsung,
+       sehingga jika helper tidak dimuat maka akan terjadi fatal error.
+
+- Penyebab paling mungkin:
+   * Composer autoload belum diperbarui setelah penambahan atau perubahan `composer.json` (belum menjalankan `composer dump-autoload` atau `composer install/update`).
+   * Atau perubahan `composer.json` sebelumnya dibatalkan sehingga path helper tidak tercantum; periksa isi `composer.json` saat ini.
+
+- Bukti pendukung:
+   * `app/helpers.php` ada dan berisi definisi fungsi.
+   * `composer.json` sekarang menunjuk `app/helpers.php` (lihat bagian `autoload.files`).
+   * `vendor/composer/autoload_files.php` tidak mencantumkan file helper — indikasi autoload belum diregenerasi.
+
+- Dampak:
+   * Semua view yang memanggil `resolveImageUrl()` akan memicu fatal error sampai helper tersedia di runtime.
+   * Ini menyebabkan halaman katalog/layanan gagal dimuat (HTTP 500).
+
+- Rekomendasi tindakan (opsi perbaikan):
+   1. Jalankan `composer dump-autoload -o` pada environment dev/production untuk memperbarui autoload dan mendaftarkan `app/helpers.php`.
+       - Perintah:
+          ```powershell
+          composer dump-autoload -o
+          ```
+   2. Sebagai alternatif sementara (tidak ideal), tambahkan `require_once base_path('app/helpers.php');` di `bootstrap/app.php` atau di `AppServiceProvider::boot()` agar helper langsung dimuat.
+   3. Pastikan cache view/route/config tidak mengganggu: jalankan `php artisan view:clear` dan `php artisan cache:clear` setelah perubahan autoload.
+
+- Langkah verifikasi setelah perbaikan:
+   * Periksa `vendor/composer/autoload_files.php` untuk memastikan ada entri yang mengacu pada `app/helpers.php`.
+   * Buka ulang halaman katalog/layanan dan pastikan tidak lagi muncul error.
+   * Jika masih error, periksa versi file blade terkompilasi di `storage/framework/views/` untuk trace terbaru.
+
+Catatan terakhir: Saya belum melakukan perubahan kode untuk memperbaiki masalah—saya hanya menganalisis dan mendokumentasikan temuan ini. Beri tahu saya perintah mana yang Anda ingin saya jalankan (mis. menjalankan `composer dump-autoload` atau menerapkan fallback di view) dan saya akan melakukannya.
+
+
+
+Ringkasan Lokasi File Statis — proyek Informasi Pemesanan Wrapping
+
+1) File konfigurasi utama
+- config/site.php
+  * Semua teks statis, label navbar, CTA, hero, gallery items, profile, services.
+
+2) Direktori aset gambar
+- public/images/           <- taruh file gambar publik di sini
+- storage/app/public/     <- jika ingin gunakan disk public (jalankan `php artisan storage:link`)
+
+3) Blade views utama yang menampilkan/menggunakan data statis
+- resources/views/layouts/tampilan_utama.blade.php   <- footer, navbar (brand/contact)
+- resources/views/landing/beranda/*                  <- beranda (hero, keunggulan, langkah, CTA)
+- resources/views/landing/profil/index.blade.php     <- halaman profil (mengambil dari config('site.profile'))
+- resources/views/landing/galeri/*                   <- galeri (mengambil dari config('site.galeri'))
+- resources/views/landing/layanan/_grid.blade.php    <- grid layanan (menggunakan config('site.services') atau fallback)
+- resources/views/landing/katalog/_grid.blade.php    <- katalog dinamis (memanggil resolveImageUrl())
+
+4) Kunci `config/site.php` yang sering diedit
+- brand.logo                     (contoh: "images/brand/logo.svg")
+- navbar (home, layanan, galeri, tentang_kami, login, register)
+- landing.hero.background_image  (path gambar hero beranda)
+- profile.hero_image, profile.team[*].photo
+- galeri.items[*].foto, galeri.hero_background_image
+- services.items[*].gambar
+
+5) Langkah singkat untuk mengganti gambar / teks statis
+- Letakkan file baru di `public/images/...` (atau `storage/app/public/...` jika ingin simpan di storage publik).
+- Update path di `config/site.php` sesuai lokasi file baru.
+- Jalankan (jika perlu):
+  php artisan view:clear
+  php artisan cache:clear
+- Refresh halaman di browser.
+
+6) Catatan
+- Beberapa view (mis. katalog/layanan) menggunakan helper `resolveImageUrl()` untuk mencari gambar baik via URL, disk storage, atau fallback.
+- Jika helper tidak tersedia di runtime, akan muncul fatal error. Untuk memastikan helper dipanggil otomatis, jalankan `composer dump-autoload -o` sehingga `app/helpers.php` ikut di-autoload.
+
+Butuh contoh perubahan spesifik? Sebutkan file/gambar yang mau diganti, saya susun checklist editnya.
