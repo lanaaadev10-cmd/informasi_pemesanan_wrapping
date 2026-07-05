@@ -22,9 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Configure CORS
         $middleware->statefulApi();
 
-        $middleware->web(append: [
-            \App\Http\Middleware\ShareSettingsToViews::class,
-        ]);
+        $middleware->web(append: []);
 
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,

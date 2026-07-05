@@ -15,7 +15,7 @@ use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GaleriController;
-use App\Http\Controllers\Admin\OfflineOrderController;
+// use App\Http\Controllers\Admin\OfflineOrderController;
 
 /*
  * Middleware throttle:60,5 — Proteksi agar user tidak melakukan
@@ -73,14 +73,14 @@ Route::middleware('throttle:60,5')->group(function () {
 
             // Pemesanan Offline — khusus admin untuk membuat pesanan manual
             // tanpa melalui proses checkout online (misal: pelanggan datang langsung)
-            Route::middleware('role:admin')->prefix('admin-offline')->name('admin.offline.')->group(function () {
-                Route::get('/orders', [OfflineOrderController::class, 'index'])->name('orders.index');
-                Route::get('/orders/create', [OfflineOrderController::class, 'create'])->name('orders.create');
-                Route::post('/orders', [OfflineOrderController::class, 'store'])->name('orders.store');
-                Route::get('/orders/{id}/edit', [OfflineOrderController::class, 'edit'])->name('orders.edit');
-                Route::put('/orders/{id}', [OfflineOrderController::class, 'update'])->name('orders.update');
-                Route::delete('/orders/{id}', [OfflineOrderController::class, 'destroy'])->name('orders.destroy');
-            });
+            // Route::middleware('role:admin')->prefix('admin-offline')->name('admin.offline.')->group(function () {
+            //     Route::get('/orders', [OfflineOrderController::class, 'index'])->name('orders.index');
+            //     Route::get('/orders/create', [OfflineOrderController::class, 'create'])->name('orders.create');
+            //     Route::post('/orders', [OfflineOrderController::class, 'store'])->name('orders.store');
+            //     Route::get('/orders/{id}/edit', [OfflineOrderController::class, 'edit'])->name('orders.edit');
+            //     Route::put('/orders/{id}', [OfflineOrderController::class, 'update'])->name('orders.update');
+            //     Route::delete('/orders/{id}', [OfflineOrderController::class, 'destroy'])->name('orders.destroy');
+            // });
         });
 
         // ================================================================
