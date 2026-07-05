@@ -39,7 +39,7 @@ class KeranjangService
 
         // Cek apakah item sudah di cart
         $existingItem = $keranjang->details()
-            ->where('id_layanan', $idLayanan)
+            ->where('id_paket', $idLayanan)
             ->first();
 
         // Cek max items
@@ -52,20 +52,19 @@ class KeranjangService
         try {
             if ($existingItem) {
                 // Update quantity jika sudah ada
-                $newQuantity = $existingItem->quantity + $quantity;
+                $newQuantity = $existingItem->jumlah + $quantity;
                 $existingItem->update([
-                    'quantity' => $newQuantity,
+                    'jumlah' => $newQuantity,
                     'subtotal' => $newQuantity * $existingItem->harga_satuan,
                 ]);
             } else {
                 // Buat item baru
                 DetailKeranjang::create([
                     'id_keranjang' => $keranjang->id_keranjang,
-                    'id_layanan' => $idLayanan,
-                    'quantity' => $quantity,
+                    'id_paket' => $idLayanan,
+                    'jumlah' => $quantity,
                     'harga_satuan' => $layanan->harga,
                     'subtotal' => $quantity * $layanan->harga,
-                    'custom_data' => $customData,
                 ]);
             }
             DB::commit();
@@ -89,7 +88,7 @@ class KeranjangService
 
         $newSubtotal = $quantity * $item->harga_satuan;
         $item->update([
-            'quantity' => $quantity,
+            'jumlah' => $quantity,
             'subtotal' => $newSubtotal,
         ]);
 
@@ -155,7 +154,7 @@ class KeranjangService
     {
         $keranjang = $this->getOrCreateCart($userId);
         return $keranjang->details()
-            ->where('id_layanan', $idLayanan)
+            ->where('id_paket', $idLayanan)
             ->exists();
     }
 

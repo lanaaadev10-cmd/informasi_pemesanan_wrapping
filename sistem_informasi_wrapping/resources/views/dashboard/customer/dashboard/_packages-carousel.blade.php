@@ -11,108 +11,91 @@
     <div class="relative group">
         <!-- Slider Wrapper -->
         <div class="overflow-hidden rounded-2xl">
-            <div class="flex gap-6 pb-2 scroll-smooth snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            <div class="packages-carousel-wrapper flex gap-6 pb-2 scroll-smooth"
                  style="scroll-behavior: smooth;">
 
                 @forelse($layanans as $package)
-                @php
-                    $fiturList = [];
-                    if ($package->fitur && is_array($package->fitur)) {
-                        foreach ($package->fitur as $f) {
-                            $item = is_array($f) ? ($f['nama_fitur'] ?? '') : $f;
-                            if (!empty($item)) $fiturList[] = $item;
-                        }
-                    }
-                    $imgSrc = $package->foto_contoh
-                        ? asset('storage/' . $package->foto_contoh)
-                        : null;
-                @endphp
-                <div class="shrink-0 w-72 sm:w-80 snap-start" data-package-id="{{ $package->id_layanan }}">
-                    <form action="{{ route('keranjang.tambah') }}" method="POST" class="contents" id="cart-form-{{ $package->id_layanan }}">
-                        @csrf
-                        <input type="hidden" name="id_paket" value="{{ $package->id_layanan }}">
-                        <input type="hidden" name="jumlah" value="1">
-                    </form>
+                <div class="packages-carousel-item flex-shrink-0 w-80" data-package-id="{{ $package->id_layanan }}">
                     <!-- Card Package -->
-                    <div class="h-full bg-gradient-to-b from-[#161616] to-[#0f0f0f] border border-white/[0.06] rounded-2xl overflow-hidden flex flex-col transition-all duration-[400ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1.5 hover:shadow-[0_20px_50px_-12px_rgba(242,153,74,0.15)] hover:border-[rgba(242,153,74,0.25)]">
+                    <div class="h-full bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 rounded-2xl overflow-hidden group/card hover:border-[#f2994a]/50 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col">
 
                         <!-- Image Section -->
-                        <a href="{{ route('pesanan.direct-order', ['package_id' => $package->id_layanan]) }}" class="relative h-48 sm:h-52 overflow-hidden bg-gray-950 flex-shrink-0 block">
-                            @if($imgSrc)
-                            <img src="{{ $imgSrc }}"
+                        <div class="relative h-48 bg-gradient-to-br from-[#f2994a]/20 to-transparent overflow-hidden">
+                            @if($package->foto_contoh)
+                            <img src="{{ asset('storage/' . $package->foto_contoh) }}"
                                  alt="{{ $package->nama_layanan }}"
-                                 class="w-full h-full object-cover object-center transition-transform duration-[600ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:scale-110"
-                                 loading="lazy">
+                                 class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-300">
                             @else
                             <div class="w-full h-full bg-gradient-to-br from-[#f2994a]/30 to-[#f2994a]/10 flex items-center justify-center">
                                 <i class="ph-bold ph-package text-5xl text-[#f2994a]/40"></i>
                             </div>
                             @endif
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] to-transparent pointer-events-none"></div>
 
+                            <!-- Badge Tipe Paket -->
                             @if($package->tipe_paket)
-                            <div class="absolute top-3 right-3 z-10">
-                                <span class="text-[0.6rem] font-bold tracking-[0.12em] uppercase px-3 py-1.5 rounded-full backdrop-blur-sm border"
-                                      style="background:rgba(242,153,74,0.12);color:#f2994a;border-color:rgba(242,153,74,0.25)">
+                            <div class="absolute top-3 right-3 bg-[#f2994a]/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                                <p class="text-[10px] font-bold text-white uppercase tracking-wider">
                                     {{ $package->tipe_paket }}
-                                </span>
+                                </p>
                             </div>
                             @endif
-                        </a>
+                        </div>
 
                         <!-- Content Section -->
-                        <div class="flex flex-col flex-1 p-5 sm:p-6 gap-4">
-                            <h3 class="text-base font-extrabold text-white leading-tight">
-                                {{ $package->nama_layanan }}
-                            </h3>
-
-                            <div class="flex items-baseline gap-1">
-                                <span class="text-base font-black text-[#f2994a]">
-                                    Rp {{ number_format($package->harga, 0, ',', '.') }}
-                                </span>
-                                @if($package->estimasi_waktu)
-                                <span class="text-[10px] text-gray-400 flex items-center gap-1 ml-auto">
-                                    <i class="ph-bold ph-clock-fill"></i>
-                                    {{ $package->estimasi_waktu }}
-                                </span>
-                                @endif
+                        <div class="p-4 flex flex-col justify-between flex-1">
+                            <!-- Title & Description -->
+                            <div class="space-y-2 mb-4">
+                                <h4 class="text-sm font-bold text-white line-clamp-2 group-hover/card:text-[#f2994a] transition-colors">
+                                    {{ $package->nama_layanan }}
+                                </h4>
+                                <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">
+                                    {{ $package->deskripsi ?? 'Deskripsi layanan' }}
+                                </p>
                             </div>
 
-                            @if($package->deskripsi)
-                            <p class="text-gray-500 text-xs leading-relaxed">
-                                {{ is_array($package->deskripsi) ? implode(', ', $package->deskripsi) : $package->deskripsi }}
-                            </p>
-                            @endif
-
-                            <div class="border-t border-white/[0.06]"></div>
-
-                            @if(!empty($fiturList))
-                            <ul class="space-y-2.5 flex-1">
-                                @foreach(array_slice($fiturList, 0, 3) as $fitur)
-                                <li class="flex items-start gap-2.5 text-[0.78rem] text-white/55">
-                                    <svg class="w-3.5 h-3.5 text-[#f2994a] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    <span>{{ $fitur }}</span>
-                                </li>
+                            <!-- Features (if exists) -->
+                            @if($package->fitur && is_array($package->fitur) && count($package->fitur) > 0)
+                            <div class="mb-4 space-y-1">
+                                @foreach(array_slice($package->fitur, 0, 2) as $fitur)
+                                <div class="flex items-center gap-2">
+                                    <i class="ph-bold ph-check-circle text-[#f2994a] text-xs"></i>
+                                    <span class="text-[10px] text-gray-300">{{ $fitur }}</span>
+                                </div>
                                 @endforeach
-                                @if(count($fiturList) > 3)
-                                <li class="text-[9px] text-gray-500 italic">+{{ count($fiturList) - 3 }} fitur lainnya</li>
+                                @if(count($package->fitur) > 2)
+                                <p class="text-[9px] text-gray-500 italic">+{{ count($package->fitur) - 2 }} fitur lainnya</p>
                                 @endif
-                            </ul>
-                            @else
-                            <div class="flex-1"></div>
+                            </div>
                             @endif
 
-                            <div class="flex gap-2 pt-2">
-                                <button type="button" onclick="addToCart({{ $package->id_layanan }}, '{{ addslashes($package->nama_layanan) }}')"
-                                        class="flex-1 text-center font-extrabold text-[0.6rem] tracking-[0.1em] uppercase py-3 px-3 rounded-xl transition-all duration-200 hover:opacity-85 cursor-pointer bg-[#f2994a] text-black">
-                                    <i class="ph-bold ph-shopping-cart-simple mr-1"></i> Keranjang
-                                </button>
-                                <a href="{{ route('pesanan.direct-order', ['package_id' => $package->id_layanan]) }}"
-                                   class="flex-1 text-center font-extrabold text-[0.6rem] tracking-[0.1em] uppercase py-3 px-3 rounded-xl transition-all duration-200 hover:opacity-85 block bg-[#f2994a] text-black">
-                                    <i class="ph-bold ph-lightning-fill mr-1"></i> Pesan
-                                </a>
+                            <!-- Price & Buttons -->
+                            <div class="space-y-3 border-t border-white/10 pt-3 mt-auto">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-2xl font-bold text-[#f2994a]">
+                                        Rp {{ number_format($package->harga, 0, ',', '.') }}
+                                    </span>
+                                    @if($package->estimasi_waktu)
+                                    <span class="text-[10px] text-gray-400 ml-auto flex items-center gap-1">
+                                        <i class="ph-bold ph-clock-fill"></i>
+                                        {{ $package->estimasi_waktu }}
+                                    </span>
+                                    @endif
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex gap-2">
+                                    <button class="flex-1 py-2 px-3 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200 add-to-cart-btn"
+                                            data-package-id="{{ $package->id_layanan }}"
+                                            data-package-name="{{ $package->nama_layanan }}"
+                                            data-package-price="{{ $package->harga }}">
+                                        <i class="ph-bold ph-shopping-cart-simple mr-1"></i> Keranjang
+                                    </button>
+                                    <button class="flex-1 py-2 px-3 bg-[#f2994a] text-white rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/90 transition-all duration-200 order-now-btn"
+                                            data-package-id="{{ $package->id_layanan }}"
+                                            data-package-name="{{ $package->nama_layanan }}">
+                                        <i class="ph-bold ph-lightning-fill mr-1"></i> {{ $profil->cta_pesan ?? 'Pesan' }}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -144,101 +127,208 @@
 </div>
 
 <!-- Toast Container -->
-<div id="toast-container" class="fixed top-4 right-4 z-50"></div>
+<div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
 
+@push('scripts')
 <script>
-async function addToCart(packageId, packageName) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
-    try {
-        const res = await fetch('/keranjang/tambah', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({ id_paket: packageId, jumlah: 1 })
-        });
-        const data = await res.json();
+    document.addEventListener('DOMContentLoaded', function() {
+        const initCarousel = () => {
+            // Handle carousel navigation
+            document.querySelectorAll('.packages-carousel-wrapper').forEach(wrapper => {
+                const parentGroup = wrapper.closest('.relative.group');
+                if (!parentGroup) return;
 
-        if (res.ok && data.status === 'success') {
-            const swalResult = await Swal.fire({
-                icon: 'success',
-                title: 'Paket Ditambahkan!',
-                text: `Paket ${packageName} berhasil dimasukkan ke keranjang`,
-                confirmButtonText: 'Lihat Keranjang',
-                confirmButtonColor: '#f2994a',
-                showCancelButton: true,
-                cancelButtonText: 'Lanjut Belanja',
-                cancelButtonColor: '#6b7280',
-                timer: 3000,
-                timerProgressBar: true,
-                customClass: { popup: 'swal-dark', title: 'swal-title' }
+                const prevBtn = parentGroup.querySelector('.carousel-prev');
+                const nextBtn = parentGroup.querySelector('.carousel-next');
+
+                if (!prevBtn || !nextBtn) return;
+
+                const scroll = (direction) => {
+                    const scrollAmount = 350;
+                    wrapper.scrollBy({
+                        left: direction === 'next' ? scrollAmount : -scrollAmount,
+                        behavior: 'smooth'
+                    });
+                };
+
+                prevBtn.addEventListener('click', () => scroll('prev'));
+                nextBtn.addEventListener('click', () => scroll('next'));
             });
-            if (swalResult.isConfirmed) window.location.href = '/keranjang';
-            updateCartBadgeGlobal();
-        } else {
-            let cartHtml = '';
-            try {
-                const r2 = await fetch('/keranjang', {
-                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
-                });
-                const d2 = await r2.json();
-                if (d2.data?.details) {
-                    cartHtml = d2.data.details.map((item, idx) =>
-                        `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:6px;">
-                            <span style="font-size:12px;color:#fff;">${idx+1}. ${item.layanan?.nama_layanan||'Paket'}</span>
-                        </div>`
-                    ).join('');
-                }
-            } catch(e) {}
-            Swal.fire({
-                icon: 'warning',
-                title: 'Batas Keranjang Tercapai!',
-                html: `<div style="text-align:left;color:#d1d5db;font-size:13px;">
-                    <p style="margin-bottom:12px;">Keranjang Anda sudah penuh (maksimal 3 paket). Hapus salah satu paket untuk menambahkan yang baru.</p>
-                    <div style="margin-top:12px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
-                        <p style="font-size:12px;font-weight:bold;color:#f2994a;margin-bottom:8px;">Paket di Keranjang:</p>
-                        ${cartHtml||'<p style="color:#6b7280;font-size:12px;">Muat ulang halaman</p>'}
-                    </div>
-                </div>`,
-                confirmButtonText: 'Kelola Keranjang',
-                confirmButtonColor: '#f2994a',
-                showCancelButton: true,
-                cancelButtonText: 'Batal',
-                cancelButtonColor: '#6b7280',
-                customClass: { popup: 'swal-dark', title: 'swal-title' }
-            }).then(r => { if (r.isConfirmed) window.location.href='/keranjang'; });
-        }
-    } catch(err) {
-        Swal.fire({ icon:'error', title:'Gagal', text:'Terjadi kesalahan.', confirmButtonColor:'#f2994a', customClass:{popup:'swal-dark',title:'swal-title'} });
-    }
-}
-async function updateCartBadgeGlobal() {
-    try {
-        const r = await fetch('/api/keranjang/count', { headers:{'Accept':'application/json'} });
-        const j = await r.json();
-        const c = j.data?.count ?? 0;
-        document.querySelectorAll('[data-cart-badge],[data-cart-badge-mobile]').forEach(b => {
-            if(c>0){b.textContent=c>9?'9+':c;b.classList.remove('hidden')}else{b.classList.add('hidden')}
-        });
-    }catch(e){}
-}
 
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.packages-carousel-wrapper').forEach(wrapper => {
-        const parentGroup = wrapper.closest('.relative.group');
-        if (!parentGroup) return;
-        const prevBtn = parentGroup.querySelector('.carousel-prev');
-        const nextBtn = parentGroup.querySelector('.carousel-next');
-        if (!prevBtn || !nextBtn) return;
-        const scroll = (direction) => {
-            wrapper.scrollBy({ left: direction === 'next' ? 350 : -350, behavior: 'smooth' });
+            // Handle add to cart buttons
+            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const packageId = this.dataset.packageId;
+                    const packageName = this.dataset.packageName;
+                    addToCart(packageId, packageName, this);
+                });
+            });
+
+            // Handle order now buttons
+            document.querySelectorAll('.order-now-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const packageId = this.dataset.packageId;
+                    const packageName = this.dataset.packageName;
+                    orderNow(packageId, packageName);
+                });
+            });
         };
-        prevBtn.addEventListener('click', () => scroll('prev'));
-        nextBtn.addEventListener('click', () => scroll('next'));
+
+        const getApiToken = () => {
+            return document.querySelector('meta[name="api-token"]')?.content || localStorage.getItem('api_token');
+        };
+
+        const addToCart = async (packageId, packageName, button) => {
+            try {
+                const response = await fetch('/api/keranjang/item', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Authorization': 'Bearer ' + getApiToken()
+                    },
+                    body: JSON.stringify({
+                        id_layanan: packageId,
+                        quantity: 1
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showToast('✓ ' + packageName + ' ditambahkan ke keranjang!', 'success');
+                    updateCartBadge();
+                    updateButtonStates();
+                } else if (response.status === 422) {
+                    showToast('⚠ ' + data.message, 'warning');
+                } else {
+                    showToast('✗ Gagal menambahkan ke keranjang', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('✗ Terjadi kesalahan', 'error');
+            }
+        };
+
+        const orderNow = (packageId, packageName) => {
+            // Redirect to direct order with package ID
+            window.location.href = `/pesanan/buat?package_id=${packageId}`;
+        };
+
+        const showToast = (message, type = 'info') => {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toastEl = document.createElement('div');
+
+            const bgColor = type === 'success' ? 'bg-green-500/90' :
+                           type === 'error' ? 'bg-red-500/90' :
+                           type === 'warning' ? 'bg-yellow-500/90' :
+                           'bg-blue-500/90';
+
+            toastEl.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg backdrop-blur-sm mb-2 animate-slide-in`;
+            toastEl.textContent = message;
+
+            container.appendChild(toastEl);
+
+            setTimeout(() => {
+                toastEl.classList.add('animate-slide-out');
+                setTimeout(() => toastEl.remove(), 300);
+            }, 3000);
+        };
+
+        const updateCartBadge = async () => {
+            try {
+                const response = await fetch('/api/keranjang/count', {
+                    headers: {
+                        'Authorization': 'Bearer ' + getApiToken()
+                    }
+                });
+                const data = await response.json();
+
+                const badge = document.querySelector('[data-cart-badge]');
+                if (badge) {
+                    badge.textContent = data.data.count;
+                    if (data.data.count > 0) {
+                        badge.classList.remove('hidden');
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating cart badge:', error);
+            }
+        };
+
+        const updateButtonStates = async () => {
+            try {
+                document.querySelectorAll('.add-to-cart-btn').forEach(async (btn) => {
+                    const packageId = btn.dataset.packageId;
+                    const response = await fetch(`/api/keranjang/check/${packageId}`, {
+                        headers: {
+                            'Authorization': 'Bearer ' + getApiToken()
+                        }
+                    });
+                    const data = await response.json();
+
+                    if (data.data.in_cart) {
+                        btn.classList.add('opacity-50');
+                        btn.disabled = true;
+                    }
+                });
+            } catch (error) {
+                console.error('Error updating button states:', error);
+            }
+        };
+
+        initCarousel();
+        updateButtonStates();
     });
-});
 </script>
 
+<style>
+    @keyframes slide-in {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slide-out {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+
+    .animate-slide-in {
+        animation: slide-in 0.3s ease-out;
+    }
+
+    .animate-slide-out {
+        animation: slide-out 0.3s ease-out;
+    }
+
+    .packages-carousel-wrapper {
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .packages-carousel-wrapper::-webkit-scrollbar {
+        display: none;
+    }
+
+    .packages-carousel-item {
+        scroll-snap-align: start;
+    }
+</style>
+@endpush

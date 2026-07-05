@@ -37,15 +37,6 @@ class TentangKamiSettings extends Settings
     public ?string $tentang_kami_cta_primary_button = null;
     public ?string $tentang_kami_cta_secondary_button = null;
 
-    // Sejarah stats
-    public ?string $tentang_kami_sejarah_stats_number = null;
-    public ?string $tentang_kami_sejarah_stats_label = null;
-    public ?string $tentang_kami_sejarah_anniversary_badge = null;
-    public ?string $tentang_kami_sejarah_anniversary_number = null;
-    public ?string $tentang_kami_sejarah_anniversary_label = null;
-    public ?string $tentang_kami_sejarah_image_shop = null;
-    public ?string $tentang_kami_sejarah_image_supercar = null;
-
     public static function group(): string
     {
         return 'tentang_kami';

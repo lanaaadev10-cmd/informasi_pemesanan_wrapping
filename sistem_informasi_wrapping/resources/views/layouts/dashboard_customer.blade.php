@@ -14,29 +14,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root{--accent:{{ $profil->accent_color ?? '#f2994a' }}}
-        body{font-family:'Plus Jakarta Sans',sans-serif}
-        .swal-dark{background:#121212!important;color:#fff!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:24px!important}
-        .swal-title{color:#f2994a!important}
-        .swal-dark .swal2-html-container{color:#d1d5db!important}
-        .swal2-timer-progress-bar{background:#f2994a!important}
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+        .sidebar-link-active { 
+            background-color: #f2994a; 
+            color: #000000 !important; 
+            box-shadow: 0 4px 15px rgba(242, 153, 74, 0.25);
+        }
+        
+        /* Pengaturan Khusus agar Desktop tidak rusak oleh gaya HP */
+        @media (min-width: 1024px) {
+            #side-menu { transform: translateX(0) !important; }
+            #side-overlay { display: none !important; }
+            #bottom-nav { display: none !important; }
+        }
+        /* Bottom Nav Mobile */
+        #bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 8999;
+            background: rgba(12,12,12,0.97);
+            border-top: 1px solid rgba(255,255,255,0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
     </style>
 </head>
 <body class="bg-[#0a0a0a] text-white antialiased">
     
     {{-- OVERLAY GELAP --}}
-    <div id="side-overlay" onclick="tutupMenu()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); z-index:9000;" class="lg:!hidden"></div>
+    <div id="side-overlay" onclick="tutupMenu()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); z-index:9000;"></div>
 
     {{-- SIDEBAR --}}
-    <aside id="side-menu" style="position:fixed; top:0; bottom:0; left:0; width:288px; background:#0c0c0c; border-right:1px solid rgba(255,255,255,0.05); z-index:9001; transition:0.3s; transform:translateX(-100%);" class="flex flex-col lg:!translate-x-0">
+    <aside id="side-menu" style="position:fixed; top:0; bottom:0; left:0; width:288px; background:#0c0c0c; border-right:1px solid rgba(255,255,255,0.05); z-index:9001; transition:0.3s; transform:translateX(-100%);" class="flex flex-col">
         
         <!-- Logo & Exclusive Member -->
         <div class="p-8 flex flex-col gap-1 border-b border-white/5">
             <div class="flex justify-between items-center w-full">
                 <div class="flex flex-col gap-0.5">
-                    <span class="font-extrabold text-xl tracking-wider text-[#f2994a] uppercase">Dantie Wrapping</span>
+                    <span class="font-extrabold text-xl tracking-wider text-[#f2994a] uppercase">Premium Wrap</span>
                     <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">Exclusive Member</span>
                 </div>
                 {{-- TOMBOL TUTUP HP --}}
@@ -48,7 +71,7 @@
 
         <!-- Navigation Menu -->
         <nav class="flex-grow p-6 space-y-1.5 overflow-y-auto">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('dashboard') ? 'bg-[#f2994a] text-black shadow-[0_4px_15px_rgba(242,153,74,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+            <a href="{{ route('dashboard') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('dashboard') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
                 <i class="ph-bold ph-layout text-lg"></i> {{ $profil->nav_beranda ?? 'Beranda' }}
             </a>
             
@@ -56,11 +79,10 @@
                 <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_belanja ?? 'Belanja' }}</span>
             </div>
 
-            <a href="{{ route('layanan') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('layanan') ? 'bg-[#f2994a] text-black shadow-[0_4px_15px_rgba(242,153,74,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-package text-lg"></i> {{ $profil->nav_layanan ?? 'Layanan' }}
+            <a href="{{ route('katalog.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('katalog.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+                <i class="ph-bold ph-tag text-lg"></i> {{ $profil->section_katalog_layanan ?? 'Katalog Layanan' }}
             </a>
-
-            <a href="{{ route('keranjang.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('keranjang.index') ? 'bg-[#f2994a] text-black shadow-[0_4px_15px_rgba(242,153,74,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }} relative">
+            <a href="{{ route('keranjang.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('keranjang.index') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }} relative">
                 <i class="ph-bold ph-shopping-cart text-lg"></i> {{ $profil->nav_keranjang ?? 'Keranjang' }}
                 <span data-cart-badge class="hidden absolute -top-2 -right-2 min-w-[20px] h-[20px] px-1.5 bg-[#f2994a] text-black text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-lg">0</span>
             </a>
@@ -69,10 +91,10 @@
                 <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_manajemen ?? 'Manajemen' }}</span>
             </div>
 
-            <a href="{{ route('pesanan.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('pesanan.index') && !request()->has('status') ? 'bg-[#f2994a] text-black shadow-[0_4px_15px_rgba(242,153,74,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+            <a href="{{ route('pesanan.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('pesanan.index') && !request()->has('status') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
                 <i class="ph-bold ph-folder text-lg"></i> {{ $profil->nav_riwayat_pesanan ?? 'Riwayat Pesanan' }}
             </a>
-            <a href="{{ route('pesanan.index', ['status' => 'menunggu_pembayaran']) }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ request('status') == 'menunggu_pembayaran' ? 'bg-[#f2994a] text-black shadow-[0_4px_15px_rgba(242,153,74,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+            <a href="{{ route('pesanan.index', ['status' => 'menunggu_pembayaran']) }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ request('status') == 'menunggu_pembayaran' ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
                 <i class="ph-bold ph-credit-card text-lg"></i> {{ $profil->nav_pembayaran ?? 'Pembayaran' }}
             </a>
 
@@ -80,21 +102,25 @@
                 <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_pengaturan ?? 'Pengaturan' }}</span>
             </div>
 
-            <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('profile.edit') ? 'bg-[#f2994a] text-black shadow-[0_4px_15px_rgba(242,153,74,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+            <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('profile.edit') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
                 <i class="ph-bold ph-user text-lg"></i> {{ $profil->nav_profil_saya ?? 'Profil Saya' }}
             </a>
             
             <div class="h-[1px] bg-white/5 my-4"></div>
             
-            <a href="{{ route('tentang-kami') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('tentang-kami') ? 'bg-[#f2994a] text-black shadow-[0_4px_15px_rgba(242,153,74,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-buildings text-lg"></i> {{ $profil->nav_tentang_kami ?? 'Tentang Kami' }}
+            <a href="{{ route('profil.perusahaan') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('profil.perusahaan') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+                <i class="ph-bold ph-buildings text-lg"></i> {{ $profil->nav_profil_perusahaan ?? 'Profil Perusahaan' }}
             </a>
-            <a href="{{ route('galeri.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('galeri.user') ? 'bg-[#f2994a] text-black shadow-[0_4px_15px_rgba(242,153,74,0.25)]' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+            <a href="{{ route('galeri.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('galeri.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
                 <i class="ph-bold ph-image-square text-lg"></i> {{ $profil->sidebar_galeri_portofolio ?? 'Galeri Portofolio' }}
             </a>
+            <a href="{{ route('katalog.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('katalog.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+                <i class="ph-bold ph-tag text-lg"></i> {{ $profil->sidebar_layanan_paket ?? 'Layanan & Paket' }}
+            </a>
+
             <!-- CTA Pesan Layanan di Sidebar -->
             <div class="pt-6">
-                <a href="{{ route('layanan') }}" class="flex items-center justify-center gap-2 py-3 bg-[#ffd8a8]/90 hover:bg-[#ffd8a8] text-black font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_4px_15px_rgba(255,216,168,0.2)] hover:scale-[1.02] active:scale-95">
+                <a href="{{ route('katalog.user') }}" class="flex items-center justify-center gap-2 py-3 bg-[#ffd8a8]/90 hover:bg-[#ffd8a8] text-black font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_4px_15px_rgba(255,216,168,0.2)] hover:scale-[1.02] active:scale-95">
                     <i class="ph-bold ph-plus-circle text-sm"></i> {{ $profil->sidebar_pesan_baru ?? 'Pesan Layanan Baru' }}
                 </a>
             </div>
@@ -187,7 +213,7 @@
         <!-- Footer matching mockup style -->
         <footer class="p-6 md:p-8 border-t border-white/5 bg-[#080808] text-[10px] text-gray-500 font-medium">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-                <p>{{ $profil->footer_copyright ?? '&copy; 2026 Dantie Wrapping Service. All rights reserved.' }}</p>
+                <p>{{ $profil->footer_copyright ?? '&copy; 2026 Wapping Premium Service. All rights reserved.' }}</p>
                 <div class="flex items-center gap-6">
                     <a href="#" class="hover:text-white transition-colors">Support</a>
                     <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
@@ -199,12 +225,17 @@
     </div>
 
     {{-- BOTTOM NAVIGATION (Mobile Only) --}}
-    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 z-[8999] bg-[#0c0c0c]/97 border-t border-white/[0.07] backdrop-blur-xl lg:hidden" style="padding-bottom:env(safe-area-inset-bottom)">
+    <nav id="bottom-nav" class="lg:hidden">
         <div class="flex items-stretch justify-around h-16">
             {{-- Beranda --}}
             <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('dashboard') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
                 <i class="ph-bold ph-layout text-xl"></i>
                 <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->nav_beranda ?? 'Beranda' }}</span>
+            </a>
+            {{-- Katalog --}}
+            <a href="{{ route('katalog.user') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('katalog.user') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
+                <i class="ph-bold ph-tag text-xl"></i>
+                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->section_katalog_layanan ?? 'Katalog' }}</span>
             </a>
             {{-- Keranjang --}}
             <a href="{{ route('keranjang.index') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('keranjang.index') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }} relative">
@@ -478,7 +509,7 @@
 
     <!-- Floating Toast Notification Component -->
     @if(session('toast_success'))
-        <div id="floating-toast" class="fixed top-4 right-4 md:bottom-24 md:right-6 md:top-auto z-50 flex items-center gap-3 bg-[#121212] border border-[#f2994a] text-white px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(242,153,74,0.3)] animate-bounce-short transition-all duration-500">
+        <div id="floating-toast" class="fixed bottom-24 right-6 z-50 flex items-center gap-3 bg-[#121212] border border-[#f2994a] text-white px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(242,153,74,0.3)] animate-bounce-short transition-all duration-500">
             <div class="w-8 h-8 rounded-full bg-[#f2994a]/20 flex items-center justify-center text-[#f2994a] shrink-0">
                 <i class="ph-bold ph-check-circle text-lg"></i>
             </div>
@@ -499,7 +530,7 @@
     @endif
 
     @if(session('toast_error'))
-        <div id="floating-toast-error" class="fixed top-4 right-4 md:bottom-24 md:right-6 md:top-auto z-50 flex items-center gap-3 bg-[#121212] border border-red-500 text-white px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(239,68,68,0.3)] animate-bounce-short transition-all duration-500">
+        <div id="floating-toast-error" class="fixed bottom-24 right-6 z-50 flex items-center gap-3 bg-[#121212] border border-red-500 text-white px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(239,68,68,0.3)] animate-bounce-short transition-all duration-500">
             <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 shrink-0">
                 <i class="ph-bold ph-warning-circle text-lg"></i>
             </div>
@@ -518,7 +549,5 @@
             }, 5000);
         </script>
     @endif
-
-    @stack('scripts')
 </body>
 </html>

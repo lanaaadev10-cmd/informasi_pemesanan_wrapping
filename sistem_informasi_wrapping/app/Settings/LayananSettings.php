@@ -43,18 +43,6 @@ class LayananSettings extends Settings
     public ?string $layanan_harga_satuan_label = null;
     public ?string $layanan_empty_state_title = null;
     public ?string $layanan_empty_state_desc = null;
-    public ?string $layanan_badge_1 = null;
-    public ?string $layanan_badge_2 = null;
-    public ?string $layanan_badge_3 = null;
-    public ?string $layanan_badge_4 = null;
-    public ?string $layanan_feature_1_title = null;
-    public ?string $layanan_feature_1_desc = null;
-    public ?string $layanan_feature_2_title = null;
-    public ?string $layanan_feature_2_desc = null;
-    public ?string $layanan_feature_3_title = null;
-    public ?string $layanan_feature_3_desc = null;
-    public ?string $layanan_feature_4_title = null;
-    public ?string $layanan_feature_4_desc = null;
 
     public static function group(): string
     {

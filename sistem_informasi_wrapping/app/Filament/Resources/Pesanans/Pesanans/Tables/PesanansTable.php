@@ -117,41 +117,6 @@ class PesanansTable
                     }),
 
                 // =====================================================
-                // LANGKAH 3: Tandai sudah bayar (manual, tanpa upload)
-                // =====================================================
-                Action::make('tandaiDibayar')
-                    ->label('💰 Tandai Dibayar')
-                    ->icon('heroicon-o-currency-dollar')
-                    ->color('success')
-                    ->visible(fn (Pesanan $record): bool =>
-                        $record->status === Pesanan::STATUS_MENUNGGU_PEMBAYARAN
-                    )
-                    ->requiresConfirmation()
-                    ->modalHeading('Tandai Sudah Dibayar')
-                    ->modalDescription('Konfirmasi bahwa pembayaran sudah diterima secara manual. Status akan berubah menjadi "Menunggu Verifikasi".')
-                    ->modalSubmitActionLabel('Ya, Tandai Dibayar')
-                    ->action(function (Pesanan $record) {
-                        // Buat record pembayaran jika belum ada
-                        if (!$record->pembayaran) {
-                            $record->pembayaran()->create([
-                                'metode_pembayaran' => 'transfer_bank',
-                                'status'            => 'dibayar',
-                                'verifikasi_admin'  => 'diverifikasi',
-                            ]);
-                        } else {
-                            $record->pembayaran->update([
-                                'status'           => 'dibayar',
-                                'verifikasi_admin' => 'diverifikasi',
-                            ]);
-                        }
-                        $record->update(['status' => Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN]);
-                        \Filament\Notifications\Notification::make()
-                            ->title('Pembayaran ditandai!')
-                            ->body('Status pesanan berubah menjadi "Menunggu Verifikasi Pembayaran".')
-                            ->success()->send();
-                    }),
-
-                // =====================================================
                 // LANGKAH 4: Admin verifikasi pembayaran → dikonfirmasi
                 // =====================================================
                 Action::make('verifikasiPembayaran')

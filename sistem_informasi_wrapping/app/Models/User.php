@@ -22,7 +22,6 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'phone',
     ];
 
     // 🔒 Sembunyikan field sensitif dari JSON/array response

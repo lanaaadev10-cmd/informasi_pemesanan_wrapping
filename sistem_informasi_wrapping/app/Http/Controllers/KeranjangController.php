@@ -51,14 +51,6 @@ class KeranjangController extends Controller
 
         // Jika item belum ada dan sudah 3 item, tolak
         if (!$existingDetail && $itemCount >= 3) {
-            if ($request->wantsJson() || $request->ajax()) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Maksimal hanya 3 paket dalam keranjang.',
-                    'max_items' => 3,
-                    'current_items' => $itemCount,
-                ], 422);
-            }
             return redirect()->route('keranjang.index')
                 ->with('error', 'Maksimal hanya 3 paket dalam keranjang. Silakan hapus paket lain terlebih dahulu.');
         }
@@ -72,6 +64,7 @@ class KeranjangController extends Controller
                 'subtotal' => ($existingDetail->jumlah + $request->jumlah) * $hargaSatuan
             ]);
         } else {
+            // Tambahkan item ke detail keranjang
             DetailKeranjang::create([
                 'id_keranjang'   => $keranjang->id_keranjang,
                 'id_paket'       => $request->id_paket,
@@ -82,18 +75,7 @@ class KeranjangController extends Controller
             ]);
         }
 
-        if ($request->wantsJson() || $request->ajax()) {
-            $keranjang->load('details.layanan');
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Paket berhasil ditambahkan ke keranjang.',
-                'data' => [
-                    'nama_paket' => $layanan->nama_layanan,
-                    'cart_count' => $keranjang->details()->count(),
-                ],
-            ], 201);
-        }
-
+        // Jika request datang dari tombol "Pesan Sekarang", langsung ke checkout
         if ($request->has('direct_checkout')) {
             return redirect()->route('pesanan.checkout.form');
         }

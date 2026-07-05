@@ -1,18 +1,12 @@
-<section class="mb-10 px-0" data-aos="fade-up" data-aos-duration="800">
-    <div class="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-0.5">
-        <button onclick="filterGaleri('all')"
-                class="snap-start inline-flex items-center gap-1.5 px-[18px] py-2 rounded-full text-[13px] font-semibold tracking-[0.01em] border border-white/[0.08] bg-transparent text-white/45 whitespace-nowrap cursor-pointer transition-all duration-200 hover:text-white/85 hover:border-white/20 data-[active=true]:bg-[rgba(242,153,74,0.12)] data-[active=true]:border-[rgba(242,153,74,0.4)] data-[active=true]:text-[#f2994a]"
-                data-category="all">
-            <span class="w-[5px] h-[5px] rounded-full bg-current opacity-0 data-[active=true]:opacity-100 transition-opacity duration-200"></span>
+
+<section class="mb-12 px-2" data-aos="fade-up" data-aos-duration="1000">
+    <div class="flex flex-row overflow-x-auto whitespace-nowrap gap-3 pb-3 md:justify-center no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+        <button onclick="filterGaleri('all')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full text-black font-extrabold text-xs border transition-all duration-300 shadow-lg flex items-center gap-2 active:scale-95" style="background-color:var(--accent-color);border-color:var(--accent-color);box-shadow:0 0 15px color-mix(in srgb,var(--accent-color)10%,transparent)" data-category="all">
             {{ $galeriFilterAll }}
         </button>
-
         @if($galeriFilterCategories && count($galeriFilterCategories) > 0)
             @foreach($galeriFilterCategories as $cat)
-                <button onclick="filterGaleri('{{ $cat['slug'] }}')"
-                        class="snap-start inline-flex items-center gap-1.5 px-[18px] py-2 rounded-full text-[13px] font-semibold tracking-[0.01em] border border-white/[0.08] bg-transparent text-white/45 whitespace-nowrap cursor-pointer transition-all duration-200 hover:text-white/85 hover:border-white/20 data-[active=true]:bg-[rgba(242,153,74,0.12)] data-[active=true]:border-[rgba(242,153,74,0.4)] data-[active=true]:text-[#f2994a]"
-                        data-category="{{ $cat['slug'] }}">
-                    <span class="w-[5px] h-[5px] rounded-full bg-current opacity-0 data-[active=true]:opacity-100 transition-opacity duration-200"></span>
+                <button onclick="filterGaleri('{{ $cat['slug'] }}')" class="filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:border-[#f2994a]/30 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95" data-category="{{ $cat['slug'] }}">
                     {{ $cat['label'] }}
                 </button>
             @endforeach

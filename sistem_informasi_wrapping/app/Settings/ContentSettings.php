@@ -6,7 +6,6 @@ use Spatie\LaravelSettings\Settings;
 
 class ContentSettings extends Settings
 {
-    // Navigasi
     public ?string $nav_beranda = null;
     public ?string $nav_layanan = null;
     public ?string $nav_galeri = null;
@@ -27,7 +26,6 @@ class ContentSettings extends Settings
     public ?string $nav_pembayaran = null;
     public ?string $nav_pemesanan = null;
 
-    // Footer
     public ?string $footer_tentang = null;
     public ?string $footer_layanan = null;
     public ?string $footer_kebijakan_privasi = null;
@@ -37,14 +35,6 @@ class ContentSettings extends Settings
     public ?string $footer_copyright = null;
     public ?string $footer_instagram = null;
     public ?string $footer_facebook = null;
-
-    // CTA
-    public ?string $cta_pesan_sekarang = null;
-    public ?string $cta_selengkapnya = null;
-    public ?string $cta_hubungi_wa = null;
-    public ?string $cta_pelajari = null;
-    public ?string $cta_lihat_semua = null;
-    public ?string $cta_cek_syarat = null;
 
     public ?string $sidebar_pesan_baru = null;
     public ?string $sidebar_galeri_portofolio = null;
@@ -62,13 +52,18 @@ class ContentSettings extends Settings
     public ?string $status_lunas = null;
     public ?string $status_verifikasi_pembayaran = null;
 
+    public ?string $cta_pesan_sekarang = null;
     public ?string $cta_pesan = null;
     public ?string $cta_pesan_lagi = null;
     public ?string $cta_bayar_sekarang = null;
     public ?string $cta_tambah_keranjang = null;
     public ?string $cta_konfirmasi_pembayaran = null;
     public ?string $cta_konfirmasi_pemesanan = null;
+    public ?string $cta_selengkapnya = null;
+    public ?string $cta_hubungi_wa = null;
     public ?string $cta_hubungi_sekarang = null;
+    public ?string $cta_pelajari = null;
+    public ?string $cta_lihat_semua = null;
     public ?string $cta_kembali = null;
     public ?string $cta_simpan = null;
     public ?string $cta_hapus = null;
@@ -84,6 +79,7 @@ class ContentSettings extends Settings
     public ?string $cta_pilih_layanan = null;
     public ?string $cta_lanjutkan_review = null;
     public ?string $cta_salin_rekening = null;
+    public ?string $cta_cek_syarat = null;
 
     public ?string $empty_keranjang_title = null;
     public ?string $empty_keranjang_desc = null;
@@ -126,6 +122,7 @@ class ContentSettings extends Settings
     public ?string $form_tanggal_mulai = null;
     public ?string $form_whatsapp = null;
     public ?string $form_studio_hq = null;
+    public ?string $form_home_service = null;
     public ?string $form_lupa_sandi = null;
     public ?string $form_ingat_saya = null;
     public ?string $form_setuju_syarat = null;

@@ -16,7 +16,7 @@ class Pembayaran extends Model
     ];
 
     protected $casts = [
-        'status_pembayaran' => \App\Enums\PaymentStatus::class,
+        'status' => \App\Enums\PaymentStatus::class,
         'metode_pembayaran' => \App\Enums\PaymentMethod::class,
         'tgl_bayar' => 'datetime',
         'created_at' => 'datetime',

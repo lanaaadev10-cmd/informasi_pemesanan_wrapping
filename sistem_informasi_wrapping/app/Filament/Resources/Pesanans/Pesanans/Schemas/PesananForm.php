@@ -102,14 +102,13 @@ class PesananForm
                                             ->required()
                                             ->helperText('Tahun pembuatan kendaraan.'),
                                         Select::make('lokasi_pengerjaan')
-                                            ->label('Workshop / Lokasi Pengerjaan *')
+                                            ->label('Lokasi Pengerjaan *')
                                             ->options([
-                                                'toko' => 'Dantie Wrapping (Studio)',
+                                                'toko' => 'Di Bengkel (Wapping Premium)',
                                             ])
                                             ->required()
                                             ->native(false)
-                                            ->disabled()
-                                            ->default('toko'),
+                                            ->helperText('Lokasi pengerjaan pelanggan.'),
                                         DateTimePicker::make('jadwal_pengerjaan')
                                             ->label('Tanggal Mulai Sesi *')
                                             ->displayFormat('d M Y, H:i')
@@ -127,7 +126,7 @@ class PesananForm
                                             ->placeholder('Masukkan alamat lengkap...')
                                             ->required()
                                             ->columnSpan(2)
-                                            ->helperText('Alamat lengkap pelanggan.'),
+                                            ->helperText('Alamat penjemputan/pengerjaan jika home service.'),
                                     ]),
                             ]),
 

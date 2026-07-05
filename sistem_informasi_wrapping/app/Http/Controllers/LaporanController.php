@@ -12,15 +12,10 @@ class LaporanController extends Controller
     public function index(Request $request)
     {
         $type = $request->get('type', 'hari');
-        $source = $request->get('source', 'semua');
         $now = Carbon::now();
 
-        $query = Pesanan::with(['details.layanan'])
+        $query = Pesanan::with(['user', 'details.layanan'])
             ->whereIn('status', ['dibayar', 'selesai']);
-
-        if ($source !== 'semua') {
-            $query->where('order_source', $source);
-        }
 
         if ($type === 'hari') {
             $query->whereDate('created_at', Carbon::today());
@@ -38,6 +33,6 @@ class LaporanController extends Controller
         $totalPendapatan = $pesanans->sum('total_harga');
         $company = app(CompanySettings::class);
 
-        return view('dashboard.admin.laporan.print', compact('pesanans', 'title', 'totalPendapatan', 'type', 'source', 'company'));
+        return view('admin.laporan.print', compact('pesanans', 'title', 'totalPendapatan', 'type', 'company'));
     }
 }

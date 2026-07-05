@@ -1,18 +1,14 @@
-@extends(auth()->check() ? 'layouts.dashboard_customer' : 'layouts.tampilan_utama')
+@extends('layouts.tampilan_utama')
 
-@section('title', ($profil?->layanan_hero_title ?? 'Layanan') . ' - ' . ($profil?->nama_perusahaan ?? 'Dantie Wrapping'))
+@section('title', 'Layanan - Wapping Premium Wrap')
 
 @section('content')
 
     @php
-        $accentColor = $profil?->accent_color ?? '#f2994a';
-        // Badge labels untuk setiap card (dari settings, fallback ke hardcoded)
-        $badgeLabels = [
-            $profil?->layanan_badge_1 ?? 'Matte Series',
-            $profil?->layanan_badge_2 ?? 'Best Seller',
-            $profil?->layanan_badge_3 ?? 'Satin Series',
-            $profil?->layanan_badge_4 ?? 'Paint Protection',
-        ];
+        $accentColor = '#f2994a';
+
+        // Badge labels untuk setiap card
+        $badgeLabels = ['Matte Series', 'Best Seller', 'Satin Series', 'Paint Protection'];
         $badgeColors = [
             'rgba(242,153,74,0.12)',         // subtle orange
             'rgba(242,153,74,0.22)',         // highlighted orange
@@ -26,29 +22,36 @@
             'var(--accent)',
         ];
 
-        // Gunakan data dari Manajemen Layanan
-        $services = [];
-        if (isset($layanans) && $layanans->count() > 0) {
-            foreach ($layanans as $lay) {
-                $fiturArr = [];
-                if (is_array($lay->fitur)) {
-                    foreach ($lay->fitur as $f) {
-                        $fiturArr[] = is_array($f) ? ($f['nama_fitur'] ?? '') : $f;
-                    }
-                }
-                if ($lay->estimasi_waktu) {
-                    $fiturArr[] = 'Estimasi ' . $lay->estimasi_waktu;
-                }
-                $services[] = [
-                    'id'        => $lay->id_layanan,
-                    'nama'      => $lay->nama_layanan,
-                    'harga'     => 'Rp ' . number_format($lay->harga, 0, ',', '.'),
-                    'deskripsi' => $lay->deskripsi ?? '',
-                    'fitur'     => $fiturArr,
-                    'gambar'    => $lay->foto_contoh,
-                ];
-            }
-        }
+        $services = [
+            [
+                'nama'      => 'Stealth Matte',
+                'harga'     => 'Rp 12.500.000',
+                'deskripsi' => 'Finishing non-reflektif yang memberikan kesan bersih, modern, dan elegan pada kendaraan Anda. Menggunakan material premium dengan ketahanan maksimal.',
+                'fitur'     => ['Premium Avery Dennison Material', 'Garansi 3 Tahun', 'Estimasi 3-4 Hari Kerja'],
+                'gambar'    => null,
+            ],
+            [
+                'nama'      => 'Mirror Glossy',
+                'harga'     => 'Rp 10.500.000',
+                'deskripsi' => 'Warna yang hidup dan permukaan cermin sempurna. Layanan cat wrapping paling populer dengan hasil mengkilap maksimal.',
+                'fitur'     => ['3M Series 2080 Premium Vinyl', 'Garansi 3 Tahun', 'Estimasi 3 Hari Kerja'],
+                'gambar'    => null,
+            ],
+            [
+                'nama'      => 'Satin Silk',
+                'harga'     => 'Rp 11.800.000',
+                'deskripsi' => 'Perpaduan sempurna antara matte dan glossy. Memberikan tekstur lembut dan elegan pada setiap lekukan bodi.',
+                'fitur'     => ['Satin Finish Luxury Grade', 'Garansi 4 Tahun', 'Estimasi 4 Hari Kerja'],
+                'gambar'    => null,
+            ],
+            [
+                'nama'      => 'Paint Protection',
+                'harga'     => 'Rp 25.000.000',
+                'deskripsi' => 'Proteksi tertinggi dengan Paint Protection Film (PPF) transparan yang melindungi cat orisinil kendaraan Anda.',
+                'fitur'     => ['Self-healing Technology TPU', 'Garansi 5 Tahun', 'Estimasi 5-7 Hari Kerja'],
+                'gambar'    => null,
+            ],
+        ];
 
         // Fallback car images
         $fallbackImages = [
@@ -58,6 +61,8 @@
             'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop',
         ];
     @endphp
+
+    <style>:root{--accent:{{$accentColor}}}</style>
 
     <div class="bg-[#0a0a0a] min-h-screen relative">
 
@@ -70,12 +75,11 @@
                  HERO HEADER
             ══════════════════════════════════════ --}}
             @include('landing.layanan._hero')
-@include('landing.layanan._grid')
 
             {{-- ══════════════════════════════════════
                  SERVICE CARDS GRID
             ══════════════════════════════════════ --}}
-
+            @include('landing.layanan._grid')
 
             {{-- ══════════════════════════════════════
                  MENGAPA MEMILIH KAMI + GARANSI RESMI

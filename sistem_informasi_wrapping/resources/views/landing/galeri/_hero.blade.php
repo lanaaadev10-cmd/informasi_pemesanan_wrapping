@@ -16,9 +16,9 @@
     <div class="relative z-10 max-w-3xl mx-auto text-center">
         {{-- Premium Tag --}}
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6"
-             style="background-color: color-mix(in srgb, var(--accent) 10%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);">
-            <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background-color: var(--accent);"></span>
-            <span class="text-xs font-bold tracking-wider uppercase font-mono" style="color: var(--accent);">{{ $galeriTitle }}</span>
+             style="background-color: color-mix(in srgb, var(--accent-color) 10%, transparent); border: 1px solid color-mix(in srgb, var(--accent-color) 20%, transparent);">
+            <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background-color: var(--accent-color);"></span>
+            <span class="text-xs font-bold tracking-wider uppercase font-mono" style="color: var(--accent-color);">{{ $galeriTitle }}</span>
         </div>
 
         <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">

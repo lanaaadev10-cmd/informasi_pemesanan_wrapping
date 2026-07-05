@@ -2,19 +2,19 @@
     <div class="lg:col-span-3 space-y-6">
         <div>
             <h2 class="text-2xl sm:text-3xl font-black text-white mb-3 italic">
-                {{ $profil?->layanan_section_mengapa_title ?? 'Mengapa Memilih Kami?' }}
+                Mengapa Memilih Kami?
             </h2>
             <p class="text-gray-400 text-sm leading-relaxed max-w-lg">
-                {{ $profil?->layanan_section_mengapa_desc ?? 'Kami menggunakan keahlian teknis dengan material terbaik dunia untuk memastikan aset Anda terlindung sempurna. Setiap pengerjaan dilakukan di ruangan steril dengan kontrol suhu untuk hasil yang maksimal tanpa gelembung udara.' }}
+                Kami menggunakan keahlian teknis dengan material terbaik dunia untuk memastikan aset Anda terlindung sempurna. Setiap pengerjaan dilakukan di ruangan steril dengan kontrol suhu untuk hasil yang maksimal tanpa gelembung udara.
             </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2 text-xs sm:text-sm font-semibold text-gray-300">
             @php
                 $benefitTags = [
-                    ['icon' => '🔧', 'text' => $profil->layanan_benefit_1_label ?? 'Instalatur Bersertifikat'],
-                    ['icon' => '🏠', 'text' => $profil->layanan_benefit_2_label ?? 'Ruangan Steril'],
-                    ['icon' => '✅', 'text' => $profil->layanan_benefit_3_label ?? 'Quality Control 3 Lapis'],
+                    ['icon' => '🔧', 'text' => 'Instalatur Bersertifikat'],
+                    ['icon' => '🏠', 'text' => 'Ruangan Steril'],
+                    ['icon' => '✅', 'text' => 'Quality Control 3 Lapis'],
                 ];
             @endphp
             @foreach($benefitTags as $tag)
@@ -37,10 +37,10 @@
 
             <div>
                 <h3 class="text-xl font-black text-white mb-2">
-                    {{ $profil?->layanan_garansi_title ?? 'Garansi Resmi' }}
+                    Garansi Resmi
                 </h3>
                 <p class="text-gray-400 text-sm leading-relaxed max-w-sm">
-                    {{ $profil?->layanan_garansi_desc ?? 'Hingga 5 tahun perlindungan terhadap gelembung, pengelupasan, dan kerusakan perekatan.' }}
+                    Hingga 5 tahun perlindungan terhadap gelembung, pengelupasan, dan kerusakan perekatan.
                 </p>
             </div>
         </div>

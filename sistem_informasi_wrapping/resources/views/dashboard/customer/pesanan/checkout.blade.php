@@ -3,45 +3,66 @@
 @section('title', $profil->cta_konfirmasi_pemesanan ?? 'Konfirmasi Pemesanan')
 
 @php
+    $accentColor = $profil->accent_color ?? '#f2994a';
     $step1Label = $profil->checkout_step_1_label ?? 'Pilih Layanan';
     $step2Label = $profil->checkout_step_2_label ?? 'Data Kendaraan';
-    $step3Label = $profil->checkout_step_3_label ?? 'Tinjauan';
+    $step3Label = $profil->checkout_step_3_label ?? 'Review';
     $step4Label = $profil->checkout_step_4_label ?? 'Pembayaran';
 @endphp
+
+<style>
+    :root {
+        --accent-color: {{ $accentColor }};
+    }
+    .accent-bg { background-color: var(--accent-color); }
+    .accent-color { color: var(--accent-color); }
+    .accent-shadow { box-shadow: 0 0 15px color-mix(in srgb, var(--accent-color) 40%, transparent); }
+    .accent-border { border-color: var(--accent-color); }
+</style>
 
 @section('content')
 <div class="max-w-6xl mx-auto py-8 space-y-12 relative overflow-hidden text-white">
 
+    <!-- Top Header (Wapping Premium style from Figma) -->
     <div class="flex items-center justify-between z-10 relative">
-        <h1 class="text-xl sm:text-2xl font-bold tracking-wide font-serif" style="color:var(--accent)">{{ $profil->nama_perusahaan ?? 'Dantie Wrapping' }}</h1>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-wide font-serif accent-color">{{ $profil->nama_perusahaan ?? 'Wapping Premium' }}</h1>
     </div>
 
+    <!-- Stepper (4 Steps Figma Match) -->
     <div class="flex items-center justify-center w-full max-w-3xl mx-auto px-4 z-10 relative">
+        <!-- Step 1: Pilih Layanan (Completed) -->
         <div class="flex flex-col items-center gap-3 relative z-10 w-28">
-            <div class="w-10 h-10 rounded-full text-black font-bold flex items-center justify-center text-sm transition-all" style="background-color:var(--accent);box-shadow:0 0 15px color-mix(in srgb,var(--accent) 40%,transparent)">
+            <div class="w-10 h-10 rounded-full accent-bg text-black font-bold flex items-center justify-center text-sm accent-shadow transition-all">
                 <i class="ph-bold ph-check"></i>
             </div>
-            <span class="text-[10px] font-bold transition-all text-center" style="color:var(--accent)">{{ $step1Label }}</span>
+            <span class="text-[10px] font-bold accent-color transition-all text-center">{{ $step1Label }}</span>
         </div>
         <div class="flex-grow h-px bg-[#f2994a] mx-2 shadow-[0_0_10px_rgba(242,153,74,0.5)]"></div>
 
+        <!-- Step 2: Data Kendaraan (Dynamic) -->
         <div class="flex flex-col items-center gap-3 relative z-10 w-28">
             <div id="step-circle-2" class="w-10 h-10 rounded-full bg-[#f2994a] text-black font-bold flex items-center justify-center text-sm shadow-[0_0_15px_rgba(242,153,74,0.4)] transition-all scale-110">
                 <i class="ph-bold ph-pencil-simple text-lg"></i>
             </div>
-            <span id="step-label-2" class="text-[10px] font-bold text-[#f2994a] transition-all text-center">{{ $step2Label }}</span>
+            <span id="step-label-2" class="text-[10px] font-bold text-[#f2994a] transition-all text-center">Data Kendaraan</span>
         </div>
         <div id="step-line-2" class="flex-grow h-px bg-white/10 mx-2 transition-all duration-500"></div>
 
+        <!-- Step 3: Review -->
         <div class="flex flex-col items-center gap-3 relative z-10 w-28">
-            <div id="step-circle-3" class="w-10 h-10 rounded-full bg-[#202020] text-gray-400 font-bold flex items-center justify-center text-sm border border-white/10 transition-all">3</div>
-            <span id="step-label-3" class="text-[10px] font-bold text-gray-500 transition-all text-center">{{ $step3Label }}</span>
+            <div id="step-circle-3" class="w-10 h-10 rounded-full bg-[#202020] text-gray-400 font-bold flex items-center justify-center text-sm border border-white/10 transition-all">
+                3
+            </div>
+            <span id="step-label-3" class="text-[10px] font-bold text-gray-500 transition-all text-center">Review</span>
         </div>
         <div class="flex-grow h-px bg-white/10 mx-2"></div>
 
+        <!-- Step 4: Pembayaran -->
         <div class="flex flex-col items-center gap-3 relative z-10 w-28">
-            <div class="w-10 h-10 rounded-full bg-[#202020] text-gray-400 font-bold flex items-center justify-center text-sm border border-white/10">4</div>
-            <span class="text-[10px] font-bold text-gray-500 transition-all text-center">{{ $step4Label }}</span>
+            <div class="w-10 h-10 rounded-full bg-[#202020] text-gray-400 font-bold flex items-center justify-center text-sm border border-white/10">
+                4
+            </div>
+            <span class="text-[10px] font-bold text-gray-500 transition-all text-center">Pembayaran</span>
         </div>
     </div>
 
@@ -59,7 +80,7 @@
         <input type="hidden" name="keterangan_tambahan" id="hidden_keterangan">
 
         <!-- PANEL 2: DATA KENDARAAN (Form Pengisian) -->
-        <div id="step-panel-2" class="transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] max-w-4xl">
+        <div id="step-panel-2" class="animate-fade-in max-w-4xl">
             <div class="bg-[#121212] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-lg relative overflow-hidden">
                 <!-- Ambient Glow inside panel -->
                 <div class="absolute top-0 right-0 w-64 h-64 bg-[#f2994a]/5 blur-[80px] rounded-full pointer-events-none"></div>
@@ -86,7 +107,7 @@
                             <div class="space-y-2">
                                 <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_tahun_produksi ?? 'Tahun Produksi *' }}</label>
                                 <input type="number" id="input_tahun" name="tahun_produksi" placeholder="2023" required
-                                       class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
+                                       class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner">
                             </div>
                         </div>
                         <div class="space-y-2">
@@ -100,19 +121,15 @@
                     <div class="space-y-6">
                         <div class="space-y-2">
                             <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_lokasi_pengerjaan ?? 'Lokasi Pengerjaan (Workshop) *' }}</label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <label class="cursor-pointer group h-full">
-                                    <input type="radio" name="lokasi_pengerjaan" value="toko" class="peer hidden" checked>
-                                    <div class="h-full border border-white/10 peer-checked:border-[#f2994a] bg-[#1c1c1c] peer-checked:bg-[#f2994a]/5 rounded-xl px-4 py-3 flex items-center justify-between transition-all hover:bg-white/5">
-                                        <span class="text-xs font-medium text-gray-400 peer-checked:text-white">{{ $profil->form_studio_hq ?? 'Studio HQ' }}</span>
-                                        <i class="ph-bold ph-check-circle text-[#f2994a] opacity-0 peer-checked:opacity-100"></i>
-                                    </div>
-                                </label>
+                            <input type="hidden" name="lokasi_pengerjaan" value="toko">
+                            <div class="flex items-center gap-3 p-4 border border-[#f2994a]/30 bg-[#f2994a]/5 rounded-xl">
+                                <i class="ph-bold ph-buildings text-[#f2994a] text-lg"></i>
+                                <span class="text-sm font-medium text-white">{{ $profil->form_studio_hq ?? 'Di Bengkel' }}</span>
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_alamat_pengerjaan ?? 'Alamat Pengerjaan / Penjemputan *' }}</label>
-                            <textarea id="input_alamat" name="alamat_pengiriman" rows="2" placeholder="{{ $profil->nama_perusahaan ?? 'Dantie Wrapping' }} - Jakarta Selatan (Atau alamat lengkap Anda)..." required
+                            <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_alamat_pengerjaan ?? 'Alamat Anda *' }}</label>
+                            <textarea id="input_alamat" name="alamat_pengiriman" rows="2" placeholder="Masukkan alamat lengkap Anda..." required
                                       class="w-full bg-[#1c1c1c] border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-[#f2994a]/50 transition-all shadow-inner"></textarea>
                         </div>
                         <div class="space-y-2">
@@ -134,14 +151,14 @@
 
                 <div class="flex justify-end pt-6 mt-4 border-t border-white/5 relative z-10">
                     <button type="button" onclick="goToStep(3)" class="px-8 py-3.5 bg-[#f2994a] hover:bg-[#e28a44] rounded-xl text-black font-medium text-sm transition-all hover:shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-[1.02] active:scale-95 flex items-center gap-2">
-                        {{ $profil->cta_lanjutkan_review ?? 'Lanjutkan ke Tinjauan' }} <i class="ph-bold ph-arrow-right text-lg"></i>
+                        {{ $profil->cta_lanjutkan_review ?? 'Lanjutkan ke Review' }} <i class="ph-bold ph-arrow-right text-lg"></i>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- PANEL 3: REVIEW (Figma Design Layout) -->
-        <div id="step-panel-3" class="hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
+        <div id="step-panel-3" class="hidden animate-fade-in">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
                 <!-- Kiri: Rincian Kartu (Col 8) -->
@@ -175,7 +192,7 @@
                                         Kuantitas: {{ $item->jumlah }} Unit
                                     </p>
                                     <div class="flex gap-2 mt-1">
-                                        <span class="text-[8px] bg-white/5 text-gray-400 px-2 py-1 rounded border border-white/10 uppercase tracking-widest font-bold">Garansi {{ $item->layanan->garansi ?? ($profil->layanan_garansi_text ?? '1 Tahun') }}</span>
+                                        <span class="text-[8px] bg-white/5 text-gray-400 px-2 py-1 rounded border border-white/10 uppercase tracking-widest font-bold">Garansi 2 Tahun</span>
                                         <span class="text-[8px] bg-white/5 text-gray-400 px-2 py-1 rounded border border-white/10 uppercase tracking-widest font-bold">UV Protection</span>
                                     </div>
                                 </div>
@@ -237,15 +254,15 @@
                             <div class="flex items-start gap-3">
                                 <i class="ph ph-clock text-gray-400 text-xl mt-0.5"></i>
                                 <div>
-                                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">{{ $profil->checkout_estimasi_durasi_label ?? 'Estimasi Durasi' }}</span>
-                                    <span class="text-gray-200 font-medium text-xs leading-relaxed block">{{ $keranjang->details->first()->layanan->estimasi_waktu ?? '4 - 5 Hari Kerja' }}</span>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Estimasi Durasi</span>
+                                    <span class="text-gray-200 font-medium text-xs leading-relaxed block">4 - 5 Hari Kerja</span>
                                 </div>
                             </div>
                             <div class="flex items-start gap-3">
                                 <i class="ph ph-map-pin text-gray-400 text-xl mt-0.5"></i>
                                 <div>
-                                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">{{ $profil->checkout_lokasi_pengerjaan_label ?? 'Workshop' }}</span>
-                                    <span id="review-lokasi" class="text-gray-200 font-medium text-xs leading-relaxed block">{{ $profil->nama_perusahaan ?? 'Dantie Wrapping' }} - HQ</span>
+                                    <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block mb-1.5">Workshop</span>
+                                    <span id="review-lokasi" class="text-gray-200 font-medium text-xs leading-relaxed block">Wapping Premium - HQ</span>
                                 </div>
                             </div>
                         </div>
@@ -265,19 +282,15 @@
                                     <span class="font-medium text-white shrink-0">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
                                 </div>
                             @endforeach
-                            @php
-                                $biayaLayanan = $keranjang->details->sum(fn($d) => $d->layanan->biaya_layanan ?? 150000);
-                                $biayaLabel = $keranjang->details->first()->layanan->biaya_layanan_label ?? 'Biaya Layanan & Pemasangan';
-                            @endphp
                             <div class="flex justify-between items-center text-xs text-gray-400 pt-2">
-                                <span>{{ $biayaLabel }}</span>
-                                <span class="font-medium text-white shrink-0">Rp {{ number_format($biayaLayanan, 0, ',', '.') }}</span>
+                                <span>Biaya Layanan & Pemasangan</span>
+                                <span class="font-medium text-white shrink-0">Rp 150.000</span>
                             </div>
                         </div>
 
                         @php
                             $subtotal = $keranjang->details->sum('subtotal');
-                            $grandTotal = $subtotal + $biayaLayanan;
+                            $grandTotal = $subtotal + 150000;
                         @endphp
 
                         <div class="bg-[#1a1a1a] border border-white/5 rounded-xl p-5 flex justify-between items-center shadow-inner mt-4">
@@ -301,64 +314,24 @@
     </form>
 </div>
 
-
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    /* Sembunyikan panah di input number */
+    input[type="number"]::-webkit-inner-spin-button, 
+    input[type="number"]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; margin: 0; 
+    }
+</style>
 
 <script>
-    // ====== DATA PRESERVATION (localStorage) ======
-    const STORAGE_KEY = 'checkout_form_data';
-    
-    function saveFormData() {
-        const data = {
-            model_kendaraan: document.getElementById('input_merk')?.value || '',
-            warna_kendaraan: document.getElementById('input_warna')?.value || '',
-            nomor_polisi: document.getElementById('input_nopol')?.value || '',
-            tahun_produksi: document.getElementById('input_tahun')?.value || '',
-            nama_pemesan: document.getElementById('input_nama')?.value || '',
-            lokasi_pengerjaan: document.querySelector('input[name="lokasi_pengerjaan"]:checked')?.value || 'toko',
-            alamat_pengiriman: document.getElementById('input_alamat')?.value || '',
-            jadwal_pengerjaan: document.getElementById('input_jadwal')?.value || '',
-            no_hp: document.querySelector('input[name="no_hp"]')?.value || '',
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-    
-    function restoreFormData() {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
-        try {
-            const data = JSON.parse(raw);
-            const el = id => document.getElementById(id);
-            if (el('input_merk')) el('input_merk').value = data.model_kendaraan || '';
-            if (el('input_warna')) el('input_warna').value = data.warna_kendaraan || '';
-            if (el('input_nopol')) el('input_nopol').value = data.nomor_polisi || '';
-            if (el('input_tahun')) el('input_tahun').value = data.tahun_produksi || '';
-            if (el('input_nama')) el('input_nama').value = data.nama_pemesan || '';
-            const lokasiRadio = document.querySelector(`input[name="lokasi_pengerjaan"][value="${data.lokasi_pengerjaan}"]`);
-            if (lokasiRadio) lokasiRadio.checked = true;
-            if (el('input_alamat')) el('input_alamat').value = data.alamat_pengiriman || '';
-            if (el('input_jadwal')) el('input_jadwal').value = data.jadwal_pengerjaan || '';
-            const hp = document.querySelector('input[name="no_hp"]');
-            if (hp) hp.value = data.no_hp || '';
-        } catch(e) {}
-    }
-    
-    function clearFormData() {
-        localStorage.removeItem(STORAGE_KEY);
-    }
-    
-    // Auto-save on any input change
-    document.addEventListener('DOMContentLoaded', function() {
-        restoreFormData();
-        const form = document.getElementById('checkout-form');
-        if (form) {
-            form.addEventListener('input', saveFormData);
-            form.addEventListener('change', saveFormData);
-        }
-    });
-
     function updateLokasiLabel() {
-        const almt = document.getElementById('input_alamat');
-        almt.placeholder = "Contoh: Menggunakan Studio {{ addslashes($profil->nama_perusahaan ?? 'Dantie Wrapping') }} (Otomatis terisi jika kosong)";
+        // Lokasi pengerjaan sudah tetap
     }
 
     function formatTanggal(isoString) {
@@ -396,12 +369,22 @@
             
             document.getElementById('review-jadwal').innerText = formatTanggal(document.getElementById('input_jadwal').value);
             
-            document.getElementById('review-lokasi').innerHTML = '{{ addslashes($profil->nama_perusahaan ?? 'Dantie Wrapping') }} HQ<br><span class="text-[9px] text-gray-500 leading-tight">{{ addslashes($profil->checkout_lokasi_pengerjaan_label ?? 'Studio Jakarta Selatan') }}</span>';
+            document.getElementById('review-lokasi').innerHTML = 'Dantie Setiker<br><span class="text-[9px] text-gray-500 leading-tight">Jl. Abu Hasan No.7, Area Sawah, Kedaleman, Kec. Rogojampi, Kabupaten Banyuwangi</span>';
         }
 
-        document.querySelectorAll('[id^="step-panel-"]').forEach(p => p.classList.add('hidden'));
+        // Hide all panels
+        document.querySelectorAll('[id^="step-panel-"]').forEach(p => {
+            p.classList.add('hidden');
+            p.classList.remove('animate-fade-in');
+        });
+        
+        // Show target panel
         const target = document.getElementById('step-panel-' + step);
-        if(target) target.classList.remove('hidden');
+        if(target) {
+            target.classList.remove('hidden');
+            void target.offsetWidth; // trigger reflow
+            target.classList.add('animate-fade-in');
+        }
 
         // Update Nav Stepper visual styling
         const title = document.getElementById('page-title');
@@ -447,7 +430,6 @@
         let customData = `Nomor Polisi: ${nopol.toUpperCase()} | Tahun Produksi: ${tahun}`;
         
         document.getElementById('hidden_keterangan').value = customData;
-        clearFormData();
     }
 </script>
 @endsection

@@ -60,25 +60,6 @@ class LayananForm
                         ->helperText('Masukkan harga dalam rupiah. Hanya muncul jika tipe "Fixed Price" dipilih.'),
                 ]),
 
-            Section::make('Biaya Layanan')
-                ->description('Biaya tambahan per paket yang akan ditambahkan ke total pesanan customer.')
-                ->icon('heroicon-o-currency-dollar')
-                ->collapsible()
-                ->schema([
-                    Grid::make(2)->schema([
-                        Forms\Components\TextInput::make('biaya_layanan')
-                            ->label('Biaya Layanan (Rp)')
-                            ->numeric()
-                            ->prefix('Rp ')
-                            ->placeholder('150000')
-                            ->helperText('Biaya tambahan per paket. Contoh: 150000 untuk Rp 150.000.'),
-                        Forms\Components\TextInput::make('biaya_layanan_label')
-                            ->label('Label Biaya')
-                            ->placeholder('BIAYA LAYANAN')
-                            ->helperText('Label yang akan ditampilkan di ringkasan pesanan.'),
-                    ]),
-                ]),
-
             Section::make('Deskripsi & Visual')
                 ->description('Detail layanan dan foto contoh hasil pekerjaan.')
                 ->icon('heroicon-o-document-text')
@@ -99,13 +80,12 @@ class LayananForm
                         ->placeholder('Jelaskan detail layanan, manfaat, dan spesifikasi...')
                         ->helperText('Deskripsi detail yang akan ditampilkan di halaman detail layanan.'),
                     Forms\Components\FileUpload::make('foto_contoh')
-                        ->label('Foto Utama Layanan')
+                        ->label('Foto Layanan')
                         ->image()
                         ->disk('public')
                         ->directory('layanan/admin')
                         ->imagePreviewHeight(140)
                         ->helperText('Upload foto contoh hasil pekerjaan. Ukuran rekomendasi: 1200x800px.'),
-
                 ]),
 
             Section::make('Keunggulan & Fitur Paket')

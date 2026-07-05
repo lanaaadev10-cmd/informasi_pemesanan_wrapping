@@ -15,10 +15,6 @@ class PesananSettings extends Settings
     public ?string $pesanan_empty_state_desc = null;
     public ?string $pesanan_new_order_button_label = null;
 
-    public ?string $pesanan_nama_bank = null;
-    public ?string $pesanan_nomor_rekening = null;
-    public ?string $pesanan_atas_nama = null;
-
     public static function group(): string
     {
         return 'pesanan';

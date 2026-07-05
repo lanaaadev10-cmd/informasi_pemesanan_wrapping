@@ -19,11 +19,10 @@ class PesananResource extends Resource
 {
     protected static ?string $model = Pesanan::class;
 
-    protected static ?string $label = 'Kelola Pemesanan';
-    protected static ?string $pluralLabel = 'Kelola Pemesanan';
-    protected static ?string $navigationLabel = 'Kelola Pemesanan';
-    protected static string|null|\UnitEnum $navigationGroup = 'Kelola User Dashboard';
-    protected static ?int $navigationSort = 2;
+    protected static ?string $navigationLabel = 'Kelola Pesanan';
+    protected static ?string $pluralLabel = 'Pesanan';
+    protected static string|null|\UnitEnum $navigationGroup = 'Transaksi';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

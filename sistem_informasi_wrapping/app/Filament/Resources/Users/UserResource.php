@@ -17,10 +17,9 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $label = 'Manajemen Pengguna';
-    protected static ?string $pluralLabel = 'Manajemen Pengguna';
-    protected static ?string $navigationLabel = 'Manajemen Pengguna';
-    protected static string|null|\UnitEnum $navigationGroup = 'Pengaturan Sistem';
+    protected static ?string $navigationLabel = 'Manajemen User';
+    protected static ?string $pluralLabel = 'Manajemen User';
+    protected static string|null|\UnitEnum $navigationGroup = 'Pengaturan';
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema

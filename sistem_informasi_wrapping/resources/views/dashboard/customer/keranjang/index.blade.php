@@ -3,17 +3,24 @@
 @section('title', 'Keranjang Belanja')
 
 @php
+    $accentColor = $profil->accent_color ?? '#f2994a';
     $keranjangTitle = $profil->keranjang_title ?? 'Keranjang Belanja';
     $keranjangSubtitle = $profil->keranjang_subtitle ?? 'Tinjau pilihan layanan premium Anda sebelum melakukan pembayaran.';
 @endphp
 
-<style>@keyframes slide-in-up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}</style>
+<style>
+    :root {
+        --accent-color: {{ $accentColor }};
+    }
+    .accent-bg { background-color: var(--accent-color); }
+    .accent-color { color: var(--accent-color); }
+</style>
 
 @section('content')
 <div class="max-w-6xl mx-auto py-6 space-y-8 relative overflow-hidden">
 
     <!-- Ambient glowing backdrop orb -->
-    <div class="absolute top-10 left-1/3 -translate-x-1/2 w-[400px] h-[200px] rounded-full blur-[100px] pointer-events-none z-0" style="background-color: color-mix(in srgb, var(--accent) 5%, transparent);"></div>
+    <div class="absolute top-10 left-1/3 -translate-x-1/2 w-[400px] h-[200px] rounded-full blur-[100px] pointer-events-none z-0" style="background-color: color-mix(in srgb, var(--accent-color) 5%, transparent);"></div>
 
     <!-- Header Section -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 z-10 relative">
@@ -180,10 +187,12 @@
                 <div class="sticky top-24 space-y-6">
                     
                     @php
+                        // Premium custom calculations for order summary realistic look
                         $subtotalVal = $keranjang->details->sum('subtotal');
-                        $serviceCharge = $keranjang->details->sum(fn($d) => $d->layanan->biaya_layanan ?? 150000);
-                        $serviceLabel = $keranjang->details->first()->layanan->biaya_layanan_label ?? 'BIAYA LAYANAN';
-                        $grandTotal = $subtotalVal + $serviceCharge;
+                        $serviceCharge = 150000;
+                        // Dynamic discount based on subtotal (5% up to 1.5M if total is over 10M)
+                        $discount = $subtotalVal > 10000000 ? min(1500000, (int)($subtotalVal * 0.05)) : 0;
+                        $grandTotal = $subtotalVal + $serviceCharge - $discount;
                     @endphp
 
                     <!-- 1. ORDER SUMMARY CARD -->
@@ -205,9 +214,16 @@
                             </div>
                             
                             <div class="flex justify-between items-center text-gray-400">
-                                <span class="font-bold uppercase tracking-widest text-[9px] font-mono">{{ $serviceLabel }}</span>
+                                <span class="font-bold uppercase tracking-widest text-[9px] font-mono">BIAYA LAYANAN</span>
                                 <span class="font-extrabold text-white text-sm">
                                     Rp {{ number_format($serviceCharge, 0, ',', '.') }}
+                                </span>
+                            </div>
+
+                            <div class="flex justify-between items-center text-gray-400">
+                                <span class="font-bold uppercase tracking-widest text-[9px] font-mono">DISKON MEMBER</span>
+                                <span id="summary-discount" class="font-extrabold text-[#f2994a] text-sm">
+                                    - Rp {{ number_format($discount, 0, ',', '.') }}
                                 </span>
                             </div>
 
@@ -220,6 +236,20 @@
                                         Rp {{ number_format($grandTotal, 0, ',', '.') }}
                                     </span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Promotional Code Box -->
+                        <div class="space-y-1.5 mb-6">
+                            <label class="text-[8px] font-bold text-gray-500 uppercase tracking-widest block font-mono">KODE PROMO</label>
+                            <div class="flex gap-2">
+                                <input type="text" 
+                                       placeholder="Masukkan kode..." 
+                                       class="flex-grow bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#f2994a]/30 transition-all">
+                                <button type="button" 
+                                        class="bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold px-4 rounded-xl active:scale-95 transition-all text-gray-300">
+                                    Terapkan
+                                </button>
                             </div>
                         </div>
 
@@ -269,6 +299,7 @@
         const decBtn = document.getElementById(`btn-dec-${idDetail}`);
         const subtotalSpan = document.getElementById(`subtotal-${idDetail}`);
         const summarySubtotal = document.getElementById('summary-subtotal');
+        const summaryDiscount = document.getElementById('summary-discount');
         const summaryTotal = document.getElementById('summary-total');
 
         let currentQty = parseInt(qtySpan.textContent);
@@ -281,7 +312,7 @@
 
         try {
             // Update quantity via patch Ajax request
-            const response = await fetch(`/keranjang/update/${idDetail}`, {
+            const response = await fetch(`/api/keranjang/${idDetail}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -293,16 +324,24 @@
 
             const data = await response.json();
 
-            if (response.ok && data.success) {
-                qtySpan.textContent = data.jumlah;
-                subtotalSpan.textContent = data.subtotal;
+            if (response.ok && data.status === 'ok') {
+                const subtotal = data.data.subtotal;
+                const totalSum = data.data.total; // Sum of details in db
 
-                const totalNum = parseInt(data.total_payment.replace(/[^\d]/g, ''));
-                const serviceFee = {{ $serviceCharge }};
-                const grandTotal = totalNum + serviceFee;
+                // Realistic dynamic totals computation
+                const serviceFee = 150000;
+                const discount = totalSum > 10000000 ? Math.min(1500000, Math.floor(totalSum * 0.05)) : 0;
+                const grandTotal = totalSum + serviceFee - discount;
 
+                // Bind updated state back to DOM displays
+                qtySpan.textContent = data.data.jumlah;
+                subtotalSpan.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(subtotal);
+                
                 if (summarySubtotal) {
-                    summarySubtotal.textContent = data.total_payment;
+                    summarySubtotal.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalSum);
+                }
+                if (summaryDiscount) {
+                    summaryDiscount.textContent = '- Rp ' + new Intl.NumberFormat('id-ID').format(discount);
                 }
                 if (summaryTotal) {
                     summaryTotal.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(grandTotal);
@@ -334,7 +373,7 @@
 
         const toast = document.createElement('div');
         toast.setAttribute('data-toast', '');
-        toast.className = `fixed top-4 right-4 p-4 rounded-2xl border ${colors[type]} max-w-sm z-50 shadow-lg animate-[slide-in-up_0.3s_cubic-bezier(0.16,1,0.3,1)_forwards] backdrop-blur-md`;
+        toast.className = `fixed bottom-6 right-6 p-4 rounded-2xl border ${colors[type]} max-w-sm z-50 shadow-lg animate-slide-in-up backdrop-blur-md`;
         toast.innerHTML = `
             <div class="flex items-center justify-between gap-4">
                 <p class="text-xs font-bold tracking-wide">${message}</p>
@@ -346,6 +385,17 @@
         setTimeout(() => toast.remove(), 4000);
     }
 
-
+    // Load styles dynamically
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slide-in-up {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-in-up {
+            animation: slide-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    `;
+    document.head.appendChild(style);
 </script>
 @endsection

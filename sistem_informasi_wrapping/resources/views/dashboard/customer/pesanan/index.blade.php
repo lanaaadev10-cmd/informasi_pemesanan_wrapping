@@ -1,13 +1,17 @@
 @extends('layouts.dashboard_customer')
 
 @php
+    $accentColor = $profil->accent_color ?? '#f2994a';
     $isPembayaranTab = request('status') === 'menunggu_pembayaran';
     $pageTitle = $isPembayaranTab ? 'Tagihan & Pembayaran' : ($profil->pesanan_page_title_all ?? 'Riwayat Pesanan');
     $pageDesc = $isPembayaranTab ? 'Pantau pesanan yang menunggu konfirmasi admin, pembayaran, atau verifikasi bukti transfer.' : ($profil->pesanan_page_desc_all ?? 'Kelola dan pantau riwayat pesanan layanan pembungkusan premium Anda yang telah terverifikasi.');
 @endphp
 
 <style>
-    .accent-bg { background-color: var(--accent); }
+    :root {
+        --accent-color: {{ $accentColor }};
+    }
+    .accent-bg { background-color: var(--accent-color); }
 </style>
 
 @section('title', $pageTitle)
@@ -125,17 +129,10 @@
                                     @endif
                                 </p>
                             </div>
-                    <div class="text-left sm:text-right">
-                        <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">{{ $profil->label_total_tagihan ?? 'Total Tagihan' }}</span>
-                        <span class="text-[#f2994a] font-bold text-xl">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
-                        <div class="mt-2">
-                            @if($pesanan->order_source === 'offline')
-                                <span class="px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[9px] font-bold uppercase tracking-wider rounded-full">Offline</span>
-                            @else
-                                <span class="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-[9px] font-bold uppercase tracking-wider rounded-full">Online</span>
-                            @endif
-                        </div>
-                    </div>
+                            <div class="text-left sm:text-right">
+                                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">{{ $profil->label_total_tagihan ?? 'Total Tagihan' }}</span>
+                                <span class="text-[#f2994a] font-bold text-xl">Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}</span>
+                            </div>
                         </div>
 
                         <!-- Bottom Actions -->

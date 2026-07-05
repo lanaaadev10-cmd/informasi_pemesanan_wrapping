@@ -7,10 +7,10 @@ use App\Filament\Resources\Company\Pages\EditCompany;
 
 class CompanyResource extends Resource
 {
-    protected static ?string $label = 'Setting Maps & Logo';
-    protected static ?string $pluralLabel = 'Setting Maps & Logo';
-    protected static ?string $navigationLabel = 'Setting Maps & Logo';
-    protected static string|null|\UnitEnum $navigationGroup = 'Pengaturan Sistem';
+    protected static ?string $label = 'Profil Perusahaan';
+    protected static ?string $pluralLabel = 'Profil Perusahaan';
+    protected static ?string $navigationLabel = 'Profil Perusahaan';
+    protected static string|null|\UnitEnum $navigationGroup = 'Pengaturan';
     protected static ?int $navigationSort = 2;
 
     public static function getPages(): array

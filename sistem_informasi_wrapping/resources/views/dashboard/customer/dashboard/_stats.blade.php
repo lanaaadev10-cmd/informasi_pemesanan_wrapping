@@ -40,7 +40,7 @@
     <!-- Benefits Footer -->
     <div class="pt-6 border-t border-white/5 mt-6">
         <p class="text-[9px] text-gray-400 leading-relaxed font-light">
-            @if($profil->dashboard_member_benefits)
+            @if(!empty($profil->dashboard_member_benefits))
                 {!! $profil->dashboard_member_benefits !!}
             @else
                 Keuntungan Anda: <span class="text-[#f2994a] font-bold">Diskon 15% Detailing</span> &amp; Prioritas Antrean.

@@ -14,10 +14,9 @@ class RiwayatPesananResource extends Resource
 {
     protected static ?string $model = Pesanan::class;
 
-    protected static ?string $label = 'Kelola Riwayat Pemesanan';
-    protected static ?string $pluralLabel = 'Kelola Riwayat Pemesanan';
-    protected static ?string $navigationLabel = 'Kelola Riwayat Pemesanan';
-    protected static string|null|\UnitEnum $navigationGroup = 'Kelola User Dashboard';
+    protected static ?string $navigationLabel = 'Riwayat Transaksi';
+    protected static ?string $pluralLabel = 'Riwayat Transaksi';
+    protected static string|null|\UnitEnum $navigationGroup = 'Transaksi';
     protected static ?int $navigationSort = 3;
 
     public static function table(Table $table): Table

@@ -21,13 +21,12 @@ class LayananResource extends Resource
     // Model yang digunakan: Layanan
     protected static ?string $model = Layanan::class;
 
-    protected static ?string $label = 'Manajemen Layanan & Paket';
-    protected static ?string $navigationLabel = 'Manajemen Layanan & Paket';
-    protected static ?string $pluralLabel = 'Manajemen Layanan & Paket';
+    protected static ?string $navigationLabel = 'Edit Katalog Layanan';
+    protected static ?string $pluralLabel = 'Edit Katalog Layanan';
     protected static ?string $recordTitleAttribute = 'nama_layanan';
 
-    protected static string|null|\UnitEnum $navigationGroup = 'Manajemen Konten';
-    protected static ?int $navigationSort = 1;
+    protected static string|null|\UnitEnum $navigationGroup = 'Konten';
+    protected static ?int $navigationSort = 2;
 
     /**
      * Konfigurasi Form (Logika ada di folder Schemas)
