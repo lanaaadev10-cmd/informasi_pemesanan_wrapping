@@ -5,7 +5,7 @@
 /public/storage
 /storage/*.key
 /storage/pail
-/vendor
+vendor/
 .env
 .env.backup
 .env.production
@@ -21,7 +21,3 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
-
-/sistem_informasi_wrapping/vendor
-/sistem_informasi_wrapping/node_modules
-/sistem_informasi_wrapping/public/storage
