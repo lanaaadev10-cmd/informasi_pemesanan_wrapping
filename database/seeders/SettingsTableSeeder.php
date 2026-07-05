@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Settings\CompanySettings;
 use App\Settings\ContentSettings;
 use App\Settings\DashboardCustomerSettings;
-use App\Settings\GaleriSettings;
 use App\Settings\HomepageSettings;
 use App\Settings\KatalogSettings;
 use App\Settings\KeranjangCheckoutSettings;
@@ -24,7 +23,6 @@ class SettingsTableSeeder extends Seeder
             CompanySettings::class,
             ContentSettings::class,
             DashboardCustomerSettings::class,
-            GaleriSettings::class,
             HomepageSettings::class,
             KatalogSettings::class,
             KeranjangCheckoutSettings::class,

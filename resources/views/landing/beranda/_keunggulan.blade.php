@@ -7,9 +7,9 @@
 
     <div class="max-w-7xl mx-auto relative z-10">
         <div class="text-center mb-16" data-aos="fade-up">
-            <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block mb-3">{{ $profil->home_section_keunggulan_badge ?? 'Keunggulan Layanan' }}</span>
+            <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block mb-3">Keunggulan Layanan</span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
-                {!! $profil->home_section_keunggulan_title ?? 'Mengapa Memilih <span class="relative inline-block pb-2">Wapping<span class="absolute bottom-0 left-0 w-full h-[3px] bg-[#f2994a] rounded-full"></span></span>?' !!}
+                Mengapa Memilih <span class="relative inline-block pb-2">Wapping<span class="absolute bottom-0 left-0 w-full h-[3px] bg-[#f2994a] rounded-full"></span></span>?
             </h2>
         </div>
 
@@ -21,13 +21,13 @@
                         <i class="ph-bold ph-shield-check"></i>
                     </div>
                     <div class="space-y-3">
-                        <h3 class="text-xl sm:text-2xl font-extrabold text-white group-hover:text-[#f2994a] transition-all">{{ $k1t }}</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed max-w-xl">{!! $k1d !!}</p>
+                        <h3 class="text-xl sm:text-2xl font-extrabold text-white group-hover:text-[#f2994a] transition-all">Kualitas Material Grade-A</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed max-w-xl">Kami hanya menggunakan merk premium dunia seperti <span class="text-white font-semibold">Avery Dennison, 3M, dan Teckwrap</span>. Memberikan hasil akhir yang sangat rapi, warna yang tahan lama, serta perlindungan cat orisinil mobil yang maksimal.</p>
                     </div>
                 </div>
                 <div class="pt-8">
                     <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#f2994a] hover:text-[#e28a44] transition-all group-hover:translate-x-1">
-                        {{ $profil->cta_selengkapnya ?? 'Selengkapnya' }} <i class="ph-bold ph-arrow-right"></i>
+                        Selengkapnya <i class="ph-bold ph-arrow-right"></i>
                     </a>
                 </div>
             </div>
@@ -39,8 +39,8 @@
                         <i class="ph-bold ph-seal-check"></i>
                     </div>
                     <div class="space-y-3">
-                        <h3 class="text-xl font-extrabold text-white group-hover:text-[#f2994a] transition-all">{{ $k2t }}</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">{{ $k2d }}</p>
+                        <h3 class="text-xl font-extrabold text-white group-hover:text-[#f2994a] transition-all">Teknisi Tersertifikasi</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Dikerjakan oleh tim profesional yang terlatih dan memiliki sertifikasi resmi di bidang car wrapping untuk menjamin ketelitian tinggi.</p>
                     </div>
                 </div>
             </div>
@@ -52,8 +52,8 @@
                         <i class="ph-bold ph-clock"></i>
                     </div>
                     <div class="space-y-3">
-                        <h3 class="text-xl font-extrabold text-white group-hover:text-[#f2994a] transition-all">{{ $k3t }}</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">{{ $k3d }}</p>
+                        <h3 class="text-xl font-extrabold text-white group-hover:text-[#f2994a] transition-all">Pengerjaan Tepat Waktu</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Kami menghargai waktu berharga Anda. Dengan SOP terstruktur, kami menjamin kendaraan Anda selesai dikerjakan sesuai estimasi waktu.</p>
                     </div>
                 </div>
             </div>
@@ -62,12 +62,12 @@
             <div class="lg:col-span-7 bg-gradient-to-br from-[#e28a44] to-[#f2994a] rounded-3xl p-8 sm:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-lg shadow-[#f2994a]/10 hover:shadow-[#f2994a]/20 hover:scale-[1.01] transition-all duration-300 group" data-aos="fade-up" data-aos-delay="300">
                 <div class="space-y-6 md:max-w-md">
                     <div class="space-y-3">
-                        <h3 class="text-2xl font-black text-black leading-tight">{{ $k4t }}</h3>
-                        <p class="text-black/80 text-sm leading-relaxed">{{ $k4d }}</p>
+                        <h3 class="text-2xl font-black text-black leading-tight">Garansi Hingga 5 Tahun</h3>
+                        <p class="text-black/80 text-sm leading-relaxed">Kami sangat yakin atas kualitas pengerjaan dan ketahanan bahan yang kami berikan. Nikmati perlindungan garansi penuh hingga 5 tahun untuk kepuasan total Anda.</p>
                     </div>
                     <div class="pt-2">
-                        <a href="https://wa.me/{{ $waNumber }}" class="inline-block bg-black text-[#f2994a] hover:bg-black/90 hover:text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
-                            {{ $profil->cta_cek_syarat ?? 'Cek Syarat &amp; Ketentuan' }}
+                        <a href="https://wa.me/628123456789" class="inline-block bg-black text-[#f2994a] hover:bg-black/90 hover:text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
+                            Cek Syarat &amp; Ketentuan
                         </a>
                     </div>
                 </div>

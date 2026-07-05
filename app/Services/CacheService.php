@@ -9,7 +9,6 @@ class CacheService
     const CACHE_DURATION = 60 * 60 * 24; // 24 hours
 
     // Settings caches
-    const GALERI_SETTINGS = 'galeri_settings';
     const LAYANAN_SETTINGS = 'layanan_settings';
     const COMPANY_SETTINGS = 'company_settings';
     const LAYOUT_SETTINGS = 'layout_settings';
@@ -28,7 +27,6 @@ class CacheService
      */
     public static function clearAll()
     {
-        Cache::forget(self::GALERI_SETTINGS);
         Cache::forget(self::LAYANAN_SETTINGS);
         Cache::forget(self::COMPANY_SETTINGS);
         Cache::forget(self::LAYOUT_SETTINGS);
@@ -46,13 +44,6 @@ class CacheService
     /**
      * Get gallery settings dengan cache
      */
-    public static function getGaleriSettings()
-    {
-        return self::remember(self::GALERI_SETTINGS, function () {
-            return app(\App\Settings\GaleriSettings::class);
-        });
-    }
-
     /**
      * Get layanan settings dengan cache
      */

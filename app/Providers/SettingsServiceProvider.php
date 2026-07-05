@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Settings\CompanySettings;
 use App\Settings\DashboardCustomerSettings;
-use App\Settings\GaleriSettings;
 use App\Settings\HomepageSettings;
 use App\Settings\KatalogSettings;
 use App\Settings\KeranjangCheckoutSettings;
@@ -33,7 +32,6 @@ class SettingsServiceProvider extends ServiceProvider
                 CompanySettings::class,
                 HomepageSettings::class,
                 LayananSettings::class,
-                GaleriSettings::class,
                 TentangKamiSettings::class,
                 KatalogSettings::class,
                 PesananSettings::class,

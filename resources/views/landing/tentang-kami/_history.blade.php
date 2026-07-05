@@ -7,21 +7,17 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             <!-- Left: Description -->
             <div class="space-y-6 lg:col-span-5">
-                <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">{{ $profil->tentang_kami_sejarah_badge ?? 'Sejarah Kami' }}</span>
+                <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">Sejarah Kami</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-                    {{ $profil->tentang_kami_sejarah_title ?? 'Satu Dekade Dedikasi pada Perfeksi.' }}
+                    Satu Dekade Dedikasi pada Perfeksi.
                 </h2>
                 <div class="text-gray-400 space-y-4 leading-relaxed text-sm sm:text-base">
-                    @if(!empty($profil->sejarah))
-                        {!! $profil->sejarah !!}
-                    @else
-                        <p>
-                            Sejak didirikan pada tahun 2014, Wrapping Mobil telah menjadi pioneer dalam teknologi stiker kendaraan premium. Dari garasi kecil, kami kini melayani ribuan pelanggan dengan komitmen yang tak pernah pudar terhadap detail dan kepuasan pelanggan.
-                        </p>
-                        <p>
-                            Kini, kami bangga menjadi workshop wrapping terpilih yang dipercaya untuk memproteksi dan mempercantik kualitas kendaraan mewah dari berbagai merek. Setiap proyek adalah karya seni yang kami kerjakan dengan ketelitian tertinggi.
-                        </p>
-                    @endif
+                    <p>
+                        Sejak didirikan pada tahun 2014, Wrapping Mobil telah menjadi pioneer dalam teknologi stiker kendaraan premium. Dari garasi kecil, kami kini melayani ribuan pelanggan dengan komitmen yang tak pernah pudar terhadap detail dan kepuasan pelanggan.
+                    </p>
+                    <p>
+                        Kini, kami bangga menjadi workshop wrapping terpilih yang dipercaya untuk memproteksi dan mempercantik kualitas kendaraan mewah dari berbagai merek. Setiap proyek adalah karya seni yang kami kerjakan dengan ketelitian tertinggi.
+                    </p>
                 </div>
             </div>
 

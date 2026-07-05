@@ -12,13 +12,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-/**
- * GaleriResource
- * Digunakan untuk mengelola portofolio atau dokumentasi pekerjaan (Galeri).
- */
 class GaleriResource extends Resource
 {
-    // Model yang digunakan: Galeri
     protected static ?string $model = Galeri::class;
 
     protected static ?string $navigationLabel = 'Edit Galeri Pekerjaan';
@@ -28,25 +23,16 @@ class GaleriResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'judul';
 
-    /**
-     * Konfigurasi Formulir Galeri
-     */
     public static function form(Schema $schema): Schema
     {
         return GaleriForm::configure($schema);
     }
 
-    /**
-     * Konfigurasi Tabel Galeri
-     */
     public static function table(Table $table): Table
     {
         return GalerisTable::configure($table);
     }
 
-    /**
-     * Rute Halaman
-     */
     public static function getPages(): array
     {
         return [

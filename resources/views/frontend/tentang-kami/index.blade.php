@@ -1,48 +1,21 @@
-@extends(auth()->check() ? 'layouts.dashboard_customer' : 'layouts.tampilan_utama')
+@extends('layouts.tampilan_utama')
 
 @section('title', 'Tentang Kami')
 
 @section('content')
     @php
-        // Setup CSS variables & settings
-        $accentColor = $profil->accent_color ?? '#f2994a';
-        $valuesColumns = $profil->tentang_kami_values_columns ?? 3;
-        $showValues = $profil->tentang_kami_show_values ?? true;
-        $showHistory = $profil->tentang_kami_show_history ?? true;
-        $showTeam = $profil->tentang_kami_show_team ?? true;
-
-        // Fallback values matching mockup
-        $heroTitle = $profil->tentang_kami_hero_title ?? 'Precision in Every Layer';
-        $heroDesc = $profil->tentang_kami_hero_desc ?? 'Satu pilihan terbaik untuk menjaga kendaraan Anda tetap berkilau dan melindunginya dari goresan, jamur, serta kotoran jalanan demi performa yang selalu cemerlang.';
-
-        $teamMembers = $profil->tentang_kami_team_members ?? [];
-        if (empty($teamMembers)) {
-            $teamMembers = [
-                [
-                    'nama' => 'Adrian Wijaya',
-                    'posisi' => 'Master Wrapper',
-                    'foto' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop'
-                ],
-                [
-                    'nama' => 'Siska Pratama',
-                    'posisi' => 'Lead Designer',
-                    'foto' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop'
-                ],
-                [
-                    'nama' => 'Budi Santoso',
-                    'posisi' => 'Detailing Specialist',
-                    'foto' => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop'
-                ],
-                [
-                    'nama' => 'Kevin Rahardja',
-                    'posisi' => 'Operation Manager',
-                    'foto' => 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop'
-                ]
-            ];
-            $isFallbackTeam = true;
-        } else {
-            $isFallbackTeam = false;
-        }
+        $accentColor = '#f2994a';
+        $showHistory = true;
+        $showValues = true;
+        $showTeam = true;
+        $heroTitle = 'Precision in Every Layer';
+        $heroDesc = 'Satu pilihan terbaik untuk menjaga kendaraan Anda tetap berkilau dan melindunginya dari goresan, jamur, serta kotoran jalanan demi performa yang selalu cemerlang.';
+        $teamMembers = [
+            ['nama' => 'Adrian Wijaya', 'posisi' => 'Master Wrapper', 'foto' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop'],
+            ['nama' => 'Siska Pratama', 'posisi' => 'Lead Designer', 'foto' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop'],
+            ['nama' => 'Budi Santoso', 'posisi' => 'Detailing Specialist', 'foto' => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop'],
+            ['nama' => 'Kevin Rahardja', 'posisi' => 'Operation Manager', 'foto' => 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop'],
+        ];
     @endphp
 
     <style>
@@ -61,9 +34,7 @@
     <div class="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden rounded-[32px] sm:rounded-[48px] {{ auth()->check() ? 'mt-4' : '-mt-24 sm:-mt-32' }}">
        <!-- Background Image with studio lights -->
         <div class="absolute inset-0 z-0">
-            <img src="{{ !empty($profil->tentang_kami_hero_image) ? asset('storage/' . $profil->tentang_kami_hero_image) : 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=2070&auto=format&fit=crop' }}" 
-                class="w-full h-full object-cover object-center" 
-                 alt="Premium Wrapping Car">
+            <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover object-center" alt="Premium Wrapping Car">
             <!-- Dark Studio Overlays -->
             <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a0a]/40 to-[#0a0a0a]"></div>
             <div class="absolute inset-0 bg-black/20"></div>
@@ -100,16 +71,12 @@
                             Satu Dekade Dedikasi pada Perfeksi.
                         </h2>
                         <div class="text-gray-400 space-y-4 leading-relaxed text-sm sm:text-base">
-                            @if(!empty($profil->sejarah))
-                                {!! $profil->sejarah !!}
-                            @else
-                                <p>
-                                    Sejak didirikan pada tahun 2014, Wrapping Mobil telah menjadi pioneer dalam teknologi stiker kendaraan premium. Dari garasi kecil, kami kini melayani ribuan pelanggan dengan komitmen yang tak pernah pudar terhadap detail dan kepuasan pelanggan.
-                                </p>
-                                <p>
-                                    Kini, kami bangga menjadi workshop wrapping terpilih yang dipercaya untuk memproteksi dan mempercantik kualitas kendaraan mewah dari berbagai merek. Setiap proyek adalah karya seni yang kami kerjakan dengan ketelitian tertinggi.
-                                </p>
-                            @endif
+                            <p>
+                                Sejak didirikan pada tahun 2014, Wrapping Mobil telah menjadi pioneer dalam teknologi stiker kendaraan premium. Dari garasi kecil, kami kini melayani ribuan pelanggan dengan komitmen yang tak pernah pudar terhadap detail dan kepuasan pelanggan.
+                            </p>
+                            <p>
+                                Kini, kami bangga menjadi workshop wrapping terpilih yang dipercaya untuk memproteksi dan mempercantik kualitas kendaraan mewah dari berbagai merek. Setiap proyek adalah karya seni yang kami kerjakan dengan ketelitian tertinggi.
+                            </p>
                         </div>
                     </div>
 
@@ -162,11 +129,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-white">Visi Kami</h3>
                     <div class="text-gray-400 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none">
-                        @if(!empty($profil->visi))
-                            {!! $profil->visi !!}
-                        @else
-                            <p>Menjadi studio wrapping terdepan yang dikenal dengan kualitas premium dan inovasi berkelanjutan dalam industri modifikasi estetika kendaraan.</p>
-                        @endif
+                        <p>Menjadi studio wrapping terdepan yang dikenal dengan kualitas premium dan inovasi berkelanjutan dalam industri modifikasi estetika kendaraan.</p>
                     </div>
                 </div>
             </div>
@@ -179,11 +142,7 @@
                     </div>
                     <h3 class="text-2xl font-bold text-white">Misi Kami</h3>
                     <div class="text-gray-400 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none">
-                        @if(!empty($profil->misi))
-                            {!! $profil->misi !!}
-                        @else
-                            <p>Memberikan solusi wrapping berkualitas tinggi dengan menggunakan material premium dunia, teknik instalasi presisi, dan komitmen layanan pelanggan yang tiada tanding.</p>
-                        @endif
+                        <p>Memberikan solusi wrapping berkualitas tinggi dengan menggunakan material premium dunia, teknik instalasi presisi, dan komitmen layanan pelanggan yang tiada tanding.</p>
                     </div>
                 </div>
             </div>
@@ -252,11 +211,11 @@
                     <div class="space-y-3">
                         <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">Tim Kami</span>
                         <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
-                            {{ $profil->tentang_kami_team_title ?? 'Dibalik Setiap Detail Sempurna.' }}
+                            Dibalik Setiap Detail Sempurna.
                         </h2>
                     </div>
                     <p class="text-gray-400 text-sm sm:text-base max-w-xl leading-relaxed">
-                        {{ $profil->tentang_kami_team_desc ?? 'Didukung oleh mekanik bersertifikat dan berdedikasi tinggi yang memastikan setiap pemasangan stiker berjalan dengan sempurna dan presisi.' }}
+                        Didukung oleh mekanik bersertifikat dan berdedikasi tinggi yang memastikan setiap pemasangan stiker berjalan dengan sempurna dan presisi.
                     </p>
                 </div>
 
@@ -312,7 +271,7 @@
                     Jadikan kendaraan Anda pusat perhatian hari ini. Konsultasikan kebutuhan Anda secara gratis dengan tim kami yang berpengalaman.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '') }}" 
+                    <a href="https://wa.me/628123456789" 
                        target="_blank"
                        class="inline-flex items-center justify-center px-8 py-4 text-black font-extrabold rounded-2xl hover:opacity-90 transition-all duration-300 shadow-lg group btn-premium bg-gradient-to-r from-[#e28a44] to-[#f2994a] hover:scale-105 active:scale-95">
                         <span>Hubungi Kami Sekarang</span>

@@ -1,0 +1,190 @@
+===========================================================================
+ RINGKASAN PENGERJAAN — KONVERSI DINAMIS → STATIS
+ (Profil Perusahaan & Galeri Hasil Pekerjaan)
+===========================================================================
+
+Tanggal : 2 Juli 2026
+Developer: AI Assistant
+
+---------------------------------------------------------------------------
+ TUJUAN
+---------------------------------------------------------------------------
+Mengubah sistem yang semula dinamis (data dari database + settings panel
+admin Filament) menjadi STATIS PENUH (hardcoded di code, hanya developer
+yang bisa mengubah lewat code).
+
+Cakupan:
+  1. Profil Perusahaan     → Statis (semua field dari migration)
+  2. Galeri Hasil Pekerjaan → Statis (semua field dari migration)
+  3. Landing Page (Beranda, Navbar, Footer) → Statis (semua teks, tombol,
+     gambar, dan warna di-hardcode)
+
+---------------------------------------------------------------------------
+ LANGKAH-LANGKAH PENGERJAAN
+---------------------------------------------------------------------------
+
+1. MEMBUAT HELPER STATIS TERPUSAT
+   ───────────────────────────────────────────────────────────────────────
+   File: app/Helpers/StaticContent.php
+   - Semua data statis diletakkan dalam 1 file class.
+   - Constants untuk teks navbar, hero, keunggulan, portofolio, CTA,
+     footer, profil perusahaan, galeri, layanan, tentang-kami.
+   - Method static galeriItems() dan teamMembers() untuk data array.
+
+   Keuntungan: Developer cukup edit 1 file ini untuk mengubah konten
+   (tidak perlu mencari di banyak file view).
+
+2. MEMBUAT FOLDER GAMBAR
+   ───────────────────────────────────────────────────────────────────────
+   public/images/
+   ├── logo/          → Logo aplikasi
+   ├── background/    → Gambar background
+   ├── galeri/        → Foto hasil pekerjaan (Tesla, Range Rover, dll)
+   └── umum/          → Gambar lain-lain
+
+   Catatan: Gambar placeholder (Unsplash) masih digunakan di beberapa
+   tempat. Ganti dengan file lokal setelah aset siap.
+
+3. MODIFIKASI LAYOUT UTAMA (Navbar & Footer)
+   ───────────────────────────────────────────────────────────────────────
+   File: resources/views/layouts/tampilan_utama.blade.php
+   - Semua teks navbar untuk frontend ($is_frontend) di-hardcode:
+     "Beranda", "Layanan", "Galeri", "Tentang Kami", "Masuk", "Daftar",
+     "Pemesanan", "Dashboard", "Keluar".
+   - Logo + nama aplikasi → "Wapping"
+   - Footer frontend → Teks, link sosial media, dan copyright di-hardcode.
+   - Bagian internal dashboard ($is_frontend = false) tetap menggunakan
+     $profil/settings (tidak diubah).
+
+4. MODIFIKASI CONTROLLER
+   ───────────────────────────────────────────────────────────────────────
+   a) app/Http/Controllers/DashboardController.php
+      - Hapus import Layanan, Galeri, Cache.
+      - Method index() → langsung return view tanpa query DB.
+      - Method layanan() → langsung return view (data statis di view).
+      - Method profile() → return view.
+      - Method tentangKami() → return view.
+
+   b) app/Http/Controllers/GaleriController.php
+      - Hapus import Galeri, Cache.
+      - Method index() → langsung return view (data statis di view).
+
+   c) app/Http/Controllers/CustomerController.php
+      - Hapus import Galeri.
+      - Method dashboard() → ganti Galeri::latest()->get() dengan array
+        statis 6 item galeri (array, bukan model Eloquent).
+
+5. MODIFIKASI VIEW LANDING PAGE
+   ───────────────────────────────────────────────────────────────────────
+   Semua view di resources/views/landing/ telah di-hardcode:
+
+   a) Beranda (landing/beranda/):
+      - index.blade.php → Hapus @php block, hanya $waNumber
+      - _hero.blade.php → Semua teks, badge, stats, CTA di-hardcode
+      - _keunggulan.blade.php → 4 card keunggulan di-hardcode
+      - _portofolio.blade.php → 6 galeri hardcoded (bukan dari DB)
+      - _cta-langkah.blade.php → CTA, 3 langkah, tombol di-hardcode
+
+   b) Galeri (landing/galeri/):
+      - index.blade.php → @extends selalu tampilan_utama, @php block
+        dengan data statis (accentColor, galeriTitle, categories)
+      - _grid.blade.php → $staticGaleri array 6 item hardcoded
+      - _hero.blade.php → Menggunakan $galeriTitle dari parent
+      - _filter.blade.php → Menggunakan $galeriFilterCategories
+
+   c) Profil (landing/profil/):
+      - index.blade.php → @extends selalu tampilan_utama, semua $profil
+        references diganti hardcoded (nama, deskripsi, alamat, visi, misi)
+
+   d) Layanan (landing/layanan/):
+      - index.blade.php → Statis $services array 4 paket, hapus fallback
+      - _hero.blade.php → Teks hardcoded
+      - _grid.blade.php → Tombol "Pesan Sekarang" hardcoded
+      - _benefits.blade.php → Teks hardcoded
+
+   e) Tentang Kami (landing/tentang-kami/):
+      - index.blade.php → @extends selalu tampilan_utama, @php statis
+      - _hero.blade.php → Background Unsplash hardcoded
+      - _history.blade.php → Teks sejarah hardcoded
+      - _vision-mission.blade.php → Visi/misi hardcoded
+      - _values.blade.php → 3 nilai hardcoded
+      - _team.blade.php → Teks header hardcoded
+      - _cta.blade.php → Teks, WhatsApp number hardcoded
+
+   f) frontend/tentang-kami/index.blade.php (duplikat) → Sama seperti di
+      atas, semua di-hardcode.
+
+6. DELETE FILE-FILE YANG TIDAK DIGUNAKAN
+   ───────────────────────────────────────────────────────────────────────
+   a) Model:
+      - app/Models/ProfilPerusahaan.php  (× HAPUS)
+      - app/Models/Galeri.php            (× HAPUS)
+
+   b) Filament Resource (Admin Panel):
+      - app/Filament/Resources/BerandaResource.php          (× HAPUS)
+      - app/Filament/Resources/Berandas/ (entire folder)    (× HAPUS)
+      - app/Filament/Resources/Galeris/ (entire folder)     (× HAPUS)
+      - app/Filament/Resources/HalamanGaleri/              (× HAPUS)
+      - app/Filament/Resources/HalamanGaleriResource.php   (× HAPUS)
+
+   c) Settings:
+      - app/Settings/GaleriSettings.php                     (× HAPUS)
+
+   d) Migration (13 file):
+      - 2026_04_21_055219_create_profil_perusahaans_table.php  (× HAPUS)
+      - 2026_05_13_012201_add_about_fields_to_profil...        (× HAPUS)
+      - 2026_05_14_184720_add_dashboard_and_steps_to_profil... (× HAPUS)
+      - 2026_05_14_191247_add_testimonis_json_to_profil...     (× HAPUS)
+      - 2026_05_18_112200_add_beranda_fields_to_profil...      (× HAPUS)
+      - 2026_05_21_134634_add_customer_dashboard_fields...     (× HAPUS)
+      - 2026_05_21_160000_add_tentang_kami_and_layanan...      (× HAPUS)
+      - 2026_05_21_174137_add_tentang_kami_hero_image...       (× HAPUS)
+      - 2026_05_21_220000_add_layout_config_to_profil...       (× HAPUS)
+      - 2026_05_25_094309_add_layanan_galeri_hero_images...    (× HAPUS)
+      - 2026_05_05_164310_create_galeris_table.php             (× HAPUS)
+      - 2026_05_11_175341_add_kategori_to_galeris_table.php    (× HAPUS)
+      - 2026_05_11_181232_add_details_to_galeris_table.php     (× HAPUS)
+
+   e) Referensi di File Lain:
+      - SettingsServiceProvider → Hapus GaleriSettings dari array
+      - CacheService → Hapus GALERI_SETTINGS constant dan method
+      - SettingsTableSeeder → Hapus GaleriSettings dari array
+
+7. MEMBERSIHKAN REFERENSI
+   ───────────────────────────────────────────────────────────────────────
+   - app/Providers/SettingsServiceProvider.php → Hapus GaleriSettings
+   - app/Services/CacheService.php → Hapus GALERI_SETTINGS constant,
+     method getGaleriSettings(), dan Cache::forget(GALERI_SETTINGS)
+   - database/seeders/SettingsTableSeeder.php → Hapus GaleriSettings
+
+---------------------------------------------------------------------------
+ YANG TETAP DINAMIS (TIDAK DIUBAH)
+---------------------------------------------------------------------------
+- Internal customer dashboard (setelah login) → masih menggunakan
+  SettingsServiceProvider + $profil
+- Admin panel (Filament) → Masih berfungsi untuk resource lain (Layanan,
+  Pesanan, User, TeamMember, dll.)
+- SettingsServiceProvider → TETAP BERJALAN untuk internal pages
+- Model Layanan, Pesanan, User, dll. → TETAP menggunakan database
+
+---------------------------------------------------------------------------
+ CATATAN PENTING
+---------------------------------------------------------------------------
+1. Gambar di public/images/ sudah dibuat foldernya tapi masih kosong.
+   Developer perlu menempatkan file gambar (.jpg/.png) di folder sesuai
+   dengan yang direference di views.
+
+2. Jika ingin mengubah konten statis:
+   - Teks umum → edit app/Helpers/StaticContent.php
+   - Teks layout/navbar → edit resources/views/layouts/tampilan_utama.blade.php
+   - Galeri items → edit StaticContent.php method galeriItems()
+   - Team members → edit StaticContent.php method teamMembers()
+
+3. Jika ada error "Class not found" setelah perubahan, jalankan:
+   composer dump-autoload
+
+4. SettingsServiceProvider tetap berjalan. Jika suatu saat ingin membuat
+   konten menjadi dinamis kembali, tinggal mengembalikan data ke settings
+   dan view kembali menggunakan $profil->xxx.
+
+===========================================================================

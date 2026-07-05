@@ -6,7 +6,7 @@
     <div class="space-y-12 z-10 relative" data-aos="fade-up">
         <div class="text-center space-y-4 max-w-2xl mx-auto">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
-                {{ $profil->tentang_kami_values_title ?? 'Nilai yang Kami Junjung' }}
+                Nilai yang Kami Junjung
             </h2>
             <div class="w-16 h-1 bg-[#f2994a] mx-auto rounded-full"></div>
         </div>
@@ -19,9 +19,9 @@
                     <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#f2994a]/10 border border-[#f2994a]/20 text-[#f2994a]">
                         <i class="ph-bold ph-target text-2xl"></i>
                     </div>
-                    <h3 class="font-bold text-white text-xl">{{ $profil->tentang_kami_values_1_title ?? 'Presisi' }}</h3>
+                    <h3 class="font-bold text-white text-xl">Presisi</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">
-                        {{ $profil->tentang_kami_values_1_desc ?? 'Setiap sudut, lekukan, dan detail kendaraan ditangani dengan tingkat presisi ekstrem oleh teknisi ahli berlisensi resmi.' }}
+                        Setiap sudut, lekukan, dan detail kendaraan ditangani dengan tingkat presisi ekstrem oleh teknisi ahli berlisensi resmi.
                     </p>
                 </div>
             </div>
@@ -33,9 +33,9 @@
                     <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#f2994a]/10 border border-[#f2994a]/20 text-[#f2994a]">
                         <i class="ph-bold ph-shield-check text-2xl"></i>
                     </div>
-                    <h3 class="font-bold text-white text-xl">{{ $profil->tentang_kami_values_2_title ?? 'Integritas' }}</h3>
+                    <h3 class="font-bold text-white text-xl">Integritas</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">
-                        {{ $profil->tentang_kami_values_2_desc ?? 'Kami berkomitmen terhadap kejujuran dengan selalu menggunakan produk material premium yang terjamin keasliannya dan bergaransi resmi.' }}
+                        Kami berkomitmen terhadap kejujuran dengan selalu menggunakan produk material premium yang terjamin keasliannya dan bergaransi resmi.
                     </p>
                 </div>
             </div>
@@ -47,9 +47,9 @@
                     <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#f2994a]/10 border border-[#f2994a]/20 text-[#f2994a]">
                         <i class="ph-bold ph-crown text-2xl"></i>
                     </div>
-                    <h3 class="font-bold text-white text-xl">{{ $profil->tentang_kami_values_3_title ?? 'Eksklusivitas' }}</h3>
+                    <h3 class="font-bold text-white text-xl">Eksklusivitas</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">
-                        {{ $profil->tentang_kami_values_3_desc ?? 'Setiap proyek adalah maha karya unik. Kami memberikan sentuhan personal demi menciptakan tampilan mewah dan prestisius bagi Anda.' }}
+                        Setiap proyek adalah maha karya unik. Kami memberikan sentuhan personal demi menciptakan tampilan mewah dan prestisius bagi Anda.
                     </p>
                 </div>
             </div>

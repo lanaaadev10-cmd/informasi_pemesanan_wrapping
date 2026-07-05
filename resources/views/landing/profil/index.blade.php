@@ -1,12 +1,9 @@
-@extends(auth()->check() ? 'layouts.dashboard_customer' : 'layouts.tampilan_utama')
+@extends('layouts.tampilan_utama')
 
 @section('title', 'Profil Perusahaan')
 
 @section('content')
-    @if(!auth()->check())
-        <!-- Spacer untuk Public View agar tidak tertutup Navbar -->
-        <div class="h-28"></div>
-    @endif
+
 
     <!-- Container Utama -->
     <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-12 relative overflow-hidden">
@@ -47,13 +44,13 @@
                 <!-- Content Area -->
                 <div class="absolute bottom-0 inset-x-0 p-8 sm:p-10 z-20 space-y-3.5">
                     <span class="bg-[#f2994a]/10 border border-[#f2994a]/20 px-3.5 py-1.5 rounded-full text-[9px] font-extrabold text-[#f2994a] uppercase tracking-widest inline-block">
-                        {{ strtoupper($profil->nama_perusahaan ?? 'Premium Wrap') }}
+                        {{ strtoupper('Wapping Premium Wrap') }}
                     </span>
                     <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight max-w-xl">
                         The Art of Precision
                     </h2>
                     <p class="text-gray-300 text-xs sm:text-sm font-medium max-w-lg leading-relaxed opacity-90">
-                        {{ $profil->deskripsi ?? 'Transforming high-performance assets into personalized masterpieces through unparalleled craftsmanship.' }}
+                        Transforming high-performance assets into personalized masterpieces through unparalleled craftsmanship.
                     </p>
                 </div>
             </div>
@@ -68,7 +65,7 @@
 
                     <div class="space-y-1">
                         <span class="text-4xl sm:text-5xl font-black text-[#f2994a] tracking-tight group-hover:scale-105 inline-block transition-transform duration-300">
-                            {{ $profil->stats_projects ?? '98%' }}
+                            98%
                         </span>
                         <span class="block text-[9px] font-extrabold uppercase tracking-widest text-gray-500 mt-1">
                             Client Satisfaction
@@ -115,7 +112,7 @@
                 
                 <div class="space-y-4">
                     <p class="text-gray-400 text-sm leading-relaxed font-light">
-                        Born from a passion for automotive aesthetics and technical perfection, <span class="text-white font-medium">{{ $profil->nama_perusahaan ?? 'LuxWrap Studio' }}</span> began as a boutique workshop dedicated to the world's most exclusive marques. Today, we stand as the industry benchmark for premium vehicle protection and styling.
+                        Born from a passion for automotive aesthetics and technical perfection, <span class="text-white font-medium">Wapping Premium Wrap</span> began as a boutique workshop dedicated to the world's most exclusive marques. Today, we stand as the industry benchmark for premium vehicle protection and styling.
                     </p>
                     <p class="text-gray-400 text-sm leading-relaxed font-light">
                         Our vision is to redefine the boundary between utility and art. We don't just apply material; we curate an experience that honors the engineering of the asset while reflecting the soul of its owner.
@@ -253,7 +250,7 @@
                         </div>
                         <div>
                             <h4 class="text-xs font-bold text-white uppercase tracking-wider">Los Angeles HQ</h4>
-                            <p class="text-[10px] text-gray-500 mt-1 font-light">{{ $profil->alamat ?? '7821 Sunset Blvd, CA' }}</p>
+                            <p class="text-[10px] text-gray-500 mt-1 font-light">Jl. Wrapping Indah No. 99, Jakarta Selatan, Indonesia 12950</p>
                         </div>
                     </div>
 
@@ -315,7 +312,7 @@
                             <h4 class="text-xs font-bold uppercase tracking-widest">Our Vision</h4>
                         </div>
                         <div class="text-gray-400 text-xs leading-relaxed font-light space-y-2">
-                            {!! $profil->visi ?? 'Menjadi penyedia layanan wrapping dan stiker terpercaya dengan inovasi, kualitas, dan kepuasan pelanggan sebagai prioritas utama.' !!}
+                            Menjadi penyedia layanan wrapping dan stiker terpercaya dengan inovasi, kualitas, dan kepuasan pelanggan sebagai prioritas utama.
                         </div>
                     </div>
 
@@ -326,7 +323,7 @@
                             <h4 class="text-xs font-bold uppercase tracking-widest">Our Mission</h4>
                         </div>
                         <div class="text-gray-400 text-xs leading-relaxed font-light space-y-2">
-                            {!! $profil->misi ?? 'Memberikan solusi wrapping dan stiker berkualitas tinggi dengan harga kompetitif, layanan excellent, dan dukungan purna jual terbaik.' !!}
+                            Memberikan solusi wrapping dan stiker berkualitas tinggi dengan harga kompetitif, layanan excellent, dan dukungan purna jual terbaik.
                         </div>
                     </div>
                 </div>
