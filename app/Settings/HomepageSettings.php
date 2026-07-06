@@ -6,6 +6,10 @@ use Spatie\LaravelSettings\Settings;
 
 class HomepageSettings extends Settings
 {
+    public ?string $home_title = null;
+    public ?string $home_hero_image = null;
+    public ?string $home_feature_title = null;
+    public ?string $home_feature_subtitle = null;
     public ?string $home_badge_text = null;
     public ?string $home_hero_title_line1 = null;
     public ?string $home_hero_title_line2 = null;

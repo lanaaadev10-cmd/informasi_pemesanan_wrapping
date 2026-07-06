@@ -23,6 +23,7 @@ class Pesanan extends Model
     protected $fillable = [
         'id_user', 'kode_pesanan', 'tanggal_pesan',
         'status', 'catatan_admin', 'total_harga',
+        'whatsapp_number',
     ];
 
     protected $casts = [

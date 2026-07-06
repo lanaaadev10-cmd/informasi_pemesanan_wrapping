@@ -10,8 +10,9 @@ class CompanyResource extends Resource
     protected static ?string $label = 'Profil Perusahaan';
     protected static ?string $pluralLabel = 'Profil Perusahaan';
     protected static ?string $navigationLabel = 'Profil Perusahaan';
-    protected static string|null|\UnitEnum $navigationGroup = 'Pengaturan';
+    protected static string|null|\UnitEnum $navigationGroup = null;
     protected static ?int $navigationSort = 2;
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array
     {

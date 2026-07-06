@@ -17,7 +17,7 @@
                             $icon = 'ph-clock';
                             $iconBg = 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500';
                             $title = $profil->status_menunggu_konfirmasi ?? 'Menunggu Konfirmasi';
-                            $desc = 'Pesanan #' . $order->kode_pesanan . ' (' . ($order->form->model_kendaraan ?? 'Kendaraan') . ') sedang ditinjau oleh admin';
+                            $desc = 'Pesanan #' . $order->kode_pesanan . ' (' . ($order->form?->model_kendaraan ?? 'Kendaraan') . ') sedang ditinjau oleh admin';
                             $rightCol = '<span class="block text-xs font-extrabold text-white font-mono">Rp ' . number_format($order->total_harga, 0, ',', '.') . '</span>';
                             break;
                         case 'menunggu_pembayaran':
@@ -45,7 +45,7 @@
                             $icon = 'ph-wrench';
                             $iconBg = 'bg-amber-500/10 border-amber-500/20 text-amber-500';
                             $title = $profil->status_dikerjakan ?? 'Sedang Dikerjakan';
-                            $desc = 'Kendaraan pesanan #' . $order->kode_pesanan . ' (' . ($order->form->model_kendaraan ?? 'Kendaraan') . ') sedang dikerjakan';
+                            $desc = 'Kendaraan pesanan #' . $order->kode_pesanan . ' (' . ($order->form?->model_kendaraan ?? 'Kendaraan') . ') sedang dikerjakan';
                             $rightCol = '<span class="block text-xs font-extrabold text-amber-500 font-mono uppercase">Proses</span>';
                             break;
                         case 'selesai':

@@ -28,22 +28,29 @@ class PesananForm
                                 Grid::make(2)
                                     ->schema([
                                         TextInput::make('kode_pesanan')
+                                            ->default('PSN-' . strtoupper(\Illuminate\Support\Str::random(8)))
                                             ->disabled()
                                             ->label('ID Pesanan')
                                             ->helperText('Kode unik pesanan (otomatis dari sistem).'),
                                         Select::make('id_user')
                                             ->relationship('user', 'name')
-                                            ->disabled()
+                                            ->searchable()
+                                            ->preload()
                                             ->label('Pelanggan')
-                                            ->helperText('Nama pelanggan yang melakukan pemesanan.'),
+                                            ->helperText('Cari dan pilih nama pelanggan.'),
                                         DatePicker::make('tanggal_pesan')
-                                            ->disabled()
+                                            ->default(now()->toDateString())
                                             ->helperText('Tanggal pesanan dibuat.'),
                                         TextInput::make('total_harga')
                                             ->numeric()
                                             ->prefix('Rp')
-                                            ->disabled()
-                                            ->helperText('Total harga pesanan (otomatis dari sistem).'),
+                                            ->helperText('Total harga pesanan.'),
+                                        TextInput::make('whatsapp_number')
+                                            ->label('Nomor Telepon Pelanggan')
+                                            ->placeholder('Contoh: 081234567890')
+                                            ->tel()
+                                            ->columnSpan(2)
+                                            ->helperText('Nomor HP/WA pelanggan untuk komunikasi.'),
                                     ]),
                             ]),
 
@@ -62,6 +69,7 @@ class PesananForm
                                         'selesai'            => 'Selesai',
                                         'dibatalkan'         => 'Dibatalkan',
                                     ])
+                                    ->default('menunggu_verifikasi')
                                     ->required()
                                     ->native(false)
                                     ->helperText('Ubah status pesanan sesuai perkembangan.'),

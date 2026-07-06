@@ -41,7 +41,7 @@ Route::middleware('throttle:60,5')->group(function () {
     Route::get('/profil-perusahaan', [DashboardController::class, 'profile'])->name('profil.perusahaan');
     Route::get('/tentang-kami', [DashboardController::class, 'tentangKami'])->name('tentang-kami');
     Route::get('/layanan', [DashboardController::class, 'layanan'])->name('layanan');
-    Route::get('/katalog-layanan', [DashboardController::class, 'layanan'])->name('katalog.user');
+    Route::get('/katalog-layanan', [CustomerController::class, 'katalog'])->name('katalog.user');
     Route::get('/galeri-karya', [GaleriController::class, 'index'])->name('galeri.user');
     Route::get('/galeri/{kategori}', [GaleriController::class, 'kategori'])->name('galeri.kategori');
 

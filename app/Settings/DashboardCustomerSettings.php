@@ -6,6 +6,8 @@ use Spatie\LaravelSettings\Settings;
 
 class DashboardCustomerSettings extends Settings
 {
+    public ?string $dashboard_title = null;
+    public ?string $dashboard_subtitle = null;
     public ?string $dashboard_member_title = null;
     public ?string $dashboard_member_desc = null;
     public ?string $dashboard_member_progress = null;

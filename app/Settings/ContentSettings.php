@@ -25,6 +25,8 @@ class ContentSettings extends Settings
     public ?string $nav_riwayat_pesanan = null;
     public ?string $nav_pembayaran = null;
     public ?string $nav_pemesanan = null;
+    public ?string $nav_whatsapp = null;
+    public ?string $label_temukan_kami = null;
 
     public ?string $footer_tentang = null;
     public ?string $footer_layanan = null;

@@ -92,7 +92,9 @@ class KeranjangController extends Controller
         $detail = DetailKeranjang::findOrFail($id_detail);
 
         // Pastikan item ini milik user yang sedang login
-        $this->authorize('delete', $detail);
+        if ($detail->keranjang->id_user !== Auth::id()) {
+            abort(403, 'Akses ditolak.');
+        }
 
         $detail->delete();
 
