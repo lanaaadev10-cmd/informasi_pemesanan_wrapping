@@ -35,7 +35,7 @@ return [
      */
     'repositories' => [
         'database' => [
-            'type' => App\Settings\Repositories\CachedDatabaseSettingsRepository::class,
+            'type' => Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository::class,
             'model' => null,
             'table' => null,
             'connection' => null,
