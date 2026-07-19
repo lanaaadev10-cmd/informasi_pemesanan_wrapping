@@ -52,11 +52,11 @@ class StaticContent
     // ──────────────────────────────────────────────
     //  HERO SECTION  (halaman beranda)
     // ──────────────────────────────────────────────
-    const HERO_BADGE     = 'Professional Car Wrapping Indonesia';
-    const HERO_TITLE_1   = 'Elevasi Estetika';
+    const HERO_BADGE     = 'Dantie Stiker ';
+    const HERO_TITLE_1   = 'Transformasi';
     const HERO_TITLE_2   = 'Aset Mewah Anda.';
     const HERO_SUBTITLE  = 'Layanan premium yang melindungi dan memperindah mobil kesayangan Anda. Hubungi kami untuk penawaran terbaik.';
-    const HERO_STAT1_VAL = '500+';
+    const HERO_STAT1_VAL = '800+';
     const HERO_STAT1_LBL = 'Supercars Wrapped';
     const HERO_STAT2_VAL = '5 Tahun';
     const HERO_STAT2_LBL = 'Garansi Material';

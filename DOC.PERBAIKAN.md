@@ -90,3 +90,26 @@ Di bagian **"Status & Kendali"**:
 
 ### Catatan Perbaikan Tambahan
 Awalnya field `id_user`, `tanggal_pesan`, dan `total_harga` dikasih kondisi `disabled` saat halaman **Ubah (Edit)**. Ternyata admin tetap perlu mengedit data tersebut. Jadi kondisi disabled untuk ketiga field itu dihapus. Sekarang **semua field** (kecuali `kode_pesanan`) bisa diedit di halaman New maupun Ubah.
+
+File itu ada tapi tidak satu pun Blade view yang mereferensikannya. Semua teks di halaman ditulis hardcoded langsung di file .blade.php, bukan dari StaticContent::NAV_BERANDA dll.
+Grep membuktikan: StaticContent:: muncul 0 kali di seluruh project selain di file definisinya sendiri.
+Cara Memperbaiki
+Agar perubahan di StaticContent.php berdampak ke tampilan, semua Blade view yang menampilkan teks statis harus diubah agar menggunakan konstanta dari StaticContent. Contoh:
+Di resources/views/landing/beranda/_hero.blade.php (sekarang):
+<span>Professional Car Wrapping Indonesia</span>
+Diubah menjadi:
+<span>{{ \App\Helpers\StaticContent::HERO_BADGE }}</span>
+Di resources/views/landing/beranda/_keunggulan.blade.php (sekarang):
+<h2>Keunggulan Layanan</h2>
+Diubah menjadi:
+<h2>{{ \App\Helpers\StaticContent::KEUNGGULAN_BADGE }}</h2>
+Dan seterusnya untuk semua teks di:
+- _portofolio.blade.php
+- _cta-langkah.blade.php
+- profil/index.blade.php
+- layanan/index.blade.php
+- tentang-kami/index.blade.php
+- galeri/index.blade.php
+- components/navbar.blade.php
+- layouts/tampilan_utama.blade.php
+Serta mengganti array hardcoded (galeri, tim, dll) dengan method static seperti StaticContent::galeriItems().
