@@ -17,6 +17,8 @@ class Galeri extends Model
         'deskripsi',
         'tanggal_upload',
         'sub_judul',
+        'kategori',
+        'jenis',
         'is_featured',
         'badge_text',
     ];

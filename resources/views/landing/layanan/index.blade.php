@@ -7,59 +7,19 @@
     @php
         $accentColor = '#f2994a';
 
-        // Badge labels untuk setiap card
-        $badgeLabels = ['Matte Series', 'Best Seller', 'Satin Series', 'Paint Protection'];
-        $badgeColors = [
-            'rgba(242,153,74,0.12)',         // subtle orange
-            'rgba(242,153,74,0.22)',         // highlighted orange
-            'rgba(242,153,74,0.12)',         // subtle orange
-            'rgba(242,153,74,0.12)',         // subtle orange
-        ];
-        $badgeTextColors = [
-            'var(--accent)',
-            'var(--accent)',
-            'var(--accent)',
-            'var(--accent)',
-        ];
+        $services = $layanans->map(fn($l) => [
+            'nama'      => $l->nama_layanan,
+            'harga'     => $l->harga > 0 ? 'Rp ' . number_format($l->harga, 0, ',', '.') : 'Menyesuaikan',
+            'deskripsi' => $l->deskripsi,
+            'fitur'     => $l->fitur ?? [],
+            'gambar'    => $l->foto_contoh,
+        ])->toArray();
 
-        $services = [
-            [
-                'nama'      => 'Stealth Matte',
-                'harga'     => 'Rp 12.500.000',
-                'deskripsi' => 'Finishing non-reflektif yang memberikan kesan bersih, modern, dan elegan pada kendaraan Anda. Menggunakan material premium dengan ketahanan maksimal.',
-                'fitur'     => ['Premium Avery Dennison Material', 'Garansi 3 Tahun', 'Estimasi 3-4 Hari Kerja'],
-                'gambar'    => null,
-            ],
-            [
-                'nama'      => 'Mirror Glossy',
-                'harga'     => 'Rp 10.500.000',
-                'deskripsi' => 'Warna yang hidup dan permukaan cermin sempurna. Layanan cat wrapping paling populer dengan hasil mengkilap maksimal.',
-                'fitur'     => ['3M Series 2080 Premium Vinyl', 'Garansi 3 Tahun', 'Estimasi 3 Hari Kerja'],
-                'gambar'    => null,
-            ],
-            [
-                'nama'      => 'Satin Silk',
-                'harga'     => 'Rp 11.800.000',
-                'deskripsi' => 'Perpaduan sempurna antara matte dan glossy. Memberikan tekstur lembut dan elegan pada setiap lekukan bodi.',
-                'fitur'     => ['Satin Finish Luxury Grade', 'Garansi 4 Tahun', 'Estimasi 4 Hari Kerja'],
-                'gambar'    => null,
-            ],
-            [
-                'nama'      => 'Paint Protection',
-                'harga'     => 'Rp 25.000.000',
-                'deskripsi' => 'Proteksi tertinggi dengan Paint Protection Film (PPF) transparan yang melindungi cat orisinil kendaraan Anda.',
-                'fitur'     => ['Self-healing Technology TPU', 'Garansi 5 Tahun', 'Estimasi 5-7 Hari Kerja'],
-                'gambar'    => null,
-            ],
-        ];
+        $badgeLabels = array_map(fn($l) => strtoupper($l->tipe_paket), $layanans->all());
+        $badgeColors = array_fill(0, count($services), 'rgba(242,153,74,0.12)');
+        $badgeTextColors = array_fill(0, count($services), 'var(--accent)');
 
-        // Fallback car images
-        $fallbackImages = [
-            'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop',
-        ];
+        $fallbackImages = \App\Helpers\StaticContent::LAYANAN_FALLBACK_IMAGES;
     @endphp
 
     <style>:root{--accent:{{$accentColor}}}</style>

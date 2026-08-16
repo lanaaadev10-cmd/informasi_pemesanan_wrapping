@@ -9,9 +9,9 @@
             <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-300 bg-[#f2994a]/10 border border-[#f2994a]/20">
                 <i class="ph-bold ph-eye text-2xl text-[#f2994a]"></i>
             </div>
-            <h3 class="text-2xl font-bold text-white">Visi Kami</h3>
+            <h3 class="text-2xl font-bold text-white">{{ \App\Helpers\StaticContent::VISI_TITLE }}</h3>
             <div class="text-gray-400 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none">
-                <p>Menjadi studio wrapping terdepan yang dikenal dengan kualitas premium dan inovasi berkelanjutan dalam industri modifikasi estetika kendaraan.</p>
+                <p>{{ \App\Helpers\StaticContent::VISI }}</p>
             </div>
         </div>
     </div>
@@ -22,9 +22,9 @@
             <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-300 bg-[#f2994a]/10 border border-[#f2994a]/20">
                 <i class="ph-bold ph-target text-2xl text-[#f2994a]"></i>
             </div>
-            <h3 class="text-2xl font-bold text-white">Misi Kami</h3>
+            <h3 class="text-2xl font-bold text-white">{{ \App\Helpers\StaticContent::MISI_TITLE }}</h3>
             <div class="text-gray-400 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none">
-                <p>Memberikan solusi wrapping berkualitas tinggi dengan menggunakan material premium dunia, teknik instalasi presisi, dan komitmen layanan pelanggan yang tiada tanding.</p>
+                <p>{{ \App\Helpers\StaticContent::MISI }}</p>
             </div>
         </div>
     </div>

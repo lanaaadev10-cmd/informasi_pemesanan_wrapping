@@ -22,7 +22,7 @@ class StaticContent
     // ──────────────────────────────────────────────
     //  NAVBAR — Logo, brand, menu labels
     // ──────────────────────────────────────────────
-    const APP_NAME      = 'Wapping';
+    const APP_NAME      = 'Dantie Stiker';
     const NAV_BERANDA   = 'Beranda';
     const NAV_LAYANAN   = 'Layanan';
     const NAV_GALERI    = 'Galeri';
@@ -58,7 +58,7 @@ class StaticContent
     const HERO_SUBTITLE  = 'Layanan premium yang melindungi dan memperindah mobil kesayangan Anda. Hubungi kami untuk penawaran terbaik.';
     const HERO_STAT1_VAL = '800+';
     const HERO_STAT1_LBL = 'Supercars Wrapped';
-    const HERO_STAT2_VAL = '5 Tahun';
+    const HERO_STAT2_VAL = '5 Bulan';
     const HERO_STAT2_LBL = 'Garansi Material';
 
     const CTA_PESAN_SEKARANG = 'Pesan Sekarang';
@@ -72,7 +72,7 @@ class StaticContent
     //  KEUNGGULAN SECTION  (halaman beranda)
     // ──────────────────────────────────────────────
     const KEUNGGULAN_BADGE  = 'Keunggulan Layanan';
-    const KEUNGGULAN_TITLE  = 'Mengapa Memilih <span class="relative inline-block pb-2">Wapping<span class="absolute bottom-0 left-0 w-full h-[3px] bg-[#f2994a] rounded-full"></span></span>?';
+    const KEUNGGULAN_TITLE  = 'Mengapa Memilih <span class="relative inline-block pb-2">Jasa Kami<span class="absolute bottom-0 left-0 w-full h-[3px] bg-[#f2994a] rounded-full"></span></span>?';
 
     const K1_TITLE = 'Kualitas Material Grade-A';
     const K1_DESC  = 'Kami hanya menggunakan merk premium dunia seperti <span class="text-white font-semibold">Avery Dennison, 3M, dan Teckwrap</span>. Memberikan hasil akhir yang sangat rapi, warna yang tahan lama, serta perlindungan cat orisinil mobil yang maksimal.';
@@ -80,7 +80,7 @@ class StaticContent
     const K2_DESC  = 'Dikerjakan oleh tim profesional yang terlatih dan memiliki sertifikasi resmi di bidang car wrapping untuk menjamin ketelitian tinggi.';
     const K3_TITLE = 'Pengerjaan Tepat Waktu';
     const K3_DESC  = 'Kami menghargai waktu berharga Anda. Dengan SOP terstruktur, kami menjamin kendaraan Anda selesai dikerjakan sesuai estimasi waktu.';
-    const K4_TITLE = 'Garansi Hingga 5 Tahun';
+    const K4_TITLE = 'Garansi Hingga 5 Bulan';
     const K4_DESC  = 'Kami sangat yakin atas kualitas pengerjaan dan ketahanan bahan yang kami berikan. Nikmati perlindungan garansi penuh hingga 5 tahun untuk kepuasan total Anda.';
 
     // ──────────────────────────────────────────────
@@ -131,6 +131,45 @@ class StaticContent
     const GALERI_FILTER_ALL  = 'All Works';
     const GALERI_EMPTY_STATE = 'Belum ada galeri untuk ditampilkan.';
 
+    const GALERI_ITEM_1_JUDUL = 'Tesla Model S';
+    const GALERI_ITEM_1_DESC  = 'Luxury Matte Grey / Blue — full body satin wrap with gloss black accents.';
+    const GALERI_ITEM_1_BADGE = 'Varian Favorit';
+    const GALERI_ITEM_2_JUDUL = 'Range Rover Sport';
+    const GALERI_ITEM_2_DESC  = 'Satin Liquid Silver Wrap — premium finish with ceramic coating protection.';
+    const GALERI_ITEM_2_BADGE = 'Sangat Direkomendasikan';
+    const GALERI_ITEM_3_JUDUL = 'Ferrari F8 Tributo';
+    const GALERI_ITEM_3_DESC  = 'Satin Metallic Gold Yellow — a head-turning transformation for this Italian masterpiece.';
+    const GALERI_ITEM_4_JUDUL = 'Porsche 911 GT3';
+    const GALERI_ITEM_4_DESC  = 'Matte Racing Green — aggressive yet elegant, track-ready aesthetic.';
+    const GALERI_ITEM_4_BADGE = 'Unggulan';
+    const GALERI_ITEM_5_JUDUL = 'Mercedes-Benz S-Class';
+    const GALERI_ITEM_5_DESC  = 'Gloss Diamond White — mirror finish that exudes pure luxury.';
+    const GALERI_ITEM_6_JUDUL = 'Lamborghini Urus';
+    const GALERI_ITEM_6_DESC  = 'Satin Armour Grey — stealthy SUV wrap with custom carbon accents.';
+    const GALERI_ITEM_6_BADGE = 'Best Seller';
+
+    /**
+     * Gallery image URL mapping — local placeholder path → live Unsplash image.
+     */
+    private static array $galeriFotoMap = [
+        'images/galeri/tesla-model-s.jpg'       => 'https://images.unsplash.com/photo-1619767886558-efdc7b9af8e6?w=600&q=80',
+        'images/galeri/range-rover-sport.jpg'   => 'https://images.unsplash.com/photo-1609521263047-f8f205293f92?w=600&q=80',
+        'images/galeri/ferrari-f8.jpg'          => 'https://images.unsplash.com/photo-1592198084037-a1c1c5f96c28?w=600&q=80',
+        'images/galeri/porsche-911.jpg'         => 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600&q=80',
+        'images/galeri/mercedes-s-class.jpg'    => 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=80',
+        'images/galeri/lamborghini-urus.jpg'    => 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80',
+    ];
+
+    /**
+     * Resolve gallery image URL: local placeholder path → live Unsplash URL.
+     */
+    public static function galeriFoto(string $path): string
+    {
+        return self::$galeriFotoMap[$path]
+            ?? self::$galeriFotoMap['images/galeri/tesla-model-s.jpg']
+            ?? 'https://images.unsplash.com/photo-1619767886558-efdc7b9af8e6?w=600&q=80';
+    }
+
     /**
      * Static gallery items.
      * Each item: ['judul', 'foto', 'deskripsi', 'kategori', 'badge_text']
@@ -139,46 +178,46 @@ class StaticContent
     {
         return [
             [
-                'judul'     => 'Tesla Model S',
+                'judul'     => self::GALERI_ITEM_1_JUDUL,
                 'foto'      => 'images/galeri/tesla-model-s.jpg',
-                'deskripsi' => 'Luxury Matte Grey / Blue — full body satin wrap with gloss black accents.',
+                'deskripsi' => self::GALERI_ITEM_1_DESC,
                 'kategori'  => 'matte',
-                'badge_text' => 'Varian Favorit',
+                'badge_text' => self::GALERI_ITEM_1_BADGE,
             ],
             [
-                'judul'     => 'Range Rover Sport',
+                'judul'     => self::GALERI_ITEM_2_JUDUL,
                 'foto'      => 'images/galeri/range-rover-sport.jpg',
-                'deskripsi' => 'Satin Liquid Silver Wrap — premium finish with ceramic coating protection.',
+                'deskripsi' => self::GALERI_ITEM_2_DESC,
                 'kategori'  => 'satin',
-                'badge_text' => 'Sangat Direkomendasikan',
+                'badge_text' => self::GALERI_ITEM_2_BADGE,
             ],
             [
-                'judul'     => 'Ferrari F8 Tributo',
+                'judul'     => self::GALERI_ITEM_3_JUDUL,
                 'foto'      => 'images/galeri/ferrari-f8.jpg',
-                'deskripsi' => 'Satin Metallic Gold Yellow — a head-turning transformation for this Italian masterpiece.',
+                'deskripsi' => self::GALERI_ITEM_3_DESC,
                 'kategori'  => 'satin',
                 'badge_text' => '',
             ],
             [
-                'judul'     => 'Porsche 911 GT3',
+                'judul'     => self::GALERI_ITEM_4_JUDUL,
                 'foto'      => 'images/galeri/porsche-911.jpg',
-                'deskripsi' => 'Matte Racing Green — aggressive yet elegant, track-ready aesthetic.',
+                'deskripsi' => self::GALERI_ITEM_4_DESC,
                 'kategori'  => 'matte',
-                'badge_text' => 'Unggulan',
+                'badge_text' => self::GALERI_ITEM_4_BADGE,
             ],
             [
-                'judul'     => 'Mercedes-Benz S-Class',
+                'judul'     => self::GALERI_ITEM_5_JUDUL,
                 'foto'      => 'images/galeri/mercedes-s-class.jpg',
-                'deskripsi' => 'Gloss Diamond White — mirror finish that exudes pure luxury.',
+                'deskripsi' => self::GALERI_ITEM_5_DESC,
                 'kategori'  => 'glossy',
                 'badge_text' => '',
             ],
             [
-                'judul'     => 'Lamborghini Urus',
+                'judul'     => self::GALERI_ITEM_6_JUDUL,
                 'foto'      => 'images/galeri/lamborghini-urus.jpg',
-                'deskripsi' => 'Satin Armour Grey — stealthy SUV wrap with custom carbon accents.',
+                'deskripsi' => self::GALERI_ITEM_6_DESC,
                 'kategori'  => 'satin',
-                'badge_text' => 'Best Seller',
+                'badge_text' => self::GALERI_ITEM_6_BADGE,
             ],
         ];
     }
@@ -198,6 +237,18 @@ class StaticContent
     // ──────────────────────────────────────────────
     //  LAYANAN  (halaman /layanan)
     // ──────────────────────────────────────────────
+
+    /**
+     * Fallback images for layanan cards when foto_contoh is null.
+     * Used consistently across both /layanan and /katalog-layanan pages.
+     */
+    const LAYANAN_FALLBACK_IMAGES = [
+        'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop',
+    ];
+
     const LAYANAN_HERO_TITLE = 'Precision in Every Layer.';
     const LAYANAN_HERO_DESC  = 'Pilih paket perlindungan dan estetika terbaik untuk kendaraan Anda. Menggunakan material grade premium dengan pemasangan yang sangat mendetail.';
     const LAYANAN_BADGE      = 'Layanan & Paket';

@@ -12,19 +12,19 @@
                 <!-- Left: CTA Text -->
                 <div class="lg:col-span-7 space-y-6">
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-[1.15] tracking-tight">
-                        Siap Mengubah Tampilan Kendaraan?
+                        {{ \App\Helpers\StaticContent::CTA_TITLE }}
                     </h2>
                     <p class="text-gray-400 text-sm sm:text-base leading-relaxed max-w-xl">
-                        Hubungi konsultan desain gratis sekarang. Tim ahli kami akan membantu Anda memilih material dan warna terbaik yang sesuai dengan kepribadian Anda.
+                        {{ \App\Helpers\StaticContent::CTA_SUBTITLE }}
                     </p>
                     <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-4">
                         <a href="https://wa.me/628123456789"
                            class="btn-premium px-8 py-4 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider text-black flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(242,153,74,0.3)]">
-                            <i class="ph-bold ph-whatsapp-logo text-lg"></i> Hubungi WhatsApp
+                            <i class="ph-bold ph-whatsapp-logo text-lg"></i> {{ \App\Helpers\StaticContent::CTA_HUBUNGI_WA }}
                         </a>
                         <a href="{{ route('katalog.user') }}"
                            class="px-8 py-4 rounded-xl border border-white/10 text-white font-bold text-xs sm:text-sm uppercase tracking-wider bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all">
-                            Pelajari Prosedur
+                            {{ \App\Helpers\StaticContent::CTA_PELAJARI }}
                         </a>
                     </div>
                 </div>
@@ -33,14 +33,14 @@
                 <div class="lg:col-span-5">
                     <div class="bg-[#181818] border border-white/5 rounded-3xl p-8 space-y-6 shadow-xl relative overflow-hidden group hover:border-[#f2994a]/25 transition-all">
                         <div class="flex justify-between items-center pb-4 border-b border-white/5">
-                            <h4 class="text-xs font-bold text-[#f2994a] tracking-widest uppercase">Langkah Mudah</h4>
-                            <span class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Fast Process</span>
+                            <h4 class="text-xs font-bold text-[#f2994a] tracking-widest uppercase">{{ \App\Helpers\StaticContent::LANGKAH_BADGE }}</h4>
+                            <span class="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">{{ \App\Helpers\StaticContent::LANGKAH_TAGLINE }}</span>
                         </div>
                         <div class="space-y-6">
                             @foreach([
-                                ['no'=>1, 'title'=>'Konsultasi & Estimasi', 'desc'=>'Hubungi tim admin kami untuk berkonsultasi mengenai desain & biaya.'],
-                                ['no'=>2, 'title'=>'Pilihan Wrapping', 'desc'=>'Tentukan pilihan material, merk premium, dan warna sesuai keinginan Anda.'],
-                                ['no'=>3, 'title'=>'Pengerjaan Rapi', 'desc'=>'Bawa mobil Anda ke workshop kami dan serahkan pengerjaan pada ahlinya.'],
+                                ['no'=>1, 'title'=>\App\Helpers\StaticContent::STEP1_TITLE, 'desc'=>\App\Helpers\StaticContent::STEP1_DESC],
+                                ['no'=>2, 'title'=>\App\Helpers\StaticContent::STEP2_TITLE, 'desc'=>\App\Helpers\StaticContent::STEP2_DESC],
+                                ['no'=>3, 'title'=>\App\Helpers\StaticContent::STEP3_TITLE, 'desc'=>\App\Helpers\StaticContent::STEP3_DESC],
                             ] as $step)
                             <div class="flex items-start gap-4">
                                 <div class="w-8 h-8 rounded-full bg-[#f2994a]/10 border border-[#f2994a]/30 flex items-center justify-center text-xs font-extrabold text-[#f2994a] flex-shrink-0 group-hover:bg-[#f2994a] group-hover:text-black transition-all duration-300">

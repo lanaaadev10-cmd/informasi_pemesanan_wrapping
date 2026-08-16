@@ -6,25 +6,25 @@
             <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
                 <i class="ph-bold ph-car text-xl text-white"></i>
             </div>
-            <span class="font-bold text-xl hidden sm:inline">{{ config('app.name', 'Wrapping') }}</span>
+            <span class="font-bold text-xl hidden sm:inline">{{ \App\Helpers\StaticContent::APP_NAME }}</span>
         </div>
 
         <!-- Desktop Menu -->
         <div class="hidden md:flex items-center gap-8">
-            <a href="#beranda" class="text-gray-300 hover:text-white transition-colors">Beranda</a>
-            <a href="{{ route('katalog.user') }}" class="text-gray-300 hover:text-white transition-colors">Layanan</a>
-            <a href="{{ route('galeri.user') }}" class="text-gray-300 hover:text-white transition-colors">Galeri</a>
-            <a href="{{ route('profil.perusahaan') }}" class="text-gray-300 hover:text-white transition-colors">Tentang</a>
+            <a href="#beranda" class="text-gray-300 hover:text-white transition-colors">{{ \App\Helpers\StaticContent::NAV_BERANDA }}</a>
+            <a href="{{ route('katalog.user') }}" class="text-gray-300 hover:text-white transition-colors">{{ \App\Helpers\StaticContent::NAV_LAYANAN }}</a>
+            <a href="{{ route('galeri.user') }}" class="text-gray-300 hover:text-white transition-colors">{{ \App\Helpers\StaticContent::NAV_GALERI }}</a>
+            <a href="{{ route('profil.perusahaan') }}" class="text-gray-300 hover:text-white transition-colors">{{ \App\Helpers\StaticContent::NAV_TENTANG }}</a>
         </div>
 
         <!-- CTA Buttons -->
         <div class="flex items-center gap-3">
             @guest
-                <a href="{{ route('login') }}" class="hidden sm:inline text-gray-300 hover:text-white transition-colors">Login</a>
-                <a href="{{ route('register') }}" class="btn-premium text-sm">Daftar</a>
+                <a href="{{ route('login') }}" class="hidden sm:inline text-gray-300 hover:text-white transition-colors">{{ \App\Helpers\StaticContent::NAV_MASUK }}</a>
+                <a href="{{ route('register') }}" class="btn-premium text-sm">{{ \App\Helpers\StaticContent::NAV_DAFTAR }}</a>
             @endguest
             @auth
-                <a href="{{ route('dashboard') }}" class="btn-premium text-sm">Dashboard</a>
+                <a href="{{ route('dashboard') }}" class="btn-premium text-sm">{{ \App\Helpers\StaticContent::NAV_DASHBOARD }}</a>
             @endauth
 
             <!-- Mobile Menu Toggle -->
@@ -37,10 +37,10 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden md:hidden bg-opacity-95 border-t border-gray-700 animate-in fade-in">
         <div class="max-w-7xl mx-auto px-6 py-4 space-y-4">
-            <a href="#beranda" class="block text-gray-300 hover:text-white transition-colors py-2">Beranda</a>
-            <a href="{{ route('katalog.user') }}" class="block text-gray-300 hover:text-white transition-colors py-2">Layanan</a>
-            <a href="{{ route('galeri.user') }}" class="block text-gray-300 hover:text-white transition-colors py-2">Galeri</a>
-            <a href="{{ route('profil.perusahaan') }}" class="block text-gray-300 hover:text-white transition-colors py-2">Tentang</a>
+            <a href="#beranda" class="block text-gray-300 hover:text-white transition-colors py-2">{{ \App\Helpers\StaticContent::NAV_BERANDA }}</a>
+            <a href="{{ route('katalog.user') }}" class="block text-gray-300 hover:text-white transition-colors py-2">{{ \App\Helpers\StaticContent::NAV_LAYANAN }}</a>
+            <a href="{{ route('galeri.user') }}" class="block text-gray-300 hover:text-white transition-colors py-2">{{ \App\Helpers\StaticContent::NAV_GALERI }}</a>
+            <a href="{{ route('profil.perusahaan') }}" class="block text-gray-300 hover:text-white transition-colors py-2">{{ \App\Helpers\StaticContent::NAV_TENTANG }}</a>
         </div>
     </div>
 </nav>

@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Galeri;
+use App\Models\Layanan;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        return view('landing.beranda.index');
+        $galeris = Galeri::all();
+        return view('landing.beranda.index', compact('galeris'));
     }
 
     public function profile()
@@ -23,6 +26,7 @@ class DashboardController extends Controller
 
     public function layanan()
     {
-        return view('landing.layanan.index');
+        $layanans = Layanan::all();
+        return view('landing.layanan.index', compact('layanans'));
     }
 }

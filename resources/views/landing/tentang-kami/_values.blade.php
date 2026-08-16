@@ -6,7 +6,7 @@
     <div class="space-y-12 z-10 relative" data-aos="fade-up">
         <div class="text-center space-y-4 max-w-2xl mx-auto">
             <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
-                Nilai yang Kami Junjung
+                {{ \App\Helpers\StaticContent::VALUES_TITLE }}
             </h2>
             <div class="w-16 h-1 bg-[#f2994a] mx-auto rounded-full"></div>
         </div>

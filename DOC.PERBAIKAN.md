@@ -91,25 +91,155 @@ Di bagian **"Status & Kendali"**:
 ### Catatan Perbaikan Tambahan
 Awalnya field `id_user`, `tanggal_pesan`, dan `total_harga` dikasih kondisi `disabled` saat halaman **Ubah (Edit)**. Ternyata admin tetap perlu mengedit data tersebut. Jadi kondisi disabled untuk ketiga field itu dihapus. Sekarang **semua field** (kecuali `kode_pesanan`) bisa diedit di halaman New maupun Ubah.
 
-File itu ada tapi tidak satu pun Blade view yang mereferensikannya. Semua teks di halaman ditulis hardcoded langsung di file .blade.php, bukan dari StaticContent::NAV_BERANDA dll.
-Grep membuktikan: StaticContent:: muncul 0 kali di seluruh project selain di file definisinya sendiri.
-Cara Memperbaiki
-Agar perubahan di StaticContent.php berdampak ke tampilan, semua Blade view yang menampilkan teks statis harus diubah agar menggunakan konstanta dari StaticContent. Contoh:
-Di resources/views/landing/beranda/_hero.blade.php (sekarang):
-<span>Professional Car Wrapping Indonesia</span>
-Diubah menjadi:
-<span>{{ \App\Helpers\StaticContent::HERO_BADGE }}</span>
-Di resources/views/landing/beranda/_keunggulan.blade.php (sekarang):
-<h2>Keunggulan Layanan</h2>
-Diubah menjadi:
-<h2>{{ \App\Helpers\StaticContent::KEUNGGULAN_BADGE }}</h2>
-Dan seterusnya untuk semua teks di:
-- _portofolio.blade.php
-- _cta-langkah.blade.php
-- profil/index.blade.php
-- layanan/index.blade.php
-- tentang-kami/index.blade.php
-- galeri/index.blade.php
-- components/navbar.blade.php
-- layouts/tampilan_utama.blade.php
-Serta mengganti array hardcoded (galeri, tim, dll) dengan method static seperti StaticContent::galeriItems().
+---
+
+## Perbaikan Sesi 4 (19 Juli 2026) — Refactor Besar-Besaran
+
+### 1. Foto Galeri — Sekarang Muncul
+**Masalah:** Gambar galeri tidak muncul karena file-nya (jpg) tidak ada di folder `public/images/galeri/`. Folder dan file-nya memang tidak pernah dibuat.
+**Perbaikan:** Semua foto galeri sekarang menggunakan gambar dari Unsplash (situs gambar gratis). Gambar akan muncul tanpa perlu menyimpan file di server. Ada tabel baru di `StaticContent.php` yang berisi pasangan "path lama → URL Unsplash", dan fungsi `galeriFoto()` untuk menerjemahkannya.
+
+### 2. `StaticContent` Sekarang Berfungsi Beneran
+**Masalah:** File `StaticContent.php` ada dan berisi konstanta teks (nama perusahaan, judul, tombol, dll), tapi tidak ada satu pun tampilan website yang menggunkannya. Semua teks ditulis langsung (hardcode) di file Blade.
+**Perbaikan:** Sekarang semua teks di halaman website ngacu ke `StaticContent`. Jadi kalau mau ganti teks, cukup edit satu file `app/Helpers/StaticContent.php`, refresh halaman, langsung berubah.
+
+**Halaman yang sudah pakai StaticContent:**
+- Navbar & Footer — nama brand, menu, tautan sosial, copyright
+- Halaman Beranda — hero, keunggulan, portofolio, CTA
+- Halaman Profil Perusahaan — nama perusahaan, deskripsi, visi misi
+- Halaman Layanan — badge, judul, deskripsi
+- Halaman Tentang Kami — judul hero, visi, misi, tim, CTA
+- Halaman Galeri — judul, deskripsi, filter
+
+### 3. Galeri — Pindah ke Database
+**Masalah:** Data galeri (foto, judul, deskripsi) ditulis manual di file Blade dan `StaticContent.php`. Kalau mau nambah/ubah, harus edit kode.
+**Perbaikan:** Data galeri sekarang disimpan di tabel `galeris` di database. Ada seeder (`GaleriSeeder`) yang isi 3 data real: Porsche 911 GT3, Mercedes-Benz S-Class, dan Lamborghini Urus.
+
+**Cara nambah/ubah galeri:** Login admin → menu Galeri → Tambah/Edit. Hasil langsung muncul di website, di halaman galeri maupun di halaman beranda bagian portofolio.
+
+### 4. Layanan — Pindah ke Database
+**Masalah:** Sama seperti galeri, data layanan awalnya ditulis manual di file Blade (4 paket: Stealth Matte, Mirror Glossy, Satin Silk, Paint Protection).
+**Perbaikan:** Data layanan sekarang disimpan di tabel `layanans` di database. Ada seeder (`LayananSeeder`) yang isi 3 data real sesuai permintaan:
+
+| Layanan | Tipe | Harga |
+|---------|------|-------|
+| Variasi Mobil | custom | Menyesuaikan |
+| Kaca Film | custom | Menyesuaikan |
+| Audio Mobil | custom | Menyesuaikan |
+
+**Cara nambah/ubah layanan:** Login admin → menu Layanan → Tambah/Edit.
+
+### 5. Galeri di Dashboard Customer
+**Masalah:** Data galeri sudah dikirim ke halaman dashboard customer tapi tidak ditampilkan.
+**Perbaikan:** Sekarang ada bagian "Galeri Portofolio" di dashboard customer (setelah login), menampilkan foto-foto galeri dalam grid. Sinkron dengan data di database.
+
+### 6. Filter Kategori Galeri — Sekarang Berfungsi
+**Masalah:** Tombol filter kategori di halaman galeri mengarah ke method `kategori()` yang tidak ada, jadinya error 500.
+**Perbaikan:** Method `kategori()` sudah ditambahkan. Klik kategori → tampilkan foto sesuai kategori. Filternya juga otomatis menyesuaikan kategori yang ada di database.
+
+### 7. API Galeri — Berfungsi
+**Masalah:** Endpoint `/api/galeri/*` error karena file `GaleriApiController.php` tidak ada.
+**Perbaikan:** File sudah dibuat, isinya ngambil data dari database.
+
+### 8. Migrasi Database — Beres Total
+**Masalah:** Ada 2 error sebelumya:
+- Foreign key `keranjangs.id_paket` mengacu ke tabel `pakets` yang tidak ada (seharusnya ke `layanans`)
+- Ada duplikasi unique index di file migrasi
+**Perbaikan:** Dua-duanya sudah dibenerin. Sekarang `php artisan migrate:fresh --seed` jalan 100% mulus.
+
+### Cara Gampang Mengelola Website Sekarang
+
+| Yang Mau Dilakukan | Caranya |
+|-------------------|---------|
+| Ganti teks (nama toko, judul, tombol, dll) | Edit file `app/Helpers/StaticContent.php` |
+| Tambah/Ubah/Hapus galeri | Login admin → menu Galeri |
+| Tambah/Ubah/Hapus layanan | Login admin → menu Layanan |
+| Ganti foto galeri | Login admin → klik galeri → upload foto baru |
+| Reset data dari awal | Jalankan: `php artisan migrate:fresh --seed` |
+
+# Catatan Perbaikan Bug Pada Tanggal 21 Juli 2026
+
+## Bug 1: Gambar layanan di dashboard customer tidak terdefinisi
+
+**Penyebab:** Data seed (`LayananSeeder.php`) tidak mengisi kolom `foto_contoh`, sehingga semua layanan memiliki `foto_contoh = null`. Dashboard hanya menampilkan icon placeholder.
+
+**Solusi (manual):** Admin perlu upload foto layanan via Filament admin panel agar `foto_contoh` terisi.
+
+---
+
+## Bug 2: Gambar Katalog Layanan berbeda dengan Halaman Layanan
+
+**Penyebab:** Kedua halaman menggunakan set fallback image (Unsplash URL) yang berbeda ketika `foto_contoh = null`.
+
+**Perbaikan:**
+
+1. **`app/Helpers/StaticContent.php`** — Menambahkan konstanta `LAYANAN_FALLBACK_IMAGES` yang berisi 4 URL fallback yang seragam.
+
+2. **`resources/views/landing/layanan/index.blade.php`** — Mengganti inline array fallback dengan `StaticContent::LAYANAN_FALLBACK_IMAGES`.
+
+3. **`resources/views/landing/katalog/_grid.blade.php`** — Mengganti 3 fallback berbeda (wide card, medium card, grid items) dengan `StaticContent::LAYANAN_FALLBACK_IMAGES` yang konsisten dengan halaman Layanan.
+
+---
+
+## Bug 3: Gambar galeri broken jika upload via Filament
+
+**Penyebab:** Tiga file menggunakan `{{ $item->foto }}` tanpa prefix `asset('storage/')`. Data seeder menyimpan full URL (Unsplash) jadi aman, tapi upload Filament menyimpan relative path (`galeri/file.jpg`) sehingga broken.
+
+**Perbaikan (3 file):**
+
+1. **`resources/views/landing/beranda/_portofolio.blade.php`**
+2. **`resources/views/landing/galeri/_grid.blade.php`**
+3. **`resources/views/dashboard/customer/dashboard/_gallery-section.blade.php`**
+
+   Semua diubah menjadi:
+   ```php
+   {{ str_starts_with($item->foto, 'http') ? $item->foto : asset('storage/' . $item->foto) }}
+   ```
+
+---
+
+## Perbaikan Sesi 5 (11 Agustus 2026) — Satu Pemicu Update Foto Galeri & Layanan (Tanpa Reseed)
+
+### Masalah
+Update foto layanan dan galeri harusnya bisa dari satu tempat yang sama, tapi caranya beda:
+- **Layanan:** gambar fallback dibaca saat render dari `StaticContent::LAYANAN_FALLBACK_IMAGES` — edit langsung berubah, tanpa reseed.
+- **Galeri:** URL gambar di-resolve oleh seeder (`GaleriSeeder`) lalu disimpan permanen ke kolom `galeri.foto` — ganti URL wajib reseed (dan reseed `GaleriSeeder` menimbulkan duplikat kalau data lama belum dihapus).
+
+Hasil keputusan: seragamkan pemicunya **bertipe layanan** = cukup edit `StaticContent.php`, tanpa reseed, tanpa cache. (Gambar per-layanan spesifik TIDAK dibutuhkan; fallback posisi tetap dipakai.)
+
+### Perbaikan (2 file)
+
+**File 1: `app/Helpers/StaticContent.php`**
+Tambah helper baru `galeriFotoByJudul()`:
+```php
+public static function galeriFotoByJudul(string $judul, ?string $stored = null): string
+{
+    foreach (self::galeriItems() as $item) {
+        if ($item['judul'] === $judul) {
+            return self::galeriFoto($item['foto']);   // resolve key → URL dari $galeriFotoMap
+        }
+    }
+    return $stored ?: self::$galeriFotoMap['images/galeri/tesla-model-s.jpg'] ?? '';
+}
+```
+
+**File 2: `app/Models/Galeri.php`**
+Tambah accessor supaya semua view ter-resolve otomatis tanpa diubah:
+```php
+public function getFotoAttribute($value)
+{
+    return \App\Helpers\StaticContent::galeriFotoByJudul($this->judul, $value);
+}
+```
+
+### Cara kerja
+- Galeri hasil seed (Porsche 911 GT3, Mercedes-Benz S-Class, Lamborghini Urus) punya judul stabil yang ada di `galeriItems()`. Gambar di-resolve dari `judul → galeriFoto(key) → URL di $galeriFotoMap` saat render, sehingga nilai lama di DB tidak lagi dipakai.
+- Galeri lain (buatan admin via Filament, judul tidak dikenal) → helper mengembalikan nilai `foto` asli; view memproses seperti biasa (`http` → apa adanya, selain itu prefix `storage/`).
+
+### Hasil
+| Gambar | Edit di `StaticContent.php` | Perlu reseed? |
+|--------|-----------------------------|---------------|
+| Galeri | `$galeriFotoMap` (baris 154) | Tidak |
+| Layanan | `LAYANAN_FALLBACK_IMAGES` (baris 245) | Tidak |
+
+Tidak ada perubahan view, seeder, atau DB. File tersentuh hanya 2 (`StaticContent.php`, `Galeri.php`).

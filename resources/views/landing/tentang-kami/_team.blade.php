@@ -6,13 +6,13 @@
     <div class="space-y-12 z-10 relative" data-aos="fade-up">
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-8">
             <div class="space-y-3">
-                <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">Tim Kami</span>
+                <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">{{ \App\Helpers\StaticContent::TIM_BADGE }}</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
-                    Dibalik Setiap Detail Sempurna.
+                    {{ \App\Helpers\StaticContent::TIM_TITLE }}
                 </h2>
             </div>
             <p class="text-gray-400 text-sm sm:text-base max-w-xl leading-relaxed">
-                Didukung oleh mekanik bersertifikat dan berdedikasi tinggi yang memastikan setiap pemasangan stiker berjalan dengan sempurna dan presisi.
+                {{ \App\Helpers\StaticContent::TIM_DESC }}
             </p>
         </div>
 

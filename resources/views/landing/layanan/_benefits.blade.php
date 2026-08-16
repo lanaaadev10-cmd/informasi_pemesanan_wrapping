@@ -2,19 +2,20 @@
     <div class="lg:col-span-3 space-y-6">
         <div>
             <h2 class="text-2xl sm:text-3xl font-black text-white mb-3 italic">
-                Mengapa Memilih Kami?
+                {{ \App\Helpers\StaticContent::LAYANAN_MENGAPA_TITLE }}
             </h2>
             <p class="text-gray-400 text-sm leading-relaxed max-w-lg">
-                Kami menggunakan keahlian teknis dengan material terbaik dunia untuk memastikan aset Anda terlindung sempurna. Setiap pengerjaan dilakukan di ruangan steril dengan kontrol suhu untuk hasil yang maksimal tanpa gelembung udara.
+                {{ \App\Helpers\StaticContent::LAYANAN_MENGAPA_DESC }}
             </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2 text-xs sm:text-sm font-semibold text-gray-300">
             @php
+                use App\Helpers\StaticContent;
                 $benefitTags = [
-                    ['icon' => '🔧', 'text' => 'Instalatur Bersertifikat'],
-                    ['icon' => '🏠', 'text' => 'Ruangan Steril'],
-                    ['icon' => '✅', 'text' => 'Quality Control 3 Lapis'],
+                    ['icon' => '🔧', 'text' => StaticContent::LAYANAN_BENEFIT_1],
+                    ['icon' => '🏠', 'text' => StaticContent::LAYANAN_BENEFIT_2],
+                    ['icon' => '✅', 'text' => StaticContent::LAYANAN_BENEFIT_3],
                 ];
             @endphp
             @foreach($benefitTags as $tag)
@@ -37,10 +38,10 @@
 
             <div>
                 <h3 class="text-xl font-black text-white mb-2">
-                    Garansi Resmi
+                    {{ \App\Helpers\StaticContent::LAYANAN_GARANSI_TITLE }}
                 </h3>
                 <p class="text-gray-400 text-sm leading-relaxed max-w-sm">
-                    Hingga 5 tahun perlindungan terhadap gelembung, pengelupasan, dan kerusakan perekatan.
+                    {{ \App\Helpers\StaticContent::LAYANAN_GARANSI_DESC }}
                 </p>
             </div>
         </div>

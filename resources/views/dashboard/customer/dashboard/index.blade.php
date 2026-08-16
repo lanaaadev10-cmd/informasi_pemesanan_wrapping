@@ -23,5 +23,8 @@
     {{-- 4. Aktivitas Terakhir Section --}}
     @include('dashboard.customer.dashboard._recent-activity')
 
+    {{-- 5. Galeri Portofolio Section --}}
+    @include('dashboard.customer.dashboard._gallery-section')
+
 </div>
 @endsection

@@ -15,15 +15,12 @@
     </style>
 
     @php
+        use App\Helpers\StaticContent;
         $accentColor = '#f2994a';
-        $galeriTitle = 'Precision Mastery Gallery';
-        $galeriDesc  = 'Explore our curated selection of high-end automotive transformations. From matte finishes to protective layers, witness the art of precision in every detail.';
-        $galeriFilterAll = 'All Works';
-        $galeriFilterCategories = [
-            ['slug' => 'matte', 'label' => 'Matte Series'],
-            ['slug' => 'satin', 'label' => 'Satin Series'],
-            ['slug' => 'glossy', 'label' => 'Glossy Series'],
-        ];
+        $galeriTitle = StaticContent::GALERI_TITLE;
+        $galeriDesc  = StaticContent::GALERI_DESC;
+        $galeriFilterAll = StaticContent::GALERI_FILTER_ALL;
+        $galeriFilterCategories = $galeris->pluck('kategori')->unique()->filter()->map(fn($k) => ['slug' => $k, 'label' => ucfirst($k) . ' Series'])->values()->toArray();
         $galeriHeroImage = null;
     @endphp
 
