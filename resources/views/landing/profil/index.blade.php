@@ -1,4 +1,4 @@
-@extends('layouts.tampilan_utama')
+@extends(auth()->check() ? 'layouts.dashboard_customer' : 'layouts.tampilan_utama')
 
 @section('title', 'Profil Perusahaan')
 
@@ -201,7 +201,7 @@
                 <div class="bg-white/[0.01] border border-white/5 p-8 rounded-3xl hover:border-[#f2994a]/25 hover:bg-white/[0.02] transition-all duration-300 group shadow-md flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="w-12 h-12 rounded-xl bg-[#f2994a]/5 flex items-center justify-center text-[#f2994a] group-hover:scale-110 transition-transform duration-300">
-                            <i class="ph-bold ph-gem text-xl"></i>
+                            <i class="ph-bold ph-diamond text-xl"></i>
                         </div>
                         <h4 class="text-base font-bold text-white uppercase tracking-wider">Bespoke Materials</h4>
                         <p class="text-gray-400 text-xs sm:text-sm leading-relaxed font-light">
@@ -214,7 +214,7 @@
                 <div class="bg-white/[0.01] border border-white/5 p-8 rounded-3xl hover:border-[#f2994a]/25 hover:bg-white/[0.02] transition-all duration-300 group shadow-md flex flex-col justify-between">
                     <div class="space-y-4">
                         <div class="w-12 h-12 rounded-xl bg-[#f2994a]/5 flex items-center justify-center text-[#f2994a] group-hover:scale-110 transition-transform duration-300">
-                            <i class="ph-bold ph-sparkles text-xl"></i>
+                            <i class="ph-bold ph-sparkle text-xl"></i>
                         </div>
                         <h4 class="text-base font-bold text-white uppercase tracking-wider">White-Glove Service</h4>
                         <p class="text-gray-400 text-xs sm:text-sm leading-relaxed font-light">

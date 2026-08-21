@@ -125,10 +125,15 @@
                 <!-- Action Buttons -->
                 <div class="space-y-3">
                     <!-- Add to Cart -->
-                    <button id="add-to-cart-btn"
-                            class="w-full py-3 px-4 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg font-bold text-xs uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200">
-                        <i class="ph-bold ph-shopping-cart-simple mr-2"></i> {{ $profil->cta_tambah_keranjang ?? 'Tambah ke Keranjang' }}
-                    </button>
+                    <form action="{{ route('keranjang.tambah') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="id_paket" value="{{ $package->id_layanan }}">
+                        <input type="hidden" name="jumlah" value="1">
+                        <button type="submit"
+                                class="w-full py-3 px-4 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg font-bold text-xs uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200">
+                            <i class="ph-bold ph-shopping-cart-simple mr-2"></i> {{ $profil->cta_tambah_keranjang ?? 'Tambah ke Keranjang' }}
+                        </button>
+                    </form>
 
                     <!-- Direct Checkout -->
                     <form action="{{ route('pesanan.checkout.store') }}" method="POST" id="direct-checkout-form">
@@ -175,108 +180,5 @@
     </div>
 
 </div>
-
-<!-- Toast Container -->
-<div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const addToCartBtn = document.getElementById('add-to-cart-btn');
-
-        if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', async function(e) {
-                e.preventDefault();
-
-                try {
-                    const response = await fetch('/api/keranjang/item', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        },
-                        body: JSON.stringify({
-                            id_layanan: {{ $package->id_layanan }},
-                            quantity: 1
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (response.ok) {
-                        showToast('✓ Paket ditambahkan ke keranjang!', 'success');
-                        addToCartBtn.disabled = true;
-                        addToCartBtn.classList.add('opacity-50');
-
-                        // Redirect ke keranjang setelah 2 detik
-                        setTimeout(() => {
-                            window.location.href = '{{ route("keranjang.index") }}';
-                        }, 2000);
-                    } else if (response.status === 422) {
-                        showToast('⚠ ' + data.message, 'warning');
-                    } else {
-                        showToast('✗ Gagal menambahkan ke keranjang', 'error');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    showToast('✗ Terjadi kesalahan', 'error');
-                }
-            });
-        }
-
-        const showToast = (message, type = 'info') => {
-            const container = document.getElementById('toast-container');
-            const toastEl = document.createElement('div');
-
-            const bgColor = type === 'success' ? 'bg-green-500/90' :
-                           type === 'error' ? 'bg-red-500/90' :
-                           type === 'warning' ? 'bg-yellow-500/90' :
-                           'bg-blue-500/90';
-
-            toastEl.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg backdrop-blur-sm mb-2 animate-slide-in`;
-            toastEl.textContent = message;
-
-            container.appendChild(toastEl);
-
-            setTimeout(() => {
-                toastEl.classList.add('animate-slide-out');
-                setTimeout(() => toastEl.remove(), 300);
-            }, 3000);
-        };
-    });
-</script>
-
-<style>
-    @keyframes slide-in {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    @keyframes slide-out {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-
-    .animate-slide-in {
-        animation: slide-in 0.3s ease-out;
-    }
-
-    .animate-slide-out {
-        animation: slide-out 0.3s ease-out;
-    }
-</style>
-@endpush
 
 @endsection

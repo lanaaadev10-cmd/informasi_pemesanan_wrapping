@@ -84,17 +84,19 @@
 
                                 <!-- Action Buttons -->
                                 <div class="flex gap-2">
-                                    <button class="flex-1 py-2 px-3 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200 add-to-cart-btn"
-                                            data-package-id="{{ $package->id_layanan }}"
-                                            data-package-name="{{ $package->nama_layanan }}"
-                                            data-package-price="{{ $package->harga }}">
-                                        <i class="ph-bold ph-shopping-cart-simple mr-1"></i> Keranjang
-                                    </button>
-                                    <button class="flex-1 py-2 px-3 bg-[#f2994a] text-white rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/90 transition-all duration-200 order-now-btn"
-                                            data-package-id="{{ $package->id_layanan }}"
-                                            data-package-name="{{ $package->nama_layanan }}">
+                                    <form action="{{ route('keranjang.tambah') }}" method="POST" class="flex-1">
+                                        @csrf
+                                        <input type="hidden" name="id_paket" value="{{ $package->id_layanan }}">
+                                        <input type="hidden" name="jumlah" value="1">
+                                        <button type="submit"
+                                                class="w-full py-2 px-3 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200">
+                                            <i class="ph-bold ph-shopping-cart-simple mr-1"></i> Keranjang
+                                        </button>
+                                    </form>
+                                    <a href="{{ route('pesanan.direct-order', ['package_id' => $package->id_layanan]) }}"
+                                       class="flex-1 py-2 px-3 bg-[#f2994a] text-white rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/90 transition-all duration-200 flex items-center justify-center">
                                         <i class="ph-bold ph-lightning-fill mr-1"></i> {{ $profil->cta_pesan ?? 'Pesan' }}
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -126,163 +128,30 @@
     </div>
 </div>
 
-<!-- Toast Container -->
-<div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
-
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const initCarousel = () => {
-            // Handle carousel navigation
-            document.querySelectorAll('.packages-carousel-wrapper').forEach(wrapper => {
-                const parentGroup = wrapper.closest('.relative.group');
-                if (!parentGroup) return;
+        // Handle carousel navigation
+        document.querySelectorAll('.packages-carousel-wrapper').forEach(wrapper => {
+            const parentGroup = wrapper.closest('.relative.group');
+            if (!parentGroup) return;
 
-                const prevBtn = parentGroup.querySelector('.carousel-prev');
-                const nextBtn = parentGroup.querySelector('.carousel-next');
+            const prevBtn = parentGroup.querySelector('.carousel-prev');
+            const nextBtn = parentGroup.querySelector('.carousel-next');
 
-                if (!prevBtn || !nextBtn) return;
+            if (!prevBtn || !nextBtn) return;
 
-                const scroll = (direction) => {
-                    const scrollAmount = 350;
-                    wrapper.scrollBy({
-                        left: direction === 'next' ? scrollAmount : -scrollAmount,
-                        behavior: 'smooth'
-                    });
-                };
-
-                prevBtn.addEventListener('click', () => scroll('prev'));
-                nextBtn.addEventListener('click', () => scroll('next'));
-            });
-
-            // Handle add to cart buttons
-            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const packageId = this.dataset.packageId;
-                    const packageName = this.dataset.packageName;
-                    addToCart(packageId, packageName, this);
+            const scroll = (direction) => {
+                const scrollAmount = 350;
+                wrapper.scrollBy({
+                    left: direction === 'next' ? scrollAmount : -scrollAmount,
+                    behavior: 'smooth'
                 });
-            });
+            };
 
-            // Handle order now buttons
-            document.querySelectorAll('.order-now-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const packageId = this.dataset.packageId;
-                    const packageName = this.dataset.packageName;
-                    orderNow(packageId, packageName);
-                });
-            });
-        };
-
-        const getApiToken = () => {
-            return document.querySelector('meta[name="api-token"]')?.content || localStorage.getItem('api_token');
-        };
-
-        const addToCart = async (packageId, packageName, button) => {
-            try {
-                const response = await fetch('/api/keranjang/item', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                        'Authorization': 'Bearer ' + getApiToken()
-                    },
-                    body: JSON.stringify({
-                        id_layanan: packageId,
-                        quantity: 1
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    showToast('✓ ' + packageName + ' ditambahkan ke keranjang!', 'success');
-                    updateCartBadge();
-                    updateButtonStates();
-                } else if (response.status === 422) {
-                    showToast('⚠ ' + data.message, 'warning');
-                } else {
-                    showToast('✗ Gagal menambahkan ke keranjang', 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('✗ Terjadi kesalahan', 'error');
-            }
-        };
-
-        const orderNow = (packageId, packageName) => {
-            // Redirect to direct order with package ID
-            window.location.href = `/pesanan/buat?package_id=${packageId}`;
-        };
-
-        const showToast = (message, type = 'info') => {
-            const container = document.getElementById('toast-container');
-            if (!container) return;
-
-            const toastEl = document.createElement('div');
-
-            const bgColor = type === 'success' ? 'bg-green-500/90' :
-                           type === 'error' ? 'bg-red-500/90' :
-                           type === 'warning' ? 'bg-yellow-500/90' :
-                           'bg-blue-500/90';
-
-            toastEl.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg backdrop-blur-sm mb-2 animate-slide-in`;
-            toastEl.textContent = message;
-
-            container.appendChild(toastEl);
-
-            setTimeout(() => {
-                toastEl.classList.add('animate-slide-out');
-                setTimeout(() => toastEl.remove(), 300);
-            }, 3000);
-        };
-
-        const updateCartBadge = async () => {
-            try {
-                const response = await fetch('/api/keranjang/count', {
-                    headers: {
-                        'Authorization': 'Bearer ' + getApiToken()
-                    }
-                });
-                const data = await response.json();
-
-                const badge = document.querySelector('[data-cart-badge]');
-                if (badge) {
-                    badge.textContent = data.data.count;
-                    if (data.data.count > 0) {
-                        badge.classList.remove('hidden');
-                    }
-                }
-            } catch (error) {
-                console.error('Error updating cart badge:', error);
-            }
-        };
-
-        const updateButtonStates = async () => {
-            try {
-                document.querySelectorAll('.add-to-cart-btn').forEach(async (btn) => {
-                    const packageId = btn.dataset.packageId;
-                    const response = await fetch(`/api/keranjang/check/${packageId}`, {
-                        headers: {
-                            'Authorization': 'Bearer ' + getApiToken()
-                        }
-                    });
-                    const data = await response.json();
-
-                    if (data.data.in_cart) {
-                        btn.classList.add('opacity-50');
-                        btn.disabled = true;
-                    }
-                });
-            } catch (error) {
-                console.error('Error updating button states:', error);
-            }
-        };
-
-        initCarousel();
-        updateButtonStates();
+            prevBtn.addEventListener('click', () => scroll('prev'));
+            nextBtn.addEventListener('click', () => scroll('next'));
+        });
     });
 </script>
 

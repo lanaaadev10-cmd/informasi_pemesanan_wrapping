@@ -65,6 +65,15 @@ class SettingsServiceProvider extends ServiceProvider
             }
 
             $view->with('profil', $profil);
+
+            // Jumlah item keranjang aktif untuk badge (hanya untuk user login)
+            $cartCount = 0;
+            if (auth()->check()) {
+                $cartCount = \App\Models\Keranjang::where('id_user', auth()->id())
+                    ->where('status', 'active')
+                    ->first()?->details?->count() ?? 0;
+            }
+            $view->with('cartCount', $cartCount);
         });
     }
 }

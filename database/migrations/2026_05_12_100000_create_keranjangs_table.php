@@ -11,10 +11,8 @@ return new class extends Migration
         Schema::create('keranjangs', function (Blueprint $table) {
             $table->id('id_keranjang');
             $table->foreignId('id_user')->constrained('users', 'id')->onDelete('cascade');
-            $table->foreignId('id_paket')->constrained('layanans', 'id_layanan')->onDelete('cascade');
             $table->enum('status', ['active', 'checked_out'])->default('active');
             $table->timestamps();
-            $table->unique(['id_keranjang', 'id_paket']);
         });
     }
 

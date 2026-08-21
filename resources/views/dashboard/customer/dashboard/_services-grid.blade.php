@@ -56,7 +56,7 @@
         <!-- Card 4 -->
         <a href="{{ route('katalog.user') }}" class="group bg-white/[0.01] border border-white/5 p-6 rounded-2xl hover:border-[#f2994a]/30 transition-all duration-300 flex flex-col justify-between min-h-[160px] shadow-lg">
             <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 group-hover:text-[#f2994a] group-hover:bg-[#f2994a]/10 transition-all">
-                <i class="ph-bold {{ $profil->dashboard_service_4_icon ?? 'ph-sparkles' }} text-xl"></i>
+                <i class="ph-bold {{ $profil->dashboard_service_4_icon ?? 'ph-sparkle' }} text-xl"></i>
             </div>
             <div class="space-y-1.5 mt-6">
                 <h4 class="text-xs font-black text-white uppercase tracking-wider">

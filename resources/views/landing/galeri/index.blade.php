@@ -1,4 +1,4 @@
-@extends('layouts.tampilan_utama')
+@extends(auth()->check() ? 'layouts.dashboard_customer' : 'layouts.tampilan_utama')
 
 @section('title', 'Galeri Karya')
 
@@ -20,7 +20,11 @@
         $galeriTitle = StaticContent::GALERI_TITLE;
         $galeriDesc  = StaticContent::GALERI_DESC;
         $galeriFilterAll = StaticContent::GALERI_FILTER_ALL;
-        $galeriFilterCategories = $galeris->pluck('kategori')->unique()->filter()->map(fn($k) => ['slug' => $k, 'label' => ucfirst($k) . ' Series'])->values()->toArray();
+        $galeriFilterCategories = [
+            ['slug' => 'matte',   'label' => 'Variasi mobil'],
+            ['slug' => 'glossy',  'label' => 'Kaca film'],
+            ['slug' => 'satin',   'label' => 'Audio mobil'],
+        ];
         $galeriHeroImage = null;
     @endphp
 

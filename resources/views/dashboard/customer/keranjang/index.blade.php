@@ -311,8 +311,8 @@
         decBtn.disabled = (newQty <= 1);
 
         try {
-            // Update quantity via patch Ajax request
-            const response = await fetch(`/api/keranjang/${idDetail}`, {
+            // Update quantity via patch Ajax request ke route web (session + CSRF)
+            const response = await fetch('{{ route('keranjang.update', '__ID__') }}'.replace('__ID__', idDetail), {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -324,9 +324,11 @@
 
             const data = await response.json();
 
-            if (response.ok && data.status === 'ok') {
-                const subtotal = data.data.subtotal;
-                const totalSum = data.data.total; // Sum of details in db
+            if (response.ok && data.success) {
+                // data.subtotal & data.total_payment sudah berformat "Rp ..."
+                const subtotalStr = data.subtotal;
+                const totalStr = data.total_payment;
+                const totalSum = parseRupiah(totalStr);
 
                 // Realistic dynamic totals computation
                 const serviceFee = 150000;
@@ -334,11 +336,11 @@
                 const grandTotal = totalSum + serviceFee - discount;
 
                 // Bind updated state back to DOM displays
-                qtySpan.textContent = data.data.jumlah;
-                subtotalSpan.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(subtotal);
-                
+                qtySpan.textContent = data.jumlah;
+                subtotalSpan.textContent = subtotalStr;
+
                 if (summarySubtotal) {
-                    summarySubtotal.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalSum);
+                    summarySubtotal.textContent = totalStr;
                 }
                 if (summaryDiscount) {
                     summaryDiscount.textContent = '- Rp ' + new Intl.NumberFormat('id-ID').format(discount);
@@ -358,6 +360,12 @@
             showToast('Gagal memperbarui keranjang: ' + err.message, 'error');
             console.error('Cart increment adjustment error:', err);
         }
+    }
+
+    // Ubah string "Rp 1.500.000" menjadi angka
+    function parseRupiah(str) {
+        const num = parseInt(String(str || '0').replace(/[^0-9]/g, ''));
+        return isNaN(num) ? 0 : num;
     }
 
     // Dynamic clean toast notifications
