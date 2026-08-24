@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
                 'confirmed',
                 'min:9',
                 'max:20',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]).{9,20}$/',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z]).{9,20}$/',
             ],
             'phone' => [
                 'nullable',
@@ -57,7 +57,7 @@ class RegisteredUserController extends Controller
             'password.confirmed' => 'Kata sandi tidak cocok, silakan periksa kembali.',
             'password.min' => 'Kata sandi minimal :min karakter.',
             'password.max' => 'Kata sandi maksimal :max karakter.',
-            'password.regex' => 'Kata sandi harus mengandung minimal 1 huruf kapital, 1 huruf kecil, dan 1 simbol.',
+            'password.regex' => 'Kata sandi harus mengandung minimal 1 huruf kapital dan 1 huruf kecil.',
             'phone.regex' => 'Format nomor tidak valid. Gunakan format: 08xxxxxxxxxx',
         ]);
 
@@ -66,6 +66,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
+            'email_verified_at' => now(),
         ]);
 
         // [OTOMATIS] Berikan role 'user' kepada pendaftar baru (pastikan role ada)

@@ -66,7 +66,7 @@
                         <p class="text-black/80 text-sm leading-relaxed">{!! \App\Helpers\StaticContent::K4_DESC !!}</p>
                     </div>
                     <div class="pt-2">
-                        <a href="https://wa.me/628123456789" class="inline-block bg-black text-[#f2994a] hover:bg-black/90 hover:text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
+                        <a href="{{ route('katalog.user') }}" class="inline-block bg-black text-[#f2994a] hover:bg-black/90 hover:text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md transition-all">
                             {{ \App\Helpers\StaticContent::CTA_CEK_SYARAT }}
                         </a>
                     </div>

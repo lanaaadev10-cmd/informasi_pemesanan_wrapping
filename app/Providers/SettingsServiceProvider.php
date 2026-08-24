@@ -61,7 +61,7 @@ class SettingsServiceProvider extends ServiceProvider
                 }
                 $profil->whatsapp_link = "https://wa.me/{$nomor}";
             } else {
-                $profil->whatsapp_link = '#';
+                $profil->whatsapp_link = \App\Helpers\StaticContent::COMPANY_WHATSAPP;
             }
 
             $view->with('profil', $profil);

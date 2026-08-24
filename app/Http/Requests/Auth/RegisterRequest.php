@@ -22,7 +22,7 @@ class RegisterRequest extends FormRequest
                 'confirmed',
                 'min:9',
                 'max:20',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]).{9,20}$/',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z]).{9,20}$/',
             ],
             'phone' => [
                 'nullable',
@@ -45,7 +45,7 @@ class RegisterRequest extends FormRequest
             'password.min' => 'Kata sandi minimal :min karakter.',
             'password.max' => 'Kata sandi maksimal :max karakter.',
             'password.confirmed' => 'Kata sandi tidak cocok, silakan periksa kembali.',
-            'password.regex' => 'Kata sandi harus mengandung minimal 1 huruf kapital, 1 huruf kecil, dan 1 simbol.',
+            'password.regex' => 'Kata sandi harus mengandung minimal 1 huruf kapital dan 1 huruf kecil.',
             'phone.regex' => 'Format nomor tidak valid. Gunakan format: 08xxxxxxxxxx',
         ];
     }

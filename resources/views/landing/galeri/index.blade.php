@@ -3,7 +3,7 @@
 @section('title', 'Galeri Karya')
 
 @section('content')
-<div class="{{ auth()->check() ? 'max-w-6xl mx-auto py-8 px-4 sm:px-0' : 'max-w-7xl mx-auto px-6 py-12' }}">
+<div class="{{ auth()->check() ? 'max-w-6xl mx-auto py-8 px-4 sm:px-0' : 'max-w-7xl mx-auto px-6 pt-4 pb-12' }}">
     <style>
         .no-scrollbar::-webkit-scrollbar {
             display: none;

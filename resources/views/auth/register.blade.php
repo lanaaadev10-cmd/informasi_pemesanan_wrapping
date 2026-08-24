@@ -24,8 +24,9 @@
                 </div>
                 <span class="font-extrabold text-sm text-white uppercase tracking-wider">{{ $profil->nama_perusahaan ?? 'Wrapping' }}</span>
             </a>
-            <a href="{{ url('/') }}" class="text-gray-500 hover:text-gray-300 transition-colors">
-                <i class="ph ph-x text-lg"></i>
+            <a href="{{ url('/') }}"
+               class="px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-gray-300 hover:text-white hover:border-[#f2994a]/40 transition-all text-xs font-bold uppercase tracking-wider">
+                Dashboard
             </a>
         </div>
 
@@ -105,9 +106,6 @@
                         </p>
                         <p id="m_pwd_chk_lower" class="transition-colors duration-200 text-[11px] text-gray-500">
                             <span class="circle-icon inline">○</span><span class="check-icon hidden">✓</span> Mengandung huruf kecil (a-z)
-                        </p>
-                        <p id="m_pwd_chk_symbol" class="transition-colors duration-200 text-[11px] text-gray-500">
-                            <span class="circle-icon inline">○</span><span class="check-icon hidden">✓</span> Mengandung simbol (!@#$%^&*)
                         </p>
                     </div>
                     <x-input-error :messages="$errors->get('password')" />
@@ -249,9 +247,6 @@
                                     </p>
                                     <p id="d_pwd_chk_lower" class="transition-colors duration-200 text-[10px] text-gray-500">
                                         <span class="circle-icon inline">○</span><span class="check-icon hidden">✓</span> Mengandung huruf kecil (a-z)
-                                    </p>
-                                    <p id="d_pwd_chk_symbol" class="transition-colors duration-200 text-[10px] text-gray-500">
-                                        <span class="circle-icon inline">○</span><span class="check-icon hidden">✓</span> Mengandung simbol (!@#$%^&*)
                                     </p>
                                 </div>
                                 <x-input-error :messages="$errors->get('password')" />
@@ -396,13 +391,11 @@
             const chkMax = document.getElementById(prefix + '_pwd_chk_maxlen');
             const chkUpper = document.getElementById(prefix + '_pwd_chk_upper');
             const chkLower = document.getElementById(prefix + '_pwd_chk_lower');
-            const chkSymbol = document.getElementById(prefix + '_pwd_chk_symbol');
 
             if (chkMin) toggleCheck(chkMin, value.length >= 9);
             if (chkMax) toggleCheck(chkMax, value.length <= 20);
             if (chkUpper) toggleCheck(chkUpper, /[A-Z]/.test(value));
             if (chkLower) toggleCheck(chkLower, /[a-z]/.test(value));
-            if (chkSymbol) toggleCheck(chkSymbol, /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value));
 
             const confirmId = (prefix === 'm' ? 'm_pwd_conf' : 'd_pwd_conf');
             const confirmEl = document.getElementById(confirmId);

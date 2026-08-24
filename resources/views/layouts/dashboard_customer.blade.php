@@ -165,7 +165,7 @@
                     </button>
 
                     <!-- Dropdown Panel -->
-                    <div id="notif-panel" class="hidden absolute right-0 top-[calc(100%+12px)] w-80 sm:w-96 bg-[#111111] border border-white/8 rounded-2xl shadow-2xl z-[9999] overflow-hidden" style="box-shadow: 0 20px 60px rgba(0,0,0,0.6);">
+                    <div id="notif-panel" class="hidden fixed z-[9999] top-20 inset-x-4 w-auto sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-96 bg-[#111111] border border-white/8 rounded-2xl shadow-2xl overflow-hidden" style="box-shadow: 0 20px 60px rgba(0,0,0,0.6);">
                         <!-- Header -->
                         <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
                             <div class="flex items-center gap-2">

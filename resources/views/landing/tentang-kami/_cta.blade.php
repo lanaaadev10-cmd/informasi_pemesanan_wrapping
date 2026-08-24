@@ -15,8 +15,7 @@
             {{ \App\Helpers\StaticContent::CTA_TENTANG_DESC }}
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <a href="https://wa.me/628123456789" 
-               target="_blank"
+            <a href="{{ $profil->whatsapp_link }}" target="_blank" rel="noopener"
                class="inline-flex items-center justify-center px-8 py-4 text-black font-extrabold rounded-2xl hover:opacity-90 transition-all duration-300 shadow-lg group btn-premium bg-gradient-to-r from-[#e28a44] to-[#f2994a] hover:scale-105 active:scale-95">
                 <span>{{ \App\Helpers\StaticContent::CTA_TENTANG_BTN }}</span>
                 <i class="ph-bold ph-arrow-right text-base ml-2 transform group-hover:translate-x-1 transition-transform"></i>

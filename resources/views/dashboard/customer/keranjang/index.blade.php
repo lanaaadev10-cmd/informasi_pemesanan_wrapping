@@ -34,7 +34,7 @@
         
         @if($keranjang && $keranjang->details->isNotEmpty())
             <div class="flex items-center shrink-0">
-                <form action="{{ route('keranjang.kosongkan') }}" method="POST" onsubmit="return confirm('{{ $profil->alert_konfirmasi_kosongkan ?? 'Apakah Anda yakin ingin mengosongkan seluruh isi keranjang?' }}')">
+                <form action="{{ route('keranjang.kosongkan') }}" method="POST" onsubmit="return confirmEmptyCart(event, this)">
                     @csrf
                     @method('DELETE')
                     <button type="submit" 
@@ -97,7 +97,7 @@
                                 </div>
 
                                 <!-- Delete button from figma -->
-                                <form action="{{ route('keranjang.hapus', $item->id_detail) }}" method="POST" class="shrink-0" onsubmit="return confirm('{{ $profil->alert_hapus_keranjang ?? 'Hapus layanan ini dari keranjang?' }}')">
+                                <form action="{{ route('keranjang.hapus', $item->id_detail) }}" method="POST" class="shrink-0" onsubmit="return confirmDeleteItem(event, this, '{{ $item->layanan->nama_layanan }}')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" 
@@ -190,9 +190,7 @@
                         // Premium custom calculations for order summary realistic look
                         $subtotalVal = $keranjang->details->sum('subtotal');
                         $serviceCharge = 150000;
-                        // Dynamic discount based on subtotal (5% up to 1.5M if total is over 10M)
-                        $discount = $subtotalVal > 10000000 ? min(1500000, (int)($subtotalVal * 0.05)) : 0;
-                        $grandTotal = $subtotalVal + $serviceCharge - $discount;
+                        $grandTotal = $subtotalVal + $serviceCharge;
                     @endphp
 
                     <!-- 1. ORDER SUMMARY CARD -->
@@ -220,13 +218,6 @@
                                 </span>
                             </div>
 
-                            <div class="flex justify-between items-center text-gray-400">
-                                <span class="font-bold uppercase tracking-widest text-[9px] font-mono">DISKON MEMBER</span>
-                                <span id="summary-discount" class="font-extrabold text-[#f2994a] text-sm">
-                                    - Rp {{ number_format($discount, 0, ',', '.') }}
-                                </span>
-                            </div>
-
                             <div class="w-full h-px bg-white/5 my-2"></div>
                             
                             <div class="flex justify-between items-end">
@@ -236,20 +227,6 @@
                                         Rp {{ number_format($grandTotal, 0, ',', '.') }}
                                     </span>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Promotional Code Box -->
-                        <div class="space-y-1.5 mb-6">
-                            <label class="text-[8px] font-bold text-gray-500 uppercase tracking-widest block font-mono">KODE PROMO</label>
-                            <div class="flex gap-2">
-                                <input type="text" 
-                                       placeholder="Masukkan kode..." 
-                                       class="flex-grow bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-[#f2994a]/30 transition-all">
-                                <button type="button" 
-                                        class="bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold px-4 rounded-xl active:scale-95 transition-all text-gray-300">
-                                    Terapkan
-                                </button>
                             </div>
                         </div>
 
@@ -298,9 +275,8 @@
         const qtySpan = document.getElementById(`qty-${idDetail}`);
         const decBtn = document.getElementById(`btn-dec-${idDetail}`);
         const subtotalSpan = document.getElementById(`subtotal-${idDetail}`);
-        const summarySubtotal = document.getElementById('summary-subtotal');
-        const summaryDiscount = document.getElementById('summary-discount');
-        const summaryTotal = document.getElementById('summary-total');
+            const summarySubtotal = document.getElementById('summary-subtotal');
+            const summaryTotal = document.getElementById('summary-total');
 
         let currentQty = parseInt(qtySpan.textContent);
         let newQty = currentQty + delta;
@@ -332,8 +308,7 @@
 
                 // Realistic dynamic totals computation
                 const serviceFee = 150000;
-                const discount = totalSum > 10000000 ? Math.min(1500000, Math.floor(totalSum * 0.05)) : 0;
-                const grandTotal = totalSum + serviceFee - discount;
+                const grandTotal = totalSum + serviceFee;
 
                 // Bind updated state back to DOM displays
                 qtySpan.textContent = data.jumlah;
@@ -341,9 +316,6 @@
 
                 if (summarySubtotal) {
                     summarySubtotal.textContent = totalStr;
-                }
-                if (summaryDiscount) {
-                    summaryDiscount.textContent = '- Rp ' + new Intl.NumberFormat('id-ID').format(discount);
                 }
                 if (summaryTotal) {
                     summaryTotal.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(grandTotal);
@@ -403,7 +375,102 @@
         .animate-slide-in-up {
             animation: slide-in-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+        @keyframes modal-in {
+            from { transform: scale(0.9) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .animate-modal-in {
+            animation: modal-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
     `;
     document.head.appendChild(style);
+</script>
+
+{{-- Bridge: tampilkan flash message via showToast() styled, cegah dobel dengan toast layout --}}
+@if(session('toast_success') || session('toast_error'))
+    <script>
+        document.getElementById('floating-toast')?.remove();
+        document.getElementById('floating-toast-error')?.remove();
+@if(session('toast_success'))
+        showToast(@js(session('toast_success')), 'success');
+@endif
+@if(session('toast_error'))
+        showToast(@js(session('toast_error')), 'error');
+@endif
+    </script>
+@endif
+
+{{-- Custom Confirmation Modal (pengganti confirm() native browser) --}}
+<div id="confirm-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+    <div id="modal-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div class="relative bg-[#121212] border border-white/10 rounded-[28px] p-8 max-w-sm w-full mx-4 shadow-2xl animate-modal-in">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-[#f2994a]/5 blur-[60px] rounded-full pointer-events-none"></div>
+        <div class="relative z-10 text-center space-y-6">
+            <div class="w-16 h-16 mx-auto rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                <i class="ph-bold ph-trash-simple text-2xl text-red-400"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 id="modal-title" class="text-lg font-extrabold text-white">Konfirmasi</h3>
+                <p id="modal-message" class="text-xs text-gray-400 leading-relaxed"></p>
+            </div>
+            <div class="flex gap-3">
+                <button type="button" id="modal-cancel" class="flex-1 px-5 py-3 border border-white/10 hover:border-white/20 text-gray-300 hover:text-white rounded-2xl font-extrabold text-[10px] tracking-wider uppercase transition-all active:scale-95">
+                    Batal
+                </button>
+                <button type="button" id="modal-confirm" class="flex-1 px-5 py-3 bg-red-500 hover:bg-red-600 text-white rounded-2xl font-extrabold text-[10px] tracking-wider uppercase transition-all shadow-[0_4px_15px_rgba(239,68,68,0.3)] active:scale-95">
+                    Ya, Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let confirmResolve = null;
+
+    function showConfirmModal(title, message, confirmText = 'Ya, Hapus') {
+        return new Promise((resolve) => {
+            confirmResolve = resolve;
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').innerHTML = message;
+            document.getElementById('modal-confirm').textContent = confirmText;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        });
+    }
+
+    document.getElementById('modal-confirm').addEventListener('click', () => {
+        document.getElementById('confirm-modal').classList.add('hidden');
+        if (confirmResolve) confirmResolve(true);
+    });
+
+    document.getElementById('modal-cancel').addEventListener('click', () => {
+        document.getElementById('confirm-modal').classList.add('hidden');
+        if (confirmResolve) confirmResolve(false);
+    });
+
+    document.getElementById('modal-overlay').addEventListener('click', () => {
+        document.getElementById('confirm-modal').classList.add('hidden');
+        if (confirmResolve) confirmResolve(false);
+    });
+
+    async function confirmEmptyCart(event, form) {
+        event.preventDefault();
+        const confirmed = await showConfirmModal(
+            'Kosongkan Keranjang',
+            @js($profil->alert_konfirmasi_kosongkan ?? 'Apakah Anda yakin ingin mengosongkan seluruh isi keranjang? Tindakan ini tidak dapat dibatalkan.'),
+            'Ya, Kosongkan'
+        );
+        if (confirmed) form.submit();
+    }
+
+    async function confirmDeleteItem(event, form, itemName) {
+        event.preventDefault();
+        const confirmed = await showConfirmModal(
+            'Hapus Item',
+            `<strong>${itemName}</strong><br>` + @js($profil->alert_hapus_keranjang ?? 'Apakah Anda yakin ingin menghapus layanan ini dari keranjang?'),
+            'Ya, Hapus'
+        );
+        if (confirmed) form.submit();
+    }
 </script>
 @endsection

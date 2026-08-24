@@ -26,7 +26,16 @@ class DashboardController extends Controller
 
     public function layanan()
     {
+        if (auth()->check()) {
+            return redirect()->route('katalog.user');
+        }
+
         $layanans = Layanan::all();
         return view('landing.layanan.index', compact('layanans'));
+    }
+
+    public function kebijakanPrivasi()
+    {
+        return view('landing.kebijakan-privasi.index');
     }
 }

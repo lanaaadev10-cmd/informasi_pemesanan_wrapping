@@ -84,20 +84,30 @@
                     <div class="flex-1"></div>
                 @endif
 
+                @auth
                 <a href="{{ route('katalog.user') }}" class="block text-center font-extrabold text-[0.72rem] tracking-[0.1em] uppercase py-3.5 px-5 rounded-xl transition-opacity duration-200 hover:opacity-88 hover:scale-102 mt-2"
                    style="background:var(--accent);color:#0a0a0a">
                     {{ \App\Helpers\StaticContent::LAYANAN_CARD_BTN }}
                 </a>
+            @else
+                <button type="button" onclick="showRegisterPrompt()"
+                        class="block text-center font-extrabold text-[0.72rem] tracking-[0.1em] uppercase py-3.5 px-5 rounded-xl transition-opacity duration-200 hover:opacity-88 hover:scale-102 mt-2"
+                        style="background:var(--accent);color:#0a0a0a">
+                    {{ \App\Helpers\StaticContent::LAYANAN_CARD_BTN }}
+                </button>
+            @endauth
             </div>
         </div>
     @endforeach
 </div>
 @else
-<div class="py-16 text-center border border-dashed border-white/10 rounded-[32px] bg-[#121212]/40 w-full col-span-full" data-aos="fade-up" data-aos-duration="800">
-    <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-500 mx-auto mb-4">
-        <i class="ph-bold ph-package text-2xl text-[var(--accent)]"></i>
-    </div>
-    <h4 class="text-base font-bold text-white mb-1">{{ \App\Helpers\StaticContent::LAYANAN_EMPTY }}</h4>
-    <p class="text-xs text-gray-500 font-light">Silakan periksa kembali nanti.</p>
-</div>
-@endif
+ <div class="py-16 text-center border border-dashed border-white/10 rounded-[32px] bg-[#121212]/40 w-full col-span-full" data-aos="fade-up" data-aos-duration="800">
+     <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-500 mx-auto mb-4">
+         <i class="ph-bold ph-package text-2xl text-[var(--accent)]"></i>
+     </div>
+     <h4 class="text-base font-bold text-white mb-1">{{ \App\Helpers\StaticContent::LAYANAN_EMPTY }}</h4>
+     <p class="text-xs text-gray-500 font-light">Silakan periksa kembali nanti.</p>
+ </div>
+ @endif
+
+<x-register-prompt />

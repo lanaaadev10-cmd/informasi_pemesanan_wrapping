@@ -44,6 +44,7 @@ Route::middleware('throttle:60,5')->group(function () {
     Route::get('/katalog-layanan', [CustomerController::class, 'katalog'])->name('katalog.user');
     Route::get('/galeri-karya', [GaleriController::class, 'index'])->name('galeri.user');
     Route::get('/galeri/{kategori}', [GaleriController::class, 'kategori'])->name('galeri.kategori');
+    Route::get('/kebijakan-privasi', [DashboardController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
 
     // Logout via GET — solusi jika form POST logout mengalami Error 419
     Route::get('/logout', function () {
@@ -104,7 +105,7 @@ Route::middleware('throttle:60,5')->group(function () {
             Route::get('/buat', function () {
                 $packageId = request('package_id');
                 if (!$packageId) {
-                    return redirect()->route('layanan')->with('error', 'Paket tidak ditemukan.');
+                    return redirect()->route('katalog.user')->with('error', 'Paket tidak ditemukan.');
                 }
                 $package = \App\Models\Layanan::findOrFail($packageId);
                 return view('dashboard.customer.pesanan.direct-order', compact('package'));
@@ -117,7 +118,7 @@ Route::middleware('throttle:60,5')->group(function () {
                     ->first();
 
                 if (!$keranjang || $keranjang->details->count() == 0) {
-                    return redirect()->route('layanan')
+                    return redirect()->route('katalog.user')
                         ->with('error', 'Keranjang Anda kosong. Silakan pilih paket terlebih dahulu.');
                 }
 

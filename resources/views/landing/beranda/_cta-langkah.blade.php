@@ -18,14 +18,14 @@
                         {{ \App\Helpers\StaticContent::CTA_SUBTITLE }}
                     </p>
                     <div class="flex flex-wrap items-center gap-4 sm:gap-6 pt-4">
-                        <a href="https://wa.me/628123456789"
+                        <a href="{{ $profil->whatsapp_link }}" target="_blank" rel="noopener"
                            class="btn-premium px-8 py-4 rounded-xl font-bold text-xs sm:text-sm uppercase tracking-wider text-black flex items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-[0_4px_20px_rgba(242,153,74,0.3)]">
-                            <i class="ph-bold ph-whatsapp-logo text-lg"></i> {{ \App\Helpers\StaticContent::CTA_HUBUNGI_WA }}
+                            <i class="ph-bold ph-tag text-lg"></i> {{ \App\Helpers\StaticContent::CTA_HUBUNGI_WA }}
                         </a>
-                        <a href="{{ route('katalog.user') }}"
+                        {{-- <a href="{{ route('katalog.user') }}"
                            class="px-8 py-4 rounded-xl border border-white/10 text-white font-bold text-xs sm:text-sm uppercase tracking-wider bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all">
                             {{ \App\Helpers\StaticContent::CTA_PELAJARI }}
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
 

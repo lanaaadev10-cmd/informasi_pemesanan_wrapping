@@ -85,16 +85,23 @@
                             </div>
 
                             <!-- Add to cart or Checkout CTA -->
-                            <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
-                                @csrf
-                                <input type="hidden" name="id_paket" value="{{ $wideItem->id_layanan }}">
-                                <input type="hidden" name="jumlah" value="1">
-                                <input type="hidden" name="direct_checkout" value="1">
-                                <button type="submit" 
+                            @auth
+                                <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
+                                    @csrf
+                                    <input type="hidden" name="id_paket" value="{{ $wideItem->id_layanan }}">
+                                    <input type="hidden" name="jumlah" value="1">
+                                    <input type="hidden" name="direct_checkout" value="1">
+                                    <button type="submit" 
+                                            class="flex items-center gap-2 bg-[#f2994a] hover:bg-[#e28a44] text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-2xl transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-105 active:scale-95">
+                                        <i class="ph-bold ph-phone text-xs"></i> {{ $profil->katalog_card_book_button ?? 'Book Discovery Call' }}
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" onclick="showRegisterPrompt()"
                                         class="flex items-center gap-2 bg-[#f2994a] hover:bg-[#e28a44] text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-2xl transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-105 active:scale-95">
                                     <i class="ph-bold ph-phone text-xs"></i> {{ $profil->katalog_card_book_button ?? 'Book Discovery Call' }}
                                 </button>
-                            </form>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -149,16 +156,24 @@
                             </span>
 
                             <!-- Add to Cart Circular Plus Button -->
-                            <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
-                                @csrf
-                                <input type="hidden" name="id_paket" value="{{ $mediumItem->id_layanan }}">
-                                <input type="hidden" name="jumlah" value="1">
-                                <button type="submit" 
-                                        class="w-11 h-11 bg-white/5 text-gray-300 rounded-2xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black transition-all border border-white/10 active:scale-95" 
-                                        title="Add to Cart">
+                            @auth
+                                <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
+                                    @csrf
+                                    <input type="hidden" name="id_paket" value="{{ $mediumItem->id_layanan }}">
+                                    <input type="hidden" name="jumlah" value="1">
+                                    <button type="submit" 
+                                            class="w-11 h-11 bg-white/5 text-gray-300 rounded-2xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black transition-all border border-white/10 active:scale-95" 
+                                            title="Add to Cart">
+                                        <i class="ph-bold ph-plus text-base"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" onclick="showRegisterPrompt()"
+                                        class="w-11 h-11 bg-white/5 text-gray-300 rounded-2xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black transition-all border border-white/10 active:scale-95"
+                                        title="Daftar untuk memesan">
                                     <i class="ph-bold ph-plus text-base"></i>
                                 </button>
-                            </form>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -224,16 +239,24 @@
                             </span>
 
                             <!-- Add to Cart Circular Plus Button -->
-                            <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
-                                @csrf
-                                <input type="hidden" name="id_paket" value="{{ $item->id_layanan }}">
-                                <input type="hidden" name="jumlah" value="1">
-                                <button type="submit" 
-                                        class="w-10 h-10 bg-white/5 text-gray-400 rounded-xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black border border-white/10 transition-all active:scale-95" 
-                                        title="Add to Cart">
+                            @auth
+                                <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
+                                    @csrf
+                                    <input type="hidden" name="id_paket" value="{{ $item->id_layanan }}">
+                                    <input type="hidden" name="jumlah" value="1">
+                                    <button type="submit" 
+                                            class="w-10 h-10 bg-white/5 text-gray-400 rounded-xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black border border-white/10 transition-all active:scale-95" 
+                                            title="Add to Cart">
+                                        <i class="ph-bold ph-plus text-xs"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <button type="button" onclick="showRegisterPrompt()"
+                                        class="w-10 h-10 bg-white/5 text-gray-400 rounded-xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black border border-white/10 transition-all active:scale-95"
+                                        title="Daftar untuk memesan">
                                     <i class="ph-bold ph-plus text-xs"></i>
                                 </button>
-                            </form>
+                            @endauth
                         </div>
                     </div>
                 @endforeach
@@ -249,5 +272,8 @@
             <h4 class="text-base font-bold text-white mb-1">{{ $profil->katalog_empty_state_title ?? 'Catalog Empty' }}</h4>
             <p class="text-xs text-gray-500 font-light">{{ $profil->katalog_empty_state_desc ?? 'We are drafting premium finishes collections at the moment.' }}</p>
         </div>
-    @endif
+@endif
+</div>
+
+<x-register-prompt />
 </div>

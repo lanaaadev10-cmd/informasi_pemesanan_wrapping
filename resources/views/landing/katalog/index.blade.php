@@ -3,11 +3,6 @@
 @section('title', 'Katalog Layanan')
 
 @section('content')
-    @if(!auth()->check())
-        <!-- Spacer untuk Public View agar tidak tertutup Navbar -->
-        <div class="h-28"></div>
-    @endif
-
     <!-- Container Utama -->
     <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-10 relative overflow-hidden">
 
@@ -24,6 +19,13 @@
             }
             .accent-color { color: var(--accent-color); }
             .accent-bg { background-color: var(--accent-color); }
+            @keyframes modal-in {
+                from { transform: scale(0.9) translateY(20px); opacity: 0; }
+                to { transform: scale(1) translateY(0); opacity: 1; }
+            }
+            .animate-modal-in {
+                animation: modal-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
         </style>
 
         <!-- Ambient Glowing Core di Background -->
@@ -35,8 +37,8 @@
         <!-- 2. INTRO SECTION (Choose Your Finish Header + Filters) -->
         @include('landing.katalog._intro')
 
-        <!-- 3. CATALOG DYNAMIC GRID -->
-        @include('landing.katalog._grid')
+        <!-- 3. PAKET LAYANAN VERTICAL LIST -->
+        @include('landing.katalog._packages-vertical')
 
         <!-- 4. BOTTOM FEATURES BAR -->
         @include('landing.katalog._features')

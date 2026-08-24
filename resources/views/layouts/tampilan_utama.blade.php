@@ -2,7 +2,7 @@
 <html lang="id" class="scroll-smooth">
 <head>
     @php
-        $is_frontend = in_array(Route::currentRouteName(), ['home', 'profil.perusahaan', 'galeri.user', 'katalog.user', 'tentang-kami', 'layanan']);
+        $is_frontend = in_array(Route::currentRouteName(), ['home', 'profil.perusahaan', 'galeri.user', 'katalog.user', 'tentang-kami', 'layanan', 'kebijakan-privasi']);
     @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -244,8 +244,8 @@
                 {{-- Horizontal Nav Links --}}
                 <div class="flex flex-wrap justify-center gap-8 md:gap-12 mb-10 text-sm font-medium text-gray-400">
                     <a href="{{ route('profil.perusahaan') }}" class="hover:text-[#f2994a] transition-all">{{ \App\Helpers\StaticContent::FOOTER_TENTANG }}</a>
-                    <a href="{{ route('katalog.user') }}" class="hover:text-[#f2994a] transition-all">{{ \App\Helpers\StaticContent::FOOTER_LAYANAN }}</a>
-                    <a href="#" class="hover:text-[#f2994a] transition-all">{{ \App\Helpers\StaticContent::FOOTER_PRIVASI }}</a>
+                    <a href="{{ route('layanan') }}" class="hover:text-[#f2994a] transition-all">{{ \App\Helpers\StaticContent::FOOTER_LAYANAN }}</a>
+                    <a href="{{ route('kebijakan-privasi') }}" class="hover:text-[#f2994a] transition-all">{{ \App\Helpers\StaticContent::FOOTER_PRIVASI }}</a>
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '') }}" class="hover:text-[#f2994a] transition-all">{{ \App\Helpers\StaticContent::FOOTER_HUBUNGI }}</a>
                 </div>
 

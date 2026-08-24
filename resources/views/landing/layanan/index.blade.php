@@ -22,7 +22,16 @@
         $fallbackImages = \App\Helpers\StaticContent::LAYANAN_FALLBACK_IMAGES;
     @endphp
 
-    <style>:root{--accent:{{$accentColor}}}</style>
+    <style>
+    :root{--accent:{{$accentColor}}}
+    @keyframes modal-in {
+        from { transform: scale(0.9) translateY(20px); opacity: 0; }
+        to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .animate-modal-in {
+        animation: modal-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+</style>
 
     <div class="bg-[#0a0a0a] min-h-screen relative">
 

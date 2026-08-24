@@ -11,7 +11,7 @@
     <div class="relative group">
         <!-- Slider Wrapper -->
         <div class="overflow-hidden rounded-2xl">
-            <div class="packages-carousel-wrapper flex gap-6 pb-2 scroll-smooth"
+            <div class="packages-carousel-wrapper flex gap-6 pb-2 scroll-smooth overflow-x-auto"
                  style="scroll-behavior: smooth;">
 
                 @forelse($layanans as $package)
@@ -113,18 +113,6 @@
                 @endforelse
             </div>
         </div>
-
-        <!-- Navigation Buttons -->
-        @if(count($layanans) > 0)
-        <button class="carousel-prev absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-[#f2994a] hover:bg-[#f2994a]/90 text-white rounded-full p-2 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                aria-label="Scroll left">
-            <i class="ph-bold ph-caret-left text-lg"></i>
-        </button>
-        <button class="carousel-next absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-[#f2994a] hover:bg-[#f2994a]/90 text-white rounded-full p-2 transition-all duration-200 opacity-0 group-hover:opacity-100"
-                aria-label="Scroll right">
-            <i class="ph-bold ph-caret-right text-lg"></i>
-        </button>
-        @endif
     </div>
 </div>
 

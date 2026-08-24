@@ -119,7 +119,7 @@
 
                     <!-- Kolom 2 -->
                     <div class="space-y-6">
-                        <div class="space-y-2">
+                        <div class="space-y-2 hidden">
                             <label class="text-xs font-medium text-gray-400 px-1">{{ $profil->form_lokasi_pengerjaan ?? 'Lokasi Pengerjaan (Workshop) *' }}</label>
                             <input type="hidden" name="lokasi_pengerjaan" value="toko">
                             <div class="flex items-center gap-3 p-4 border border-[#f2994a]/30 bg-[#f2994a]/5 rounded-xl">

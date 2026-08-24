@@ -52,7 +52,7 @@ class KeranjangController extends Controller
         // Jika item belum ada dan sudah 3 item, tolak
         if (!$existingDetail && $itemCount >= 3) {
             return redirect()->route('keranjang.index')
-                ->with('error', 'Maksimal hanya 3 paket dalam keranjang. Silakan hapus paket lain terlebih dahulu.');
+                ->with('toast_error', 'Maksimal hanya 3 paket dalam keranjang. Silakan hapus paket lain terlebih dahulu.');
         }
 
         $hargaSatuan = $layanan->harga ?? 0;
@@ -81,7 +81,7 @@ class KeranjangController extends Controller
         }
 
         return redirect()->route('keranjang.index')
-            ->with('success', 'Paket berhasil ditambahkan ke keranjang!');
+            ->with('toast_success', 'Paket berhasil ditambahkan ke keranjang!');
     }
 
     /**
@@ -99,7 +99,7 @@ class KeranjangController extends Controller
         $detail->delete();
 
         return redirect()->route('keranjang.index')
-            ->with('success', 'Item berhasil dihapus dari keranjang.');
+            ->with('toast_success', 'Item berhasil dihapus dari keranjang.');
     }
 
     /**
@@ -116,7 +116,7 @@ class KeranjangController extends Controller
         }
 
         return redirect()->route('keranjang.index')
-            ->with('success', 'Keranjang berhasil dikosongkan.');
+            ->with('toast_success', 'Keranjang berhasil dikosongkan.');
     }
 
     /**
@@ -162,6 +162,6 @@ class KeranjangController extends Controller
         }
 
         return redirect()->route('keranjang.index')
-            ->with('success', 'Jumlah unit berhasil diperbarui!');
+            ->with('toast_success', 'Jumlah unit berhasil diperbarui!');
     }
 }

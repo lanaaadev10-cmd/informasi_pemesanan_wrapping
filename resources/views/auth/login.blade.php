@@ -24,8 +24,9 @@
                 </div>
                 <span class="font-extrabold text-sm text-white uppercase tracking-wider">{{ $profil->nama_perusahaan ?? 'Wrapping' }}</span>
             </a>
-            <a href="{{ url('/') }}" class="text-gray-500 hover:text-gray-300 transition-colors">
-                <i class="ph ph-x text-lg"></i>
+            <a href="{{ url('/') }}"
+               class="px-4 py-2 rounded-lg bg-white/[0.04] border border-white/[0.08] text-gray-300 hover:text-white hover:border-[#f2994a]/40 transition-all text-xs font-bold uppercase tracking-wider">
+                Dashboard
             </a>
         </div>
 

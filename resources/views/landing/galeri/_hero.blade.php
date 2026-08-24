@@ -2,7 +2,7 @@
     BAGIAN: Hero / Header Galeri
     Deskripsi: Judul dan deskripsi halaman galeri
 ============================================ --}}
-<section class="relative w-full rounded-[32px] overflow-hidden mb-12 px-2 py-16 sm:py-20 flex items-center justify-center" data-aos="fade-down" data-aos-duration="1000">
+<section class="relative w-full rounded-[32px] overflow-hidden mb-8 px-2 py-10 sm:py-14 flex items-center justify-center" data-aos="fade-down" data-aos-duration="1000">
     @if($galeriHeroImage)
         <div class="absolute inset-0 z-0">
             <img src="{{ asset('storage/' . $galeriHeroImage) }}"

@@ -18,7 +18,7 @@
             {{ $profil->home_subtitle ?? ($profil->deskripsi ?? 'Transformasikan kendaraan dan bisnis Anda dengan sentuhan profesional dari tim ahli kami.') }}
         </p>
         <div class="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-            <a href="https://wa.me/{{ $profil->nomor_telepon ?? '' }}" class="btn-premium text-white px-10 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105">
+            <a href="{{ route('katalog.user') }}" class="btn-premium text-white px-10 py-4 rounded-2xl font-bold text-lg transition-all hover:scale-105">
                 Get Started Now
             </a>
             <a href="{{ route('profil.perusahaan') }}" class="bg-gray-50 hover:bg-gray-100 text-gray-700 px-10 py-4 rounded-2xl font-bold text-lg transition-all border border-gray-200">
@@ -118,7 +118,7 @@
                     Jadikan kendaraan atau bisnis Anda pusat perhatian hari ini. Konsultasikan kebutuhan Anda secara gratis dengan tim kami.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-5">
-                    <a href="https://wa.me/{{ $profil->nomor_telepon ?? '' }}" class="bg-white text-orange-600 px-10 py-4 rounded-2xl font-bold text-lg shadow-lg hover:scale-105 transition-transform">
+                    <a href="{{ route('katalog.user') }}" class="bg-white text-orange-600 px-10 py-4 rounded-2xl font-bold text-lg shadow-lg hover:scale-105 transition-transform">
                         Hubungi Tim Kami
                     </a>
                 </div>
