@@ -593,3 +593,17 @@ Setelah semua perubahan, uji hal-hal berikut:
    tetap tersimpan saat order dibuat.
 7. **Dashboard customer** — carousel paket bisa digeser manual; panel
    notifikasi rapi saat dibuka dari HP.
+
+
+
+
+
+
+
+Akses
+
+   Host : 38.103.171.82
+   port : 22
+   Username : developer
+   Password : developer123
+

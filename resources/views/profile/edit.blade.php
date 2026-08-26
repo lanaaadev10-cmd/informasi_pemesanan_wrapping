@@ -41,7 +41,7 @@
         </div>
 
         <div class="lg:col-span-8 space-y-12">
-            <section id="profil" class="soft-card p-10 md:p-12 relative overflow-hidden bg-[#151515] border border-white/5" data-aos="fade-up">
+            <section id="profil" class="form-dark soft-card p-10 md:p-12 relative overflow-hidden bg-[#151515] border border-white/5" data-aos="fade-up">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full"></div>
                 <h3 class="text-2xl font-black text-white mb-10 flex items-center gap-4">
                     <i class="ph-fill ph-user-circle text-orange-600 bg-white/10 p-4 rounded-2xl"></i> Informasi Profil
@@ -51,7 +51,7 @@
                 </div>
             </section>
 
-            <section id="password" class="soft-card p-10 md:p-12 relative overflow-hidden bg-[#151515] border border-white/5" data-aos="fade-up">
+            <section id="password" class="form-dark soft-card p-10 md:p-12 relative overflow-hidden bg-[#151515] border border-white/5" data-aos="fade-up">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/5 blur-[100px] rounded-full"></div>
                 <h3 class="text-2xl font-black text-white mb-10 flex items-center gap-4">
                     <i class="ph-fill ph-lock-key text-orange-600 bg-white/10 p-4 rounded-2xl"></i> Keamanan Akun
@@ -61,7 +61,7 @@
                 </div>
             </section>
 
-            <section id="hapus" class="p-10 md:p-12 rounded-[40px] border-2 border-dashed border-red-500/20 bg-red-950/20" data-aos="fade-up">
+            <section id="hapus" class="form-dark p-10 md:p-12 rounded-[40px] border-2 border-dashed border-red-500/20 bg-red-950/20" data-aos="fade-up">
                 <h3 class="text-2xl font-black text-red-400 mb-10 flex items-center gap-4">
                     <i class="ph-fill ph-warning-circle text-red-400 bg-red-500/10 p-4 rounded-2xl"></i> Zona Berbahaya
                 </h3>
@@ -72,20 +72,4 @@
         </div>
     </div>
 </div>
-
-<style>
-    .soft-card input[type="text"],
-    .soft-card input[type="email"],
-    .soft-card input[type="password"] {
-        @apply w-full bg-gray-50 border-none rounded-2xl px-6 py-4 text-gray-900 font-bold focus:ring-2 focus:ring-orange-500 outline-none transition-all placeholder:text-gray-300 !important;
-    }
-
-    .soft-card label {
-        @apply text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 px-1 mb-2 block !important;
-    }
-
-    .soft-card button[type="submit"] {
-        @apply px-10 py-4 bg-gray-900 text-white rounded-2xl font-black text-xs tracking-widest uppercase hover:bg-orange-600 transition-all shadow-xl shadow-gray-200 !important;
-    }
-</style>
 @endsection

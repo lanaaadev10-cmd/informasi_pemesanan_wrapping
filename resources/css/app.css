@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .form-dark input[type="text"],
+    .form-dark input[type="email"],
+    .form-dark input[type="password"] {
+        @apply w-full bg-white border-none rounded-2xl px-6 py-4 text-gray-900 font-bold shadow-sm focus:ring-2 focus:ring-[#f2994a] outline-none transition-all placeholder:text-gray-400 placeholder:font-medium;
+    }
+
+    .form-dark label {
+        @apply text-[11px] font-black uppercase tracking-[0.2em] text-gray-200 px-1 mb-2 block;
+    }
+
+    .form-dark button[type="submit"] {
+        @apply px-10 py-4 bg-[#f2994a] text-black rounded-2xl font-black text-xs tracking-widest uppercase hover:bg-orange-600 hover:text-white transition-all shadow-xl;
+    }
+}
