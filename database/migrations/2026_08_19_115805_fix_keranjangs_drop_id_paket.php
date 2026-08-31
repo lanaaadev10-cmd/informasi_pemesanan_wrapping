@@ -14,9 +14,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('keranjangs', function (Blueprint $table) {
-            $table->dropForeign(['id_paket']);
-            $table->dropUnique(['id_keranjang', 'id_paket']);
-            $table->dropColumn('id_paket');
+            // 1. Cek & Hapus Foreign Key jika ada
+            try {
+                $table->dropForeign(['id_paket']);
+            } catch (\Exception $e) {
+                // Abaikan jika Foreign Key tidak ditemukan
+            }
+
+            // 2. Cek & Hapus Unique Index jika ada
+            try {
+                $table->dropUnique(['id_keranjang', 'id_paket']);
+            } catch (\Exception $e) {
+                // Abaikan jika Unique Index tidak ditemukan
+            }
+
+            // 3. Hapus Kolom id_paket jika kolomnya masih ada
+            if (Schema::hasColumn('keranjangs', 'id_paket')) {
+                $table->dropColumn('id_paket');
+            }
         });
     }
 
@@ -26,8 +41,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('keranjangs', function (Blueprint $table) {
-            $table->foreignId('id_paket')->constrained('layanans', 'id_layanan')->onDelete('cascade');
-            $table->unique(['id_keranjang', 'id_paket']);
+            if (!Schema::hasColumn('keranjangs', 'id_paket')) {
+                $table->foreignId('id_paket')->nullable()->constrained('layanans', 'id_layanan')->onDelete('cascade');
+                $table->unique(['id_keranjang', 'id_paket']);
+            }
         });
     }
 };
