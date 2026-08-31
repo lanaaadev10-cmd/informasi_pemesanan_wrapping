@@ -25,9 +25,10 @@ class PesanansTable
                     ->weight('bold')
                     ->copyable(),
 
-                TextColumn::make('user.name')
+                TextColumn::make('customer_name')
                     ->label('Pelanggan')
-                    ->searchable()
+                    ->getStateUsing(fn ($record) => $record->customer_name ?? $record->user?->name)
+                    ->searchable(['customer_name'])
                     ->sortable(),
 
                 TextColumn::make('total_harga')

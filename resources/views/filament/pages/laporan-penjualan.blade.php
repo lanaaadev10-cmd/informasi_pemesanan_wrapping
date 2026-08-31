@@ -140,13 +140,13 @@
         <div class="lp-stat-card">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-orange-600/20 blur-[50px] rounded-full"></div>
             <div class="relative z-10">
-                <p class="lp-stat-card-title text-orange-500">Total Revenue Today</p>
+                <p class="lp-stat-card-title text-orange-500">TOTAL PENDAPATAN HARI INI</p>
                 @php
                     $todayIncome = \App\Models\Pesanan::where('status', 'dibayar')
                         ->whereDate('updated_at', today())
                         ->sum('total_harga');
                 @endphp
-                <h4 class="lp-stat-card-val">Rp {{ number_format($todayIncome, 0, ',', '.') }}</h4>
+                <h4 class="lp-stat-card-val">Rp {{ number_format($totalPendapatanHariIni, 0, ',', '.') }}</h4>
             </div>
         </div>
         
@@ -154,11 +154,11 @@
         <div class="lp-stat-card">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/10 blur-[50px] rounded-full"></div>
             <div class="relative z-10">
-                <p class="lp-stat-card-title text-blue-400">Orders to Verify</p>
+                <p class="lp-stat-card-title text-blue-400">PESANAN YANG BUTUH DIVERIFIKASI</p>
                 @php
-                    $pendingCount = \App\Models\Pesanan::where('status', 'menunggu_verifikasi')->count();
+                    $pendingCount = \App\Models\Pesanan::where('status', 'menunggu_konfirmasi_admin')->count();
                 @endphp
-                <h4 class="lp-stat-card-val">{{ $pendingCount }} <span class="text-xs not-italic text-gray-500 ml-1">Orders</span></h4>
+                <h4 class="lp-stat-card-val">{{ $butuhDiverifikasi }} <span class="text-xs not-italic text-gray-500 ml-1">Orders</span></h4>
             </div>
         </div>
 
@@ -166,13 +166,13 @@
         <div class="lp-stat-card">
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-green-600/10 blur-[50px] rounded-full"></div>
             <div class="relative z-10">
-                <p class="lp-stat-card-title text-green-400">Completed This Month</p>
+                <p class="lp-stat-card-title text-green-400">JUMLAH PESANAN SELESAI BULAN INI</p>
                 @php
                     $monthCount = \App\Models\Pesanan::where('status', 'selesai')
                         ->whereMonth('updated_at', now()->month)
                         ->count();
                 @endphp
-                <h4 class="lp-stat-card-val">{{ $monthCount }} <span class="text-xs not-italic text-gray-500 ml-1">Orders</span></h4>
+                <h4 class="lp-stat-card-val">{{ $jumlahPesananSelesaiBulanIni }} <span class="text-xs not-italic text-gray-500 ml-1">Orders</span></h4>
             </div>
         </div>
     </div>
