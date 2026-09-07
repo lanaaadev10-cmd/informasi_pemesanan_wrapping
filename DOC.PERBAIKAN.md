@@ -600,10 +600,149 @@ Setelah semua perubahan, uji hal-hal berikut:
 
 
 
+# Fitur Baru: Rating oleh User — Jobdesk Backend & Frontend
+
+> **Status:** Rencana pengembangan (belum dieksekusi / belum ada kode).
+> Fitur yang belum dikerjakan ini dicatat sebagai pembagian tugas supaya
+> pengerjaan nantinya jelas: mana tanggung jawab **Backend** dan mana
+> tanggung jawab **Frontend**.
+
+## Ringkasan Fitur (Keputusan yang Sudah Disepakati)
+
+- Customer memberi **rating bintang 1–5** + **ulasan teks** (opsional) +
+  **unggah foto/video** (maks. 2 media) untuk **setiap pesanan yang berstatus `selesai`**.
+- **1 rating per pesanan** (tidak bisa dobel), dan customer **bisa mengubah (edit) ratingnya** kapan saja.
+- Rating **langsung tampil publik** tanpa persetujuan admin. Admin tetap bisa menghapus rating bila tidak pantas.
+- Dikumpulkan di **halaman Testimoni** baru (`/testimoni`) — berisi rata-rata bintang,
+  filter bintang (Semua/5/4/3/2/1), urut (Terbaru/Tertinggi), dan daftar kartu ulasan.
+- Navbar menampilkan menu **Testimoni**. Beranda **tidak** menampilkan seksi ulasan.
+- Fitur disediakan **via web (Blade)** **dan** via **REST API (Sanctum)**.
+- Nama entitas: tabel `ratings` + `rating_medias` (tabel `testimonis` lama TIDAK dipakai).
+
+---
+
+## A. Jobdesk BACKEND (PHP / Laravel / Database / API / Admin)
+
+Tugas di sisi data, logika, dan keamanan. Umumnya dikerjakan oleh pengembang backend.
+
+### A1. Database (Migration)
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 1 | Buat tabel `ratings` | `database/migrations/<timestamp>_create_ratings_table.php` | Kolom: `id`, `id_user` (FK→`users.id`, cascade), `id_pesanan` (FK→`pesanans.id_pesanan`, cascade, **unique** = 1 rating/pesanan), `rating` (tinyint 1–5), `ulasan` (text, nullable), `is_tampil` (bool, default `true`), `timestamps` |
+| 2 | Buat tabel `rating_medias` | `database/migrations/<timestamp>_create_rating_medias_table.php` | Kolom: `id`, `id_rating` (FK→`ratings.id`, cascade), `tipe` (enum `image`\|`video`), `path` (string), `urutan` (int), `timestamps` |
+
+### A2. Model & Relasi
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 3 | Buat model `Rating` | `app/Models/Rating.php` | `fillable`: `id_user`, `id_pesanan`, `rating`, `ulasan`, `is_tampil`. `casts`: rating integer. Relasi: `user()` belongsTo User, `pesanan()` belongsTo Pesanan, `medias()` hasMany RatingMedia. `booted()` hapus cache `testimoni_ratings` saat `saved`/`deleted` (pola `Layanan`) |
+| 4 | Buat model `RatingMedia` | `app/Models/RatingMedia.php` | `fillable`: `id_rating`, `tipe`, `path`, `urutan`. Relasi `rating()` belongsTo Rating |
+| 5 | Tambah relasi di `Pesanan` | `app/Models/Pesanan.php` | Tambah method `rating()` → `hasOne(Rating::class, 'id_pesanan', 'id_pesanan')` |
+
+### A3. Service Layer
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 6 | Buat `RatingService` | `app/Services/RatingService.php` | Method `store(Pesanan, data, files)` & `update(Rating, data, files)`. Tugas: validasi (rating wajib 1–5; ulasan maks. 500 karakter; media image **jpg/jpeg/png/webp** maks. **5MB**; video **mp4/webm/mov** maks. **25MB**; maks. **3 file**), simpan file ke `storage/app/public/rating/`, hapus media lama saat edit, daftarkan sebagai singleton di `AppServiceProvider` |
+| 7 | Cache | `app/Services/CacheService.php` | Tambah key cache `testimoni_ratings` (data daftar ulasan untuk halaman publik) |
+
+### A4. Event, Listener & Notifikasi
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 8 | Buat event `RatingCreated` & `RatingUpdated` | `app/Events/RatingCreated.php`, `app/Events/RatingUpdated.php` | Membawa instance `Rating` |
+| 9 | Buat listener `NotifyAdminRating` | `app/Listeners/NotifyAdminRating.php` | Notifikasi ke admin: baris `notifikasis` (in-app) + Filament database notification (pola notifikasi order yang sudah ada) |
+| 10 | Daftarkan event-listener | `app/Providers/EventServiceProvider.php` | Mapping `RatingCreated` & `RatingUpdated` → `NotifyAdminRating` |
+
+### A5. Authorization (Policy)
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 11 | Buat `RatingPolicy` | `app/Policies/RatingPolicy.php` | `create`/`update`: hanya pesanan milik user yang login **dan** berstatus `selesai`. Daftarkan di `AppServiceProvider`/`AuthServiceProvider` (ikuti pola policy `PesananPolicy`) |
+
+### A6. Web Route & Controller (Customer)
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 12 | Route form & simpan rating | `routes/web.php` | Dalam grup `pesanan` (terproteksi auth+verified): `GET /pesanan/{id}/rating` (form create/edit) → `RatingController@form`; `POST /pesanan/{id}/rating` → `store`; `PUT /pesanan/{id}/rating` → `update`. Route publik `GET /testimoni` → `TestimoniController@index` (`testimoni.index`) |
+| 13 | Buat `RatingController` | `app/Http/Controllers/RatingController.php` | Method `form`, `store`, `update`. Cek kepemilikan pesanan + status `selesai` (polisi via `RatingPolicy` atau manual), delegasikan ke `RatingService`, redirect dengan toast |
+| 14 | Buat `TestimoniController` | `app/Http/Controllers/TestimoniController.php` | Method `index`: ambil dari cache `testimoni_ratings` (publik, `is_tampil = true`), dukung filter bintang & sort, hitung rata-rata bintang, render `landing.testimoni.index` |
+
+### A7. REST API (Sanctum)
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 15 | Route API rating | `routes/api.php` | Protected (`auth:sanctum`) di grup `pesanan`: `GET/POST/PUT /api/pesanan/{pesanan}/rating`. Publik: `GET /api/rating` (daftar ulasan publik + media) |
+| 16 | Buat `Api\RatingController` | `app/Http/Controllers/Api/RatingController.php` | Method `show` (rating milik user utk pesanan itu), `store`, `update`, `index` (publik). Respons JSON 201/200, error 401/403/422 sesuai kondisi |
+
+### A8. Admin Panel (Filament)
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 17 | Buat `RatingResource` | `app/Filament/Resources/Ratings/RatingResource.php` (+ Pages `ListRatings`, `ViewRating`) | Kolom: user (nama), kode pesanan, bintang, ulasan, jumlah/preview media, `is_tampil`, tanggal. Aksi: lihat, hapus, ubah `is_tampil`. **Tanpa** create/edit |
+
+### A9. Pengujian (Pest)
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 18 | Buat feature test | `tests/Feature/RatingFeatureTest.php` | API create (unauth → 401, pesanan bukan `selesai`/bukan miliknya → error, sukses → 201), duplikat per pesanan → ditolak, edit berhasil, validasi media, daftar publik hanya `is_tampil = true` |
+
+### A10. Penyelesaian Backend
+
+- Jalankan: `php artisan migrate`, `./vendor/bin/pint` (format kode), `php artisan test`.
+
+---
+
+## B. Jobdesk FRONTEND (Blade / Tailwind / Alpine.js / JavaScript)
+
+Tugas di sisi tampilan dan interaksi pengguna. Umumnya dikerjakan oleh pengembang frontend.
+
+### B1. Form Rating (Dashboard Customer)
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 1 | Buat halaman form rating | `resources/views/dashboard/customer/pesanan/rating.blade.php` (FILE BARU) | Extend `layouts.dashboard_customer`. Berisi: **star picker 1–5** (Alpine.js), textarea ulasan, upload foto/video (maks. 3, preview), tombol simpan (mode create → POST, mode edit → PUT + tampil data lama). Tampil pesan sudah rated "Terima kasih atas ulasan Anda" |
+| 2 | Tombol "Beri/Ubah Rating" di daftar pesanan | `resources/views/dashboard/customer/pesanan/index.blade.php` | Untuk status `selesai`: tampilkan tombol **"Beri Rating"** (belum ada rating) atau **"Ubah Rating"** (sudah ada) → link ke form di B1. Bisa ditambahkan ikon bintang |
+
+### B2. Tombol Rating di Detail Pesanan
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 3 | Tombol "Beri/Ubah Rating" | `resources/views/dashboard/customer/pesanan/show.blade.php` | Di blok status `selesai` tambahkan tombol menuju form rating (pola tombol "Unduh Invoice PDF" yang sudah ada) |
+
+### B3. Halaman Testimoni Publik
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 4 | Buat halaman Testimoni | `resources/views/landing/testimoni/index.blade.php` (FILE BARU) | Extend `layouts.tampilan_utama`. Konten: heading, **blok rata-rata bintang** keseluruhan, **filter bintang** (Semua/5/4/3/2/1) + **sort** (Terbaru/Tertinggi), **daftar kartu ulasan**: bintang, teks ulasan, nama user, tanggal, preview **foto** (`<img>`) & **video** (`<video>`). Empty state saat belum ada ulasan |
+
+### B4. Navigasi Landing Page
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 5 | Tambah konstanta menu | `app/Helpers/StaticContent.php` | Tambah konstanta `NAV_TESTIMONI = 'Testimoni'` |
+| 6 | Link navbar desktop & mobile | `resources/views/layouts/tampilan_utama.blade.php` | Tambah route `testimoni.index` ke daftar `$is_frontend` (baris ±5); tambah link menu **Testimoni** di navbar desktop (setelah "Tentang Kami", baris ±116) dan di menu mobile (baris ±181) |
+
+### B5. Penyelesaian Frontend
+
+- Jalankan: `npm run build` (atau `npm run dev`), lalu uji tampilan di desktop & HP (responsive).
+
+---
+
+## C. Catatan Pengerjaan
+
+- **Urutan pengerjaan:** Backend selesai dulu (A1–A9) agar data & API siap, baru Frontend (B1–B4) mengonsumsi.
+- **Koordinasi Backend–Frontend:** kesepakatan nama variabel/kolom (`rating`, `ulasan`, `is_tampil`, `medias[]` dengan `tipe`+`path`), URL route, dan format tanggapan API.
+- **Penyimpanan media:** folder `rating/` di disk `public` (`storage/app/public/rating/`), sudah didukung `php artisan storage:link`.
+- **Keamanan:** semua form memakai CSRF; route rating hanya untuk pesanan milik user & berstatus `selesai`.
+- **Tabel lama** `testimonis` **tidak** diubah/dipakai.
+
+---
+
 Akses
 
    Host : 38.103.171.82
    port : 22
    Username : developer
    Password : developer123
-

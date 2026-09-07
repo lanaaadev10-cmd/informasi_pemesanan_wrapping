@@ -340,6 +340,11 @@ npm run dev
 
 ---
 
+### New Feature
+
+1. Rating
+2. Payment Gateway
+
 ### Lisensi
 
 Hak Cipta @ 2026 Fundev. Seluruh Hak Cipta Dilindungi.
