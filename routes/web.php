@@ -130,6 +130,22 @@ Route::middleware('throttle:60,5')->group(function () {
             Route::get('/{id}/invoice', [\App\Http\Controllers\PesananController::class, 'invoice'])->name('pesanan.invoice');
             Route::post('/{id}/upload-bukti', [\App\Http\Controllers\PesananController::class, 'uploadBukti'])->name('pesanan.upload-bukti');
         });
+
+        // ================================================================
+        // BOOKING — Fitur booking jadwal pengerjaan wrapping
+        // ================================================================
+        Route::prefix('booking')->name('booking.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\BookingController::class, 'index'])->name('index');
+            Route::get('/buat', [\App\Http\Controllers\BookingController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\BookingController::class, 'store'])
+                ->middleware('throttle:3,1')
+                ->name('store');
+            Route::get('/{id}', [\App\Http\Controllers\BookingController::class, 'show'])->name('show');
+            Route::post('/{id}/upload-bukti', [\App\Http\Controllers\BookingController::class, 'uploadBukti'])
+                ->middleware('throttle:3,1')
+                ->name('upload-bukti');
+            Route::post('/{id}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel'])->name('cancel');
+        });
     });
 });
 

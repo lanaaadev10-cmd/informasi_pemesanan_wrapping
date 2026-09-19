@@ -11,6 +11,12 @@ use App\Events\OrderCompleted;
 use App\Events\OrderRejected;
 use App\Events\PaymentUploaded;
 use App\Events\PaymentVerified;
+use App\Events\BookingCreated;
+use App\Events\BookingConfirmed;
+use App\Events\BookingPaymentUploaded;
+use App\Events\BookingPaymentVerified;
+use App\Events\BookingRejected;
+use App\Events\BookingCompleted;
 
 // Listeners
 use App\Listeners\SendOrderConfirmationEmail;
@@ -20,6 +26,13 @@ use App\Listeners\NotifyOrderProcessingStarted;
 use App\Listeners\NotifyOrderCompleted;
 use App\Listeners\NotifyOrderRejection;
 use App\Listeners\SendPaymentUploadedToAdmin;
+use App\Listeners\NotifyBookingCreated;
+use App\Listeners\NotifyAdminNewBooking;
+use App\Listeners\NotifyBookingConfirmed;
+use App\Listeners\NotifyAdminBookingPaymentUploaded;
+use App\Listeners\NotifyBookingPaymentVerified;
+use App\Listeners\NotifyBookingRejected;
+use App\Listeners\NotifyBookingCompleted;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -53,6 +66,32 @@ class EventServiceProvider extends ServiceProvider
 
         PaymentUploaded::class => [
             SendPaymentUploadedToAdmin::class,
+        ],
+
+        // Booking lifecycle events
+        BookingCreated::class => [
+            NotifyBookingCreated::class,
+            NotifyAdminNewBooking::class,
+        ],
+
+        BookingConfirmed::class => [
+            NotifyBookingConfirmed::class,
+        ],
+
+        BookingPaymentUploaded::class => [
+            NotifyAdminBookingPaymentUploaded::class,
+        ],
+
+        BookingPaymentVerified::class => [
+            NotifyBookingPaymentVerified::class,
+        ],
+
+        BookingRejected::class => [
+            NotifyBookingRejected::class,
+        ],
+
+        BookingCompleted::class => [
+            NotifyBookingCompleted::class,
         ],
     ];
 

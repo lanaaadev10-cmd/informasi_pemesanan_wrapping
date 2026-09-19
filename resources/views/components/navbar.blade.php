@@ -12,6 +12,7 @@
         <!-- Desktop Menu -->
         <div class="hidden md:flex items-center gap-8">
             <a href="#beranda" class="text-gray-300 hover:text-white transition-colors">{{ \App\Helpers\StaticContent::NAV_BERANDA }}</a>
+            <a href="#booking" class="text-gray-300 hover:text-white transition-colors">Booking</a>
             <a href="{{ route('katalog.user') }}" class="text-gray-300 hover:text-white transition-colors">{{ \App\Helpers\StaticContent::NAV_LAYANAN }}</a>
             <a href="{{ route('galeri.user') }}" class="text-gray-300 hover:text-white transition-colors">{{ \App\Helpers\StaticContent::NAV_GALERI }}</a>
             <a href="{{ route('profil.perusahaan') }}" class="text-gray-300 hover:text-white transition-colors">{{ \App\Helpers\StaticContent::NAV_TENTANG }}</a>

@@ -14,7 +14,10 @@
     {{-- 3. Portofolio Section --}}
     @include('landing.beranda._portofolio')
 
-    {{-- 4. CTA + Langkah Mudah Section --}}
+    {{-- 4. Jadwal Booking Section --}}
+    @include('landing.booking._calendar')
+
+    {{-- 5. CTA + Langkah Mudah Section --}}
     @include('landing.beranda._cta-langkah')
 
 @endsection

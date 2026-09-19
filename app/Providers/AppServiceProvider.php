@@ -7,6 +7,7 @@ use App\Services\KeranjangService;
 use App\Services\PesananService;
 use App\Services\PembayaranService;
 use App\Services\NotifikasiService;
+use App\Services\BookingService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,6 +34,11 @@ class AppServiceProvider extends ServiceProvider
         // Register Notifikasi Service
         $this->app->singleton(NotifikasiService::class, function ($app) {
             return new NotifikasiService();
+        });
+
+        // Register Booking Service (depends on NotifikasiService)
+        $this->app->singleton(BookingService::class, function ($app) {
+            return new BookingService($app->make(NotifikasiService::class));
         });
     }
 
