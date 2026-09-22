@@ -13,11 +13,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('keranjangs', function (Blueprint $table) {
-            $table->dropForeign(['id_paket']);
-            $table->dropUnique(['id_keranjang', 'id_paket']);
-            $table->dropColumn('id_paket');
-        });
+        // Kolom id_paket sudah tidak ada di migration pembuat tabel keranjangs (2026_05_12_100000).
+        // Guard ini membuat migration aman dijalankan pada database segar (migrate:fresh / test).
+        if (Schema::hasColumn('keranjangs', 'id_paket')) {
+            Schema::table('keranjangs', function (Blueprint $table) {
+                $table->dropForeign(['id_paket']);
+                $table->dropUnique(['id_keranjang', 'id_paket']);
+                $table->dropColumn('id_paket');
+            });
+        }
     }
 
     /**
@@ -25,9 +29,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('keranjangs', function (Blueprint $table) {
-            $table->foreignId('id_paket')->constrained('layanans', 'id_layanan')->onDelete('cascade');
-            $table->unique(['id_keranjang', 'id_paket']);
-        });
+        if (! Schema::hasColumn('keranjangs', 'id_paket')) {
+            Schema::table('keranjangs', function (Blueprint $table) {
+                $table->foreignId('id_paket')->constrained('layanans', 'id_layanan')->onDelete('cascade');
+                $table->unique(['id_keranjang', 'id_paket']);
+            });
+        }
     }
 };

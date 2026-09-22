@@ -2,7 +2,7 @@
 <html lang="id" class="scroll-smooth">
 <head>
     @php
-        $is_frontend = in_array(Route::currentRouteName(), ['home', 'profil.perusahaan', 'galeri.user', 'katalog.user', 'tentang-kami', 'layanan', 'kebijakan-privasi']);
+        $is_frontend = in_array(Route::currentRouteName(), ['home', 'profil.perusahaan', 'galeri.user', 'katalog.user', 'tentang-kami', 'layanan', 'kebijakan-privasi', 'testimoni.index']);
     @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -114,6 +114,7 @@
                 <a href="{{ route('layanan') }}" class="text-sm font-medium {{ Request::routeIs('layanan') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ \App\Helpers\StaticContent::NAV_LAYANAN }}</a>
                 <a href="{{ route('galeri.user') }}" class="text-sm font-medium {{ Request::routeIs('galeri.user') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ \App\Helpers\StaticContent::NAV_GALERI }}</a>
                 <a href="{{ route('tentang-kami') }}" class="text-sm font-medium {{ Request::routeIs('tentang-kami') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ \App\Helpers\StaticContent::NAV_TENTANG }}</a>
+                <a href="{{ route('testimoni.index') }}" class="text-sm font-medium {{ Request::routeIs('testimoni.index') ? 'nav-link-active' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-500 hover:text-orange-600') }} transition-colors">{{ \App\Helpers\StaticContent::NAV_TESTIMONI }}</a>
                 
                 @if($is_frontend)
                     <div class="flex items-center gap-4 border-l pl-6 border-white/10">
@@ -179,6 +180,7 @@
                     <a href="{{ route('layanan') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('layanan') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">{{ \App\Helpers\StaticContent::NAV_LAYANAN }}</a>
                     <a href="{{ route('galeri.user') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('galeri.user') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">{{ \App\Helpers\StaticContent::NAV_GALERI }}</a>
                     <a href="{{ route('tentang-kami') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('tentang-kami') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">{{ \App\Helpers\StaticContent::NAV_TENTANG }}</a>
+                    <a href="{{ route('testimoni.index') }}" @click="mobileMenuOpen = false" class="block text-2xl font-bold {{ Request::routeIs('testimoni.index') ? 'text-[#f2994a]' : ($is_frontend ? 'text-gray-300 hover:text-[#f2994a]' : 'text-gray-900') }} transition-colors">{{ \App\Helpers\StaticContent::NAV_TESTIMONI }}</a>
                 </div>
                 
                 <div class="pt-6 border-t {{ $is_frontend ? 'border-white/5' : 'border-gray-100' }}">

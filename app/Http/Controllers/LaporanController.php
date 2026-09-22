@@ -15,7 +15,11 @@ class LaporanController extends Controller
         $now = Carbon::now();
 
         $query = Pesanan::with(['user', 'details.layanan'])
-            ->whereIn('status', ['dibayar', 'selesai']);
+            ->whereIn('status', [
+                Pesanan::STATUS_DIKONFIRMASI,
+                Pesanan::STATUS_SEDANG_DIPROSES,
+                Pesanan::STATUS_SELESAI,
+            ]);
 
         if ($type === 'hari') {
             $query->whereDate('created_at', Carbon::today());

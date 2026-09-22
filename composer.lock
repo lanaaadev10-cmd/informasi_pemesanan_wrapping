@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "879229675f258953b74da971e75f66cf",
+    "content-hash": "284d4cedc1e9bd077139264457d3491a",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -2008,6 +2008,69 @@
                 }
             ],
             "time": "2026-05-23T22:00:21+00:00"
+        },
+        {
+            "name": "heyitsmi/content-guard",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/heyitsmi/content-guard.git",
+                "reference": "3417ff790be570c6f6e837ca97aa787f46e11155"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/heyitsmi/content-guard/zipball/3417ff790be570c6f6e837ca97aa787f46e11155",
+                "reference": "3417ff790be570c6f6e837ca97aa787f46e11155",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^10.8",
+                "phpunit/phpunit": "^12.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "ContentGuard": "Heyitsmi\\ContentGuard\\Facades\\ContentGuard"
+                    },
+                    "providers": [
+                        "Heyitsmi\\ContentGuard\\ContentGuardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Heyitsmi\\ContentGuard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hilmi",
+                    "email": "hilmi.workspace@gmail.com"
+                }
+            ],
+            "description": "A content sanitization library to filter negative content and online gambling spam.",
+            "keywords": [
+                "content-moderation",
+                "filter",
+                "indonesia",
+                "judi-online",
+                "laravel",
+                "php",
+                "spam-detection"
+            ],
+            "support": {
+                "issues": "https://github.com/heyitsmi/content-guard/issues",
+                "source": "https://github.com/heyitsmi/content-guard/tree/v1.2.0"
+            },
+            "time": "2026-01-10T12:34:26+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
@@ -11997,5 +12060,5 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

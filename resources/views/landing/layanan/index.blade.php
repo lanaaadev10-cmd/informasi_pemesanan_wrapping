@@ -8,6 +8,7 @@
         $accentColor = '#f2994a';
 
         $services = $layanans->map(fn($l) => [
+            'id'        => $l->id_layanan,
             'nama'      => $l->nama_layanan,
             'harga'     => $l->harga > 0 ? 'Rp ' . number_format($l->harga, 0, ',', '.') : 'Menyesuaikan',
             'deskripsi' => $l->deskripsi,

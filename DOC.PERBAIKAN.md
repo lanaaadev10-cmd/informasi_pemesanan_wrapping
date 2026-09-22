@@ -607,14 +607,96 @@ Setelah semua perubahan, uji hal-hal berikut:
 > pengerjaan nantinya jelas: mana tanggung jawab **Backend** dan mana
 > tanggung jawab **Frontend**.
 
+---
+
+## Diskusi Alur Rating (7 September 2026)
+
+### Konteks
+
+Mitra sudah melayani banyak pesanan **sebelum** sistem ini ada. Pelanggan lama
+ingin memberikan rating/testimoni melalui sistem, tetapi mereka **tidak punya
+data pesanan** di database. Maka alur rating dipecah menjadi dua.
+
+### Alur 1 — Pelanggan Baru (via Riwayat Pesanan)
+
+Untuk pelanggan yang order melalui sistem, rating dilakukan dari riwayat pesanan.
+
+```
+Login → Dashboard → Riwayat Pesanan → Tab "Selesai"
+→ Klik pesanan selesai → Tombol "Beri/Ubah Rating"
+→ Form rating (bintang 1–5 + ulasan + upload foto) → Simpan
+```
+
+- Rating **terikat ke pesanan** (`id_pesanan` terisi)
+- **1 rating per pesanan** (unique constraint di `id_pesanan`)
+- Customer **bisa mengubah (edit)** rating kapan saja
+
+### Alur 2 — Pelanggan Lama (via Dropdown Layanan)
+
+Untuk pelanggan yang sudah pernah pesan **sebelum sistem**, rating dilakukan
+tanpa data pesanan. Cukup buat akun, lalu pilih layanan dari dropdown.
+
+```
+Belum punya akun → Daftar akun → Login
+→ Buka form rating (dari dashboard atau halaman Testimoni)
+→ Dropdown pilih layanan (Variasi Mobil / Kaca Film / Audio Mobil)
+→ Rating bintang 1–5 + ulasan + upload foto → Simpan
+```
+
+- Rating **terikat ke layanan** (`id_layanan` terisi, `id_pesanan` kosong)
+- **1 rating per layanan per akun** (unique constraint di `id_user` + `id_layanan`)
+- Customer **bisa mengubah (edit)** rating kapan saja
+
+### Keputusan Diskusi
+
+| No | Keputusan | Keterangan |
+|----|-----------|------------|
+| 1 | Dua alur rating | Alur 1 (via pesanan) + Alur 2 (via dropdown layanan) |
+| 2 | Tidak ada verifikasi khusus untuk pelanggan lama | Cukup daftar akun + login |
+| 3 | Dropdown layanan untuk pelanggan lama | 3 pilihan: Variasi Mobil, Kaca Film, Audio Mobil (dari tabel `layanans`) |
+| 4 | Rating per layanan dibatasi 1x per akun | Unique constraint di (`id_user` + `id_layanan`) untuk alur 2 |
+| 5 | Tabel `testimonis` lama TIDAK dipakai | Dibuat tabel baru `ratings` + `rating_medias` |
+| 6 | Media per rating | Maks. **2 foto** (opsional), format **jpg/jpeg/png/webp**, maks. **5MB/foto** |
+| 7 | Rating langsung tampil publik | Tanpa persetujuan admin, admin bisa hapus jika tidak pantas |
+| 8 | Halaman Testimoni publik | `/testimoni` — rata-rata bintang, filter, sort, daftar ulasan |
+
+### Dampak Teknis terhadap Schema `ratings`
+
+Karena ada dua alur, tabel `ratings` harus mendukung keduanya:
+
+| Kolom | Tipe | Keterangan |
+|-------|------|------------|
+| `id` | bigint (PK) | Auto-increment |
+| `id_user` | FK → `users.id` | Wajib, cascade delete |
+| `id_pesanan` | FK → `pesanans.id_pesanan` | **Nullable** (hanya terisi untuk Alur 1) |
+| `id_layanan` | FK → `layanans.id_layanan` | **Nullable** (hanya terisi untuk Alur 2) |
+| `rating` | tinyint (1–5) | Wajib |
+| `ulasan` | text | Nullable (opsional) |
+| `is_tampil` | bool | Default true, untuk sembunyikan rating |
+| `timestamps` | | created_at, updated_at |
+
+**Unique constraint:**
+- Alur 1: `id_pesanan` unique (null diabaikan) → 1 rating per pesanan
+- Alur 2: (`id_user` + `id_layanan`) unique (null diabaikan) → 1 rating per layanan per akun
+
+---
+
 ## Ringkasan Fitur (Keputusan yang Sudah Disepakati)
 
 - Customer memberi **rating bintang 1–5** + **ulasan teks** (opsional) +
-  **unggah foto/video** (maks. 2 media) untuk **setiap pesanan yang berstatus `selesai`**.
-- **1 rating per pesanan** (tidak bisa dobel), dan customer **bisa mengubah (edit) ratingnya** kapan saja.
-- Rating **langsung tampil publik** tanpa persetujuan admin. Admin tetap bisa menghapus rating bila tidak pantas.
-- Dikumpulkan di **halaman Testimoni** baru (`/testimoni`) — berisi rata-rata bintang,
-  filter bintang (Semua/5/4/3/2/1), urut (Terbaru/Tertinggi), dan daftar kartu ulasan.
+  **unggah foto** (maks. **2 foto**, opsional).
+- **Dua alur rating:**
+  - **Alur 1 (Pelanggan Baru):** Rating dari riwayat pesanan yang berstatus `selesai`.
+    1 rating per pesanan (`id_pesanan` wajib, unique).
+  - **Alur 2 (Pelanggan Lama):** Rating dari dropdown layanan tanpa data pesanan.
+    Cukup daftar akun + login. 1 rating per layanan per akun
+    (`id_layanan` wajib untuk alur ini, unique per user+layanan).
+- Customer **bisa mengubah (edit) ratingnya** kapan saja (kedua alur).
+- Rating **langsung tampil publik** tanpa persetujuan admin. Admin tetap bisa
+  menghapus rating bila tidak pantas.
+- Dikumpulkan di **halaman Testimoni** baru (`/testimoni`) — berisi rata-rata
+  bintang, filter bintang (Semua/5/4/3/2/1), urut (Terbaru/Tertinggi), dan
+  daftar kartu ulasan.
 - Navbar menampilkan menu **Testimoni**. Beranda **tidak** menampilkan seksi ulasan.
 - Fitur disediakan **via web (Blade)** **dan** via **REST API (Sanctum)**.
 - Nama entitas: tabel `ratings` + `rating_medias` (tabel `testimonis` lama TIDAK dipakai).
@@ -629,64 +711,67 @@ Tugas di sisi data, logika, dan keamanan. Umumnya dikerjakan oleh pengembang bac
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 1 | Buat tabel `ratings` | `database/migrations/<timestamp>_create_ratings_table.php` | Kolom: `id`, `id_user` (FK→`users.id`, cascade), `id_pesanan` (FK→`pesanans.id_pesanan`, cascade, **unique** = 1 rating/pesanan), `rating` (tinyint 1–5), `ulasan` (text, nullable), `is_tampil` (bool, default `true`), `timestamps` |
-| 2 | Buat tabel `rating_medias` | `database/migrations/<timestamp>_create_rating_medias_table.php` | Kolom: `id`, `id_rating` (FK→`ratings.id`, cascade), `tipe` (enum `image`\|`video`), `path` (string), `urutan` (int), `timestamps` |
+| 1 | Buat tabel `ratings` | `database/migrations/<timestamp>_create_ratings_table.php` | Kolom: `id`, `id_user` (FK→`users.id`, cascade), `id_pesanan` (FK→`pesanans.id_pesanan`, nullable, cascade), `id_layanan` (FK→`layanans.id_layanan`, nullable, cascade), `rating` (tinyint 1–5, wajib), `ulasan` (text, nullable), `is_tampil` (bool, default `true`), `timestamps`. **Unique:** `id_pesanan` (null diabaikan); (`id_user`, `id_layanan`) (null diabaikan) |
+| 2 | Buat tabel `rating_medias` | `database/migrations/<timestamp>_create_rating_medias_table.php` | Kolom: `id`, `id_rating` (FK→`ratings.id`, cascade), `path` (string), `urutan` (int), `timestamps`. **Tipe selalu `image`** (tidak ada video) |
 
 ### A2. Model & Relasi
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 3 | Buat model `Rating` | `app/Models/Rating.php` | `fillable`: `id_user`, `id_pesanan`, `rating`, `ulasan`, `is_tampil`. `casts`: rating integer. Relasi: `user()` belongsTo User, `pesanan()` belongsTo Pesanan, `medias()` hasMany RatingMedia. `booted()` hapus cache `testimoni_ratings` saat `saved`/`deleted` (pola `Layanan`) |
-| 4 | Buat model `RatingMedia` | `app/Models/RatingMedia.php` | `fillable`: `id_rating`, `tipe`, `path`, `urutan`. Relasi `rating()` belongsTo Rating |
+| 3 | Buat model `Rating` | `app/Models/Rating.php` | `fillable`: `id_user`, `id_pesanan`, `id_layanan`, `rating`, `ulasan`, `is_tampil`. `casts`: `rating` → integer, `is_tampil` → boolean. Relasi: `user()` belongsTo User, `pesanan()` belongsTo Pesanan (nullable), `layanan()` belongsTo Layanan (nullable), `medias()` hasMany RatingMedia. `booted()` hapus cache `testimoni_ratings` saat `saved`/`deleted` (pola `Layanan`) |
+| 4 | Buat model `RatingMedia` | `app/Models/RatingMedia.php` | `fillable`: `id_rating`, `path`, `urutan`. Relasi `rating()` belongsTo Rating |
 | 5 | Tambah relasi di `Pesanan` | `app/Models/Pesanan.php` | Tambah method `rating()` → `hasOne(Rating::class, 'id_pesanan', 'id_pesanan')` |
+| 6 | Tambah relasi di `Layanan` | `app/Models/Layanan.php` | Tambah method `ratings()` → `hasMany(Rating::class, 'id_layanan', 'id_layanan')` |
 
 ### A3. Service Layer
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 6 | Buat `RatingService` | `app/Services/RatingService.php` | Method `store(Pesanan, data, files)` & `update(Rating, data, files)`. Tugas: validasi (rating wajib 1–5; ulasan maks. 500 karakter; media image **jpg/jpeg/png/webp** maks. **5MB**; video **mp4/webm/mov** maks. **25MB**; maks. **3 file**), simpan file ke `storage/app/public/rating/`, hapus media lama saat edit, daftarkan sebagai singleton di `AppServiceProvider` |
-| 7 | Cache | `app/Services/CacheService.php` | Tambah key cache `testimoni_ratings` (data daftar ulasan untuk halaman publik) |
+| 7 | Buat `RatingService` | `app/Services/RatingService.php` | **Method `storeForPesanan(Pesanan, data, files)`** (Alur 1): validasi rating 1–5, ulasan maks. 500 karakter, foto maks. 2 file, image **jpg/jpeg/png/webp** maks. **5MB/foto**, simpan ke `storage/app/public/rating/`, buat record `ratings` + `rating_medias`. **Method `storeForLayanan(Layanan, user, data, files)`** (Alur 2): sama validasinya, cek unique (`id_user`+`id_layanan`), kalau sudah ada → update. **Method `update(Rating, data, files)`**: update data, replace media lama. **Method `deleteMedia(RatingMedia)`**: hapus file fisik + record. Daftarkan sebagai singleton di `AppServiceProvider` |
+| 8 | Cache | `app/Services/CacheService.php` | Tambah key cache `testimoni_ratings` (data daftar ulasan untuk halaman publik) |
 
 ### A4. Event, Listener & Notifikasi
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 8 | Buat event `RatingCreated` & `RatingUpdated` | `app/Events/RatingCreated.php`, `app/Events/RatingUpdated.php` | Membawa instance `Rating` |
-| 9 | Buat listener `NotifyAdminRating` | `app/Listeners/NotifyAdminRating.php` | Notifikasi ke admin: baris `notifikasis` (in-app) + Filament database notification (pola notifikasi order yang sudah ada) |
-| 10 | Daftarkan event-listener | `app/Providers/EventServiceProvider.php` | Mapping `RatingCreated` & `RatingUpdated` → `NotifyAdminRating` |
+| 9 | Buat event `RatingCreated` & `RatingUpdated` | `app/Events/RatingCreated.php`, `app/Events/RatingUpdated.php` | Membawa instance `Rating` |
+| 10 | Buat listener `NotifyAdminRating` | `app/Listeners/NotifyAdminRating.php` | Notifikasi ke admin: baris `notifikasis` (in-app) + Filament database notification (pola notifikasi order yang sudah ada) |
+| 11 | Daftarkan event-listener | `app/Providers/EventServiceProvider.php` | Mapping `RatingCreated` & `RatingUpdated` → `NotifyAdminRating` |
 
 ### A5. Authorization (Policy)
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 11 | Buat `RatingPolicy` | `app/Policies/RatingPolicy.php` | `create`/`update`: hanya pesanan milik user yang login **dan** berstatus `selesai`. Daftarkan di `AppServiceProvider`/`AuthServiceProvider` (ikuti pola policy `PesananPolicy`) |
+| 12 | Buat `RatingPolicy` | `app/Policies/RatingPolicy.php` | **Alur 1 (`create`/`update` via pesanan):** pesanan milik user yang login **dan** berstatus `selesai`. **Alur 2 (`create`/`update` via layanan):** user yang login, belum punya rating untuk layanan itu. Daftarkan di `AppServiceProvider` (ikuti pola `PesananPolicy`) |
 
 ### A6. Web Route & Controller (Customer)
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 12 | Route form & simpan rating | `routes/web.php` | Dalam grup `pesanan` (terproteksi auth+verified): `GET /pesanan/{id}/rating` (form create/edit) → `RatingController@form`; `POST /pesanan/{id}/rating` → `store`; `PUT /pesanan/{id}/rating` → `update`. Route publik `GET /testimoni` → `TestimoniController@index` (`testimoni.index`) |
-| 13 | Buat `RatingController` | `app/Http/Controllers/RatingController.php` | Method `form`, `store`, `update`. Cek kepemilikan pesanan + status `selesai` (polisi via `RatingPolicy` atau manual), delegasikan ke `RatingService`, redirect dengan toast |
-| 14 | Buat `TestimoniController` | `app/Http/Controllers/TestimoniController.php` | Method `index`: ambil dari cache `testimoni_ratings` (publik, `is_tampil = true`), dukung filter bintang & sort, hitung rata-rata bintang, render `landing.testimoni.index` |
+| 13 | Route rating (Alur 1 — via pesanan) | `routes/web.php` | Dalam grup `pesanan` (terproteksi auth+verified): `GET /pesanan/{id}/rating` → `RatingController@form`; `POST /pesanan/{id}/rating` → `RatingController@store`; `PUT /pesanan/{id}/rating` → `RatingController@update` |
+| 14 | Route rating (Alur 2 — via layanan) | `routes/web.php` | Terproteksi auth+verified: `GET /rating/buat` → `RatingController@formLayanan`; `POST /rating/buat` → `RatingController@storeLayanan`; `PUT /rating/{id}/ubah` → `RatingController@updateLayanan` |
+| 15 | Route testimoni publik | `routes/web.php` | `GET /testimoni` → `TestimoniController@index` (`testimoni.index`) |
+| 16 | Buat `RatingController` | `app/Http/Controllers/RatingController.php` | **Alur 1:** `form($id_pesanan)` — cek pesanan milik user + status selesai + sudah rating?, render form. `store($id_pesanan)` — delegasi ke `RatingService->storeForPesanan()`, redirect toast. `update($id_pesanan)` — delegasi ke `RatingService->update()`, redirect toast. **Alur 2:** `formLayanan()` — ambil daftar layanan dari cache, cek apakah user sudah rate tiap layanan, render form dengan dropdown. `storeLayanan()` — delegasi ke `RatingService->storeForLayanan()`, redirect toast. `updateLayanan($id)` — delegasi ke `RatingService->update()`, redirect toast |
+| 17 | Buat `TestimoniController` | `app/Http/Controllers/TestimoniController.php` | Method `index`: ambil dari cache `testimoni_ratings` (publik, `is_tampil = true`), dukung filter bintang & sort, hitung rata-rata bintang, render `landing.testimoni.index` |
 
 ### A7. REST API (Sanctum)
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 15 | Route API rating | `routes/api.php` | Protected (`auth:sanctum`) di grup `pesanan`: `GET/POST/PUT /api/pesanan/{pesanan}/rating`. Publik: `GET /api/rating` (daftar ulasan publik + media) |
-| 16 | Buat `Api\RatingController` | `app/Http/Controllers/Api/RatingController.php` | Method `show` (rating milik user utk pesanan itu), `store`, `update`, `index` (publik). Respons JSON 201/200, error 401/403/422 sesuai kondisi |
+| 18 | Route API rating | `routes/api.php` | Protected (`auth:sanctum`): `POST /api/pesanan/{pesanan}/rating` (Alur 1), `POST /api/rating/layanan` (Alur 2), `PUT /api/rating/{rating}` (edit). Publik: `GET /api/rating` (daftar ulasan publik + media) |
+| 19 | Buat `Api\RatingController` | `app/Http/Controllers/Api/RatingController.php` | Method `storeByPesanan`, `storeByLayanan`, `update`, `index` (publik). Validasi server-side, respons JSON 201/200, error 401/403/422 |
 
 ### A8. Admin Panel (Filament)
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 17 | Buat `RatingResource` | `app/Filament/Resources/Ratings/RatingResource.php` (+ Pages `ListRatings`, `ViewRating`) | Kolom: user (nama), kode pesanan, bintang, ulasan, jumlah/preview media, `is_tampil`, tanggal. Aksi: lihat, hapus, ubah `is_tampil`. **Tanpa** create/edit |
+| 20 | Buat `RatingResource` | `app/Filament/Resources/Ratings/RatingResource.php` (+ Pages `ListRatings`, `ViewRating`) | Kolom: user (nama), tipe (Pesanan/Layanan), kode pesanan/nama layanan, bintang, ulasan, jumlah preview foto, `is_tampil`, tanggal. Aksi: lihat detail, hapus, toggle `is_tampil`. **Tanpa** create/edit manual |
 
 ### A9. Pengujian (Pest)
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 18 | Buat feature test | `tests/Feature/RatingFeatureTest.php` | API create (unauth → 401, pesanan bukan `selesai`/bukan miliknya → error, sukses → 201), duplikat per pesanan → ditolak, edit berhasil, validasi media, daftar publik hanya `is_tampil = true` |
+| 21 | Buat feature test | `tests/Feature/RatingFeatureTest.php` | **Alur 1:** unauth → 401, pesanan bukan `selesai`/bukan miliknya → error, sukses → 201, duplikat per pesanan → ditolak, edit berhasil, validasi foto (tipe/ukuran/jumlah). **Alur 2:** unauth → 401, sukses → 201, duplikat user+layanan → ditolak (update), edit berhasil. **Publik:** daftar hanya `is_tampil = true` |
 
 ### A10. Penyelesaian Backend
 
@@ -698,33 +783,45 @@ Tugas di sisi data, logika, dan keamanan. Umumnya dikerjakan oleh pengembang bac
 
 Tugas di sisi tampilan dan interaksi pengguna. Umumnya dikerjakan oleh pengembang frontend.
 
-### B1. Form Rating (Dashboard Customer)
+### B1. Form Rating — Alur 1 (via Riwayat Pesanan)
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 1 | Buat halaman form rating | `resources/views/dashboard/customer/pesanan/rating.blade.php` (FILE BARU) | Extend `layouts.dashboard_customer`. Berisi: **star picker 1–5** (Alpine.js), textarea ulasan, upload foto/video (maks. 3, preview), tombol simpan (mode create → POST, mode edit → PUT + tampil data lama). Tampil pesan sudah rated "Terima kasih atas ulasan Anda" |
-| 2 | Tombol "Beri/Ubah Rating" di daftar pesanan | `resources/views/dashboard/customer/pesanan/index.blade.php` | Untuk status `selesai`: tampilkan tombol **"Beri Rating"** (belum ada rating) atau **"Ubah Rating"** (sudah ada) → link ke form di B1. Bisa ditambahkan ikon bintang |
+| 1 | Buat halaman form rating pesanan | `resources/views/dashboard/customer/pesanan/rating.blade.php` (FILE BARU) | Extend `layouts.dashboard_customer`. Terima `$pesanan` + `$rating` (nullable, untuk mode edit). **Star picker 1–5** (Alpine.js), textarea ulasan (opsional, maks. 500 karakter), upload foto (maks. 2, preview thumbnail), tombol Simpan. Mode create → POST, mode edit → PUT + pre-fill data lama. Tampil pesan "Terima kasih atas ulasan Anda" jika sudah rated |
 
-### B2. Tombol Rating di Detail Pesanan
-
-| # | Tugas | File | Detail |
-|---|-------|------|--------|
-| 3 | Tombol "Beri/Ubah Rating" | `resources/views/dashboard/customer/pesanan/show.blade.php` | Di blok status `selesai` tambahkan tombol menuju form rating (pola tombol "Unduh Invoice PDF" yang sudah ada) |
-
-### B3. Halaman Testimoni Publik
+### B2. Form Rating — Alur 2 (via Dropdown Layanan)
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 4 | Buat halaman Testimoni | `resources/views/landing/testimoni/index.blade.php` (FILE BARU) | Extend `layouts.tampilan_utama`. Konten: heading, **blok rata-rata bintang** keseluruhan, **filter bintang** (Semua/5/4/3/2/1) + **sort** (Terbaru/Tertinggi), **daftar kartu ulasan**: bintang, teks ulasan, nama user, tanggal, preview **foto** (`<img>`) & **video** (`<video>`). Empty state saat belum ada ulasan |
+| 2 | Buat halaman form rating layanan | `resources/views/dashboard/customer/rating/layanan.blade.php` (FILE BARU) | Extend `layouts.dashboard_customer`. **Dropdown layanan** (3 opsi dari controller, disabled jika sudah rate). Star picker, textarea, upload foto (maks. 2, preview), tombol Simpan. Mode edit: tampil data lama + foto yang sudah diupload |
 
-### B4. Navigasi Landing Page
+### B3. Tombol Rating di Riwayat & Detail Pesanan
 
 | # | Tugas | File | Detail |
 |---|-------|------|--------|
-| 5 | Tambah konstanta menu | `app/Helpers/StaticContent.php` | Tambah konstanta `NAV_TESTIMONI = 'Testimoni'` |
-| 6 | Link navbar desktop & mobile | `resources/views/layouts/tampilan_utama.blade.php` | Tambah route `testimoni.index` ke daftar `$is_frontend` (baris ±5); tambah link menu **Testimoni** di navbar desktop (setelah "Tentang Kami", baris ±116) dan di menu mobile (baris ±181) |
+| 3 | Tombol "Beri/Ubah Rating" di daftar pesanan | `resources/views/dashboard/customer/pesanan/index.blade.php` | Untuk status `selesai`: tampilkan tombol **"Beri Rating"** (belum ada rating) atau **"Ubah Rating"** (sudah ada) → link ke form B1. Ikon bintang |
+| 4 | Tombol "Beri/Ubah Rating" di detail pesanan | `resources/views/dashboard/customer/pesanan/show.blade.php` | Di blok status `selesai` tambahkan tombol menuju form rating (pola tombol "Unduh Invoice PDF" yang sudah ada) |
 
-### B5. Penyelesaian Frontend
+### B4. Akses Form Rating Alur 2 dari Dashboard
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 5 | Tombol "Beri Testimoni" di dashboard customer | `resources/views/dashboard/customer/dashboard/index.blade.php` | Tambahkan section/card "Beri Testimoni" yang link ke `rating.buat` (Alur 2). Hanya tampil jika user sudah login. Ikon bintang, teks "Bagikan pengalaman Anda" |
+
+### B5. Halaman Testimoni Publik
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 6 | Buat halaman Testimoni | `resources/views/landing/testimoni/index.blade.php` (FILE BARU) | Extend `layouts.tampilan_utama`. Konten: heading, **blok rata-rata bintang** keseluruhan, **filter bintang** (Semua/5/4/3/2/1) + **sort** (Terbaru/Tertinggi), **daftar kartu ulasan**: bintang, teks ulasan, **nama layanan** (untuk Alur 2) atau **kode pesanan** (untuk Alur 1), nama user, tanggal, preview foto (`<img>`). Empty state saat belum ada ulasan |
+
+### B6. Navigasi Landing Page
+
+| # | Tugas | File | Detail |
+|---|-------|------|--------|
+| 7 | Tambah konstanta menu | `app/Helpers/StaticContent.php` | Tambah konstanta `NAV_TESTIMONI = 'Testimoni'` |
+| 8 | Link navbar desktop & mobile | `resources/views/layouts/tampilan_utama.blade.php` | Tambah route `testimoni.index` ke daftar `$is_frontend`; tambah link menu **Testimoni** di navbar desktop (setelah "Tentang Kami") dan di menu mobile |
+
+### B7. Penyelesaian Frontend
 
 - Jalankan: `npm run build` (atau `npm run dev`), lalu uji tampilan di desktop & HP (responsive).
 
@@ -732,11 +829,254 @@ Tugas di sisi tampilan dan interaksi pengguna. Umumnya dikerjakan oleh pengemban
 
 ## C. Catatan Pengerjaan
 
-- **Urutan pengerjaan:** Backend selesai dulu (A1–A9) agar data & API siap, baru Frontend (B1–B4) mengonsumsi.
-- **Koordinasi Backend–Frontend:** kesepakatan nama variabel/kolom (`rating`, `ulasan`, `is_tampil`, `medias[]` dengan `tipe`+`path`), URL route, dan format tanggapan API.
+- **Urutan pengerjaan:** Backend selesai dulu (A1–A9) agar data & API siap, baru Frontend (B1–B6) mengonsumsi.
+- **Koordinasi Backend–Frontend:** kesepakatan nama variabel/kolom (`rating`, `ulasan`, `is_tampil`, `medias[]` dengan `path`), URL route, dan format tanggapan API.
 - **Penyimpanan media:** folder `rating/` di disk `public` (`storage/app/public/rating/`), sudah didukung `php artisan storage:link`.
-- **Keamanan:** semua form memakai CSRF; route rating hanya untuk pesanan milik user & berstatus `selesai`.
+- **Keamanan:** semua form memakai CSRF; Alur 1 hanya untuk pesanan milik user & berstatus `selesai`; Alur 2 hanya untuk user yang login + belum rate layanan itu.
 - **Tabel lama** `testimonis` **tidak** diubah/dipakai.
+- **Media:** hanya foto (jpg/jpeg/png/webp), maks. 2 foto per rating, maks. 5MB per foto. Tidak ada video.
+
+**Deviations saat implementasi (Backend A1–A10):**
+
+- **`order_ref` bukan generated column.** Solusi C semula memakai `BIGINT UNSIGNED GENERATED ALWAYS AS (IFNULL(id_pesanan,0)) STORED`, tetapi MySQL 8.4.3 menolaknya (error 1215) ketika tabel juga punya FOREIGN KEY pada `id_pesanan`. Jadi `order_ref` dibuat sebagai kolom biasa `BIGINT UNSIGNED DEFAULT 0`, dan diisi otomatis oleh `RatingService::validateAndCreate()` (`order_ref = id_pesanan ?? 0`). Unique index tetap dua:
+  - `unique('id_pesanan','id_layanan')` → Alur 1: 1 rating per layanan per pesanan.
+  - `unique('id_user','id_layanan','order_ref')` → Alur 2: 1 rating per layanan per akun (tanpa pesanan, `order_ref = 0`).
+- **Perbaikan migration lama `2026_08_19_115805_fix_keranjangs_drop_id_paket`**: `up()`/`down()` sekarang di-guard `Schema::hasColumn('keranjangs','id_paket')`. Sebelumnya migration ini mentargetkan kolom `id_paket` yang sudah tidak dibuat oleh `create_keranjangs`, sehingga `migrate:fresh` / test (RefreshDatabase) selalu gagal.
+- **Test & role:** seeder role global di `tests/Pest.php` ternyata tidak aktif pada environment DB ini; `RatingFeatureTest` melakukan seeder `RolesTableSeeder` di `beforeEach` file-nya sendiri (agar listener notifikasi admin tidak error `RoleDoesNotExist`).
+- **Listener `NotifyAdminRating`** dibuat defensif: jika role admin belum ada datanya, rating tetap tersimpan tanpa memblokir request.
+- **Status uji:** `php artisan test --filter=RatingFeatureTest` = 12 passed (43 assertions). Dua kegagalan pre-existing di `Auth\AuthenticationTest` (logout) dan `Auth\RegistrationTest` tidak terkait fitur rating (perbedaan redirect `/` vs `/login`).
+
+---
+
+# Sesi Lanjutan Rating — 8 September 2026
+
+> Status: Sebagian **sudah dieksekusi**, sebagian masih **rencana yang disepakati**.
+> Sesi ini melanjutkan fitur rating yang sudah selesai di backend & form, fokus ke
+> **titik masuk UI**, **tujuan redirect**, dan **keamanan/validasi konten**.
+
+---
+
+## 1. TOMBOL RATING DI RIWAYAT PESANAN — ✅ SUDAH DIEKSEKUSI
+
+### Latar belakang
+
+Fitur rating (backend + form) sudah lengkap, tapi **tidak ada tombol apa pun** yang
+mengarah ke form rating dari halaman Riwayat Pesanan. Form hanya bisa diakses dengan
+mengetik URL langsung (`/pesanan/{id}/rating` atau `/rating/buat`).
+
+Hasil analisis:
+- **Backend 100% lengkap**: model `Rating`/`RatingMedia`, migrasi (sudah jalan), service,
+  controller web + API, event/listener, policy, Filament admin, 2 form rating, halaman
+  testimoni publik, routes, dan 12 test feature — semuanya sudah ada.
+- **Yang hilang hanya titik masuk UI** (task frontend B3 #3, B4 #5, B6 #7–8 dari dokumen
+  sebelumnya): tombol rating di riwayat pesanan, tombol rating di detail pesanan, kartu
+  "Beri Testimoni" di dashboard, dan link "Testimoni" di navbar landing.
+
+### Perubahan yang dilakukan
+
+Skup yang dikerjakan: **hanya tombol rating pada kartu pesanan berstatus `selesai`**
+di halaman Riwayat Pesanan (tombol saja, tanpa tambahan toast/redirect baru).
+
+| File | Baris | Detail |
+|---|---|---|
+| `resources/views/dashboard/customer/pesanan/index.blade.php` | 157–167 | Blok aksi kanan bawah dipecah. **Sebelumnya:** `@elseif($isSelesai \|\| $isDitolak)` → hanya tombol "Pesan Lagi". **Sekarang:** `$isSelesai` → tombol **"Beri/Ubah Rating"** (ikon bintang `ph-star`, aksen oranye `#f2994a`, link ke `route('pesanan.rating.form', $pesanan->id_pesanan)`) + tombol "Pesan Lagi"; `$isDitolak` → tetap "Pesan Lagi" saja |
+
+Aman karena `RatingController@form` sudah memvalidasi sendiri (403 jika bukan pesanan
+milik user / status bukan `selesai`).
+
+### Yang BELUM dikerjakan dari titik masuk (pekerjaan lanjutan)
+
+| Task | File | Detail |
+|---|---|---|
+| Tombol rating di detail pesanan | `resources/views/dashboard/customer/pesanan/show.blade.php` | Di blok status `selesai` tambahkan tombol ke form rating (pola "Unduh Invoice PDF") |
+| Kartu "Beri Testimoni" (Alur 2) | `resources/views/dashboard/customer/dashboard/index.blade.php` | Link ke `rating.buat` |
+| Link "Testimoni" di navbar landing | `resources/views/layouts/tampilan_utama.blade.php` + `app/Helpers/StaticContent.php` | Tambah `NAV_TESTIMONI`, masuk daftar `$is_frontend`, link navbar desktop & mobile |
+
+---
+
+## 2. REDIRECT SETELAH SUBMIT RATING → BERANDA USER — ✅ SUDAH DIEKSEKUSI
+
+### Bug/perilaku lama
+
+Setelah customer submit rating (Alur 1), sistem membawa user ke **halaman verifikasi
+pembayaran** (`pesanan.show`). Permintaan: setelah rating selesai, arahkan ke **beranda
+dashboard user yang sudah login** saja.
+
+### Perubahan yang dilakukan
+
+| File | Baris | Detail |
+|---|---|---|
+| `app/Http/Controllers/RatingController.php` | 83–85 | `store()` Alur 1: `redirect()->route('pesanan.show', ...)` → `redirect()->route('dashboard')`. Toast tetap dipertahankan |
+
+`route('dashboard')` sudah terdaftar di `routes/web.php` (grup auth+verified + role
+admin|user) → `/dashboard` (beranda user login). **Alur 2 (`storeLayanan`) juga
+disesuaikan** — tadinya kembali ke `rating.layanan.form`, sekarang ikut ke dashboard:
+
+| File | Baris | Detail |
+|---|---|---|
+| `app/Http/Controllers/RatingController.php` | 88–89 | `store()` Alur 1: redirect → `route('dashboard')` |
+| `app/Http/Controllers/RatingController.php` | 136–138 | `storeLayanan()` Alur 2: redirect → `route('dashboard')` |
+| `tests/Feature/RatingFeatureTest.php` | 109, 129, 135, 239, 244 | Asert Alur 1: `pesanan.show` → `route('dashboard')` |
+| `tests/Feature/RatingFeatureTest.php` | 192, 210, 215 | Asert Alur 2 sukses: tambah `assertRedirect(route('dashboard'))` |
+
+---
+
+## 3. KLARIFIKASI: `id_pesanan` NULL BUKAN `id_layanan` — ✅ TIDAK ADA PERUBAHAN
+
+### Temuan
+
+Awalnya dikira ada rating tersimpan dengan `id_layanan` NULL. Penelusuran (kode + query
+DB langsung `wrapping_db.ratings`) membuktikan:
+
+- **Tidak ada** baris dengan `id_layanan` NULL (0 dari 2). `id_layanan` adalah FK
+  **non-nullable** (`constrained`) dan validasi `required|exists:layanans,id_layanan`
+  memastikan selalu terisi. Juga data aktual terisi benar (Audio Mobil / Variasi Mobil).
+- Yang NULL justru **`id_pesanan`** pada rating **Alur 2** (rating tanpa pesanan via
+  dropdown layanan) — ini **perilaku yang disengaja**, bukan bug.
+
+| Konfirmasi | Nilai |
+|---|---|
+| Kolom `id_layanan` | FK non-nullable → selalu terisi |
+| Kolom `id_pesanan` | Nullable → NULL hanya untuk Alur 2 (rating tanpa pesanan) |
+| Unique Alur 2 | `(id_user, id_layanan, order_ref)` dengan `order_ref = 0` saat `id_pesanan` NULL |
+
+### Keputusan
+
+**Tidak perlu perbaikan.** Skema, relasi, dan Alur 2 sudah konsisten dengan rencana awal
+(dropdown layanan, `id_pesanan` boleh kosong, `id_layanan` selalu terisi).
+
+---
+
+## 4. DISKUSI: TAMPILAN RATING DI KARTU LAYANAN — SEPAKAT TUGAS FRONTEND
+
+### Analisis
+
+- **Data sudah lengkap di backend**: `TestimoniController::dataCache()` menghasilkan list
+  ulasan user + `summary` (`average`, `total`, `distribution`, `per_layanan` berisi
+  `avg` + `count` per layanan), di-cache dengan kunci `testimoni_ratings`.
+- Halaman `/testimoni` **sudah** memakai data itu (rata-rata + list ulasan + top 3 layanan).
+- **Kartu layanan di katalog/dashboard BELUM** memakai data tersebut: tidak ada blok
+  bintang/rata-rata/ulasan, dan controller yang merender kartu
+  (`CustomerController@katalog`, `DashboardController@layanan`) **tidak mengoper**
+  `$summary` ke view.
+
+### Kesepakatan
+
+Menampilkan **rata-rata + beberapa user yang sudah rating pada kartu layanan** adalah
+**tugas frontend** (render bintang, angka, thumbnail user). Syarat prasyarat backend:
+controller kartu perlu mengoper `$summary` (atau `per_layanan`) dari
+`TestimoniController::dataCache()` ke view — titik tempel kecil ini belum dikerjakan.
+
+---
+
+## 5. BALASAN RATING OLEH ADMIN — ⏸️ DITUNDAK (keep saja)
+
+### Analisis
+
+Kebutuhan admin: *"Sebagai Admin, saya bisa melihat dan membalas rating yang diberikan
+customer."*
+
+| Kemampuan | Status |
+|---|---|
+| Melihat rating | ✅ Sudah ada & lengkap (`RatingResource` Filament: kolom user, tipe, layanan, kode pesanan, bintang, ulasan, foto, toggle `is_tampil`, filter, hapus, halaman detail) |
+| Membalas rating | ❌ Belum ada sama sekali (tidak ada kolom balasan di tabel `ratings`, model, maupun Filament; `canEdit = false`) |
+
+### Keputusan
+
+**Dikep (ditunda).** Jika nanti dieksekusi, butuh (dari nol, bukan hanya frontend):
+1. Migration baru: kolom `balasan_admin` (text, nullable) + `dibalas_at` (timestamp).
+2. Model `Rating`: tambah ke `$fillable`.
+3. Filament: `canEdit = true` + halaman edit berisi textarea balasan.
+4. Opsional: tampilkan balasan di halaman testimoni publik.
+
+---
+
+## 6. ANALISIS KEAMANAN & VALIDASI RATING — ✅ SUDAH BAIK, ADA BEKERJAAN KECIL
+
+### Sudah terimplementasi (baik)
+
+| Aspek | Detail |
+|---|---|
+| Auth | Web: `auth` + `verified`. API: `auth:sanctum` |
+| Ownership (IDOR) | Alur 1: `where('id_user', Auth::id())`; API juga cek `id_user` |
+| Syarat status | Rating hanya jika `status === selesai` (web & API → 403) |
+| Validasi input | `id_layanan` required+exists, `rating` int 1–5, `ulasan` ≤500, foto maks 2 (jpg/jpeg/png/webp ≤5MB) — web & API konsisten |
+| Mass assignment | Service membangun array create eksplisit; `is_tampil` tidak bisa dimanipulasi user |
+| Rate limit | Web `throttle:60,5`; API `throttle:api` 60/menit per user/ip |
+| CSRF | Web via middleware Laravel; API via token Sanctum |
+| XSS/Injection | Tanpa raw SQL; output Blade di-escape; Filament aman |
+| Cache | Invalidasi otomatis `testimoni_ratings` saat saved/deleted |
+| Notifikasi | `NotifyAdminRating` defensif (try/catch) → tidak memblokir simpan |
+
+### Kelemahan yang ditemukan (belum dikerjakan)
+
+| # | Kelemahan | Detail |
+|---|---|---|
+| 1 | Race condition submit ganda → HTTP 500 | `storeForLayanan`/`storeForPesanan` pakai *check-then-insert* non-atomik; `QueryException` dari unique constraint tidak ditangkap. Prioritas tertinggi, murah diperbaiki |
+| 2 | Cek tipe file foto percaya ekstensi client | `assertValidPhoto` hanya cek `getClientOriginalExtension()`, bukan MIME asli (`getMimeType()`) |
+| 3 | `RatingPolicy` tidak terpakai (dead code) | Kontroller/API pakai cek manual, bukan `$this->authorize()`; policy tidak konsisten |
+| 4 | API rating tanpa `verified` | `auth:sanctum` saja → user belum verifikasi email tetap bisa rating via API |
+
+---
+
+## 7. RENCANA DISEPAKATI: FILTER KONTEN TIDAK PANTAS PADA ULASAN — 📋 BELUM DIEKSEKUSI
+
+### Latar belakang
+
+Saat ini **tidak ada filter konten sama sekali** pada ulasan — validasi hanya
+`nullable|string|max:500`. Pengaman satu-satunya adalah manual: admin toggle `is_tampil`
+atau hapus rating via Filament.
+
+### Keputusan yang disepakati (12 pertanyaan desain)
+
+| Aspek | Keputusan |
+|---|---|
+| Package sumber daftar kata | **`heyitsmi/content-guard`** (Laravel-ready, kamus Indonesia, smart-regex, zero deps) |
+| Strategi | **Tanpa tolak submit** — rating tetap tersimpan, tapi terdeteksi kotor → `is_tampil = false` + notif admin |
+| Logika berlapis | Semua kata terdeteksi → auto-hide + notif admin (tidak ada penolakan keras) |
+| Deteksi variasi | Package content-guard memakai smart-regex (deteksi leet-speak spt `b4j1ng`, `s.l.o.t`); tidak memakai exact-match murni |
+
+### Alur outcome yang disepakati
+
+```
+Submit rating/ulasan → ContentGuard::hasBadWords(ulasan)
+  ├─ Bersih → is_tampil = true  → tampil publik + notif admin (seperti biasa)
+  └─ Kotor  → is_tampil = false → tidak tampil publik + notif admin → admin review & toggle di Filament
+```
+
+### Rencana eksekusi
+
+| # | Langkah | Detail |
+|---|---|---|
+| 1 | Install package | `composer require heyitsmi/content-guard`; `php artisan vendor:publish --tag="content-guard-config"` (opsional) |
+| 2 | Integrasi `RatingService` | `app/Services/RatingService.php` — helper `cekKataKotor()` → `ContentGuard::hasBadWords()`; di `validateAndCreate` set `is_tampil = !kotor`; di `update` set `is_tampil = false` saat kotor. Otomatis mencakup Alur 1 + Alur 2 + web + API (semua lewat service) |
+| 3 | Notifikasi admin | `app/Listeners/NotifyAdminRating.php` — tambah penanda "🌀 Menunggu moderasi" saat `is_tampil=false` |
+| 4 | Filament | Opsional badge "Perlu Moderasi" di `RatingsTable`; toggle `is_tampil` sudah tersedia |
+| 5 | Test | `tests/Feature/RatingFeatureTest.php` — ulasan kotor → `is_tampil=false`; ulasan bersih → `is_tampil=true` |
+
+### Catatan/batasan
+
+- Karena strategi "tanpa tolak", customer tetap diarahkan ke dashboard dengan toast sukses;
+  hanya konten yang tidak tampil publik.
+- Smart-regex berpotensi *false-positive* kecil → admin tetap bebas toggle `is_tampil`.
+- Penyesuaian daftar kata via config/custom dictionary package (tanpa ubah kode).
+
+---
+
+# Ringkasan Status Per Sesi (8 September 2026)
+
+| Item | Status |
+|---|---|
+| Tombol "Beri/Ubah Rating" di riwayat pesanan (`selesai`) | ✅ Dieksekusi |
+| Redirect submit rating → dashboard `route('dashboard')` | ✅ Dieksekusi |
+| `id_pesanan` NULL pada Alur 2 = perilaku wajar | ✅ Konfirmasi, tanpa perubahan |
+| Tampilan rata-rata rating di kartu layanan | 📋 Tugas frontend (perlu controller oper `$summary`) |
+| Balasan rating admin | ⏸️ Ditunda (keep) |
+| Perbaikan race condition submit ganda (HTTP 500) | 📋 Rencana, belum dikerjakan |
+| Validasi MIME asli foto rating | 📋 Rencana, belum dikerjakan |
+| `RatingPolicy` dead code | 📋 Rencana, belum dikerjakan |
+| `verified` di API rating | 📋 Rencana, belum dikerjakan |
+| Filter konten tidak pantas (content-guard) | 📋 Rencana disepakati, belum dikerjakan |
 
 ---
 
@@ -746,3 +1086,118 @@ Akses
    port : 22
    Username : developer
    Password : developer123
+
+---
+
+# Fitur Rating — Daftar File yang Dibuat & Diubah (September 2026)
+
+Bagian ini mendata semua file yang terlibat dalam pembuatan fitur rating/testimoni.
+Tujuannya supaya mudah dicari: file mana yang dibuat baru, mana yang hanya diubah,
+dan masing-masing gunanya buat apa. Semua ditulis dengan bahasa sederhana.
+
+> Fitur rating memungkinkan pelanggan memberi **bintang 1–5 + ulasan + foto (maks. 2)**.
+> Ada 2 cara: **via pesanan yang selesai** (pelanggan baru) dan **via pilihan layanan**
+> (pelanggan lama). Hasilnya tampil di **halaman Testimoni** dan bisa dikelola di **admin**.
+
+---
+
+## A. File Baru (dibuat khusus untuk fitur rating)
+
+### 1. Database (4 file)
+
+| File | Fungsinya |
+|---|---|
+| `database/migrations/2026_09_07_171200_create_ratings_table.php` | Membuat tabel `ratings` — tempat simpan rating (bintang, ulasan, status tampil) + kunci unik supaya pelanggan tidak bisa rating dobel |
+| `database/migrations/2026_09_07_171300_create_rating_medias_table.php` | Membuat tabel `rating_medias` — tempat daftar foto tiap rating |
+| `database/migrations/2026_09_17_000001_add_balasan_admin_to_ratings_table.php` | Menambah kolom "balasan admin" dan waktu balasan di tabel rating |
+| `database/migrations/2026_09_17_000010_drop_testimonis_table.php` | Membuang tabel `testimonis` yang lama (sudah digantikan tabel `ratings`) |
+
+### 2. Model (2 file)
+
+| File | Fungsinya |
+|---|---|
+| `app/Models/Rating.php` | Model utama rating. Berisi relasi ke user, pesanan, layanan, dan foto. Otomatis membersihkan cache daftar testimoni setiap ada rating baru/diubah/dihapus |
+| `app/Models/RatingMedia.php` | Model untuk tiap foto rating |
+
+### 3. Logika utama (1 file)
+
+| File | Fungsinya |
+|---|---|
+| `app/Services/RatingService.php` | "Otak" dari semua aturan rating: menyimpan rating baru, mengubah, menghapus, memvalidasi (bintang 1–5, ulasan maks. 500 huruf, foto maks. 2 file jpg/jpeg/png/webp maks. 5MB), menyimpan file foto, dan menangani submit dobel |
+
+### 4. Event & notifikasi (3 file)
+
+| File | Fungsinya |
+|---|---|
+| `app/Events/RatingCreated.php` | Tanda "ada rating baru" yang dikirim sistem |
+| `app/Events/RatingUpdated.php` | Tanda "ada rating yang diubah" yang dikirim sistem |
+| `app/Listeners/NotifyAdminRating.php` | Menerima tanda di atas lalu memberi tahu semua admin (notifikasi di situs + di panel admin). Dibuat aman supaya kegagalan notifikasi tidak menggagalkan penyimpanan rating |
+
+### 5. Keamanan (1 file)
+
+| File | Fungsinya |
+|---|---|
+| `app/Policies/RatingPolicy.php` | Aturan "siapa boleh rating": hanya pemilik pesanan dan pesanan harus berstatus selesai |
+
+### 6. Halaman web (2 file)
+
+| File | Fungsinya |
+|---|---|
+| `app/Http/Controllers/RatingController.php` | Mengatur tampilan form rating dan proses simpan, untuk 2 alur (via pesanan & via pilihan layanan) |
+| `app/Http/Controllers/TestimoniController.php` | Menyediakan data & halaman `Testimoni` publik (`/testimoni`): rata-rata bintang, filter, dan urutan ulasan |
+
+### 7. API (2 file)
+
+| File | Fungsinya |
+|---|---|
+| `app/Http/Controllers/Api/RatingController.php` | Versi API dari fitur rating: daftar rating publik, simpan rating, dan tampilkan "rating punya saya" |
+| `app/Http/Middleware/EnsureApiEmailVerified.php` | Aturan untuk API: user harus sudah verifikasi email sebelum boleh memberi rating |
+
+### 8. Panel admin (5 file)
+
+| File | Fungsinya |
+|---|---|
+| `app/Filament/Resources/Ratings/RatingResource.php` | Membuat menu "Rating & Testimoni" di panel admin |
+| `app/Filament/Resources/Ratings/Tables/RatingsTable.php` | Isi daftar rating di admin (user, layanan, bintang, ulasan, jumlah foto, tombol tampil/sembunyi, hapus) |
+| `app/Filament/Resources/Ratings/Pages/ListRatings.php` | Halaman daftar rating di admin |
+| `app/Filament/Resources/Ratings/Pages/ViewRating.php` | Halaman detail satu rating di admin |
+| `app/Filament/Widgets/RecentRatingsWidget.php` | Kotak "Rating & Testimoni Terbaru" di dashboard admin |
+
+### 9. Tampilan pengguna (4 file)
+
+| File | Fungsinya |
+|---|---|
+| `resources/views/dashboard/customer/pesanan/rating.blade.php` | Form rating via pesanan (bintang, ulasan, upload foto) |
+| `resources/views/dashboard/customer/rating/layanan.blade.php` | Form rating via pilihan layanan (untuk pelanggan lama) |
+| `resources/views/landing/testimoni/index.blade.php` | Halaman Testimoni publik (rata-rata bintang, filter, daftar kartu ulasan + foto) |
+| `resources/views/dashboard/customer/dashboard/_testimonial-cta.blade.php` | Kartu ajakan "Tulis Ulasan" di dashboard customer |
+
+### 10. Uji coba & paket (2 file)
+
+| File | Fungsinya |
+|---|---|
+| `tests/Feature/RatingFeatureTest.php` | 12 pengujian otomatis untuk alur rating 1 & 2, dan halaman testimoni publik |
+| `config/content-guard.php` | Pengaturan paket penyaring kata tidak pantas pada ulasan |
+
+---
+
+## B. File Lama yang Diubah (disiapkan agar fitur rating berjalan)
+
+| File | Perubahannya |
+|---|---|
+| `routes/web.php` | Menambah alamat halaman: `/testimoni`, `/pesanan/{id}/rating`, `/rating/buat` |
+| `routes/api.php` | Menambah alamat API: daftar rating publik, simpan rating, rating "saya" |
+| `bootstrap/app.php` | Mendaftarkan middleware `api.verified` supaya bisa dipakai di API |
+| `app/Models/Pesanan.php` | Menambah relasi `rating()` (satu pesanan boleh punya rating) |
+| `app/Models/Layanan.php` | Menambah relasi `ratings()` (satu layanan bisa punya banyak rating) |
+| `app/Providers/AppServiceProvider.php` | Mendaftarkan `RatingService` supaya bisa dipakai di semua halaman |
+| `app/Providers/AuthServiceProvider.php` | Mendaftarkan aturan `RatingPolicy` |
+| `app/Providers/EventServiceProvider.php` | Menghubungkan event rating → notifikasi admin |
+| `app/Services/CacheService.php` | Menambah kunci cache `testimoni_ratings` supaya bisa dibersihkan |
+| `app/Helpers/StaticContent.php` | Menambah teks menu "Testimoni" |
+| `resources/views/dashboard/customer/pesanan/index.blade.php` | Menambah tombol "Beri/Ubah Rating" pada pesanan berstatus selesai |
+| `resources/views/dashboard/customer/pesanan/show.blade.php` | Menambah tombol menuju form rating di detail pesanan selesai |
+| `resources/views/dashboard/customer/dashboard/index.blade.php` | Memasang kartu ajakan "Tulis Ulasan" |
+| `resources/views/layouts/tampilan_utama.blade.php` | Menambah link menu "Testimoni" di navbar |
+| `composer.json` & `composer.lock` | Memasang paket `heyitsmi/content-guard` (penyaring kata tidak pantas) |
+| `app/Models/Testimoni.php` (dihapus) | Model lama sudah tidak terpakai karena tabel `testimonis` dibuang |

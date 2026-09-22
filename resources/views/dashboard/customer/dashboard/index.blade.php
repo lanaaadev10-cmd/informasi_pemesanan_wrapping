@@ -20,6 +20,9 @@
     {{-- 3. Paket Layanan dengan Carousel --}}
     @include('dashboard.customer.dashboard._packages-carousel')
 
+    {{-- 3b. CTA Beri Testimoni (Alur 2 — rating tanpa pesanan) --}}
+    @include('dashboard.customer.dashboard._testimonial-cta')
+
     {{-- 4. Aktivitas Terakhir Section --}}
     @include('dashboard.customer.dashboard._recent-activity')
 

@@ -13,17 +13,21 @@
 |--------------------------------------------------------------------------
 */
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
+use App\Http\Controllers\Api\Admin\AdminDashboardController;
+use App\Http\Controllers\Api\Admin\AdminPembayaranController;
+use App\Http\Controllers\Api\Admin\AdminPesananController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\LayananController;
-use App\Http\Controllers\Api\KeranjangController;
-use App\Http\Controllers\Api\PesananController;
-use App\Http\Controllers\Api\PembayaranController;
-use App\Http\Controllers\Api\NotifikasiController;
 use App\Http\Controllers\Api\GaleriApiController;
+use App\Http\Controllers\Api\KeranjangController;
+use App\Http\Controllers\Api\LayananController;
+use App\Http\Controllers\Api\NotifikasiController;
+use App\Http\Controllers\Api\PembayaranController;
+use App\Http\Controllers\Api\PesananController;
+use App\Http\Controllers\Api\RatingController;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
 
 /*
  * ============================================
@@ -33,9 +37,9 @@ use App\Http\Controllers\Api\GaleriApiController;
  * 2. auth  → 10 request/menit (login/register)
  * 3. orders → 30 request/menit (manipulasi pesanan)
  */
-RateLimiter::for('api', fn(Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
-RateLimiter::for('auth', fn() => Limit::perMinute(10)->by(request()->ip()));
-RateLimiter::for('orders', fn(Request $request) => Limit::perMinute(30)->by($request->user()?->id ?: $request->ip()));
+RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
+RateLimiter::for('auth', fn () => Limit::perMinute(10)->by(request()->ip()));
+RateLimiter::for('orders', fn (Request $request) => Limit::perMinute(30)->by($request->user()?->id ?: $request->ip()));
 
 // ============================================
 //  PUBLIC ROUTES — Tanpa perlu token
@@ -58,6 +62,9 @@ Route::prefix('galeri')->group(function () {
     Route::get('/kategori', [GaleriApiController::class, 'categories']); // daftar kategori
     Route::get('/{kategori}/jenis', [GaleriApiController::class, 'jenisList']); // filter by kategori
 });
+
+// Testimoni publik
+Route::get('/rating', [RatingController::class, 'index']);
 
 // ============================================
 //  PROTECTED ROUTES — Wajib login (Sanctum)
@@ -110,28 +117,37 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     });
 
     // ========================================
+    //  RATING
+    // ========================================
+    Route::middleware('api.verified')->group(function () {
+        Route::get('/rating/saya', [RatingController::class, 'myRatings']);
+        Route::post('/rating/layanan', [RatingController::class, 'storeByLayanan']);
+        Route::post('/pesanan/{pesanan}/rating', [RatingController::class, 'storeByPesanan']);
+    });
+
+    // ========================================
     //  ADMIN ONLY — Manajemen & Laporan
     // ========================================
     Route::middleware('role:admin')->prefix('admin')->group(function () {
 
         // Manajemen pesanan (admin bisa lihat & edit semua pesanan)
         Route::prefix('pesanan')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Api\Admin\AdminPesananController::class, 'index']);
-            Route::get('/{pesanan}', [\App\Http\Controllers\Api\Admin\AdminPesananController::class, 'show']);
-            Route::put('/{pesanan}/status', [\App\Http\Controllers\Api\Admin\AdminPesananController::class, 'updateStatus']);
-            Route::post('/{pesanan}/note', [\App\Http\Controllers\Api\Admin\AdminPesananController::class, 'addNote']);
+            Route::get('/', [AdminPesananController::class, 'index']);
+            Route::get('/{pesanan}', [AdminPesananController::class, 'show']);
+            Route::put('/{pesanan}/status', [AdminPesananController::class, 'updateStatus']);
+            Route::post('/{pesanan}/note', [AdminPesananController::class, 'addNote']);
         });
 
         // Verifikasi pembayaran
         Route::prefix('pembayaran')->group(function () {
-            Route::get('/', [\App\Http\Controllers\Api\Admin\AdminPembayaranController::class, 'index']);
-            Route::put('/{pembayaran}/verify', [\App\Http\Controllers\Api\Admin\AdminPembayaranController::class, 'verify']);
-            Route::put('/{pembayaran}/reject', [\App\Http\Controllers\Api\Admin\AdminPembayaranController::class, 'reject']);
+            Route::get('/', [AdminPembayaranController::class, 'index']);
+            Route::put('/{pembayaran}/verify', [AdminPembayaranController::class, 'verify']);
+            Route::put('/{pembayaran}/reject', [AdminPembayaranController::class, 'reject']);
         });
 
         // Statistik & grafik dashboard admin
-        Route::get('/dashboard/stats', [\App\Http\Controllers\Api\Admin\AdminDashboardController::class, 'getStats']);
-        Route::get('/dashboard/chart-data', [\App\Http\Controllers\Api\Admin\AdminDashboardController::class, 'getChartData']);
+        Route::get('/dashboard/stats', [AdminDashboardController::class, 'getStats']);
+        Route::get('/dashboard/chart-data', [AdminDashboardController::class, 'getChartData']);
     });
 });
 

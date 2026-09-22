@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
 class Layanan extends Model
@@ -42,5 +42,10 @@ class Layanan extends Model
             Cache::forget('katalog_layanans');
             Cache::forget('dashboard_layanans');
         });
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'id_layanan', 'id_layanan');
     }
 }

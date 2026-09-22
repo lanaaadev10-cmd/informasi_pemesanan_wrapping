@@ -1,5 +1,5 @@
 <!-- Active Order Card (Dynamic) -->
-@if($latestOrder && !in_array($latestOrder->status, ['selesai', 'ditolak', 'dibatalkan']))
+@if($latestOrder && !in_array($latestOrder->status, ['selesai', 'ditolak']))
     @php
         $statusColorClass = match((string) $latestOrder->status) {
             'menunggu_konfirmasi_admin' => 'bg-yellow-500 text-yellow-500',

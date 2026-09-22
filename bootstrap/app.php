@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'api.verified' => \App\Http\Middleware\EnsureApiEmailVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

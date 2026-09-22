@@ -201,7 +201,10 @@
                         </div>
                         <h2 class="text-lg font-bold text-white">{{ $profil->status_pesanan_selesai ?? 'Pesanan Selesai' }}</h2>
                         <p class="text-xs text-gray-400 leading-relaxed px-4">Pengerjaan pesanan Anda telah selesai. Silakan ambil kendaraan Anda.</p>
-                        <a href="{{ route('pesanan.invoice', $pesanan->id_pesanan) }}" target="_blank" class="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-md active:scale-95">
+                        <a href="{{ route('pesanan.rating.form', $pesanan->id_pesanan) }}" class="mt-4 flex items-center justify-center gap-2 w-full py-3.5 bg-[#f2994a] hover:bg-[#e28a44] text-black rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] active:scale-95">
+                            <i class="ph-bold ph-star text-lg"></i> {{ $profil->cta_rating ?? 'Beri Rating' }}
+                        </a>
+                        <a href="{{ route('pesanan.invoice', $pesanan->id_pesanan) }}" target="_blank" class="flex items-center justify-center gap-2 w-full py-3.5 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-xl font-bold text-xs tracking-wider uppercase transition-all shadow-md active:scale-95">
                             <i class="ph-bold ph-file-pdf text-lg"></i> {{ $profil->cta_unduh_invoice ?? 'Unduh Invoice PDF' }}
                         </a>
                         <a href="{{ route('pesanan.index') }}" class="mt-4 inline-block px-6 py-2 border border-white/10 rounded-lg text-[10px] text-gray-400 hover:text-white transition-colors">{{ $profil->cta_kembali ?? 'Kembali ke Dashboard' }}</a>

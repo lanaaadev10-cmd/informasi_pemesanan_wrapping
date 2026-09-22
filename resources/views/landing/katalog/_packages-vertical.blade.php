@@ -33,6 +33,7 @@
                 @forelse($layanan as $index => $package)
                 @php
                     $packageImage = $package->foto_contoh ? asset('storage/' . $package->foto_contoh) : getFallbackImage($index);
+                    $packageSummary = $ratingSummary->get($package->id_layanan);
                 @endphp
                 <div class="packages-carousel-item katalog-item flex-shrink-0 w-80" data-category="{{ strtolower($package->kategori) }}">
                     <!-- Card Package -->
@@ -60,6 +61,16 @@
                             <h4 class="katalog-title text-sm font-bold text-white group-hover/card:text-[#f2994a] transition-colors">
                                 {{ $package->nama_layanan }}
                             </h4>
+
+                            <!-- Rating Summary -->
+                            @if($packageSummary && $packageSummary['count'] > 0)
+                            <div class="flex items-center gap-1.5 mt-1.5">
+                                <span class="text-[#f2994a] font-bold text-xs flex items-center gap-1">
+                                    <i class="ph-fill ph-star text-xs"></i> {{ number_format((float) $packageSummary['avg'], 1, ',', '.') }}
+                                </span>
+                                <span class="text-[10px] text-gray-500">({{ $packageSummary['count'] }} ulasan)</span>
+                            </div>
+                            @endif
 
                             <!-- Deskripsi & Fitur — Scroll Vertikal Internal -->
                             <div class="katalog-scroll-area mt-2 max-h-[130px] overflow-y-auto pr-1 space-y-2">

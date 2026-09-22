@@ -139,7 +139,13 @@ class UserProfileApiController extends Controller
             ->where('status', 'selesai')
             ->count();
         $pendingOrders = Pesanan::where('id_user', $user->id)
-            ->whereIn('status', ['menunggu_verifikasi', 'diverifikasi', 'menunggu_pembayaran', 'menunggu_konfirmasi'])
+            ->whereIn('status', [
+                Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN,
+                Pesanan::STATUS_MENUNGGU_PEMBAYARAN,
+                Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN,
+                Pesanan::STATUS_DIKONFIRMASI,
+                Pesanan::STATUS_SEDANG_DIPROSES,
+            ])
             ->count();
         $totalSpent = Pesanan::where('id_user', $user->id)->sum('total_harga');
 

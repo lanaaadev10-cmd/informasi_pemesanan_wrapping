@@ -27,18 +27,18 @@
             <h1 class="text-3xl font-bold tracking-tight">{{ $pageTitle }}</h1>
             <p class="text-sm text-gray-400">{{ $pageDesc }}</p>
         </div>
-        
+
         @if(!$isPembayaranTab)
         <div class="flex items-center bg-[#121212] border border-white/10 rounded-xl p-1.5 shrink-0">
-            <a href="{{ route('pesanan.index') }}" 
+            <a href="{{ route('pesanan.index') }}"
                class="px-5 py-2.5 rounded-lg text-xs font-bold transition-all {{ !request()->has('status') ? 'bg-[#f2994a] text-black shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
                 Semua
             </a>
-            <a href="{{ route('pesanan.index', ['status' => 'berjalan']) }}" 
+            <a href="{{ route('pesanan.index', ['status' => 'berjalan']) }}"
                class="px-5 py-2.5 rounded-lg text-xs font-bold transition-all {{ request('status') == 'berjalan' ? 'bg-[#f2994a] text-black shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
                 Berjalan
             </a>
-            <a href="{{ route('pesanan.index', ['status' => 'selesai']) }}" 
+            <a href="{{ route('pesanan.index', ['status' => 'selesai']) }}"
                class="px-5 py-2.5 rounded-lg text-xs font-bold transition-all {{ request('status') == 'selesai' ? 'bg-[#f2994a] text-black shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
                 Selesai
             </a>
@@ -154,7 +154,14 @@
                                     <a href="{{ route('pesanan.show', $pesanan->id_pesanan) }}" class="flex-1 sm:flex-none text-center px-6 py-2.5 bg-[#f2994a] hover:bg-[#e28a44] text-black font-bold text-[10px] uppercase tracking-wider rounded-lg transition-all active:scale-95 shadow-md">
                                         {{ $profil->cta_bayar_sekarang ?? 'Bayar Sekarang' }}
                                     </a>
-                                @elseif($isSelesai || $isDitolak)
+                                @elseif($isSelesai)
+                                    <a href="{{ route('pesanan.rating.form', $pesanan->id_pesanan) }}" class="flex-1 sm:flex-none text-center inline-flex items-center justify-center gap-1.5 px-6 py-2.5 bg-[#f2994a] hover:bg-[#e28a44] text-black font-bold text-[10px] uppercase tracking-wider rounded-lg transition-all active:scale-95 shadow-md">
+                                        <i class="ph-bold ph-star text-sm"></i> {{ $profil->cta_rating ?? 'Ulasan' }}
+                                    </a>
+                                    <a href="{{ route('katalog.user') }}" class="flex-1 sm:flex-none text-center px-6 py-2.5 border border-white/10 hover:border-white/30 text-white font-bold text-[10px] uppercase tracking-wider rounded-lg transition-all active:scale-95 bg-white/5">
+                                        {{ $profil->cta_pesan_lagi ?? 'Pesan Lagi' }}
+                                    </a>
+                                @elseif($isDitolak)
                                     <a href="{{ route('katalog.user') }}" class="flex-1 sm:flex-none text-center px-6 py-2.5 border border-white/10 hover:border-white/30 text-white font-bold text-[10px] uppercase tracking-wider rounded-lg transition-all active:scale-95 bg-white/5">
                                         {{ $profil->cta_pesan_lagi ?? 'Pesan Lagi' }}
                                     </a>

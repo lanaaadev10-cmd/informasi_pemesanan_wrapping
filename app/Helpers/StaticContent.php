@@ -27,6 +27,7 @@ class StaticContent
     const NAV_LAYANAN   = 'Layanan';
     const NAV_GALERI    = 'Galeri';
     const NAV_TENTANG   = 'Tentang Kami';
+    const NAV_TESTIMONI = 'Testimoni';
     const NAV_MASUK     = 'Masuk';
     const NAV_DAFTAR    = 'Daftar';
     const NAV_PESANAN   = 'Pemesanan';
@@ -67,7 +68,6 @@ class StaticContent
     const CTA_CEK_SYARAT     = 'Cek Syarat & Ketentuan';
     const CTA_HUBUNGI_WA     = 'Hubungi WhatsApp';
     const CTA_PELAJARI       = 'Pelajari Prosedur';
-
     // ──────────────────────────────────────────────
     //  KEUNGGULAN SECTION  (halaman beranda)
     // ──────────────────────────────────────────────

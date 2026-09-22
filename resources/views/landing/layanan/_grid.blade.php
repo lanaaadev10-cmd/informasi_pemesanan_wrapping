@@ -30,6 +30,8 @@
             $badgeBg     = $badgeColors[$idx % count($badgeColors)];
             $badgeClr    = $badgeTextColors[$idx % count($badgeTextColors)];
             $isFeatured  = ($idx === 1); // Best Seller card
+
+            $svcSummary = isset($svc['id']) ? ($ratingSummary->get($svc['id']) ?? null) : null;
         @endphp
         <div class="bg-gradient-to-b from-[#161616] to-[#0f0f0f] border border-white/[0.06] rounded-2xl overflow-hidden flex flex-col transition-all duration-[400ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1.5 hover:shadow-[0_20px_50px_-12px_rgba(242,153,74,0.15)] hover:border-[rgba(242,153,74,0.25)]{{ $isFeatured ? ' ring-1 ring-[var(--accent)]/20' : '' }}">
 
@@ -51,6 +53,15 @@
                 <h3 class="text-lg font-extrabold text-white leading-tight">
                     {{ $svc['nama'] }}
                 </h3>
+
+                @if($svcSummary && $svcSummary['count'] > 0)
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[var(--accent)] font-bold text-xs flex items-center gap-1">
+                            <i class="ph-fill ph-star text-xs"></i> {{ number_format((float) $svcSummary['avg'], 1, ',', '.') }}
+                        </span>
+                        <span class="text-[11px] text-gray-500">({{ $svcSummary['count'] }} ulasan)</span>
+                    </div>
+                @endif
 
                 @if(!empty($svc['harga']))
                     <div class="flex items-baseline gap-1">
