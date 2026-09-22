@@ -595,8 +595,16 @@ Setelah semua perubahan, uji hal-hal berikut:
    notifikasi rapi saat dibuka dari HP.
 
 
-
-
+Catatan :
+/**
+ * Alur Kerja Live Search Katalog:
+ * 1. Ambil input nilai pencarian dan bersihkan spasi berlebih (.trim()).
+ * 2. Loop semua elemen '.katalog-item'.
+ * 3. Ambil teks judul (.katalog-title) & deskripsi (.katalog-desc).
+ * 4. Uji apakah query pencarian ada pada judul ATAU deskripsi.
+ * 5. Tampilkan/Sembunyikan kartu dengan kelas transisi CSS.
+ * 6. Jika semua kartu tersembunyi, tampilkan pesan 'tidak ditemukan'.
+ */
 
 
 

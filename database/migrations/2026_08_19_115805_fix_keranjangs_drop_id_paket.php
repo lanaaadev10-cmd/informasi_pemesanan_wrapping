@@ -8,8 +8,6 @@ return new class extends Migration
 {
     /**
      * Perbaikan skema: kolom id_paket pada tabel keranjangs tidak dipakai.
-     * Tabel keranjangs adalah header (1 baris per user + status active),
-     * sedangkan paket layanan disimpan di detail_keranjangs.
      */
     public function up(): void
     {

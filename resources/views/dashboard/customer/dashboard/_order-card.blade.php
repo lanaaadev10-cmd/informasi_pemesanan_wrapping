@@ -22,7 +22,7 @@
             ? $latestOrder->form->jadwal_pengerjaan->addDays(5)->translatedFormat('d M Y') 
             : $latestOrder->created_at->addDays(5)->translatedFormat('d M Y');
     @endphp
-    <div class="md:col-span-2 bg-[#111111] border border-white/5 rounded-3xl p-8 flex flex-col justify-between hover:border-[#f2994a]/20 transition-all duration-300 shadow-xl relative overflow-hidden">
+    <div class="md:col-span-3 bg-[#111111] border border-white/5 rounded-3xl p-8 flex flex-col justify-between hover:border-[#f2994a]/20 transition-all duration-300 shadow-xl relative overflow-hidden">
         <!-- Glowing Accent Background -->
         <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-[#f2994a]/5 rounded-full blur-[80px] pointer-events-none"></div>
 
@@ -62,7 +62,7 @@
     </div>
 @else
     <!-- No Active Order Placeholder Card -->
-    <div class="md:col-span-2 bg-[#111111] border border-white/5 rounded-3xl p-8 flex flex-col justify-between hover:border-[#f2994a]/20 transition-all duration-300 shadow-xl relative overflow-hidden">
+    <div class="md:col-span-3 bg-[#111111] border border-white/5 rounded-3xl p-8 flex flex-col justify-between hover:border-[#f2994a]/20 transition-all duration-300 shadow-xl relative overflow-hidden">
         <!-- Glowing Accent Background -->
         <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-[#f2994a]/5 rounded-full blur-[80px] pointer-events-none"></div>
 

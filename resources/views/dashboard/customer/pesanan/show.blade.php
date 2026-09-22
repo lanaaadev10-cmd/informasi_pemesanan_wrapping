@@ -84,7 +84,7 @@
                 @php
                     $firstItem = $pesanan->details->first();
                     $thumbnail = $firstItem?->layanan->foto_contoh;
-                    $imageUrl = $thumbnail ? asset('storage/' . $thumbnail) : asset('images/placeholder.svg');
+                    $imageUrl = \App\Helpers\StaticContent::fotoUrl($thumbnail ?? '');
                 @endphp
 
                 <div class="flex items-center justify-between gap-4">

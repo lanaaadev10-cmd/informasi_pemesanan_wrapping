@@ -30,7 +30,7 @@
     };
 
     $thumbnail = $pesanan->details->first()?->layanan?->foto_contoh;
-    $imageUrl  = $thumbnail ? asset('storage/' . $thumbnail) : null;
+    $imageUrl  = $thumbnail ? \App\Helpers\StaticContent::fotoUrl($thumbnail) : null;
 @endphp
 
     <style>

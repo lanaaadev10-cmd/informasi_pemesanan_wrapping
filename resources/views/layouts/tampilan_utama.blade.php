@@ -225,7 +225,7 @@
     </nav>
 
     {{-- Konten Utama --}}
-    <main class="{{ (Request::routeIs('home') || Request::routeIs('profil.perusahaan') || Request::routeIs('layanan')) ? 'pt-0' : 'pt-32' }}">
+    <main class="{{ (Request::routeIs('home') || Request::routeIs('layanan')) ? 'pt-0' : 'pt-32' }}">
         @yield('content')
     </main>
 

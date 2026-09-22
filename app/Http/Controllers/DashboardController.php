@@ -16,7 +16,7 @@ class DashboardController extends Controller
 
     public function profile()
     {
-        return view('landing.profil.index');
+        return view('landing.tentang-kami.index');
     }
 
     public function tentangKami()
