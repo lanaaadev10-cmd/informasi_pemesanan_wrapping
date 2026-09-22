@@ -27,6 +27,7 @@ class StaticContent
     const NAV_LAYANAN   = 'Layanan';
     const NAV_GALERI    = 'Galeri';
     const NAV_TENTANG   = 'Profil Perusahaan';
+    const NAV_TESTIMONI = 'Testimoni';
     const NAV_MASUK     = 'Masuk';
     const NAV_DAFTAR    = 'Daftar';
     const NAV_PESANAN   = 'Pemesanan';
