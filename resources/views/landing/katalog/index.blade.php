@@ -8,9 +8,9 @@
 
         @php
             $accentColor = $profil->accent_color ?? '#f2994a';
-            $heroTitle = $profil->katalog_hero_title ?? 'Wrap Catalog';
-            $heroDesc = $profil->katalog_hero_desc ?? 'Choose Your Finish';
-            $introText = $profil->katalog_intro_text ?? 'Elevate your vehicle\'s aesthetic with our curated collection of high-performance wraps and protective finishes.';
+            $heroTitle = $profil->katalog_hero_title ?? 'Katalog Layanan';
+            $heroDesc = $profil->katalog_hero_desc ?? 'Pilih Layanan yang Anda Inginkan';
+            $introText = $profil->katalog_intro_text ?? 'Kami menyediakan berbagai layanan wrapping premium untuk kendaraan Anda. Pilih jenis finishing yang sesuai dengan selera dan kebutuhan Anda.';
         @endphp
 
         <style>

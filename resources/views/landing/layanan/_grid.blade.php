@@ -22,8 +22,9 @@
                 }
             }
 
-            $imgSrc = !empty($svc['gambar'])
-                ? asset('storage/' . $svc['gambar'])
+            $fotoPath = $svc['foto_contoh'] ?? $svc['gambar'] ?? null;
+                $imgSrc = !empty($fotoPath)
+                ? \App\Helpers\StaticContent::fotoUrl($fotoPath)
                 : ($fallbackImages[$idx % count($fallbackImages)]);
 
             $badge       = $badgeLabels[$idx % count($badgeLabels)] ?? '';
@@ -35,13 +36,13 @@
 
             <div class="relative h-48 sm:h-52 overflow-hidden bg-gray-950 flex-shrink-0">
                 <img src="{{ $imgSrc }}"
-                     alt="{{ $svc['nama'] }}"
+                     alt="{{ $svc['nama_layanan'] ?? $svc['nama'] ?? 'Layanan' }}"
                      class="w-full h-full object-cover object-center transition-transform duration-[600ms] ease-[cubic-bezier(.22,.61,.36,1)] group-hover:scale-106"
                      loading="lazy">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] to-transparent"></div>
                 <div class="absolute top-4 right-4 z-10">
                     <span class="text-[0.6rem] font-bold tracking-[0.12em] uppercase px-3 py-1.5 rounded-full backdrop-blur-sm border"
-                          style="background:{{ $badgeBg }};color:{{ $badgeClr }};border-color:rgba(242,153,74,0.25)">
+                            style="background:{{ $badgeBg }};color:{{ $badgeClr }};border-color:rgba(242,153,74,0.25)">
                         {{ $badge }}
                     </span>
                 </div>
@@ -49,15 +50,17 @@
 
             <div class="flex flex-col flex-1 p-5 sm:p-6 gap-4">
                 <h3 class="text-lg font-extrabold text-white leading-tight">
-                    {{ $svc['nama'] }}
+                        {{ $svc['nama_layanan'] ?? $svc['nama'] ?? 'Layanan' }}
                 </h3>
 
-                @if(!empty($svc['harga']))
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-base font-black text-[var(--accent)]">{{ $svc['harga'] }}</span>
-                        <span class="text-xs text-gray-500 font-medium">/unit</span>
-                    </div>
-                @endif
+            @if(!empty($svc['harga']))
+                <div class="flex items-baseline gap-1">
+                    <span class="text-base font-black text-[var(--accent)]">
+                        {{ is_numeric($svc['harga']) ? 'Rp ' . number_format((float)$svc['harga'], 0, ',', '.') : $svc['harga'] }}
+                    </span>
+                    <span class="text-xs text-gray-500 font-medium">per unit</span>
+                </div>
+            @endif
 
                 @if(!empty($svc['deskripsi']))
                     <p class="text-gray-500 text-xs leading-relaxed line-clamp-3">

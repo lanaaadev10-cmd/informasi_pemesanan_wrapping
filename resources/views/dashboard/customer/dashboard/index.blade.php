@@ -12,9 +12,6 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {{-- Active Order Card --}}
         @include('dashboard.customer.dashboard._order-card')
-
-        {{-- Member Status Card --}}
-        @include('dashboard.customer.dashboard._stats')
     </div>
 
     {{-- 3. Paket Layanan dengan Carousel --}}

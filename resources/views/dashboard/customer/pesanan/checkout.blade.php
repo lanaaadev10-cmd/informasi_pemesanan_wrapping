@@ -178,7 +178,7 @@
                             <div class="flex gap-5 items-center">
                                 <div class="w-24 h-24 bg-white/5 rounded-xl border border-white/5 overflow-hidden shrink-0 shadow-inner">
                                     @if($item->layanan->foto_contoh)
-                                        <img src="{{ asset('storage/' . $item->layanan->foto_contoh) }}" class="w-full h-full object-cover">
+                                        <img src="{{ \App\Helpers\StaticContent::fotoUrl($item->layanan->foto_contoh) }}" class="w-full h-full object-cover">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center">
                                             <i class="ph ph-car text-3xl text-gray-500"></i>

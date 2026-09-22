@@ -26,7 +26,7 @@ class StaticContent
     const NAV_BERANDA   = 'Beranda';
     const NAV_LAYANAN   = 'Layanan';
     const NAV_GALERI    = 'Galeri';
-    const NAV_TENTANG   = 'Tentang Kami';
+    const NAV_TENTANG   = 'Profil Perusahaan';
     const NAV_MASUK     = 'Masuk';
     const NAV_DAFTAR    = 'Daftar';
     const NAV_PESANAN   = 'Pemesanan';
@@ -41,7 +41,7 @@ class StaticContent
     const COMPANY_ADDRESS     = 'Jl. Wrapping Indah No. 99, Jakarta Selatan, Indonesia 12950';
     const COMPANY_EMAIL       = 'hello@wapping.id';
     const COMPANY_PHONE       = '628123456789';
-    const COMPANY_WHATSAPP    = 'https://wa.me/628123456789';
+    const COMPANY_WHATSAPP    = 'https://wa.me/6283117163605';
     const COMPANY_MAPS_URL    = 'https://maps.google.com/?q=-6.1234,106.5678';
     const COMPANY_LOGO        = 'images/logo/logo-wapping.png';
 
@@ -56,10 +56,10 @@ class StaticContent
     const HERO_TITLE_1   = 'Transformasi';
     const HERO_TITLE_2   = 'Aset Mewah Anda.';
     const HERO_SUBTITLE  = 'Layanan premium yang melindungi dan memperindah mobil kesayangan Anda. Hubungi kami untuk penawaran terbaik.';
-    const HERO_STAT1_VAL = '800+';
-    const HERO_STAT1_LBL = 'Supercars Wrapped';
-    const HERO_STAT2_VAL = '5 Bulan';
-    const HERO_STAT2_LBL = 'Garansi Material';
+    const HERO_STAT1_VAL = '500+';
+    const HERO_STAT1_LBL = 'WRAPPING KENDARAAN';
+    const HERO_STAT2_VAL = '5 Tahun';
+    const HERO_STAT2_LBL = 'PENGALAMAN DI BIDANG WRAPPING';
 
     const CTA_PESAN_SEKARANG = 'Pesan Sekarang';
     const CTA_LIHAT_SEMUA    = 'Lihat Portofolio';
@@ -80,7 +80,7 @@ class StaticContent
     const K2_DESC  = 'Dikerjakan oleh tim profesional yang terlatih dan memiliki sertifikasi resmi di bidang car wrapping untuk menjamin ketelitian tinggi.';
     const K3_TITLE = 'Pengerjaan Tepat Waktu';
     const K3_DESC  = 'Kami menghargai waktu berharga Anda. Dengan SOP terstruktur, kami menjamin kendaraan Anda selesai dikerjakan sesuai estimasi waktu.';
-    const K4_TITLE = 'Garansi Hingga 5 Bulan';
+    const K4_TITLE = 'Garansi Hingga 5 Tahun';
     const K4_DESC  = 'Kami sangat yakin atas kualitas pengerjaan dan ketahanan bahan yang kami berikan. Nikmati perlindungan garansi penuh hingga 5 tahun untuk kepuasan total Anda.';
 
     // ──────────────────────────────────────────────
@@ -109,7 +109,7 @@ class StaticContent
     // ──────────────────────────────────────────────
     //  FOOTER
     // ──────────────────────────────────────────────
-    const FOOTER_TENTANG        = 'Tentang Kami';
+    const FOOTER_TENTANG        = 'Profil Perusahaan';
     const FOOTER_LAYANAN        = 'Layanan';
     const FOOTER_PRIVASI        = 'Kebijakan Privasi';
     const FOOTER_HUBUNGI        = 'Hubungi Kami';
@@ -168,6 +168,26 @@ class StaticContent
         return self::$galeriFotoMap[$path]
             ?? self::$galeriFotoMap['images/galeri/tesla-model-s.jpg']
             ?? 'https://images.unsplash.com/photo-1619767886558-efdc7b9af8e6?w=600&q=80';
+    }
+
+    /**
+     * Resolve any stored photo path to a renderable URL.
+     * - Full http(s) URLs (Unsplash/external) pass through unchanged.
+     * - Paths that exist under public/ (e.g. images/layanan/...) → asset($path).
+     * - Anything else falls back to storage (admin uploads via Filament).
+     */
+    public static function fotoUrl(string $path): string
+    {
+        if (! $path) {
+            return asset('images/placeholder.svg');
+        }
+        if (str_starts_with($path, 'http')) {
+            return $path;
+        }
+        if (file_exists(public_path($path))) {
+            return asset($path);
+        }
+        return asset('storage/' . $path);
     }
 
     /**
@@ -249,11 +269,11 @@ class StaticContent
         'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop',
     ];
 
-    const LAYANAN_HERO_TITLE = 'Precision in Every Layer.';
+    const LAYANAN_HERO_TITLE = 'Presisi di Setiap Lapisan.';
     const LAYANAN_HERO_DESC  = 'Pilih paket perlindungan dan estetika terbaik untuk kendaraan Anda. Menggunakan material grade premium dengan pemasangan yang sangat mendetail.';
     const LAYANAN_BADGE      = 'Layanan & Paket';
     const LAYANAN_CARD_BTN   = 'Pesan Sekarang';
-    const LAYANAN_EMPTY      = 'admin belum menambahkan paket layanan saat ini.';
+    const LAYANAN_EMPTY      = 'Admin belum menambahkan paket layanan saat ini.';
 
     const LAYANAN_MENGAPA_TITLE = 'Mengapa Memilih Kami?';
     const LAYANAN_MENGAPA_DESC  = 'Kami menggunakan keahlian teknis dengan material terbaik dunia untuk memastikan aset Anda terlindung sempurna. Setiap pengerjaan dilakukan di ruangan steril dengan kontrol suhu untuk hasil yang maksimal tanpa gelembung udara.';
@@ -262,13 +282,13 @@ class StaticContent
 
     const LAYANAN_BENEFIT_1 = 'Instalatur Bersertifikat';
     const LAYANAN_BENEFIT_2 = 'Ruangan Steril';
-    const LAYANAN_BENEFIT_3 = 'Quality Control 3 Lapis';
+    const LAYANAN_BENEFIT_3 = 'Kontrol Kualitas 3 Lapis';
 
     // ──────────────────────────────────────────────
     //  TENTANG KAMI  (halaman /tentang-kami)
     // ──────────────────────────────────────────────
     const TENTANG_HERO_BADGE    = 'Tentang Kami';
-    const TENTANG_HERO_TITLE    = 'Precision in Every Layer';
+    const TENTANG_HERO_TITLE    = 'Presisi Dalam Setiap Detail';
     const TENTANG_HERO_DESC     = 'Satu pilihan terbaik untuk menjaga kendaraan Anda tetap berkilau dan melindunginya dari goresan, jamur, serta kotoran jalanan demi performa yang selalu cemerlang.';
 
     const SEJARAH_BADGE    = 'Sejarah Kami';
@@ -293,24 +313,24 @@ class StaticContent
     {
         return [
             [
-                'nama'   => 'Adrian Wijaya',
-                'posisi' => 'Master Wrapper',
-                'foto'   => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop',
+                'nama'   => 'Silahkan isi nama anda',
+                'posisi' => 'Owner & Founder',
+                'foto'   => 'public/images/team/Owner&Founder.jpg',
             ],
             [
-                'nama'   => 'Siska Pratama',
-                'posisi' => 'Lead Designer',
-                'foto'   => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
+                'nama'   => '...',
+                'posisi' => 'Admin & Content Creator',
+                'foto'   => 'public/images/team/Admin&ContentCreator.jpg',
             ],
             [
-                'nama'   => 'Budi Santoso',
-                'posisi' => 'Detailing Specialist',
-                'foto'   => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop',
+                'nama'   => '...',
+                'posisi' => 'Team Wrapping',
+                'foto'   => 'public/images/team/TeamWrapping.jpg',
             ],
             [
-                'nama'   => 'Kevin Rahardja',
-                'posisi' => 'Operation Manager',
-                'foto'   => 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop',
+                'nama'   => '....',
+                'posisi' => 'Team Wrapping',
+                'foto'   => 'public/images/team/TeamWrapping.jpg',
             ],
         ];
     }

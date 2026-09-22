@@ -32,15 +32,16 @@
 
                 @forelse($layanan as $index => $package)
                 @php
-                    $packageImage = $package->foto_contoh ? asset('storage/' . $package->foto_contoh) : getFallbackImage($index);
+                    $fotoPath = $package->getOriginal('foto_contoh') ?? null;
+                    $imgSrc   = !empty($fotoPath) ? \App\Helpers\StaticContent::fotoUrl($fotoPath) : asset('images/placeholder.svg');
                 @endphp
-                <div class="packages-carousel-item katalog-item flex-shrink-0 w-80" data-category="{{ strtolower($package->kategori) }}">
+                <div class="packages-carousel-item katalog-item flex-shrink-0 w-80" data-category="{{ strtolower(trim(($package->tipe_paket ?? '') . ' ' . ($package->kategori ?? ''))) }}">
                     <!-- Card Package -->
                     <div class="h-full bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 rounded-2xl overflow-hidden group/card hover:border-[#f2994a]/50 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col">
 
                         <!-- Image Section -->
                         <div class="relative h-48 bg-gradient-to-br from-[#f2994a]/20 to-transparent overflow-hidden">
-                            <img src="{{ $packageImage }}"
+                            <img src="{{ $imgSrc }}"
                                  alt="{{ $package->nama_layanan }}"
                                  class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-300">
 
@@ -73,7 +74,7 @@
                                     @foreach($package->fitur as $fitur)
                                     <div class="flex items-center gap-2">
                                         <i class="ph-bold ph-check-circle text-[#f2994a] text-xs"></i>
-                                        <span class="text-[10px] text-gray-300">{{ $fitur }}</span>
+                                        <span class="text-[10px] text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? ($fitur[0] ?? '')) : $fitur }}</span>
                                     </div>
                                     @endforeach
                                 </div>
