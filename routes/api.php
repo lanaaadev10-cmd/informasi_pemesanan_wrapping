@@ -121,7 +121,8 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // ========================================
     Route::middleware('api.verified')->group(function () {
         Route::get('/rating/saya', [RatingController::class, 'myRatings']);
-        Route::post('/rating/layanan', [RatingController::class, 'storeByLayanan']);
+        // [DISABLED] Alur 2 — rating via dropdown layanan tanpa pesanan. Non-aktif.
+        // Route::post('/rating/layanan', [RatingController::class, 'storeByLayanan']);
         Route::post('/pesanan/{pesanan}/rating', [RatingController::class, 'storeByPesanan']);
     });
 

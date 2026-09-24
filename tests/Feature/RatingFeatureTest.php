@@ -171,8 +171,32 @@ describe('Alur 1 - rating via pesanan', function () {
 
         $this->assertDatabaseMissing('ratings', ['id_pesanan' => $pesanan->id_pesanan]);
     });
+
+    test('user yang sama boleh rate layanan yang sama di pesanan berbeda', function () {
+        ($this->actAs)();
+
+        $pesananA = createSelesaiPesanan($this->actor, $this->layanan);
+        $pesananB = createSelesaiPesanan($this->actor, $this->layanan);
+
+        $this->post(route('pesanan.rating.store', $pesananA->id_pesanan), [
+            'id_layanan' => $this->layanan->id_layanan,
+            'rating' => 5,
+        ])->assertRedirect(route('dashboard'));
+
+        $this->post(route('pesanan.rating.store', $pesananB->id_pesanan), [
+            'id_layanan' => $this->layanan->id_layanan,
+            'rating' => 4,
+        ])->assertRedirect(route('dashboard'));
+
+        $this->assertSame(2, Rating::where('id_user', $this->actor->id)
+            ->where('id_layanan', $this->layanan->id_layanan)
+            ->count());
+    });
 });
 
+/* [DISABLED] Alur 2 - rating layanan tanpa pesanan (dropdown layanan).
+ * Fitur non-aktif; rute & endpoint dikomentari. Blok dibiarkan sebagai referensi.
+ * (Versi aktif test "user yang sama boleh rate..." sudah dipindah ke describe Alur 1.)
 describe('Alur 2 - rating layanan tanpa pesanan', function () {
     test('guest tidak bisa mengakses form layanan', function () {
         $this->get(route('rating.layanan.form'))->assertRedirect(route('login'));
@@ -248,6 +272,7 @@ describe('Alur 2 - rating layanan tanpa pesanan', function () {
             ->count());
     });
 });
+*/
 
 describe('Testimoni publik', function () {
     test('halaman /testimoni menampilkan hanya rating is_tampil = true', function () {
@@ -286,8 +311,12 @@ describe('Testimoni publik', function () {
             'rating' => 5,
         ]);
 
-        $this->post(route('rating.layanan.store'), [
+        // [DISABLED Alur 2] Rating lama tanpa pesanan tetap diperhitungkan ringkasan
+        // (data lama tetap tampil publik). Dibuat langsung via model, bukan route.
+        Rating::create([
+            'id_user' => $this->actor->id,
             'id_layanan' => $this->layanan->id_layanan,
+            'order_ref' => 0,
             'rating' => 4,
         ]);
 

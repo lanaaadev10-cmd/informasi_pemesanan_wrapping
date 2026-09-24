@@ -66,6 +66,8 @@ class RatingService
         });
     }
 
+    // [DISABLED] Alur 2 — service ini hanya dipakai oleh endpoint Alur 2 yang sedang non-aktif.
+
     /**
      * Simpan rating untuk Alur 2 (via dropdown layanan tanpa pesanan).
      * Cek unique secara manual: id_user + id_layanan + id_pesanan IS NULL.

@@ -147,11 +147,13 @@ Route::middleware('throttle:60,5')->group(function () {
             Route::post('/{id}/rating', [RatingController::class, 'store'])->name('pesanan.rating.store');
         });
 
-        // Alur 2: Rating layanan tanpa pesanan (dropdown layanan)
-        Route::prefix('rating')->group(function () {
-            Route::get('/buat', [RatingController::class, 'formLayanan'])->name('rating.layanan.form');
-            Route::post('/buat', [RatingController::class, 'storeLayanan'])->name('rating.layanan.store');
-        });
+        // [DISABLED] Alur 2 — Rating layanan tanpa pesanan (dropdown layanan).
+        // Non-aktif karena tidak relevan; rating hanya melalui Alur 1 (pesanan berstatus selesai).
+        // Untuk re-enable: hapus tanda komentar di bawah ini.
+        // Route::prefix('rating')->group(function () {
+        //     Route::get('/buat', [RatingController::class, 'formLayanan'])->name('rating.layanan.form');
+        //     Route::post('/buat', [RatingController::class, 'storeLayanan'])->name('rating.layanan.store');
+        // });
     });
 });
 

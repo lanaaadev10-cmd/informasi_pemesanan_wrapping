@@ -89,6 +89,8 @@ class RatingController extends Controller
             ->with('toast_success', 'Terima kasih atas ulasan Anda!');
     }
 
+    // [DISABLED] Alur 2 — method tidak terpakai (rute /rating/buat dikomentari di routes/web.php).
+
     /**
      * Alur 2: Form rating tanpa pesanan (dropdown layanan).
      */
@@ -109,6 +111,8 @@ class RatingController extends Controller
 
         return view('dashboard.customer.rating.layanan', compact('layanans', 'myRatings'));
     }
+
+    // [DISABLED] Alur 2 — method tidak terpakai (rute /rating/buat dikomentari di routes/web.php).
 
     /**
      * Alur 2: Simpan/Update rating layanan (tanpa pesanan).

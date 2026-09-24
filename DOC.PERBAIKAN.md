@@ -1107,6 +1107,10 @@ dan masing-masing gunanya buat apa. Semua ditulis dengan bahasa sederhana.
 > Ada 2 cara: **via pesanan yang selesai** (pelanggan baru) dan **via pilihan layanan**
 > (pelanggan lama). Hasilnya tampil di **halaman Testimoni** dan bisa dikelola di **admin**.
 
+> ⚠️ **UPDATE:** Sejak sesi **"Nonaktifkan Alur 2 Rating"** di akhir dokumen ini,
+> hanya **1 alur yang aktif** — rating **via pesanan berstatus `selesai`**.
+> Alur 2 (dropdown layanan tanpa pesanan) telah **dinonaktifkan**.
+
 ---
 
 ## A. File Baru (dibuat khusus untuk fitur rating)
@@ -1209,3 +1213,85 @@ dan masing-masing gunanya buat apa. Semua ditulis dengan bahasa sederhana.
 | `resources/views/layouts/tampilan_utama.blade.php` | Menambah link menu "Testimoni" di navbar |
 | `composer.json` & `composer.lock` | Memasang paket `heyitsmi/content-guard` (penyaring kata tidak pantas) |
 | `app/Models/Testimoni.php` (dihapus) | Model lama sudah tidak terpakai karena tabel `testimonis` dibuang |
+
+---
+
+# Sesi Nonaktifkan Alur 2 Rating — Dokumentasi Perubahan (September 2026)
+
+> **Status:** ✅ **SELESAI — Alur 2 (rating via dropdown layanan, tanpa pesanan) dinonaktifkan.**
+> **Metode:** non-destruktif via **komentar** — seluruh kode tetap disimpan sebagai
+> referensi dan bisa di-re-enable kapan saja dengan menghapus tanda komentar.
+
+---
+
+## 1. Latar Belakang & Keputusan
+
+- Alur 2 adalah rating yang diberikan pelanggan **tanpa data pesanan** (cukup daftar
+  akun lalu pilih layanan dari dropdown). Saat sistem dipakai secara nyata, alur ini
+  dinilai **tidak relevan**, sehingga diputuskan untuk **dinonaktifkan**.
+- Keputusan akhir: rating hanya boleh diberikan melalui **Alur 1 — pesanan berstatus
+  `selesai`** (customer memberi rating setelah melakukan pemesanan).
+- Rating Alur 2 yang **sudah ada sebelumnya** di database (`id_pesanan` = NULL)
+  **tidak dihapus** dan **tetap tampil** di halaman `/testimoni` dan `GET /api/rating`.
+
+## 2. Perubahan yang Dilakukan (per File)
+
+| File | Perubahan |
+|---|---|
+| `routes/web.php` | Rute `GET /rating/buat` (`rating.layanan.form`) dan `POST /rating/buat` (`rating.layanan.store`) dikomentari `[DISABLED]` |
+| `routes/api.php` | Endpoint `POST /api/rating/layanan` (`storeByLayanan`) dikomentari `[DISABLED]` |
+| `resources/views/dashboard/customer/dashboard/index.blade.php` | Include kartu CTA `_testimonial-cta` dimatikan (komentar Blade) |
+| `resources/views/landing/testimoni/index.blade.php` | 2 tombol "Tulis Ulasan / Beri Rating" (filter atas + empty-state) dikomentari (Blade comment) |
+| `app/Http/Controllers/RatingController.php` | Method `formLayanan()` & `storeLayanan()` diberi penanda `[DISABLED]` (tidak terpanggil oleh rute mana pun) |
+| `app/Http/Controllers/Api/RatingController.php` | Method `storeByLayanan()` diberi penanda `[DISABLED]` |
+| `app/Services/RatingService.php` | Method `storeForLayanan()` diberi penanda `[DISABLED]` |
+| `tests/Feature/RatingFeatureTest.php` | Blok `describe('Alur 2 ...')` dikomentari; test "user yang sama boleh rate layanan yang sama di pesanan berbeda" dipindah ke describe Alur 1; test "ringkasan rata-rata" memakai `Rating::create` langsung (bukan route) |
+
+## 3. Behavior Sebelum / Sesudah
+
+| Aspek | Sebelum | Sesudah |
+|---|---|---|
+| Jalur input rating | 2 alur (via pesanan + via dropdown layanan) | **1 alur** (via pesanan berstatus `selesai`) |
+| URL `/rating/buat` (web) | Aktif | Tidak aktif (rute dihapus via komentar → 404) |
+| `POST /api/rating/layanan` | Aktif | Tidak aktif |
+| Kartu CTA "Tulis Ulasan" di dashboard | Tampil | Tidak dirender |
+| Tombol "Tulis Ulasan" di `/testimoni` | Tampil | Tidak dirender |
+| Data lama `id_pesanan` NULL | Tampil publik | **Tetap tampil** (tidak dihapus) |
+| Tombol "Beri/Ubah Rating" di pesanan selesai | Aktif | **Tetap aktif** (tidak disentuh) |
+
+## 4. Hal yang TIDAK Diubah
+
+- **Database:** kolom `order_ref`, unique index `('id_user','id_layanan','order_ref')`,
+  dan semua migrasi tetap ada (tidak ada migrasi baru).
+- **Tampilan & endpoint publik:** `/testimoni`, `GET /api/rating`, `GET /api/rating/saya`
+  tetap aktif; data lama Alur 2 tetap tampil.
+- **File referensi:** `resources/views/dashboard/customer/rating/layanan.blade.php`
+  dan `resources/views/dashboard/customer/dashboard/_testimonial-cta.blade.php`
+  dipertahankan (tidak dirender) — berisi referensi `route('rating.layanan.*')`
+  yang aman karena hanya ada di dalam komentar/file yang tidak dipakai.
+- **Settings:** `cta_rating` (dipakai tombol Alur 1 di `pesanan/index` & `show`),
+  `testimoni_cta_title`, `testimoni_cta_desc`.
+- **Lainnya:** navbar menu Testimoni, `RatingPolicy`, event/listener `NotifyAdminRating`,
+  panel admin (Filament) `RatingResource`.
+
+## 5. Verifikasi
+
+- `php artisan route:list` — tidak ditemukan lagi rute `rating/buat` (web) maupun
+  `api/rating/layanan` (API); rute Alur 1 (`pesanan/{id}/rating` GET/POST,
+  `api/pesanan/{pesanan}/rating`) tetap ada.
+- `php artisan view:clear` — cache view dibersihkan.
+- `php artisan test --filter=RatingFeatureTest` — **9 passed (33 assertions)**.
+  Sebelumnya 12 test; berkurang karena block Alur 2 dikomentari.
+- Referensi `route('rating.layanan.*')` yang tersisa hanya berada di dalam komentar
+  atau file Blade yang tidak dirender.
+
+## 6. Cara Re-enable (jika diinginkan nanti)
+
+1. `routes/web.php` — hapus komentar pada grup `Route::prefix('rating')` (2 rute).
+2. `routes/api.php` — hapus komentar pada `Route::post('/rating/layanan', ...)`.
+3. `resources/views/dashboard/customer/dashboard/index.blade.php` — aktifkan kembali
+   `@include('dashboard.customer.dashboard._testimonial-cta')`.
+4. `resources/views/landing/testimoni/index.blade.php` — hapus komentar Blade pada
+   2 tombol "Tulis Ulasan / Beri Rating".
+5. `tests/Feature/RatingFeatureTest.php` — hapus komentar block `describe('Alur 2 ...')`.
+6. Jalankan ulang `php artisan route:list` dan `php artisan test --filter=RatingFeatureTest`.

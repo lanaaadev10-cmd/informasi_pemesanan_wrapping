@@ -110,6 +110,8 @@ class RatingController extends Controller
         }
     }
 
+    // [DISABLED] Alur 2 — endpoint tidak terpakai (route POST /api/rating/layanan dikomentari di routes/api.php).
+
     /**
      * POST /api/rating/layanan
      * Alur 2: simpan/update rating layanan tanpa pesanan.
