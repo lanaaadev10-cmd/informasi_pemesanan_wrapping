@@ -76,7 +76,10 @@ Route::prefix('booking')->group(function () {
     Route::get('/quota-today', [BookingPublicController::class, 'getTodayQuota'])->middleware('throttle:booking');
     Route::get('/quota/{date}', [BookingPublicController::class, 'checkQuota'])->middleware('throttle:booking');
     Route::get('/quota-month/{year}/{month}', [BookingPublicController::class, 'getMonthQuota'])->middleware('throttle:booking');
+    // Detail slot per hari: kuota + daftar booking anonim (dipakai kalender dashboard)
+    Route::get('/day-detail/{date}', [BookingPublicController::class, 'getDayDetail'])->middleware('throttle:api');
 });
+
 
 
 // ============================================

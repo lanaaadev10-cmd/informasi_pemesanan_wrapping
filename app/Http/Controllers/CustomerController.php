@@ -41,26 +41,9 @@ class CustomerController extends Controller
             ->limit(5)
             ->get();
 
-        // Semua booking bulan ini (untuk kalender interaktif + modal)
-        $monthBookings = Booking::with('layanan')
-            ->where('user_id', auth()->id())
-            ->whereYear('booking_date', now()->year)
-            ->whereMonth('booking_date', now()->month)
-            ->orderBy('created_at')
-            ->get();
-
-        // Kalender: keyed 'Y-m-d' => status value (hanya bulan ini)
-        $bookingCalendar = $monthBookings
-            ->keyBy(fn ($b) => $b->booking_date->format('Y-m-d'))
-            ->map(fn ($b) => $b->status instanceof \App\Enums\BookingStatus
-                ? $b->status->value
-                : (string) $b->status
-            )
-            ->toArray();
-
         return view('dashboard.customer.dashboard.index', compact(
             'layanans', 'galeris', 'latestOrder', 'latestOrders',
-            'ratingSummary', 'upcomingBookings', 'bookingCalendar', 'monthBookings'
+            'ratingSummary', 'upcomingBookings'
         ));
 
     }
