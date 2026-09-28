@@ -88,7 +88,6 @@
                             <button
                                 type="button"
                                 @click="onDayClick(day)"
-                                :disabled="isPast(day)"
                                 :class="cellClass(day)"
                                 class="relative flex flex-col items-center justify-center aspect-square rounded-xl text-xs font-bold transition-all duration-150 p-1">
 
@@ -324,13 +323,18 @@
 
             {{-- Footer --}}
             <div class="px-6 pb-5 pt-3 flex gap-3">
-                <template x-if="modalData && !modalData.quota.is_full">
+                <template x-if="modalData && modalIsPast">
+                    <div class="flex-1 text-center py-3 bg-white/5 border border-white/10 text-gray-400 font-bold text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5">
+                        <i class="ph-bold ph-clock-counter-clockwise"></i> Tanggal Sudah Berlalu
+                    </div>
+                </template>
+                <template x-if="modalData && !modalIsPast && !modalData.quota.is_full">
                     <a :href="'{{ route('booking.create') }}?date=' + modalDate"
                        class="flex-1 text-center py-3 bg-gradient-to-r from-[#e28a44] to-[#f2994a] text-black font-black text-xs uppercase tracking-wider rounded-xl hover:opacity-90 transition-all active:scale-95">
                         <i class="ph-bold ph-plus-circle mr-1"></i> Booking Tanggal Ini
                     </a>
                 </template>
-                <template x-if="modalData && modalData.quota.is_full">
+                <template x-if="modalData && !modalIsPast && modalData.quota.is_full">
                     <div class="flex-1 text-center py-3 bg-red-500/10 border border-red-500/30 text-red-400 font-black text-xs uppercase tracking-wider rounded-xl">
                         Slot Penuh — Pilih Tanggal Lain
                     </div>
@@ -379,6 +383,7 @@ function bookingCalWidget() {
         modalOpen:    false,
         modalLoading: false,
         modalDate:    null,
+        modalIsPast:  false,
         modalTitle:   '',
         modalData:    null,
 
@@ -420,7 +425,7 @@ function bookingCalWidget() {
         },
 
         dotClass(day) {
-            if (this.isPast(day)) return 'bg-transparent';
+            if (this.isPast(day)) return 'bg-gray-600/40';
             const q = this.quotaForDay(day);
             if (!q || q.total_used === 0) return 'bg-transparent';
             if (q.is_full)          return 'bg-red-500';
@@ -435,7 +440,7 @@ function bookingCalWidget() {
             const used    = this.slotCount(day);
 
             if (isToday) return 'bg-[#f2994a]/20 border border-[#f2994a]/60 text-[#f2994a] ring-2 ring-[#f2994a]/30 font-black cursor-pointer hover:bg-[#f2994a]/30 shadow-[0_0_12px_rgba(242,153,74,0.2)]';
-            if (past)    return 'bg-white/[0.015] border border-white/[0.03] text-gray-600 opacity-40 cursor-not-allowed';
+            if (past)    return 'bg-white/[0.015] border border-white/[0.04] text-gray-400 opacity-60 cursor-pointer hover:bg-white/[0.06] hover:opacity-100 hover:text-white';
             if (full)    return 'bg-red-500/10 border border-red-500/30 text-red-400 cursor-pointer hover:bg-red-500/20';
             if (used >= 3) return 'bg-[#f2994a]/10 border border-[#f2994a]/30 text-[#f2994a] cursor-pointer hover:bg-[#f2994a]/20';
             if (used > 0)  return 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 cursor-pointer hover:bg-emerald-500/20';
@@ -448,13 +453,13 @@ function bookingCalWidget() {
 
         // ── Modal ────────────────────────────────────────────────────
         async onDayClick(day) {
-            if (this.isPast(day) && day !== TODAY_D) return;
             const dk = this.dateKey(day);
             const d  = new Date(TODAY_Y, TODAY_M - 1, day);
-            this.modalDate  = dk;
-            this.modalTitle = `${HARI[d.getDay()]}, ${day} ${BULAN[TODAY_M - 1]} ${TODAY_Y}`;
-            this.modalOpen  = true;
-            this.modalData  = null;
+            this.modalDate   = dk;
+            this.modalIsPast = this.isPast(day);
+            this.modalTitle  = `${HARI[d.getDay()]}, ${day} ${BULAN[TODAY_M - 1]} ${TODAY_Y}`;
+            this.modalOpen   = true;
+            this.modalData   = null;
             this.modalLoading = true;
 
             try {
