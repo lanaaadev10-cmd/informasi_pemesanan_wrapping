@@ -72,7 +72,8 @@
 
 @section('content')
 <div class="max-w-5xl mx-auto text-white relative space-y-8"
-     x-data="bookingWizard({{ json_encode($selectableLayanans) }}, '{{ old('payment_type', 'dp') }}', '{{ old('booking_date', $selectedDate) }}', '{{ old('layanan_id') }}', {{ $errors->hasAny(['vehicle_name', 'proof_file', 'payment_type']) ? 2 : 1 }})">
+     x-data="bookingWizard({{ json_encode($selectableLayanans) }}, '{{ old('payment_type', 'dp') }}', '{{ old('booking_date', $selectedDate) }}', '{{ old('layanan_id') }}', {{ $errors->hasAny(['vehicle_name', 'proof_file', 'payment_type']) ? 2 : 1 }})"
+     x-init="initCalendar()">
 
     {{-- ════ TOP HEADER ════ --}}
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
@@ -81,7 +82,7 @@
                 Fitting &amp; Wrapping Professional
             </div>
             <h1 class="text-3xl md:text-4xl font-black tracking-tight">Booking Jadwal Pengerjaan</h1>
-            <p class="text-sm text-gray-400 mt-1">Kuota harian maksimal 4 slot. Ikuti 2 langkah cepat untuk mengamankan jadwal Anda.</p>
+            <p class="text-sm text-gray-400 mt-1">Kuota harian maksimal 5 slot. Pilih tanggal pengerjaan dari kalender di bawah untuk mengamankan jadwal Anda.</p>
         </div>
         <a href="{{ route('booking.index') }}"
            class="inline-flex items-center px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-extrabold text-gray-300 hover:text-white transition-all w-fit">
@@ -202,21 +203,80 @@
                         @enderror
                     </section>
 
-                    {{-- § Tanggal Pengerjaan --}}
+                    {{-- § Tanggal Pengerjaan (Kalender Visual Interaktif) --}}
                     <section class="bg-[#141417] border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl space-y-5">
-                        <div class="flex items-center justify-between border-b border-white/10 pb-4">
-                            <h2 class="flex items-center gap-2.5 text-sm font-black uppercase tracking-widest text-[#f2994a]">
-                                Tanggal Pengerjaan
-                            </h2>
-                            <span class="inline-flex items-center text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
+                            <div>
+                                <h2 class="flex items-center gap-2.5 text-sm font-black uppercase tracking-widest text-[#f2994a]">
+                                    Pilih Tanggal Pengerjaan
+                                </h2>
+                                <p class="text-xs text-gray-400 mt-0.5">Klik tanggal di kalender atau pilih manual di bawah.</p>
+                            </div>
+                            <span class="inline-flex items-center text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full w-fit">
                                 Sisa slot hari ini: {{ $todayQuota['available'] }}/{{ $todayQuota['max'] }}
                             </span>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-stretch">
+                        {{-- Legend --}}
+                        <div class="flex flex-wrap items-center gap-4 text-xs pt-1">
+                            <span class="flex items-center gap-1.5 text-gray-300"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Tersedia</span>
+                            <span class="flex items-center gap-1.5 text-gray-300"><span class="w-2.5 h-2.5 rounded-full bg-[#f2994a]"></span> Sisa Sedikit</span>
+                            <span class="flex items-center gap-1.5 text-gray-300"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Penuh</span>
+                        </div>
 
-                            {{-- date picker --}}
+                        {{-- Kalender Component Container --}}
+                        <div class="bg-[#111114] border border-white/10 rounded-2xl p-4 md:p-5 relative overflow-hidden">
+                            {{-- Header Navigasi Bulan --}}
+                            <div class="flex items-center justify-between mb-4">
+                                <button type="button" @click="prevCalMonth()" class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:border-[#f2994a] text-gray-300 hover:text-white text-xs font-bold transition-all">
+                                    &larr; Prev
+                                </button>
+                                <h3 class="text-sm font-black text-white capitalize tracking-wide" x-text="calMonthLabel"></h3>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" @click="thisCalMonth()" class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:border-[#f2994a] text-[11px] font-bold text-gray-300 hover:text-white transition-all">Bulan Ini</button>
+                                    <button type="button" @click="nextCalMonth()" class="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:border-[#f2994a] text-gray-300 hover:text-white text-xs font-bold transition-all">
+                                        Next &rarr;
+                                    </button>
+                                </div>
+                            </div>
+
+                            {{-- Nama Hari --}}
+                            <div class="grid grid-cols-7 gap-1.5 mb-1.5">
+                                <template x-for="d in ['Min','Sen','Sel','Rab','Kam','Jum','Sab']" :key="d">
+                                    <div class="text-center text-[10px] font-extrabold uppercase text-gray-500 py-1" x-text="d"></div>
+                                </template>
+                            </div>
+
+                            {{-- Grid Tanggal --}}
+                            <div class="grid grid-cols-7 gap-1.5">
+                                <template x-for="cell in calCells" :key="cell.key">
+                                    <template x-if="cell.empty">
+                                        <div class="h-11 rounded-lg"></div>
+                                    </template>
+                                    <template x-if="!cell.empty">
+                                        <button type="button"
+                                            @click="selectCalDate(cell)"
+                                            :disabled="cell.disabled"
+                                            :class="calCellClasses(cell)"
+                                            class="h-11 rounded-xl border text-xs font-extrabold transition-all relative flex flex-col items-center justify-center p-1"
+                                        >
+                                            <span x-text="cell.day"></span>
+                                            <span class="w-1.5 h-1.5 rounded-full mt-0.5"
+                                                  :class="cell.status === 'full' ? 'bg-red-500' : (cell.status === 'few' ? 'bg-[#f2994a]' : (cell.status === 'available' ? 'bg-emerald-500' : 'bg-transparent'))">
+                                            </span>
+                                            <span x-show="cell.status === 'full'" class="absolute -top-1 -right-1 text-[6px] font-black bg-red-500 text-white px-1 rounded-full">FULL</span>
+                                        </button>
+                                    </template>
+                                </template>
+                            </div>
+                        </div>
+
+                        {{-- Input Tanggal & Preview Card --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 items-stretch pt-2">
                             <div class="sm:col-span-3 relative">
+                                <label for="booking_date" class="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1">
+                                    Tanggal Pengerjaan (Form Input):
+                                </label>
                                 <input type="date"
                                        name="booking_date"
                                        id="booking_date"
@@ -224,15 +284,14 @@
                                        value="{{ old('booking_date', $selectedDate) }}"
                                        min="{{ now()->toDateString() }}"
                                        required
-                                       class="field-input w-full pl-4 pr-4 py-4 rounded-2xl bg-[#1a1a1e] border border-white/15 text-white font-bold text-sm focus:border-[#f2994a]">
+                                       class="field-input w-full pl-4 pr-4 py-3.5 rounded-2xl bg-[#1a1a1e] border border-white/15 text-white font-bold text-sm focus:border-[#f2994a]">
                             </div>
 
-                            {{-- date preview card --}}
-                            <div class="sm:col-span-2 p-4 rounded-2xl bg-gradient-to-br from-[#f2994a]/8 to-transparent border border-[#f2994a]/20 flex flex-col justify-center gap-1">
-                                <p class="text-[10px] font-black uppercase tracking-widest text-[#f2994a]/70">Jadwal Dipilih</p>
+                            <div class="sm:col-span-2 p-4 rounded-2xl bg-gradient-to-br from-[#f2994a]/12 to-transparent border border-[#f2994a]/25 flex flex-col justify-center gap-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-[#f2994a]">Jadwal Dipilih</p>
                                 <p class="text-base font-black text-white leading-tight" x-text="dateLabel"></p>
-                                <p class="text-[11px] text-gray-400 flex items-center gap-1 pt-0.5">
-                                    Slot dikunci otomatis
+                                <p class="text-[11px] text-emerald-400 font-semibold flex items-center gap-1 pt-0.5">
+                                    ✓ Slot Kuota Tersedia
                                 </p>
                             </div>
                         </div>
@@ -602,6 +661,112 @@
                     // bisa diganti toast notification jika ada
                     alert(label + ' berhasil disalin!');
                 });
+            },
+
+            // Calendar states
+            calYear: new Date().getFullYear(),
+            calMonth: new Date().getMonth(),
+            calCells: [],
+            calQuota: {},
+
+            get calMonthLabel() {
+                return `${MONTHS[this.calMonth]} ${this.calYear}`;
+            },
+
+            async initCalendar() {
+                if (this.bookingDate) {
+                    const [y, m] = this.bookingDate.split('-').map(Number);
+                    if (y && m) {
+                        this.calYear = y;
+                        this.calMonth = m - 1;
+                    }
+                }
+                await this.loadCalQuota();
+                this.renderCalendar();
+            },
+
+            async loadCalQuota() {
+                try {
+                    const res = await fetch(`/api/booking/quota-month/${this.calYear}/${this.calMonth + 1}`);
+                    if (res.ok) {
+                        const json = await res.json();
+                        this.calQuota = json.quota ?? {};
+                    }
+                } catch(e) {}
+            },
+
+            renderCalendar() {
+                const now = new Date();
+                const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                const MAX = 5;
+
+                const firstDay = new Date(this.calYear, this.calMonth, 1);
+                const startWeekday = firstDay.getDay();
+                const daysInMonth = new Date(this.calYear, this.calMonth + 1, 0).getDate();
+                const cells = [];
+
+                for (let i = 0; i < startWeekday; i++) {
+                    cells.push({ empty: true, key: `e${i}` });
+                }
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const monthStr = String(this.calMonth + 1).padStart(2, '0');
+                    const dayStr = String(d).padStart(2, '0');
+                    const dateStr = `${this.calYear}-${monthStr}-${dayStr}`;
+                    const past = dateStr < todayStr;
+                    const q = this.calQuota[dateStr];
+                    const available = q ? q.available : MAX;
+                    const status = past ? 'past' : (available <= 0 ? 'full' : (available <= 2 ? 'few' : 'available'));
+                    cells.push({
+                        empty: false,
+                        key: dateStr,
+                        date: dateStr,
+                        day: d,
+                        status,
+                        available,
+                        max: MAX,
+                        disabled: past || status === 'full',
+                    });
+                }
+
+                this.calCells = cells;
+            },
+
+            calCellClasses(cell) {
+                const base = 'disabled:opacity-40 disabled:cursor-not-allowed ';
+                if (cell.date === this.bookingDate) {
+                    return base + 'border-[#f2994a] bg-[#f2994a]/20 text-white shadow-[0_0_15px_rgba(242,153,74,0.3)]';
+                }
+                if (cell.status === 'full' || cell.status === 'past') return base + 'border-white/10 bg-white/[0.02] text-gray-500';
+                if (cell.status === 'few') return base + 'border-[#f2994a]/40 bg-white/5 text-white hover:border-[#f2994a]';
+                return base + 'border-white/10 bg-white/5 text-white hover:border-emerald-500';
+            },
+
+            selectCalDate(cell) {
+                if (cell.disabled) return;
+                this.bookingDate = cell.date;
+            },
+
+            async prevCalMonth() {
+                this.calMonth--;
+                if (this.calMonth < 0) { this.calMonth = 11; this.calYear--; }
+                await this.loadCalQuota();
+                this.renderCalendar();
+            },
+
+            async nextCalMonth() {
+                this.calMonth++;
+                if (this.calMonth > 11) { this.calMonth = 0; this.calYear++; }
+                await this.loadCalQuota();
+                this.renderCalendar();
+            },
+
+            async thisCalMonth() {
+                const now = new Date();
+                this.calYear = now.getFullYear();
+                this.calMonth = now.getMonth();
+                await this.loadCalQuota();
+                this.renderCalendar();
             },
 
             handleFileChange(event) {

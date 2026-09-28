@@ -104,7 +104,7 @@
         const MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
         const DAYS = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
         const todayStr = fmtDate(now);
-        const MAX = 4;
+        const MAX = 5;
 
         function fmtDate(d) {
             const m = String(d.getMonth() + 1).padStart(2, '0');

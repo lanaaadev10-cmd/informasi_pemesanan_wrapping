@@ -22,6 +22,9 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'is_walk_in',
+        'walk_in_created_by',
+        'walk_in_note',
     ];
 
     // 🔒 Sembunyikan field sensitif dari JSON/array response
@@ -34,7 +37,13 @@ class User extends Authenticatable implements FilamentUser
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_walk_in' => 'boolean',
     ];
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'walk_in_created_by', 'id');
+    }
     // 🔐 Batasi akses ke Filament
     public function canAccessPanel(Panel $panel): bool
     {

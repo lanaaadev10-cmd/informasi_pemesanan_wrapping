@@ -87,10 +87,14 @@ class SlotKuotaService
                 ->whereIn('status', self::BOOKING_ACTIVE_STATUSES)
                 ->count();
 
-            // Hitung pesanan aktif yang jadwal pengerjaannya di tanggal ini
-            // (Pesanan menggunakan tanggal_pengerjaan, bukan tanggal_pesan)
+            // Hitung pesanan aktif (baik dari booking_date di pesanans atau jadwal_pengerjaan di form_pesanans)
             $pesananCount = Pesanan::query()
-                ->whereDate('tanggal_pengerjaan', $date)
+                ->where(function ($q) use ($date) {
+                    $q->whereDate('booking_date', $date)
+                      ->orWhereHas('form', function ($fq) use ($date) {
+                          $fq->whereDate('jadwal_pengerjaan', $date);
+                      });
+                })
                 ->whereIn('status', self::PESANAN_ACTIVE_STATUSES)
                 ->count();
 
@@ -135,11 +139,15 @@ class SlotKuotaService
             ->pluck('total', 'tgl')
             ->toArray();
 
-        // Agregat pesanan per tanggal pengerjaan
+        // Agregat pesanan per tanggal pengerjaan (pesanans.booking_date ATAU form_pesanans.jadwal_pengerjaan)
         $pesananData = Pesanan::query()
-            ->selectRaw('DATE(tanggal_pengerjaan) as tgl, count(*) as total')
-            ->whereBetween('tanggal_pengerjaan', [$start, $end])
-            ->whereIn('status', self::PESANAN_ACTIVE_STATUSES)
+            ->leftJoin('form_pesanans', 'pesanans.id_pesanan', '=', 'form_pesanans.id_pesanan')
+            ->selectRaw('COALESCE(DATE(pesanans.booking_date), DATE(form_pesanans.jadwal_pengerjaan)) as tgl, count(*) as total')
+            ->where(function ($q) use ($start, $end) {
+                $q->whereBetween('pesanans.booking_date', [$start, $end])
+                  ->orWhereBetween('form_pesanans.jadwal_pengerjaan', [$start, $end]);
+            })
+            ->whereIn('pesanans.status', self::PESANAN_ACTIVE_STATUSES)
             ->groupBy('tgl')
             ->pluck('total', 'tgl')
             ->toArray();
@@ -149,6 +157,7 @@ class SlotKuotaService
 
         $result = [];
         foreach ($allDates as $date) {
+            if (!$date) continue;
             $bCount    = (int) ($bookingData[$date] ?? 0);
             $pCount    = (int) ($pesananData[$date] ?? 0);
             $totalUsed = $bCount + $pCount;
@@ -188,8 +197,12 @@ class SlotKuotaService
             ->count();
 
         $totalUsed += DB::table('pesanans')
-            ->whereDate('tanggal_pengerjaan', $date)
-            ->whereIn('status', self::PESANAN_ACTIVE_STATUSES)
+            ->leftJoin('form_pesanans', 'pesanans.id_pesanan', '=', 'form_pesanans.id_pesanan')
+            ->where(function ($q) use ($date) {
+                $q->whereDate('pesanans.booking_date', $date)
+                  ->orWhereDate('form_pesanans.jadwal_pengerjaan', $date);
+            })
+            ->whereIn('pesanans.status', self::PESANAN_ACTIVE_STATUSES)
             ->lockForUpdate()
             ->count();
 

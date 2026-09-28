@@ -28,17 +28,24 @@ class Pesanan extends Model
     const STATUS_DITOLAK = 'ditolak';
 
     protected $fillable = [
-        'id_user', 'kode_pesanan', 'tanggal_pesan',
+        'id_user', 'kode_pesanan', 'tanggal_pesan', 'booking_date',
         'status', 'catatan_admin', 'total_harga',
-        'whatsapp_number',
+        'whatsapp_number', 'order_source', 'customer_name',
+        'address', 'created_by_admin_id',
     ];
 
     protected $casts = [
         'tanggal_pesan' => 'datetime',
+        'booking_date' => 'date',
 
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    public function createdByAdmin()
+    {
+        return $this->belongsTo(User::class, 'created_by_admin_id', 'id');
+    }
 
     // =============================================
     //  RELASI

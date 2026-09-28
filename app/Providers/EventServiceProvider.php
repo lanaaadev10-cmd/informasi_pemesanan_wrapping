@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
-use App\Events\OrderCompleted;
 // Events — Pesanan
-use App\Events\OrderConfirmed;
 use App\Events\OrderCreated;
+use App\Events\OrderConfirmed;
+use App\Events\PaymentVerified;
+use App\Events\OrderCompleted;
 use App\Events\OrderRejected;
 use App\Events\PaymentUploaded;
-use App\Events\PaymentVerified;
 // Events — Rating
 use App\Events\RatingCreated;
 use App\Events\RatingUpdated;
@@ -19,13 +19,14 @@ use App\Events\BookingPaymentUploaded;
 use App\Events\BookingPaymentVerified;
 use App\Events\BookingRejected;
 use App\Events\BookingCompleted;
+
 // Listeners — Pesanan
-use App\Listeners\NotifyOrderCompleted;
-use App\Listeners\NotifyOrderProcessingStarted;
-use App\Listeners\NotifyOrderRejection;
-use App\Listeners\NotifyPaymentRequired;
 use App\Listeners\SendOrderConfirmationEmail;
 use App\Listeners\SendOrderCreatedToAdmin;
+use App\Listeners\NotifyPaymentRequired;
+use App\Listeners\NotifyOrderProcessingStarted;
+use App\Listeners\NotifyOrderCompleted;
+use App\Listeners\NotifyOrderRejection;
 use App\Listeners\SendPaymentUploadedToAdmin;
 // Listeners — Rating
 use App\Listeners\NotifyAdminRating;
@@ -37,6 +38,7 @@ use App\Listeners\NotifyAdminBookingPaymentUploaded;
 use App\Listeners\NotifyBookingPaymentVerified;
 use App\Listeners\NotifyBookingRejected;
 use App\Listeners\NotifyBookingCompleted;
+
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -124,5 +126,3 @@ class EventServiceProvider extends ServiceProvider
         return true;
     }
 }
-
-

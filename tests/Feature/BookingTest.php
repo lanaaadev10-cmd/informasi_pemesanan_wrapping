@@ -7,6 +7,7 @@ use App\Models\Layanan;
 use App\Models\User;
 use App\Services\BookingService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -22,6 +23,8 @@ class BookingTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->withoutMiddleware(\Illuminate\Routing\Middleware\ThrottleRequests::class);
 
         Storage::fake('public');
 
@@ -144,8 +147,8 @@ class BookingTest extends TestCase
             'status' => 'aktif',
         ]);
 
-        // Create 3 existing bookings for target date using separate verified users
-        for ($i = 1; $i <= 3; $i++) {
+        // Create 4 existing bookings for target date using separate verified users
+        for ($i = 1; $i <= 4; $i++) {
             $user = User::factory()->create(['email_verified_at' => now()]);
             Booking::create([
                 'booking_code' => 'BKG-TEST-00' . $i,
@@ -158,24 +161,7 @@ class BookingTest extends TestCase
             ]);
         }
 
-        // 4th booking (Boundary Max Limit) -> should SUCCEED
-        $user4 = User::factory()->create(['email_verified_at' => now()]);
-        $file4 = UploadedFile::fake()->create('bukti_4.jpg', 500, 'image/jpeg');
-
-        $response4 = $this->actingAs($user4)->post(route('booking.store'), [
-            'layanan_id' => $layanan->id_layanan,
-            'booking_date' => $targetDate,
-            'payment_type' => 'dp',
-            'payment_method' => 'transfer_bank',
-            'vehicle_name' => 'Mobil Ke-4',
-            'proof_file' => $file4,
-        ]);
-
-        $response4->assertRedirect();
-        $response4->assertSessionHas('toast_success');
-        $this->assertDatabaseCount('bookings', 4);
-
-        // 5th booking (Over Boundary) -> should FAIL with error quota full
+        // 5th booking (Boundary Max Limit = 5/5) -> should SUCCEED
         $user5 = User::factory()->create(['email_verified_at' => now()]);
         $file5 = UploadedFile::fake()->create('bukti_5.jpg', 500, 'image/jpeg');
 
@@ -188,8 +174,25 @@ class BookingTest extends TestCase
             'proof_file' => $file5,
         ]);
 
-        $response5->assertSessionHas('toast_error');
-        $this->assertDatabaseCount('bookings', 4);
+        $response5->assertRedirect();
+        $response5->assertSessionHas('toast_success');
+        $this->assertDatabaseCount('bookings', 5);
+
+        // 6th booking (Over Boundary) -> should FAIL with error quota full
+        $user6 = User::factory()->create(['email_verified_at' => now()]);
+        $file6 = UploadedFile::fake()->create('bukti_6.jpg', 500, 'image/jpeg');
+
+        $response6 = $this->actingAs($user6)->post(route('booking.store'), [
+            'layanan_id' => $layanan->id_layanan,
+            'booking_date' => $targetDate,
+            'payment_type' => 'dp',
+            'payment_method' => 'transfer_bank',
+            'vehicle_name' => 'Mobil Ke-6',
+            'proof_file' => $file6,
+        ]);
+
+        $response6->assertSessionHas('toast_error');
+        $this->assertDatabaseCount('bookings', 5);
     }
 
     /**

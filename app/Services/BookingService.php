@@ -183,9 +183,12 @@ class BookingService
         };
 
         try {
-            return Cache::lock("booking_slot_{$bookingDate}", 10)->block(5, $processBooking);
+            if (Cache::store()->supportsTags() || config('cache.default') !== 'array') {
+                return Cache::lock("booking_slot_{$bookingDate}", 10)->block(5, $processBooking);
+            }
+        } catch (\BadMethodCallException $e) {
+            // Driver tidak mendukung lock (misal: array driver pada phpunit test)
         } catch (\Throwable $e) {
-            // Jika lock cache tidak didukung atau Redis offline, gunakan DB pessimistic lock bawaan.
             if (
                 $e instanceof SlotPenuhException ||
                 $e instanceof BookingDuplicateException ||
@@ -195,8 +198,9 @@ class BookingService
                 throw $e;
             }
             \Illuminate\Support\Facades\Log::warning("Cache lock unavailable: {$e->getMessage()}. Executing DB pessimistic lock fallback.");
-            return $processBooking();
         }
+
+        return $processBooking();
     }
 
     /**
@@ -421,7 +425,14 @@ class BookingService
         $alreadyBooked = Booking::query()
             ->where('user_id', $user->id)
             ->whereDate('booking_date', $bookingDate)
-            ->whereIn('status', self::ACTIVE_STATUSES)
+            ->whereIn('status', [
+                'pending',
+                'confirmed',
+                'awaiting_payment',
+                'payment_uploaded',
+                'approved',
+                'in_progress',
+            ])
             ->when($excludeBookingId, fn ($query) => $query->where('id', '!=', $excludeBookingId))
             ->exists();
 

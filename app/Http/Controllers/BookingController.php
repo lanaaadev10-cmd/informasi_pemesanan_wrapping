@@ -79,6 +79,8 @@ class BookingController extends Controller
 
             return redirect()->route('booking.show', $booking->id)
                 ->with('toast_success', 'Booking berhasil diajukan! Kode booking: ' . $booking->booking_code);
+        } catch (\App\Exceptions\SlotPenuhException $e) {
+            return back()->with('toast_error', $e->getMessage())->withInput();
         } catch (\App\Exceptions\Booking\BookingFullException $e) {
             return back()->with('toast_error', $e->getMessage())->withInput();
         } catch (\App\Exceptions\Booking\BookingDuplicateException $e) {

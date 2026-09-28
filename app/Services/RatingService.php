@@ -201,10 +201,12 @@ class RatingService
      */
     public static function assertCleanContent(?string $ulasan): void
     {
-        if ($ulasan !== null && trim($ulasan) !== '' && ContentGuard::hasBadWords($ulasan)) {
-            throw ValidationException::withMessages([
-                'ulasan' => 'Ulasan mengandung kata yang tidak pantas.',
-            ]);
+        if ($ulasan !== null && trim($ulasan) !== '' && class_exists(\Heyitsmi\ContentGuard\Facades\ContentGuard::class)) {
+            if (\Heyitsmi\ContentGuard\Facades\ContentGuard::hasBadWords($ulasan)) {
+                throw ValidationException::withMessages([
+                    'ulasan' => 'Ulasan mengandung kata yang tidak pantas.',
+                ]);
+            }
         }
     }
 

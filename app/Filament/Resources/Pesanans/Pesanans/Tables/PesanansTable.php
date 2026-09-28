@@ -31,6 +31,18 @@ class PesanansTable
                     ->searchable(['customer_name'])
                     ->sortable(),
 
+                TextColumn::make('order_source')
+                    ->label('Sumber')
+                    ->badge()
+                    ->color(fn ($state): string => match ((string)$state) {
+                        'offline', 'walk_in' => 'warning',
+                        default              => 'info',
+                    })
+                    ->formatStateUsing(fn ($state): string => match ((string)$state) {
+                        'offline', 'walk_in' => '🟠 OFFLINE (Walk-in)',
+                        default              => '🔵 ONLINE (Web)',
+                    }),
+
                 TextColumn::make('total_harga')
                     ->label('Total')
                     ->money('IDR')
