@@ -32,8 +32,9 @@
 
                 @forelse($layanan as $index => $package)
                 @php
-                    $fotoPath = $package->getOriginal('foto_contoh') ?? null;
-                    $imgSrc   = !empty($fotoPath) ? \App\Helpers\StaticContent::fotoUrl($fotoPath) : asset('images/placeholder.svg');
+                    $fotoPath       = $package->getOriginal('foto_contoh') ?? null;
+                    $imgSrc         = !empty($fotoPath) ? \App\Helpers\StaticContent::fotoUrl($fotoPath) : asset('images/placeholder.svg');
+                    $packageSummary = $ratingSummary[$package->id_layanan] ?? null;
                 @endphp
                 <div class="packages-carousel-item katalog-item flex-shrink-0 w-80" data-category="{{ strtolower(trim(($package->tipe_paket ?? '') . ' ' . ($package->kategori ?? ''))) }}">
                     <!-- Card Package -->
