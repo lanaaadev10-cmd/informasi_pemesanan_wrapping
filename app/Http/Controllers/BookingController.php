@@ -34,12 +34,6 @@ class BookingController extends Controller
      */
     public function create(Request $request)
     {
-        // Gate verifikasi email sebelum mengajukan booking (anti slot-hoarding).
-        if (Auth::user()->email_verified_at === null) {
-            return redirect()->route('verification.notice')
-                ->with('toast_warning', 'Verifikasi email Anda terlebih dahulu untuk mengajukan booking.');
-        }
-
         $layanans = $this->bookingService->getAvailableLayanans();
         $selectedDate = $request->get('date', now()->toDateString());
         $todayQuota = $this->bookingService->getTodayQuota();

@@ -14,6 +14,9 @@
         @include('dashboard.customer.dashboard._order-card')
     </div>
 
+    {{-- 2b. Widget Kalender Booking --}}
+    @include('dashboard.customer.dashboard._booking-calendar')
+
     {{-- 3. Paket Layanan dengan Carousel --}}
     @include('dashboard.customer.dashboard._packages-carousel')
 

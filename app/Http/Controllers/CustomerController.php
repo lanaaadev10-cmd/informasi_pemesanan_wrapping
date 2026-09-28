@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\Galeri;
 use App\Models\Layanan;
+use App\Services\BookingService;
 
 class CustomerController extends Controller
 {
+    public function __construct(protected BookingService $bookingService) {}
+
     public function katalog()
     {
         $layanan = Layanan::all();
@@ -17,8 +21,8 @@ class CustomerController extends Controller
 
     public function dashboard()
     {
-        $layanans = Layanan::all();
-        $galeris = Galeri::all();
+        $layanans      = Layanan::all();
+        $galeris       = Galeri::all();
         $ratingSummary = \App\Http\Controllers\TestimoniController::summaryPerLayananKeyed();
 
         $latestOrders = \App\Models\Pesanan::where('id_user', auth()->id())
@@ -29,6 +33,29 @@ class CustomerController extends Controller
 
         $latestOrder = $latestOrders->first();
 
-        return view('dashboard.customer.dashboard.index', compact('layanans', 'galeris', 'latestOrder', 'latestOrders', 'ratingSummary'));
+        // Widget kalender booking: 5 booking terbaru yang belum selesai/batal
+        $upcomingBookings = Booking::with('layanan')
+            ->where('user_id', auth()->id())
+            ->whereNotIn('status', ['completed', 'rejected', 'cancelled'])
+            ->orderBy('booking_date')
+            ->limit(5)
+            ->get();
+
+        // Kalender: keyed 'Y-m-d' => status value (hanya bulan ini)
+        $bookingCalendar = Booking::where('user_id', auth()->id())
+            ->whereYear('booking_date', now()->year)
+            ->whereMonth('booking_date', now()->month)
+            ->get()
+            ->keyBy(fn ($b) => $b->booking_date->format('Y-m-d'))
+            ->map(fn ($b) => $b->status instanceof \App\Enums\BookingStatus
+                ? $b->status->value
+                : (string) $b->status
+            )
+            ->toArray();
+
+        return view('dashboard.customer.dashboard.index', compact(
+            'layanans', 'galeris', 'latestOrder', 'latestOrders',
+            'ratingSummary', 'upcomingBookings', 'bookingCalendar'
+        ));
     }
 }
