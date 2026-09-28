@@ -39,8 +39,8 @@ class RiwayatPesananResource extends Resource
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'selesai' => 'success',
-                        'dibayar' => 'success',
-                        'dibatalkan' => 'danger',
+                        'dikonfirmasi' => 'success',
+                        'ditolak' => 'danger',
                         default => 'gray',
                     }),
                 TextColumn::make('created_at')
@@ -52,8 +52,8 @@ class RiwayatPesananResource extends Resource
                 SelectFilter::make('status')
                     ->options([
                         'selesai' => 'Selesai',
-                        'dibayar' => 'Sudah Dibayar',
-                        'dibatalkan' => 'Dibatalkan',
+                        'dikonfirmasi' => 'Sudah Dibayar',
+                        'ditolak' => 'Ditolak',
                     ]),
             ])
             ->actions([

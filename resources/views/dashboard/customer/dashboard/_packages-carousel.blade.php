@@ -16,13 +16,16 @@
 
                 @forelse($layanans as $package)
                 <div class="packages-carousel-item flex-shrink-0 w-80" data-package-id="{{ $package->id_layanan }}">
+                    @php
+                        $packageSummary = $ratingSummary->get($package->id_layanan);
+                    @endphp
                     <!-- Card Package -->
                     <div class="h-full bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 rounded-2xl overflow-hidden group/card hover:border-[#f2994a]/50 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col">
 
                         <!-- Image Section -->
                         <div class="relative h-48 bg-gradient-to-br from-[#f2994a]/20 to-transparent overflow-hidden">
                             @if($package->foto_contoh)
-                            <img src="{{ asset('storage/' . $package->foto_contoh) }}"
+                            <img src="{{ \App\Helpers\StaticContent::fotoUrl($package->foto_contoh) }}"
                                  alt="{{ $package->nama_layanan }}"
                                  class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-300">
                             @else
@@ -48,6 +51,16 @@
                                 <h4 class="text-sm font-bold text-white line-clamp-2 group-hover/card:text-[#f2994a] transition-colors">
                                     {{ $package->nama_layanan }}
                                 </h4>
+
+                                <!-- Rating Summary -->
+                                @if($packageSummary && $packageSummary['count'] > 0)
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[#f2994a] font-bold text-xs flex items-center gap-1">
+                                        <i class="ph-fill ph-star text-xs"></i> {{ number_format((float) $packageSummary['avg'], 1, ',', '.') }}
+                                    </span>
+                                    <span class="text-[10px] text-gray-500">({{ $packageSummary['count'] }} ulasan)</span>
+                                </div>
+                                @endif
                                 <p class="text-xs text-gray-400 line-clamp-2 leading-relaxed">
                                     {{ $package->deskripsi ?? 'Deskripsi layanan' }}
                                 </p>
@@ -59,7 +72,7 @@
                                 @foreach(array_slice($package->fitur, 0, 2) as $fitur)
                                 <div class="flex items-center gap-2">
                                     <i class="ph-bold ph-check-circle text-[#f2994a] text-xs"></i>
-                                    <span class="text-[10px] text-gray-300">{{ $fitur }}</span>
+                                    <span class="text-[10px] text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? ($fitur[0] ?? '')) : $fitur }}</span>
                                 </div>
                                 @endforeach
                                 @if(count($package->fitur) > 2)

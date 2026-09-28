@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Settings\CompanySettings;
+use App\Settings\ContentSettings;
+use App\Settings\LayananSettings;
+use App\Settings\LayoutSettings;
 use Illuminate\Support\Facades\Cache;
 
 class CacheService
@@ -10,9 +14,14 @@ class CacheService
 
     // Settings caches
     const LAYANAN_SETTINGS = 'layanan_settings';
+
     const COMPANY_SETTINGS = 'company_settings';
+
     const LAYOUT_SETTINGS = 'layout_settings';
+
     const CONTENT_SETTINGS = 'content_settings';
+
+    const TESTIMONI_RATINGS = 'testimoni_ratings';
 
     /**
      * Get cached setting atau fetch dari database
@@ -31,6 +40,7 @@ class CacheService
         Cache::forget(self::COMPANY_SETTINGS);
         Cache::forget(self::LAYOUT_SETTINGS);
         Cache::forget(self::CONTENT_SETTINGS);
+        Cache::forget(self::TESTIMONI_RATINGS);
     }
 
     /**
@@ -50,7 +60,7 @@ class CacheService
     public static function getLayananSettings()
     {
         return self::remember(self::LAYANAN_SETTINGS, function () {
-            return app(\App\Settings\LayananSettings::class);
+            return app(LayananSettings::class);
         });
     }
 
@@ -60,7 +70,7 @@ class CacheService
     public static function getCompanySettings()
     {
         return self::remember(self::COMPANY_SETTINGS, function () {
-            return app(\App\Settings\CompanySettings::class);
+            return app(CompanySettings::class);
         });
     }
 
@@ -70,7 +80,7 @@ class CacheService
     public static function getLayoutSettings()
     {
         return self::remember(self::LAYOUT_SETTINGS, function () {
-            return app(\App\Settings\LayoutSettings::class);
+            return app(LayoutSettings::class);
         });
     }
 
@@ -80,7 +90,7 @@ class CacheService
     public static function getContentSettings()
     {
         return self::remember(self::CONTENT_SETTINGS, function () {
-            return app(\App\Settings\ContentSettings::class);
+            return app(ContentSettings::class);
         });
     }
 }

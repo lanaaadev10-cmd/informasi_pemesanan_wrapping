@@ -1,4 +1,4 @@
-@extends('layouts.tampilan_utama')
+@extends(auth()->check() ? 'layouts.dashboard_customer' : 'layouts.tampilan_utama')
 
 @section('title', 'Tentang Kami')
 
@@ -19,7 +19,7 @@
     @include('landing.tentang-kami._hero')
 
     <!-- MAIN CONTAINER -->
-    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-16 sm:py-24 space-y-24 sm:space-y-32 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 {{ auth()->check() ? 'py-8 sm:py-10 space-y-16 sm:space-y-20' : 'py-16 sm:py-24 space-y-24 sm:space-y-32' }} relative overflow-hidden">
         
         <!-- Ambient Glowing Core -->
         <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[500px] h-[250px] rounded-full blur-[120px] pointer-events-none z-0" style="background-color: color-mix(in srgb, var(--accent-color) 5%, transparent);"></div>
@@ -35,6 +35,9 @@
 
         <!-- TEAM SECTION (Dibalik Setiap Detail Sempurna) -->
         @include('landing.tentang-kami._team')
+
+        <!-- LOKASI KAMI SECTION (Google Maps) -->
+        @include('landing.tentang-kami._lokasi')
 
         <!-- CTA SECTION -->
         @include('landing.tentang-kami._cta')

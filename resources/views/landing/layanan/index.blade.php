@@ -8,6 +8,7 @@
         $accentColor = '#f2994a';
 
         $services = $layanans->map(fn($l) => [
+            'id'        => $l->id_layanan,
             'nama'      => $l->nama_layanan,
             'harga'     => $l->harga > 0 ? 'Rp ' . number_format($l->harga, 0, ',', '.') : 'Menyesuaikan',
             'deskripsi' => $l->deskripsi,
@@ -15,7 +16,15 @@
             'gambar'    => $l->foto_contoh,
         ])->toArray();
 
-        $badgeLabels = array_map(fn($l) => strtoupper($l->tipe_paket), $layanans->all());
+        $paketLabels = [
+            'wrapping'    => 'Variasi',
+            'window-film' => 'Kaca Film',
+            'audio'       => 'Audio',
+            'lighting'    => 'Lampu',
+            'striping'    => 'Striping',
+        ];
+
+        $badgeLabels = array_map(fn($l) => strtoupper($paketLabels[$l->tipe_paket] ?? $l->tipe_paket ?? ''), $layanans->all());
         $badgeColors = array_fill(0, count($services), 'rgba(242,153,74,0.12)');
         $badgeTextColors = array_fill(0, count($services), 'var(--accent)');
 

@@ -16,7 +16,7 @@ class DashboardController extends Controller
 
     public function profile()
     {
-        return view('landing.profil.index');
+        return view('landing.tentang-kami.index');
     }
 
     public function tentangKami()
@@ -31,7 +31,9 @@ class DashboardController extends Controller
         }
 
         $layanans = Layanan::all();
-        return view('landing.layanan.index', compact('layanans'));
+        $ratingSummary = \App\Http\Controllers\TestimoniController::summaryPerLayananKeyed();
+
+        return view('landing.layanan.index', compact('layanans', 'ratingSummary'));
     }
 
     public function kebijakanPrivasi()

@@ -142,7 +142,11 @@
             <div class="relative z-10">
                 <p class="lp-stat-card-title text-orange-500">TOTAL PENDAPATAN HARI INI</p>
                 @php
-                    $todayIncome = \App\Models\Pesanan::where('status', 'dibayar')
+                    $todayIncome = \App\Models\Pesanan::whereIn('status', [
+                        \App\Models\Pesanan::STATUS_DIKONFIRMASI,
+                        \App\Models\Pesanan::STATUS_SEDANG_DIPROSES,
+                        \App\Models\Pesanan::STATUS_SELESAI,
+                    ])
                         ->whereDate('updated_at', today())
                         ->sum('total_harga');
                 @endphp

@@ -11,18 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Hanya jalankan pembersihan jika kolom id_paket memang ada di tabel
+        // Kolom id_paket sudah tidak ada di migration pembuat tabel keranjangs (2026_05_12_100000).
+        // Guard ini membuat migration aman dijalankan pada database segar (migrate:fresh / test).
         if (Schema::hasColumn('keranjangs', 'id_paket')) {
             Schema::table('keranjangs', function (Blueprint $table) {
-                // Hapus foreign & unique index dengan try-catch di tingkat internal
-                try {
-                    $table->dropForeign('keranjangs_id_paket_foreign');
-                } catch (\Throwable $e) {}
-
-                try {
-                    $table->dropUnique('keranjangs_id_keranjang_id_paket_unique');
-                } catch (\Throwable $e) {}
-
+                $table->dropForeign(['id_paket']);
+                $table->dropUnique(['id_keranjang', 'id_paket']);
                 $table->dropColumn('id_paket');
             });
         }
@@ -33,9 +27,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (!Schema::hasColumn('keranjangs', 'id_paket')) {
+        if (! Schema::hasColumn('keranjangs', 'id_paket')) {
             Schema::table('keranjangs', function (Blueprint $table) {
-                $table->foreignId('id_paket')->nullable()->constrained('layanans', 'id_layanan')->onDelete('cascade');
+                $table->foreignId('id_paket')->constrained('layanans', 'id_layanan')->onDelete('cascade');
+                $table->unique(['id_keranjang', 'id_paket']);
             });
         }
     }

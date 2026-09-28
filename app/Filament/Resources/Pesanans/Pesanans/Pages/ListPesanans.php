@@ -22,19 +22,19 @@ class ListPesanans extends ListRecords
         return [
             'all' => \Filament\Schemas\Components\Tabs\Tab::make('Semua Pesanan'),
             'verifikasi' => \Filament\Schemas\Components\Tabs\Tab::make('Perlu Verifikasi')
-                ->modifyQueryUsing(fn ($query) => $query->where('status', 'menunggu_verifikasi'))
-                ->badge(\App\Models\Pesanan::where('status', 'menunggu_verifikasi')->count())
+                ->modifyQueryUsing(fn ($query) => $query->where('status', \App\Models\Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN))
+                ->badge(\App\Models\Pesanan::where('status', \App\Models\Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN)->count())
                 ->badgeColor('warning'),
             'pembayaran' => \Filament\Schemas\Components\Tabs\Tab::make('Menunggu Bayar')
                 ->modifyQueryUsing(fn ($query) => $query->where('status', 'menunggu_pembayaran'))
                 ->badge(\App\Models\Pesanan::where('status', 'menunggu_pembayaran')->count()),
-            'validasi' => \Filament\Schemas\Components\Tabs\Tab::make('Validasi Bayar')
-                ->modifyQueryUsing(fn ($query) => $query->where('status', 'menunggu_konfirmasi'))
-                ->badge(\App\Models\Pesanan::where('status', 'menunggu_konfirmasi')->count())
-                ->badgeColor('danger'),
+            'validasi' => \Filament\Schemas\Components\Tabs\Tab::make('Pembayaran OK')
+                ->modifyQueryUsing(fn ($query) => $query->where('status', \App\Models\Pesanan::STATUS_DIKONFIRMASI))
+                ->badge(\App\Models\Pesanan::where('status', \App\Models\Pesanan::STATUS_DIKONFIRMASI)->count())
+                ->badgeColor('success'),
             'proses' => \Filament\Schemas\Components\Tabs\Tab::make('Dalam Proses')
-                ->modifyQueryUsing(fn ($query) => $query->where('status', 'dibayar'))
-                ->badge(\App\Models\Pesanan::where('status', 'dibayar')->count())
+                ->modifyQueryUsing(fn ($query) => $query->where('status', \App\Models\Pesanan::STATUS_SEDANG_DIPROSES))
+                ->badge(\App\Models\Pesanan::where('status', \App\Models\Pesanan::STATUS_SEDANG_DIPROSES)->count())
                 ->badgeColor('info'),
             'selesai' => \Filament\Schemas\Components\Tabs\Tab::make('Selesai')
                 ->modifyQueryUsing(fn ($query) => $query->where('status', 'selesai')),

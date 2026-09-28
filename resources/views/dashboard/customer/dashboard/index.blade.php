@@ -12,13 +12,13 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {{-- Active Order Card --}}
         @include('dashboard.customer.dashboard._order-card')
-
-        {{-- Member Status Card --}}
-        @include('dashboard.customer.dashboard._stats')
     </div>
 
     {{-- 3. Paket Layanan dengan Carousel --}}
     @include('dashboard.customer.dashboard._packages-carousel')
+
+    {{-- 3b. CTA Beri Testimoni (Alur 2 — rating tanpa pesanan) --}}
+    {{-- [DISABLED] Alur 2 non-aktif: @include('dashboard.customer.dashboard._testimonial-cta') --}}
 
     {{-- 4. Aktivitas Terakhir Section --}}
     @include('dashboard.customer.dashboard._recent-activity')

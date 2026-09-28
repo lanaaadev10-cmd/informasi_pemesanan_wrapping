@@ -7,18 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 class Pesanan extends Model
 {
     protected $table = 'pesanans';
+
     protected $primaryKey = 'id_pesanan';
 
     // =============================================
     //  STATUS CONSTANTS — Alur Logika Pemesanan
     // =============================================
-    const STATUS_MENUNGGU_KONFIRMASI_ADMIN     = 'menunggu_konfirmasi_admin';
-    const STATUS_MENUNGGU_PEMBAYARAN           = 'menunggu_pembayaran';
+    const STATUS_MENUNGGU_KONFIRMASI_ADMIN = 'menunggu_konfirmasi_admin';
+
+    const STATUS_MENUNGGU_PEMBAYARAN = 'menunggu_pembayaran';
+
     const STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN = 'menunggu_verifikasi_pembayaran';
-    const STATUS_DIKONFIRMASI                  = 'dikonfirmasi';
-    const STATUS_SEDANG_DIPROSES               = 'sedang_diproses';
-    const STATUS_SELESAI                       = 'selesai';
-    const STATUS_DITOLAK                       = 'ditolak';
+
+    const STATUS_DIKONFIRMASI = 'dikonfirmasi';
+
+    const STATUS_SEDANG_DIPROSES = 'sedang_diproses';
+
+    const STATUS_SELESAI = 'selesai';
+
+    const STATUS_DITOLAK = 'ditolak';
 
     protected $fillable = [
         'id_user', 'kode_pesanan', 'tanggal_pesan',
@@ -27,7 +34,7 @@ class Pesanan extends Model
     ];
 
     protected $casts = [
-            'tanggal_pesan' => 'datetime',
+        'tanggal_pesan' => 'datetime',
 
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -61,19 +68,24 @@ class Pesanan extends Model
         return $this->hasMany(Notifikasi::class, 'id_pesanan', 'id_pesanan');
     }
 
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'id_pesanan', 'id_pesanan');
+    }
+
     // =============================================
     //  HELPER - Label Status untuk tampilan
     // =============================================
     public function getLabelStatusAttribute(): string
     {
         return match ((string) $this->status) {
-            self::STATUS_MENUNGGU_KONFIRMASI_ADMIN      => 'Menunggu Konfirmasi Admin',
-            self::STATUS_MENUNGGU_PEMBAYARAN            => 'Menunggu Pembayaran',
+            self::STATUS_MENUNGGU_KONFIRMASI_ADMIN => 'Menunggu Konfirmasi Admin',
+            self::STATUS_MENUNGGU_PEMBAYARAN => 'Menunggu Pembayaran',
             self::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => 'Menunggu Verifikasi Pembayaran',
-            self::STATUS_DIKONFIRMASI                   => 'Dikonfirmasi',
-            self::STATUS_SEDANG_DIPROSES                => 'Sedang Diproses',
-            self::STATUS_SELESAI                        => 'Selesai',
-            self::STATUS_DITOLAK                        => 'Ditolak',
+            self::STATUS_DIKONFIRMASI => 'Dikonfirmasi',
+            self::STATUS_SEDANG_DIPROSES => 'Sedang Diproses',
+            self::STATUS_SELESAI => 'Selesai',
+            self::STATUS_DITOLAK => 'Ditolak',
             default => ucfirst(str_replace('_', ' ', (string) $this->status)),
         };
     }
@@ -81,13 +93,13 @@ class Pesanan extends Model
     public function getWarnaBadgeAttribute(): string
     {
         return match ((string) $this->status) {
-            self::STATUS_MENUNGGU_KONFIRMASI_ADMIN      => 'yellow',
-            self::STATUS_MENUNGGU_PEMBAYARAN            => 'blue',
+            self::STATUS_MENUNGGU_KONFIRMASI_ADMIN => 'yellow',
+            self::STATUS_MENUNGGU_PEMBAYARAN => 'blue',
             self::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => 'orange',
-            self::STATUS_DIKONFIRMASI                   => 'green',
-            self::STATUS_SEDANG_DIPROSES                => 'purple',
-            self::STATUS_SELESAI                        => 'emerald',
-            self::STATUS_DITOLAK                        => 'red',
+            self::STATUS_DIKONFIRMASI => 'green',
+            self::STATUS_SEDANG_DIPROSES => 'purple',
+            self::STATUS_SELESAI => 'emerald',
+            self::STATUS_DITOLAK => 'red',
             default => 'gray',
         };
     }
@@ -100,7 +112,6 @@ class Pesanan extends Model
         return (string) $this->status === self::STATUS_MENUNGGU_PEMBAYARAN;
     }
 
-
     /**
      * Apakah invoice bisa diunduh?
      */
@@ -112,7 +123,6 @@ class Pesanan extends Model
             self::STATUS_SELESAI,
         ]);
     }
-
 
     // =============================================
     //  NOTES - Notifikasi di-handle oleh Event & Listener

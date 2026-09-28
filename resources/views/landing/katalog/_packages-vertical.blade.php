@@ -32,15 +32,16 @@
 
                 @forelse($layanan as $index => $package)
                 @php
-                    $packageImage = $package->foto_contoh ? asset('storage/' . $package->foto_contoh) : getFallbackImage($index);
+                    $fotoPath = $package->getOriginal('foto_contoh') ?? null;
+                    $imgSrc   = !empty($fotoPath) ? \App\Helpers\StaticContent::fotoUrl($fotoPath) : asset('images/placeholder.svg');
                 @endphp
-                <div class="packages-carousel-item katalog-item flex-shrink-0 w-80" data-category="{{ strtolower($package->kategori) }}">
+                <div class="packages-carousel-item katalog-item flex-shrink-0 w-80" data-category="{{ strtolower(trim(($package->tipe_paket ?? '') . ' ' . ($package->kategori ?? ''))) }}">
                     <!-- Card Package -->
                     <div class="h-full bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 rounded-2xl overflow-hidden group/card hover:border-[#f2994a]/50 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col">
 
                         <!-- Image Section -->
                         <div class="relative h-48 bg-gradient-to-br from-[#f2994a]/20 to-transparent overflow-hidden">
-                            <img src="{{ $packageImage }}"
+                            <img src="{{ $imgSrc }}"
                                  alt="{{ $package->nama_layanan }}"
                                  class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-300">
 
@@ -61,6 +62,16 @@
                                 {{ $package->nama_layanan }}
                             </h4>
 
+                            <!-- Rating Summary -->
+                            @if($packageSummary && $packageSummary['count'] > 0)
+                            <div class="flex items-center gap-1.5 mt-1.5">
+                                <span class="text-[#f2994a] font-bold text-xs flex items-center gap-1">
+                                    <i class="ph-fill ph-star text-xs"></i> {{ number_format((float) $packageSummary['avg'], 1, ',', '.') }}
+                                </span>
+                                <span class="text-[10px] text-gray-500">({{ $packageSummary['count'] }} ulasan)</span>
+                            </div>
+                            @endif
+
                             <!-- Deskripsi & Fitur — Scroll Vertikal Internal -->
                             <div class="katalog-scroll-area mt-2 max-h-[130px] overflow-y-auto pr-1 space-y-2">
                                 <p class="katalog-desc text-xs text-gray-400 leading-relaxed">
@@ -73,7 +84,7 @@
                                     @foreach($package->fitur as $fitur)
                                     <div class="flex items-center gap-2">
                                         <i class="ph-bold ph-check-circle text-[#f2994a] text-xs"></i>
-                                        <span class="text-[10px] text-gray-300">{{ $fitur }}</span>
+                                        <span class="text-[10px] text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? ($fitur[0] ?? '')) : $fitur }}</span>
                                     </div>
                                     @endforeach
                                 </div>

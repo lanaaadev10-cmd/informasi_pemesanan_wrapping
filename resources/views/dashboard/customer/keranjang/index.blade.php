@@ -74,7 +74,7 @@
                 @foreach($keranjang->details as $item)
                     @php
                         // Premium visual fallback selector based on catalog categories
-                        $itemImage = $item->layanan->foto_contoh ? asset('storage/' . $item->layanan->foto_contoh) : asset('images/placeholder.svg');
+                        $itemImage = \App\Helpers\StaticContent::fotoUrl($item->layanan->foto_contoh ?? '');
                     @endphp
 
                     <div class="bg-white/[0.01] border border-white/5 rounded-[28px] overflow-hidden p-5 flex flex-col sm:flex-row items-center gap-6 group hover:border-[#f2994a]/25 hover:bg-white/[0.02] transition-all duration-300 relative shadow-md">

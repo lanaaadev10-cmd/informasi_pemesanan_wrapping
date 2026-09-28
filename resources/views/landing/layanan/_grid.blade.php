@@ -22,26 +22,29 @@
                 }
             }
 
-            $imgSrc = !empty($svc['gambar'])
-                ? asset('storage/' . $svc['gambar'])
+            $fotoPath = $svc['foto_contoh'] ?? $svc['gambar'] ?? null;
+                $imgSrc = !empty($fotoPath)
+                ? \App\Helpers\StaticContent::fotoUrl($fotoPath)
                 : ($fallbackImages[$idx % count($fallbackImages)]);
 
             $badge       = $badgeLabels[$idx % count($badgeLabels)] ?? '';
             $badgeBg     = $badgeColors[$idx % count($badgeColors)];
             $badgeClr    = $badgeTextColors[$idx % count($badgeTextColors)];
             $isFeatured  = ($idx === 1); // Best Seller card
+
+            $svcSummary = isset($svc['id']) ? ($ratingSummary->get($svc['id']) ?? null) : null;
         @endphp
         <div class="bg-gradient-to-b from-[#161616] to-[#0f0f0f] border border-white/[0.06] rounded-2xl overflow-hidden flex flex-col transition-all duration-[400ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1.5 hover:shadow-[0_20px_50px_-12px_rgba(242,153,74,0.15)] hover:border-[rgba(242,153,74,0.25)]{{ $isFeatured ? ' ring-1 ring-[var(--accent)]/20' : '' }}">
 
             <div class="relative h-48 sm:h-52 overflow-hidden bg-gray-950 flex-shrink-0">
                 <img src="{{ $imgSrc }}"
-                     alt="{{ $svc['nama'] }}"
+                     alt="{{ $svc['nama_layanan'] ?? $svc['nama'] ?? 'Layanan' }}"
                      class="w-full h-full object-cover object-center transition-transform duration-[600ms] ease-[cubic-bezier(.22,.61,.36,1)] group-hover:scale-106"
                      loading="lazy">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] to-transparent"></div>
                 <div class="absolute top-4 right-4 z-10">
                     <span class="text-[0.6rem] font-bold tracking-[0.12em] uppercase px-3 py-1.5 rounded-full backdrop-blur-sm border"
-                          style="background:{{ $badgeBg }};color:{{ $badgeClr }};border-color:rgba(242,153,74,0.25)">
+                            style="background:{{ $badgeBg }};color:{{ $badgeClr }};border-color:rgba(242,153,74,0.25)">
                         {{ $badge }}
                     </span>
                 </div>
@@ -49,8 +52,17 @@
 
             <div class="flex flex-col flex-1 p-5 sm:p-6 gap-4">
                 <h3 class="text-lg font-extrabold text-white leading-tight">
-                    {{ $svc['nama'] }}
+                        {{ $svc['nama_layanan'] ?? $svc['nama'] ?? 'Layanan' }}
                 </h3>
+
+                @if($svcSummary && $svcSummary['count'] > 0)
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[var(--accent)] font-bold text-xs flex items-center gap-1">
+                            <i class="ph-fill ph-star text-xs"></i> {{ number_format((float) $svcSummary['avg'], 1, ',', '.') }}
+                        </span>
+                        <span class="text-[11px] text-gray-500">({{ $svcSummary['count'] }} ulasan)</span>
+                    </div>
+                @endif
 
                 @if(!empty($svc['harga']))
                     <div class="flex items-baseline gap-1">

@@ -61,15 +61,15 @@ class PesananForm
                             ->schema([
                                 Select::make('status')
                                     ->options([
-                                        'menunggu_verifikasi' => 'Menunggu Verifikasi Pesanan',
-                                        'perlu_diperbaiki'    => 'Perlu Diperbaiki',
-                                        'diverifikasi'       => 'Pesanan Diverifikasi (Siap Bayar)',
-                                        'menunggu_pembayaran' => 'Menunggu Pembayaran',
-                                        'dibayar'            => 'Sudah Dibayar',
-                                        'selesai'            => 'Selesai',
-                                        'dibatalkan'         => 'Dibatalkan',
+                                        \App\Models\Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN => 'Menunggu Konfirmasi Admin',
+                                        \App\Models\Pesanan::STATUS_MENUNGGU_PEMBAYARAN => 'Menunggu Pembayaran',
+                                        \App\Models\Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN => 'Menunggu Verifikasi Pembayaran',
+                                        \App\Models\Pesanan::STATUS_DIKONFIRMASI => 'Dikonfirmasi (Bayar OK)',
+                                        \App\Models\Pesanan::STATUS_SEDANG_DIPROSES => 'Sedang Diproses',
+                                        \App\Models\Pesanan::STATUS_SELESAI => 'Selesai',
+                                        \App\Models\Pesanan::STATUS_DITOLAK => 'Ditolak',
                                     ])
-                                    ->default('menunggu_verifikasi')
+                                    ->default(\App\Models\Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN)
                                     ->required()
                                     ->native(false)
                                     ->helperText('Ubah status pesanan sesuai perkembangan.'),

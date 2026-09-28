@@ -14,14 +14,19 @@
             // Dynamic finish classifications helper
             if (!function_exists('getFinishType')) {
                 function getFinishType($item, $index) {
+                    if (!empty($item->kategori)) {
+                        return strtolower($item->kategori);
+                    }
                     $name = strtolower($item->nama_layanan);
                     $desc = strtolower($item->deskripsi);
-                    if (str_contains($name, 'ppf') || str_contains($desc, 'ppf')) return 'ppf';
-                    if (str_contains($name, 'matte') || str_contains($desc, 'matte')) return 'matte';
-                    if (str_contains($name, 'gloss') || str_contains($desc, 'gloss')) return 'gloss';
-                    if (str_contains($name, 'satin') || str_contains($desc, 'satin')) return 'satin';
-                    if (str_contains($name, 'interior') || str_contains($desc, 'interior')) return 'interior';
-                    return ['matte', 'gloss', 'satin', 'ppf'][$index % 4];
+
+                    if (str_contains($name, 'wrap') || str_contains($desc, 'wrap')) return 'wrapping';
+                    if (str_contains($name, 'strip') || str_contains($desc, 'strip')) return 'striping';
+                    if (str_contains($name, 'kaca') || str_contains($desc, 'kaca')) return 'kaca_film';
+                    if (str_contains($name, 'audio') || str_contains($desc, 'audio')) return 'audio';       
+                    if (str_contains($name, 'biled') || str_contains($desc, 'biled')) return 'biled';
+
+                    return 'wrapping'; // Default fallback
                 }
             }
         @endphp
@@ -29,27 +34,23 @@
         <!-- Row 1: Staggered (Wide + Medium card) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <!-- 1. WIDE CARD (Left, e.g. Signature Full Body Wrap style) -->
+            <!-- 1. WIDE CARD -->
             @if($wideItem)
                 @php 
                     $wideFinish = getFinishType($wideItem, 0); 
                     $wideImage = $wideItem->foto_contoh ? asset('storage/' . $wideItem->foto_contoh) : \App\Helpers\StaticContent::LAYANAN_FALLBACK_IMAGES[0];
                 @endphp
-                <div class="katalog-item lg:col-span-2 bg-[#121212]/40 border border-white/5 rounded-[32px] overflow-hidden relative min-h-[380px] lg:min-h-[420px] flex flex-col justify-end p-8 sm:p-10 group shadow-[0_15px_30px_rgba(0,0,0,0.5)] transition-all duration-500"
-                     data-category="{{ $wideFinish }} {{ strtolower($wideItem->kategori) }}">
+                <div class="katalog-item lg:col-span-2 relative group overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/50 p-6 transition-all duration-300 hover:border-white/20" data-category="{{ $wideFinish }}">
                     
-                    <!-- Card background image -->
                     <img src="{{ $wideImage }}" 
                          width="800" height="420"
                          class="absolute inset-0 w-full h-full object-cover transform scale-100 group-hover:scale-[1.02] transition-transform duration-1000 ease-out z-0" 
                          alt="{{ $wideItem->nama_layanan }}">
                     
-                    <!-- Overlays -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent z-10"></div>
                     <div class="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent z-10"></div>
 
-                    <!-- Card Body -->
-                    <div class="z-20 space-y-4">
+                    <div class="relative z-20 space-y-4">
                         <div class="flex items-center gap-2">
                             <span class="bg-[#f2994a]/15 border border-[#f2994a]/30 px-3 py-1 rounded-full text-[9px] font-extrabold text-[#f2994a] uppercase tracking-wider">
                                 POPULAR
@@ -71,7 +72,6 @@
                             {!! $wideItem->deskripsi !!}
                         </p>
 
-                        <!-- Footer row pricing & actions -->
                         <div class="flex flex-wrap items-end justify-between gap-6 pt-6 border-t border-white/5 mt-4">
                             <div class="space-y-1">
                                 <span class="text-[9px] font-black text-gray-500 uppercase tracking-widest block">STARTING FROM</span>
@@ -84,7 +84,6 @@
                                 </span>
                             </div>
 
-                            <!-- Add to cart or Checkout CTA -->
                             @auth
                                 <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
                                     @csrf
@@ -107,26 +106,22 @@
                 </div>
             @endif
 
-            <!-- 2. MEDIUM CARD (Right, e.g. Bespoke Interior style) -->
+            <!-- 2. MEDIUM CARD -->
             @if($mediumItem)
                 @php 
                     $mediumFinish = getFinishType($mediumItem, 1); 
                     $mediumImage = $mediumItem->foto_contoh ? asset('storage/' . $mediumItem->foto_contoh) : \App\Helpers\StaticContent::LAYANAN_FALLBACK_IMAGES[1];
                 @endphp
-                <div class="katalog-item lg:col-span-1 bg-[#121212]/40 border border-white/5 rounded-[32px] overflow-hidden relative min-h-[380px] lg:min-h-[420px] flex flex-col justify-end p-8 group shadow-[0_15px_30px_rgba(0,0,0,0.5)] transition-all duration-500"
-                     data-category="{{ $mediumFinish }} {{ strtolower($mediumItem->kategori) }}">
+                <div class="katalog-item relative group overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/50 p-6 transition-all duration-300 hover:border-white/20" data-category="{{ $mediumFinish }}">
                     
-                    <!-- Card background image -->
                     <img src="{{ $mediumImage }}" 
                          width="400" height="420"
                          class="absolute inset-0 w-full h-full object-cover transform scale-100 group-hover:scale-[1.03] transition-transform duration-700 ease-out z-0" 
                          alt="{{ $mediumItem->nama_layanan }}">
                     
-                    <!-- Overlays -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent z-10"></div>
 
-                    <!-- Card Body -->
-                    <div class="z-20 space-y-4">
+                    <div class="relative z-20 space-y-4">
                         <div class="flex items-center gap-2">
                             <span class="bg-white/5 border border-white/10 px-3 py-1 rounded-full text-[9px] font-extrabold text-gray-300 uppercase tracking-wider inline-block">
                                 {{ $mediumItem->kategori ?? 'Interior' }}
@@ -145,7 +140,6 @@
                             {!! $mediumItem->deskripsi !!}
                         </p>
 
-                        <!-- Footer row pricing & actions -->
                         <div class="flex items-center justify-between pt-5 border-t border-white/5 mt-2">
                             <span class="text-lg font-black text-white">
                                 @if($mediumItem->tipe_layanan == 'fix')
@@ -155,7 +149,6 @@
                                 @endif
                             </span>
 
-                            <!-- Add to Cart Circular Plus Button -->
                             @auth
                                 <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
                                     @csrf
@@ -181,7 +174,7 @@
 
         </div>
 
-        <!-- Row 2: Standard 3-Column Grid for subsequent items -->
+        <!-- Row 2: Standard 3-Column Grid -->
         @if($gridItems->isNotEmpty())
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                 @foreach($gridItems as $index => $item)
@@ -194,19 +187,15 @@
                         }
                     @endphp
 
-                    <!-- Card item standard -->
-                    <div class="katalog-item bg-white/[0.01] border border-white/5 rounded-[32px] overflow-hidden p-6 hover:border-[#f2994a]/25 hover:bg-white/[0.02] transition-all duration-300 group flex flex-col justify-between shadow-lg relative"
-                         data-category="{{ $itemFinish }} {{ strtolower($item->kategori) }}">
+                    <div class="katalog-item relative group overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/50 p-6 transition-all duration-300 hover:border-white/20 flex flex-col justify-between" data-category="{{ $itemFinish }}">
                         
                         <div class="space-y-4">
-                            <!-- Image Header aspect aspect-[4/3] -->
                             <div class="relative aspect-[4/3] rounded-2xl overflow-hidden bg-white/5 border border-white/5 shadow-inner shrink-0">
                                 <img src="{{ $itemImage }}" 
                                      width="400" height="300"
                                      class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700" 
                                      alt="{{ $item->nama_layanan }}">
                                 
-                                <!-- Dynamic pill overlay -->
                                 <span class="absolute top-3 right-3 bg-[#0a0a0a]/80 backdrop-blur-md px-3 py-1 rounded-lg text-[8px] font-extrabold text-gray-300 uppercase tracking-widest border border-white/5">
                                     {{ $item->kategori ?? 'Standard' }}
                                 </span>
@@ -217,7 +206,6 @@
                                 @endif
                             </div>
 
-                            <!-- Content body -->
                             <div class="space-y-2">
                                 <h4 class="katalog-title text-lg font-bold text-white group-hover:text-[#f2994a] transition-colors duration-300 leading-tight">
                                     {{ $item->nama_layanan }}
@@ -228,7 +216,6 @@
                             </div>
                         </div>
 
-                        <!-- Card Footer pricing & checkout plus -->
                         <div class="flex items-center justify-between pt-5 mt-5 border-t border-white/5 shrink-0">
                             <span class="text-[#f2994a] font-extrabold text-base">
                                 @if($item->tipe_layanan == 'fix')
@@ -238,7 +225,6 @@
                                 @endif
                             </span>
 
-                            <!-- Add to Cart Circular Plus Button -->
                             @auth
                                 <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
                                     @csrf
@@ -272,8 +258,7 @@
             <h4 class="text-base font-bold text-white mb-1">{{ $profil->katalog_empty_state_title ?? 'Catalog Empty' }}</h4>
             <p class="text-xs text-gray-500 font-light">{{ $profil->katalog_empty_state_desc ?? 'We are drafting premium finishes collections at the moment.' }}</p>
         </div>
-@endif
+    @endif
 </div>
 
 <x-register-prompt />
-</div>

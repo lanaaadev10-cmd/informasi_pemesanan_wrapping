@@ -21,7 +21,7 @@ class OrderStatsWidget extends BaseWidget
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('success'),
 
-            Stat::make('Perlu Verifikasi', Pesanan::where('status', 'menunggu_verifikasi')->count())
+            Stat::make('Perlu Verifikasi', Pesanan::where('status', Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN)->count())
                 ->description('Pesanan baru masuk')
                 ->descriptionIcon('heroicon-m-magnifying-glass')
                 ->color('warning'),
