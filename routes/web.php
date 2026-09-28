@@ -68,7 +68,7 @@ Route::middleware('throttle:60,5')->group(function () {
     // ====================================================================
     // RUTE TERPROTEKSI — Wajib login + verifikasi email
     // ====================================================================
-    Route::middleware(['auth', 'verified'])->group(function () {
+    Route::middleware(['auth'])->group(function () {
 
         // Dashboard & Profile — bisa diakses oleh admin maupun user biasa
         Route::middleware('role:admin|user')->group(function () {
