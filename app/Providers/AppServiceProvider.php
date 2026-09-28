@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Services\BookingService;
 use App\Services\KeranjangService;
 use App\Services\NotifikasiService;
 use App\Services\PembayaranService;
 use App\Services\PesananService;
 use App\Services\RatingService;
+use App\Services\SlotKuotaService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -39,6 +41,19 @@ class AppServiceProvider extends ServiceProvider
         // Register Rating Service
         $this->app->singleton(RatingService::class, function ($app) {
             return new RatingService;
+        });
+
+        // Register SlotKuota Service — pengelola kuota 5 slot/hari (shared Booking + Pesanan)
+        $this->app->singleton(SlotKuotaService::class, function ($app) {
+            return new SlotKuotaService;
+        });
+
+        // Register Booking Service (depends on NotifikasiService + SlotKuotaService)
+        $this->app->singleton(BookingService::class, function ($app) {
+            return new BookingService(
+                $app->make(NotifikasiService::class),
+                $app->make(SlotKuotaService::class),
+            );
         });
     }
 

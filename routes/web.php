@@ -154,6 +154,22 @@ Route::middleware('throttle:60,5')->group(function () {
         //     Route::get('/buat', [RatingController::class, 'formLayanan'])->name('rating.layanan.form');
         //     Route::post('/buat', [RatingController::class, 'storeLayanan'])->name('rating.layanan.store');
         // });
+
+        // ================================================================
+        // BOOKING — Fitur booking jadwal pengerjaan wrapping
+        // ================================================================
+        Route::prefix('booking')->name('booking.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\BookingController::class, 'index'])->name('index');
+            Route::get('/buat', [\App\Http\Controllers\BookingController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\BookingController::class, 'store'])
+                ->middleware('throttle:3,1')
+                ->name('store');
+            Route::get('/{id}', [\App\Http\Controllers\BookingController::class, 'show'])->name('show');
+            Route::post('/{id}/upload-bukti', [\App\Http\Controllers\BookingController::class, 'uploadBukti'])
+                ->middleware('throttle:3,1')
+                ->name('upload-bukti');
+            Route::post('/{id}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel'])->name('cancel');
+        });
     });
 });
 

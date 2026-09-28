@@ -93,6 +93,9 @@
                 <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_manajemen ?? 'Manajemen' }}</span>
             </div>
 
+            <a href="{{ route('booking.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('booking.*') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
+                <i class="ph-bold ph-calendar-dots text-lg"></i> Booking Saya
+            </a>
             <a href="{{ route('pesanan.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('pesanan.index') && !request()->has('status') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
                 <i class="ph-bold ph-folder text-lg"></i> {{ $profil->nav_riwayat_pesanan ?? 'Riwayat Pesanan' }}
             </a>

@@ -16,6 +16,7 @@
 use App\Http\Controllers\Api\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\Admin\AdminPembayaranController;
 use App\Http\Controllers\Api\Admin\AdminPesananController;
+use App\Http\Controllers\Api\Admin\AdminBookingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\GaleriApiController;
 use App\Http\Controllers\Api\KeranjangController;
@@ -24,6 +25,8 @@ use App\Http\Controllers\Api\NotifikasiController;
 use App\Http\Controllers\Api\PembayaranController;
 use App\Http\Controllers\Api\PesananController;
 use App\Http\Controllers\Api\RatingController;
+use App\Http\Controllers\Api\BookingPublicController;
+use App\Http\Controllers\Api\BookingController;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -33,13 +36,15 @@ use Illuminate\Support\Facades\Route;
  * ============================================
  *  RATE LIMITER — Batasan jumlah request
  * ============================================
- * 1. api   → 60 request/menit per user/ip
- * 2. auth  → 10 request/menit (login/register)
- * 3. orders → 30 request/menit (manipulasi pesanan)
+ * 1. api     → 60 request/menit per user/ip
+ * 2. auth    → 10 request/menit (login/register)
+ * 3. orders  → 30 request/menit (manipulasi pesanan)
+ * 4. booking → 3 request/menit (submit form/upload bukti)
  */
 RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
 RateLimiter::for('auth', fn () => Limit::perMinute(10)->by(request()->ip()));
 RateLimiter::for('orders', fn (Request $request) => Limit::perMinute(30)->by($request->user()?->id ?: $request->ip()));
+RateLimiter::for('booking', fn (Request $request) => Limit::perMinute(3)->by($request->user()?->id ?: $request->ip()));
 
 // ============================================
 //  PUBLIC ROUTES — Tanpa perlu token
@@ -63,8 +68,16 @@ Route::prefix('galeri')->group(function () {
     Route::get('/{kategori}/jenis', [GaleriApiController::class, 'jenisList']); // filter by kategori
 });
 
-// Testimoni publik
+// Testimoni/Rating publik
 Route::get('/rating', [RatingController::class, 'index']);
+
+// Kuota booking publik (landing page calendar) — read-only, tanpa auth
+Route::prefix('booking')->group(function () {
+    Route::get('/quota-today', [BookingPublicController::class, 'getTodayQuota'])->middleware('throttle:booking');
+    Route::get('/quota/{date}', [BookingPublicController::class, 'checkQuota'])->middleware('throttle:booking');
+    Route::get('/quota-month/{year}/{month}', [BookingPublicController::class, 'getMonthQuota'])->middleware('throttle:booking');
+});
+
 
 // ============================================
 //  PROTECTED ROUTES — Wajib login (Sanctum)
@@ -106,6 +119,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     });
 
     // ========================================
+    //  BOOKING — Fitur booking user
+    // ========================================
+    Route::prefix('booking')->middleware('throttle:booking')->group(function () {
+        Route::get('/', [BookingController::class, 'index']);                       // daftar booking user
+        Route::post('/', [BookingController::class, 'store']);                      // buat booking (3x/menit)
+        Route::get('/{id}', [BookingController::class, 'show']);                    // detail booking
+        Route::post('/{id}/upload-bukti', [BookingController::class, 'uploadBukti']); // upload bukti (3x/menit)
+        Route::post('/{id}/cancel', [BookingController::class, 'cancel']);          // batalkan booking
+    });
+
+    // ========================================
     //  NOTIFIKASI PUSH
     // ========================================
     Route::prefix('notifikasi')->group(function () {
@@ -137,6 +161,22 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
             Route::get('/{pesanan}', [AdminPesananController::class, 'show']);
             Route::put('/{pesanan}/status', [AdminPesananController::class, 'updateStatus']);
             Route::post('/{pesanan}/note', [AdminPesananController::class, 'addNote']);
+        });
+
+        // Manajemen booking (verifikasi, konfirmasi, dll)
+        Route::prefix('booking')->group(function () {
+            Route::get('/', [AdminBookingController::class, 'index']);
+            Route::get('/{id}', [AdminBookingController::class, 'show']);
+            Route::post('/{booking}/confirm', [AdminBookingController::class, 'confirm']);
+            Route::post('/{booking}/reject', [AdminBookingController::class, 'reject']);
+            Route::post('/{booking}/start', [AdminBookingController::class, 'start']);
+            Route::post('/{booking}/complete', [AdminBookingController::class, 'complete']);
+
+            // Verifikasi pembayaran booking
+            Route::prefix('payment')->group(function () {
+                Route::post('/{bookingPayment}/verify', [AdminBookingController::class, 'verifyPayment']);
+                Route::post('/{bookingPayment}/reject', [AdminBookingController::class, 'rejectPayment']);
+            });
         });
 
         // Verifikasi pembayaran

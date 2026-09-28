@@ -25,9 +25,15 @@ class UserTableSeeder extends Seeder
         // USER
         $user = User::updateOrCreate(
             ['email' => 'izaldev@gmail.com'],
-            ['name' => 'Syahrizaldev','password' => Hash::make('password'),]
+            [
+                'name' => 'Syahrizaldev',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
         );
 
+
+        
         // Pastikan role ada
         $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $userRole = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
