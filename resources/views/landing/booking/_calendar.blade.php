@@ -6,7 +6,7 @@
     <div class="text-center mb-12">
         <span class="text-sm font-bold uppercase tracking-widest text-[#f2994a]">Jadwal Booking</span>
         <h2 class="section-title text-gradient font-black mt-2">Pilih Tanggal Pengerjaan</h2>
-        <p class="section-subtitle max-w-2xl mx-auto">Cek ketersediaan slot harian (maksimal 4 booking) dan amankan jadwal pengerjaan wrapping kendaraan Anda.</p>
+        <p class="section-subtitle max-w-2xl mx-auto">Cek ketersediaan slot harian (maksimal <strong>5 kendaraan/hari</strong> — termasuk pesanan langsung) dan amankan jadwal pengerjaan wrapping kendaraan Anda.</p>
     </div>
 
     {{-- Legend --}}
