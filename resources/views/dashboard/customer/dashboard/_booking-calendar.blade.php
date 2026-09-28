@@ -35,143 +35,156 @@
     <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#f2994a]/5 rounded-full blur-[80px] pointer-events-none"></div>
 
     {{-- Header --}}
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/5">
         <div>
-            <span class="inline-flex items-center gap-1.5 bg-[#f2994a]/10 border border-[#f2994a]/25 text-[#f2994a] text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg">
-                <i class="ph-bold ph-calendar-check"></i> Ketersediaan Slot
-            </span>
-            <h3 class="text-xl font-extrabold text-white mt-3 tracking-tight">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 bg-[#f2994a]/10 border border-[#f2994a]/25 text-[#f2994a] text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg">
+                    <i class="ph-bold ph-calendar-check"></i> Ketersediaan Slot
+                </span>
+                <span class="text-xs text-gray-500">&bull; Kuota Harian</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mt-2 tracking-tight">
                 {{ $today->translatedFormat('F Y') }}
             </h3>
-            <p class="text-xs text-gray-500 mt-0.5">Klik tanggal untuk melihat slot yang sudah terisi hari itu</p>
+            <p class="text-xs text-gray-400 mt-0.5">Klik tanggal di bawah untuk melihat rincian slot yang terisi.</p>
         </div>
         <a href="{{ route('booking.create') }}"
-           class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#e28a44] to-[#f2994a] text-black font-black text-[10px] uppercase tracking-wider rounded-xl hover:scale-[1.03] active:scale-95 transition-all shadow-[0_4px_16px_rgba(242,153,74,0.35)]">
+           class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#e28a44] to-[#f2994a] text-black font-black text-[10px] uppercase tracking-wider rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-[0_4px_16px_rgba(242,153,74,0.3)] shrink-0">
             <i class="ph-bold ph-plus-circle text-sm"></i> Booking Baru
         </a>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        {{-- ── Mini Kalender ── --}}
-        <div>
-            {{-- Day labels --}}
-            <div class="grid grid-cols-7 mb-2">
-                @foreach($dayLabels as $dl)
-                    <div class="text-center text-[9px] font-black uppercase tracking-widest text-gray-500 py-1">{{ $dl }}</div>
-                @endforeach
-            </div>
+        {{-- ── Mini Kalender (7 Cols Span) ── --}}
+        <div class="lg:col-span-7 flex flex-col justify-between">
+            <div>
+                {{-- Day labels --}}
+                <div class="grid grid-cols-7 gap-1.5 mb-2">
+                    @foreach($dayLabels as $dl)
+                        <div class="text-center text-[10px] font-black uppercase tracking-widest text-gray-500 py-1.5">{{ $dl }}</div>
+                    @endforeach
+                </div>
 
-            {{-- Day cells — rendered by Alpine setelah quota di-load --}}
-            <div class="grid grid-cols-7 gap-1 min-h-[160px]">
-                {{-- Skeleton loading --}}
-                <template x-if="loading">
-                    <template x-for="i in 35" :key="i">
-                        <div class="aspect-square rounded-xl bg-white/[0.02] animate-pulse"></div>
+                {{-- Day cells --}}
+                <div class="grid grid-cols-7 gap-1.5">
+                    {{-- Skeleton loading --}}
+                    <template x-if="loading">
+                        <template x-for="i in 35" :key="i">
+                            <div class="aspect-square rounded-xl bg-white/[0.02] border border-white/5 animate-pulse"></div>
+                        </template>
                     </template>
-                </template>
 
-                {{-- Offset kosong --}}
-                <template x-if="!loading">
-                    <template x-for="i in {{ $startOffset }}" :key="'off'+i">
-                        <div></div>
+                    {{-- Offset kosong --}}
+                    <template x-if="!loading">
+                        <template x-for="i in {{ $startOffset }}" :key="'off'+i">
+                            <div class="aspect-square rounded-xl bg-transparent border border-transparent"></div>
+                        </template>
                     </template>
-                </template>
 
-                {{-- Tanggal cells --}}
-                <template x-if="!loading">
-                    <template x-for="day in {{ $daysInMonth }}" :key="day">
-                        <button
-                            type="button"
-                            @click="onDayClick(day)"
-                            :disabled="isPast(day)"
-                            :class="cellClass(day)"
-                            class="relative flex flex-col items-center justify-center aspect-square rounded-xl text-xs font-bold transition-all duration-150">
+                    {{-- Tanggal cells --}}
+                    <template x-if="!loading">
+                        <template x-for="day in {{ $daysInMonth }}" :key="day">
+                            <button
+                                type="button"
+                                @click="onDayClick(day)"
+                                :disabled="isPast(day)"
+                                :class="cellClass(day)"
+                                class="relative flex flex-col items-center justify-center aspect-square rounded-xl text-xs font-bold transition-all duration-150 p-1">
 
-                            <span x-text="day"></span>
+                                <span x-text="day"></span>
 
-                            {{-- Kuota dot --}}
-                            <span class="w-1.5 h-1.5 rounded-full mt-0.5 block"
-                                  :class="dotClass(day)"></span>
+                                {{-- Kuota dot --}}
+                                <span class="w-1.5 h-1.5 rounded-full mt-0.5 block shrink-0"
+                                      :class="dotClass(day)"></span>
 
-                            {{-- Badge jumlah slot terpakai --}}
-                            <template x-if="slotCount(day) > 0">
-                                <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full text-black text-[8px] font-black flex items-center justify-center leading-none shadow"
-                                      :class="slotCount(day) >= 5 ? 'bg-red-500' : (slotCount(day) >= 3 ? 'bg-[#f2994a]' : 'bg-emerald-500')"
-                                      x-text="slotCount(day)">
-                                </span>
-                            </template>
+                                {{-- Badge jumlah slot terpakai --}}
+                                <template x-if="slotCount(day) > 0">
+                                    <span class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full text-black text-[8px] font-black flex items-center justify-center leading-none shadow-md"
+                                          :class="slotCount(day) >= 5 ? 'bg-red-500 text-white' : (slotCount(day) >= 3 ? 'bg-[#f2994a]' : 'bg-emerald-500')"
+                                          x-text="slotCount(day)">
+                                    </span>
+                                </template>
 
-                            {{-- FULL badge --}}
-                            <template x-if="isFull(day)">
-                                <span class="absolute -top-1 -left-1 text-[6px] font-black bg-red-500 text-white px-1 rounded-full leading-tight">FULL</span>
-                            </template>
-                        </button>
+                                {{-- FULL badge --}}
+                                <template x-if="isFull(day)">
+                                    <span class="absolute -top-1 -left-1 text-[6px] font-black bg-red-500 text-white px-1 rounded-full leading-tight shadow">FULL</span>
+                                </template>
+                            </button>
+                        </template>
                     </template>
-                </template>
+                </div>
             </div>
 
             {{-- Legenda --}}
-            <div class="flex flex-wrap gap-x-4 gap-y-2 mt-4 pt-4 border-t border-white/5">
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-6 pt-4 border-t border-white/5">
                 @foreach([
                     ['bg-emerald-500', 'Tersedia (1–2 slot)'],
                     ['bg-[#f2994a]',   'Sisa Sedikit (3–4 slot)'],
                     ['bg-red-500',     'Penuh (5/5 slot)'],
                 ] as [$clr, $lbl])
-                    <span class="inline-flex items-center gap-1.5 text-[10px] text-gray-400 font-semibold">
+                    <span class="inline-flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
                         <span class="w-2 h-2 rounded-full {{ $clr }} shrink-0"></span>{{ $lbl }}
                     </span>
                 @endforeach
-                <span class="inline-flex items-center gap-1.5 text-[10px] text-[#f2994a] font-black">
-                    <i class="ph-bold ph-cursor-click"></i> Klik tanggal untuk detail
-                </span>
             </div>
         </div>
 
-        {{-- ── Booking Mendatang Milik Saya ── --}}
-        <div class="flex flex-col gap-3">
-            <p class="text-[10px] font-black uppercase tracking-widest text-gray-500">Booking Saya yang Aktif</p>
-            @forelse($upcomingBookings as $bk)
-                @php
-                    $bkStatus = $bk->status instanceof \App\Enums\BookingStatus
-                        ? $bk->status->value : (string)$bk->status;
-                    $bkDot    = $dotColor($bkStatus);
-                    $bkLabel  = $bk->status instanceof \App\Enums\BookingStatus
-                        ? $bk->status->label()
-                        : ucfirst(str_replace('_', ' ', $bkStatus));
-                    $isPast   = $bk->booking_date?->isPast();
-                @endphp
-                <a href="{{ route('booking.show', $bk->id) }}"
-                   class="group/bk flex items-center gap-4 bg-white/[0.02] hover:bg-[#f2994a]/5 border border-white/5 hover:border-[#f2994a]/30 rounded-2xl px-4 py-3.5 transition-all duration-200">
-                    <div class="w-12 h-12 rounded-xl {{ $isPast ? 'bg-white/[0.03]' : 'bg-[#f2994a]/10' }} flex flex-col items-center justify-center shrink-0">
-                        <span class="text-lg font-black leading-none {{ $isPast ? 'text-gray-500' : 'text-[#f2994a]' }}">{{ $bk->booking_date?->format('d') }}</span>
-                        <span class="text-[8px] font-extrabold uppercase text-gray-500">{{ $bk->booking_date?->format('M') }}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="text-xs font-black text-white truncate group-hover/bk:text-[#f2994a] transition-colors">{{ $bk->layanan?->nama_layanan ?? '-' }}</p>
-                        <p class="text-[10px] text-gray-500 mt-0.5 truncate">{{ $bk->vehicle_name }} &bull; {{ $bk->booking_code }}</p>
-                    </div>
-                    <span class="inline-flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-wider whitespace-nowrap px-2.5 py-1 rounded-full bg-white/5 border border-white/10">
-                        <span class="w-1.5 h-1.5 rounded-full {{ $bkDot }} shrink-0"></span>
-                        {{ $bkLabel }}
-                    </span>
-                </a>
-            @empty
-                <div class="flex flex-col items-center justify-center py-8 text-center space-y-3">
-                    <div class="w-12 h-12 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-[#f2994a]">
-                        <i class="ph-bold ph-calendar-slash text-2xl"></i>
-                    </div>
-                    <p class="text-sm font-bold text-gray-400">Belum Ada Booking Aktif</p>
-                    <a href="{{ route('booking.create') }}"
-                       class="inline-flex items-center gap-2 mt-1 px-5 py-2.5 text-[10px] font-black uppercase tracking-wider text-black bg-[#f2994a] rounded-xl hover:bg-[#e28a44] transition-all active:scale-95">
-                        Buat Booking Sekarang
+        {{-- ── Booking Mendatang Milik Saya (5 Cols Span) ── --}}
+        <div class="lg:col-span-5 flex flex-col h-full bg-white/[0.015] border border-white/5 rounded-2xl p-5">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+                    <i class="ph-bold ph-bookmark-simple text-[#f2994a]"></i> Booking Saya yang Aktif
+                </p>
+                <span class="text-[9px] font-bold text-gray-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/5">{{ $upcomingBookings->count() }} Booking</span>
+            </div>
+
+            <div class="flex-1 flex flex-col gap-3 min-h-[220px]">
+                @forelse($upcomingBookings as $bk)
+                    @php
+                        $bkStatus = $bk->status instanceof \App\Enums\BookingStatus
+                            ? $bk->status->value : (string)$bk->status;
+                        $bkDot    = $dotColor($bkStatus);
+                        $bkLabel  = $bk->status instanceof \App\Enums\BookingStatus
+                            ? $bk->status->label()
+                            : ucfirst(str_replace('_', ' ', $bkStatus));
+                        $isPast   = $bk->booking_date?->isPast();
+                    @endphp
+                    <a href="{{ route('booking.show', $bk->id) }}"
+                       class="group/bk flex items-center gap-3.5 bg-white/[0.02] hover:bg-[#f2994a]/5 border border-white/5 hover:border-[#f2994a]/30 rounded-xl p-3 transition-all duration-200">
+                        <div class="w-10 h-10 rounded-lg {{ $isPast ? 'bg-white/[0.03]' : 'bg-[#f2994a]/10' }} flex flex-col items-center justify-center shrink-0">
+                            <span class="text-sm font-black leading-none {{ $isPast ? 'text-gray-500' : 'text-[#f2994a]' }}">{{ $bk->booking_date?->format('d') }}</span>
+                            <span class="text-[7px] font-extrabold uppercase text-gray-500">{{ $bk->booking_date?->format('M') }}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-black text-white truncate group-hover/bk:text-[#f2994a] transition-colors">{{ $bk->layanan?->nama_layanan ?? '-' }}</p>
+                            <p class="text-[10px] text-gray-500 mt-0.5 truncate">{{ $bk->vehicle_name }} &bull; {{ $bk->booking_code }}</p>
+                        </div>
+                        <span class="inline-flex items-center gap-1.5 text-[8px] font-extrabold uppercase tracking-wider whitespace-nowrap px-2 py-1 rounded-full bg-white/5 border border-white/10">
+                            <span class="w-1.5 h-1.5 rounded-full {{ $bkDot }} shrink-0"></span>
+                            {{ $bkLabel }}
+                        </span>
                     </a>
-                </div>
-            @endforelse
+                @empty
+                    <div class="flex-1 flex flex-col items-center justify-center text-center py-6 px-4 space-y-3">
+                        <div class="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-gray-500">
+                            <i class="ph-bold ph-calendar-slash text-2xl"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-xs font-bold text-gray-300">Belum Ada Booking Aktif</p>
+                            <p class="text-[10px] text-gray-500 leading-relaxed max-w-[200px] mx-auto">Anda tidak memiliki jadwal booking kendaraan yang sedang aktif.</p>
+                        </div>
+                        <a href="{{ route('booking.create') }}"
+                           class="inline-flex items-center gap-1.5 px-4 py-2 text-[10px] font-black uppercase tracking-wider text-black bg-[#f2994a] rounded-xl hover:bg-[#e28a44] transition-all active:scale-95 shadow-md">
+                            <i class="ph-bold ph-plus"></i> Buat Booking
+                        </a>
+                    </div>
+                @endforelse
+            </div>
 
             @if($upcomingBookings->count() > 0)
                 <a href="{{ route('booking.index') }}"
-                   class="mt-auto text-center text-[10px] font-black uppercase tracking-widest text-[#f2994a] hover:underline py-2">
+                   class="mt-3 text-center text-[10px] font-black uppercase tracking-widest text-[#f2994a] hover:underline pt-2 border-t border-white/5">
                     Lihat Semua Booking <i class="ph-bold ph-arrow-right"></i>
                 </a>
             @endif
@@ -421,12 +434,12 @@ function bookingCalWidget() {
             const full    = this.isFull(day);
             const used    = this.slotCount(day);
 
-            if (isToday) return 'bg-[#f2994a]/20 border border-[#f2994a]/50 ring-1 ring-[#f2994a]/30 text-[#f2994a] cursor-pointer hover:bg-[#f2994a]/25';
-            if (past)    return 'opacity-30 cursor-not-allowed text-gray-600 bg-transparent border border-transparent';
-            if (full)    return 'bg-red-500/10 border border-red-500/30 text-red-400 cursor-pointer hover:bg-red-500/15';
-            if (used >= 3) return 'bg-[#f2994a]/8 border border-[#f2994a]/25 text-[#f2994a] cursor-pointer hover:bg-[#f2994a]/15';
-            if (used > 0)  return 'bg-emerald-500/8 border border-emerald-500/20 text-white cursor-pointer hover:bg-emerald-500/12';
-            return 'bg-white/[0.02] border border-white/5 text-gray-400 cursor-pointer hover:bg-white/[0.06] hover:text-white';
+            if (isToday) return 'bg-[#f2994a]/20 border border-[#f2994a]/60 text-[#f2994a] ring-2 ring-[#f2994a]/30 font-black cursor-pointer hover:bg-[#f2994a]/30 shadow-[0_0_12px_rgba(242,153,74,0.2)]';
+            if (past)    return 'bg-white/[0.015] border border-white/[0.03] text-gray-600 opacity-40 cursor-not-allowed';
+            if (full)    return 'bg-red-500/10 border border-red-500/30 text-red-400 cursor-pointer hover:bg-red-500/20';
+            if (used >= 3) return 'bg-[#f2994a]/10 border border-[#f2994a]/30 text-[#f2994a] cursor-pointer hover:bg-[#f2994a]/20';
+            if (used > 0)  return 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 cursor-pointer hover:bg-emerald-500/20';
+            return 'bg-white/[0.03] border border-white/5 text-gray-300 cursor-pointer hover:bg-white/[0.08] hover:border-white/20 hover:text-white';
         },
 
         statusDot(status) {
