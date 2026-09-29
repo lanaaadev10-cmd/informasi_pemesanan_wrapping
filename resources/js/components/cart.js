@@ -1,6 +1,15 @@
 /**
- * Cart Component
- * Handles all cart operations via API
+ * cart.js — Komponen Keranjang Belanja
+ *
+ * Menangani seluruh operasi keranjang melalui API (`window.api.keranjang.*`).
+ * Bergantung pada: `UI` (toast/loading), `storage` (cache lokal), `api` (HTTP client).
+ *
+ * Penggunaan di Blade/Alpine:
+ *   CartComponent.addToCart(layananId, 1)
+ *   CartComponent.updateCartBadge()
+ *   CartComponent.removeFromCart(idDetail)
+ *
+ * Badge di topbar diperbarui secara otomatis menggunakan `data-cart-badge` attribute.
  */
 
 const CartComponent = {
@@ -120,7 +129,10 @@ if (document.readyState === 'loading') {
   CartComponent.setupCartObserver();
 }
 
-// Export for module environments
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = CartComponent;
+// ES Module export (digunakan oleh app.js via Vite)
+export { CartComponent };
+
+// Fallback ke window agar bisa diakses dari inline script Blade
+if (typeof window !== 'undefined') {
+  window.CartComponent = CartComponent;
 }

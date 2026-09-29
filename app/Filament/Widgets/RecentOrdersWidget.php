@@ -2,16 +2,23 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Pesanans\PesananResource;
 use App\Models\Pesanan;
+use Filament\Actions\Action;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
 class RecentOrdersWidget extends BaseWidget
 {
-    protected static ?string $heading = 'Pesanan Terbaru';
-    protected static ?string $description = '5 pesanan paling baru';
-    protected static ?int $sort = 3;
+    protected static ?string $heading = 'Pesanan Walk-In / Offline Terbaru';
+    protected static ?string $description = '5 pesanan offline & toko paling baru';
+    protected static ?int $sort = 6;
+
+    protected int | string | array $columnSpan = [
+        'default' => 'full',
+        'lg' => 1,
+    ];
 
     protected static ?int $defaultPaginationPageOption = 5;
 
@@ -72,6 +79,12 @@ class RecentOrdersWidget extends BaseWidget
                     ->label('Tanggal')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
+            ])
+            ->actions([
+                Action::make('view')
+                    ->label('Buka')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn (Pesanan $record): string => PesananResource::getUrl('view', ['record' => $record])),
             ])
             ->paginated(false);
     }

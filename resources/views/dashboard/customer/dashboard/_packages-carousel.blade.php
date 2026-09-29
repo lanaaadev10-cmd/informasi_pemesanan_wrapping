@@ -103,9 +103,9 @@
                                             <i class="ph-bold ph-shopping-cart-simple mr-1"></i> Keranjang
                                         </button>
                                     </form>
-                                    <a href="{{ route('pesanan.direct-order', ['package_id' => $package->id_layanan]) }}"
+                                    <a href="{{ route('booking.create', ['layanan_id' => $package->id_layanan]) }}"
                                        class="flex-1 py-2.5 px-3 bg-[#ff6b00] hover:bg-[#ea580c] text-white rounded-xl text-xs font-bold uppercase tracking-wide transition-all duration-200 flex items-center justify-center shadow-md">
-                                        <i class="ph-bold ph-lightning-fill mr-1"></i> {{ $profil->cta_pesan ?? 'Pesan' }}
+                                        <i class="ph-bold ph-calendar-plus mr-1"></i> <span>Booking</span>
                                     </a>
                                 </div>
                             </div>

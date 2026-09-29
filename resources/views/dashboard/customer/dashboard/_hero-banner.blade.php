@@ -11,14 +11,6 @@
     {{-- Content --}}
     <div class="relative z-10 p-5 sm:p-7 flex flex-col justify-between h-full space-y-4">
 
-        {{-- Top: Clean Text Indicator --}}
-        <div class="flex items-center gap-2 self-start">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#ff6b00]"></span>
-            <span class="text-[10px] font-montserrat font-bold uppercase tracking-widest text-[#ff6b00]">
-                {{ $profil->dashboard_member_title ?? 'LAYANAN UNGGULAN' }}
-            </span>
-        </div>
-
         {{-- Middle: Headline --}}
         <div class="space-y-2 flex-1 flex flex-col justify-center">
             <h1 class="font-audiowide font-bold text-white leading-tight tracking-wide">

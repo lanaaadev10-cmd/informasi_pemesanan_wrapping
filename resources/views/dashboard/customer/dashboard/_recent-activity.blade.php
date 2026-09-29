@@ -52,7 +52,7 @@
                             $icon = 'ph-wrench';
                             $title = $profil->status_dikerjakan ?? 'Sedang Dikerjakan';
                             $desc = 'Kendaraan pesanan #' . $order->kode_pesanan . ' (' . ($order->form?->model_kendaraan ?? 'Kendaraan') . ') sedang dikerjakan';
-                            $rightCol = '<span class="block text-xs font-bold text-[#ff6b00] uppercase tracking-wider font-montserrat animate-pulse">Proses</span>';
+                            $rightCol = '<span class="block text-xs font-bold text-[#ff6b00] uppercase tracking-wider font-montserrat">Proses</span>';
                             break;
                         case 'selesai':
                             $icon = 'ph-check-square';

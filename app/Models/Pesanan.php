@@ -2,8 +2,39 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * Model Pesanan (Transaksi Pemesanan Jasa Wrapping)
+ *
+ * @property int $id_pesanan Primary key pesanan
+ * @property int|null $id_user ID customer pemilik pesanan (null untuk guest / walk-in manual)
+ * @property string $kode_pesanan Kode unik pesanan (misal: ORD-20260929-XXXX)
+ * @property \Carbon\Carbon $tanggal_pesan Waktu pesanan dibuat
+ * @property \Carbon\Carbon|null $booking_date Tanggal pengerjaan terjadwal
+ * @property string $status Status tahapan pesanan (mengacu pada OrderStatus enum)
+ * @property string|null $catatan_admin Catatan khusus dari admin
+ * @property float $total_harga Total nominal biaya pesanan
+ * @property string|null $whatsapp_number Nomor WhatsApp customer
+ * @property string $order_source Asal pesanan: 'online' atau 'offline'
+ * @property string|null $customer_name Nama customer untuk pesanan offline/walk-in
+ * @property string|null $address Alamat customer
+ * @property int|null $created_by_admin_id ID admin pembuat pesanan offline
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ *
+ * @property-read User|null $createdByAdmin Admin pembuat pesanan offline
+ * @property-read User|null $user Customer pemilik pesanan
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, DetailPesanan> $details Rincian paket layanan
+ * @property-read FormPesanan|null $form Formulir data kendaraan & lokasi
+ * @property-read Pembayaran|null $pembayaran Data transaksi pembayaran
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Notifikasi> $notifikasis Riwayat notifikasi
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Rating> $ratings Ulasan customer
+ */
 class Pesanan extends Model
 {
     protected $table = 'pesanans';
@@ -12,6 +43,7 @@ class Pesanan extends Model
 
     // =============================================
     //  STATUS CONSTANTS — Alur Logika Pemesanan
+    //  (Diselaraskan dengan App\Enums\OrderStatus)
     // =============================================
     const STATUS_MENUNGGU_KONFIRMASI_ADMIN = 'menunggu_konfirmasi_admin';
 
@@ -37,12 +69,20 @@ class Pesanan extends Model
     protected $casts = [
         'tanggal_pesan' => 'datetime',
         'booking_date' => 'date',
-
+        'total_harga' => 'decimal:2',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
 
-    public function createdByAdmin()
+    /**
+     * Konversi status pesanan ke PHP Backed Enum OrderStatus (jika valid)
+     */
+    public function getStatusEnumAttribute(): ?OrderStatus
+    {
+        return OrderStatus::tryFrom((string) $this->status);
+    }
+
+    public function createdByAdmin(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by_admin_id', 'id');
     }
@@ -50,32 +90,32 @@ class Pesanan extends Model
     // =============================================
     //  RELASI
     // =============================================
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_user', 'id');
     }
 
-    public function details()
+    public function details(): HasMany
     {
         return $this->hasMany(DetailPesanan::class, 'id_pesanan', 'id_pesanan');
     }
 
-    public function form()
+    public function form(): HasOne
     {
         return $this->hasOne(FormPesanan::class, 'id_pesanan', 'id_pesanan');
     }
 
-    public function pembayaran()
+    public function pembayaran(): HasOne
     {
         return $this->hasOne(Pembayaran::class, 'id_pesanan', 'id_pesanan');
     }
 
-    public function notifikasis()
+    public function notifikasis(): HasMany
     {
         return $this->hasMany(Notifikasi::class, 'id_pesanan', 'id_pesanan');
     }
 
-    public function ratings()
+    public function ratings(): HasMany
     {
         return $this->hasMany(Rating::class, 'id_pesanan', 'id_pesanan');
     }

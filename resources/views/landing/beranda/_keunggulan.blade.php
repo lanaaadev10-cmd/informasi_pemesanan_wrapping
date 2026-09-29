@@ -7,7 +7,6 @@
 
     <div class="max-w-7xl mx-auto relative z-10">
         <div class="text-center mb-16" data-aos="fade-up">
-            <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block mb-3">{{ \App\Helpers\StaticContent::KEUNGGULAN_BADGE }}</span>
             <h2 class="text-3xl sm:text-4xl font-extrabold text-white">
                 {!! \App\Helpers\StaticContent::KEUNGGULAN_TITLE !!}
             </h2>

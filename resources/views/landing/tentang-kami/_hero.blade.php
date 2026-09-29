@@ -3,19 +3,14 @@
     Deskripsi: Banner sinematik dengan judul dan deskripsi utama
 ============================================ --}}
 <div class="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden rounded-[32px] sm:rounded-[48px] {{ auth()->check() ? 'mt-4' : '-mt-24 sm:-mt-32' }}">
-    <!-- Background Image with studio lights -->
-    <div class="absolute inset-0 z-0">
-        <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover object-center" alt="Premium Wrapping Car">
-        <!-- Dark Studio Overlays -->
-        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#0a0a0a]/40 to-[#0a0a0a]"></div>
-        <div class="absolute inset-0 bg-black/20"></div>
+    <!-- Studio Backdrop with subtle glow -->
+    <div class="absolute inset-0 z-0 bg-gradient-to-b from-[#141416] via-[#0d0d0f] to-[#0a0a0a]">
+        <div class="absolute top-0 right-1/4 w-[400px] h-[400px] bg-[#f2994a]/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute bottom-0 left-1/4 w-[350px] h-[350px] bg-[#e28a44]/5 rounded-full blur-[100px] pointer-events-none"></div>
     </div>
 
     <!-- Hero Content -->
     <div class="relative z-10 text-center max-w-4xl mx-auto px-6 space-y-6" data-aos="fade-up">
-        <span class="text-xs uppercase font-extrabold tracking-[0.3em] text-[#f2994a] bg-[#f2994a]/10 px-4 py-2 rounded-full border border-[#f2994a]/20">
-            {{ \App\Helpers\StaticContent::TENTANG_HERO_BADGE }}
-        </span>
         <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
             {!! nl2br(e($heroTitle)) !!}
         </h1>

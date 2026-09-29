@@ -4,12 +4,6 @@
     <!-- Section Header: "Paket Layanan" with orange accent & "Lihat Semua ->" -->
     <div class="flex items-end justify-between">
         <div class="space-y-1">
-            <div class="flex items-center gap-2 mb-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#FF6B00]"></span>
-                <span class="text-[10px] font-montserrat font-bold uppercase tracking-widest text-[#FF6B00]">
-                    Pilihan Favorit
-                </span>
-            </div>
             <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white tracking-wide">
                 Paket Layanan
             </h3>
@@ -113,10 +107,10 @@
                         </div>
 
                         <!-- Circular Orange Button with Arrow -->
-                        <a href="{{ route('pesanan.direct-order', ['package_id' => $item->id_layanan]) }}" 
-                           title="Pesan Layanan Sekarang"
+                        <a href="{{ route('booking.create', ['layanan_id' => $item->id_layanan]) }}" 
+                           title="Booking Jadwal Sekarang"
                            class="w-9 h-9 rounded-full bg-[#ff6b00] hover:bg-[#ea580c] text-white flex items-center justify-center shadow-lg shadow-[#ff6b00]/30 group-hover:scale-105 active:scale-95 transition-all">
-                            <i class="ph-bold ph-arrow-right text-sm"></i>
+                            <i class="ph-bold ph-calendar-plus text-sm"></i>
                         </a>
                     </div>
                 </div>

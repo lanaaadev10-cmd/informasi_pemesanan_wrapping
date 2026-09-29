@@ -1,4 +1,4 @@
-@extends(auth()->check() ? 'layouts.dashboard_customer' : 'layouts.tampilan_utama')
+@extends(auth()->check() ? 'layouts.dashboard-customer' : 'layouts.tampilan-utama')
 
 @section('title', 'Katalog Layanan')
 

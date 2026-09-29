@@ -1,0 +1,80 @@
+/*
+ * dashboard.css — Gaya Khusus Dashboard Customer
+ *
+ * File ini berisi semua CSS kustom yang spesifik untuk area
+ * dashboard pelanggan (topbar, bottom nav, sidebar link, dll.)
+ *
+ * Diimpor otomatis oleh Vite melalui app.css karena
+ * dashboard-customer.blade.php menggunakan @vite(['resources/css/app.css']).
+ * Tidak perlu include manual terpisah di Blade.
+ *
+ * Hierarki impor CSS:
+ *   app.css
+ *     └── dashboard.css     ← file ini
+ */
+
+/* ======================================================
+   CSS Custom Properties (Design Tokens Dashboard)
+   ====================================================== */
+:root {
+    --font-audiowide:  'Audiowide', cursive, sans-serif;
+    --font-montserrat: 'Montserrat', sans-serif;
+    --font-questrial:  'Questrial', sans-serif;
+
+    /* Warna Utama */
+    --bg-carbon:           #000000;
+    --surface-dark:        #0E0E10;
+    --surface-elevated:    #16161A;
+    --border-glass:        rgba(255, 255, 255, 0.08);
+    --primary-orange:      #FF6B00;
+    --primary-orange-hover:#E05D00;
+    --text-white:          #FFFFFF;
+    --text-muted:          #8A8D93;
+}
+
+/* ======================================================
+   Typografi Aplikasi
+   ====================================================== */
+body {
+    font-family: var(--font-questrial), 'Montserrat', sans-serif;
+    background-color: var(--bg-carbon);
+    color: var(--text-white);
+}
+
+h1, h2, h3, .font-heading, .brand-font {
+    font-family: var(--font-audiowide);
+}
+
+.font-audiowide  { font-family: var(--font-audiowide) !important; }
+.font-montserrat { font-family: var(--font-montserrat) !important; }
+.font-questrial  { font-family: var(--font-questrial) !important; }
+
+/* ======================================================
+   Sidebar / Navigasi — Tautan Aktif
+   ====================================================== */
+.sidebar-link-active {
+    background-color: var(--primary-orange);
+    color: #000000 !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 0, 0.35);
+}
+
+/* ======================================================
+   Bottom Navigation Bar — Mobile
+   ====================================================== */
+#bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 8999;
+    background: rgba(8, 8, 8, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Sembunyikan bottom nav di layar desktop */
+@media (min-width: 1024px) {
+    #bottom-nav { display: none !important; }
+}

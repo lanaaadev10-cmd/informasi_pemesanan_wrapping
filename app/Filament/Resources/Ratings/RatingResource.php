@@ -25,11 +25,13 @@ class RatingResource extends Resource
 
     protected static ?string $pluralLabel = 'Rating & Testimoni';
 
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-star';
+
     protected static ?string $recordTitleAttribute = 'id';
 
     protected static string|null|\UnitEnum $navigationGroup = 'Konten';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 3;
 
     public static function table(Table $table): Table
     {

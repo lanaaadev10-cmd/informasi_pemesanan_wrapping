@@ -172,7 +172,7 @@ class KeranjangService
      */
     public function getMaxItems(): int
     {
-        return config('app-settings.cart.max_items', 3);
+        return config('app_settings.cart.max_items', 3);
     }
 
     /**

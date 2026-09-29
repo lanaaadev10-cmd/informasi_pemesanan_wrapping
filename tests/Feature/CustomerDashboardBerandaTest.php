@@ -47,7 +47,7 @@ class CustomerDashboardBerandaTest extends TestCase
         // Verifikasi ke-12 fitur aksi cepat
         $response->assertSee(route('booking.create'));
         $response->assertSee(route('katalog.user'));
-        $response->assertSee(route('kalkulator.index'));
+        $response->assertSee(route('testimoni.index'));
         $response->assertSee(route('keranjang.index'));
         $response->assertSee(route('transaksi.index'));
         $response->assertSee(route('booking.index'));

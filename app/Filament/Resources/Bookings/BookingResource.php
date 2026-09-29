@@ -17,13 +17,13 @@ class BookingResource extends Resource
 {
     protected static ?string $model = Booking::class;
 
-    protected static ?string $navigationLabel = 'Kelola Booking';
-    protected static ?string $pluralLabel = 'Booking';
+    protected static ?string $navigationLabel = 'Booking Online';
+    protected static ?string $pluralLabel = 'Booking Online';
     protected static ?string $modelLabel = 'Booking';
     protected static ?string $slug = 'booking';
     protected static string|null|\UnitEnum $navigationGroup = 'Transaksi';
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

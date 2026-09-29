@@ -1,4 +1,4 @@
-@extends('layouts.tampilan_utama')
+@extends('layouts.tampilan-utama')
 
 @php
     $accentColor = '#f2994a';

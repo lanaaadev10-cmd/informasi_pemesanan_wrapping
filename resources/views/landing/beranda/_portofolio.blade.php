@@ -8,7 +8,6 @@
     <div class="max-w-7xl mx-auto relative z-10">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16" data-aos="fade-up">
             <div class="space-y-3">
-                <span class="text-xs font-bold text-[#f2994a] tracking-[0.25em] uppercase block">{{ \App\Helpers\StaticContent::PORTOFOLIO_BADGE }}</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-white">{{ \App\Helpers\StaticContent::PORTOFOLIO_TITLE }}</h2>
                 <p class="text-gray-500 text-sm max-w-lg">{{ \App\Helpers\StaticContent::PORTOFOLIO_DESC }}</p>
             </div>

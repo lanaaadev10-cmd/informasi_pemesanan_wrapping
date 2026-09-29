@@ -75,9 +75,9 @@ class KeranjangController extends Controller
             ]);
         }
 
-        // Jika request datang dari tombol "Pesan Sekarang", langsung ke checkout
+        // Jika request datang dari tombol "Pesan / Booking Sekarang", langsung ke booking
         if ($request->has('direct_checkout')) {
-            return redirect()->route('pesanan.checkout.form');
+            return redirect()->route('booking.create', ['layanan_id' => $request->id_paket]);
         }
 
         return redirect()->route('keranjang.index')

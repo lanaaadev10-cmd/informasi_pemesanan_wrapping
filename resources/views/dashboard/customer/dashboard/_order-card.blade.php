@@ -16,10 +16,8 @@
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full border-b border-white/10 pb-6 mb-6 gap-4">
             <div class="space-y-1.5">
-                <!-- Clean Text Header Indicator (No Badge Container) -->
-                <div class="flex items-center gap-2 text-[11px] font-montserrat font-bold tracking-widest text-[#ff6b00] uppercase">
-                    <span class="w-2 h-2 rounded-full bg-[#ff6b00] animate-pulse"></span>
-                    <span>Pesanan Aktif &bull; #{{ $activePesanan->kode_pesanan }}</span>
+                <div class="text-xs font-montserrat font-bold text-[#ff6b00]">
+                    Pesanan Aktif &bull; #{{ $activePesanan->kode_pesanan }}
                 </div>
                 
                 <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white mt-1.5">{{ $activePesanan->form?->model_kendaraan ?? 'Kendaraan Customer' }}</h3>
@@ -78,10 +76,8 @@
 
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full border-b border-white/10 pb-6 mb-6 gap-4">
             <div class="space-y-1.5">
-                <!-- Clean Text Header Indicator (No Badge Container) -->
-                <div class="flex items-center gap-2 text-[11px] font-montserrat font-bold tracking-widest text-[#ff6b00] uppercase">
-                    <span class="w-2 h-2 rounded-full bg-[#ff6b00] animate-pulse"></span>
-                    <span>Booking Aktif &bull; {{ $activeBooking->booking_code }}</span>
+                <div class="text-xs font-montserrat font-bold text-[#ff6b00]">
+                    Booking Aktif &bull; {{ $activeBooking->booking_code }}
                 </div>
                 
                 <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white mt-1.5">{{ $activeBooking->vehicle_name ?: 'Kendaraan Customer' }}</h3>

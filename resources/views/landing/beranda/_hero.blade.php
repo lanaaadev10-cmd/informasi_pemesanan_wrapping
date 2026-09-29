@@ -9,11 +9,6 @@
     <div class="max-w-7xl mx-auto w-full relative z-20">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div class="lg:col-span-8 space-y-8" data-aos="fade-right" data-aos-duration="1200">
-                <!-- Badge -->
-                <div class="inline-flex items-center gap-2 bg-[#f2994a]/10 border border-[#f2994a]/20 px-4 py-2 rounded-full">
-                    <span class="w-2 h-2 rounded-full bg-[#f2994a] animate-pulse"></span>
-                    <span class="text-xs font-bold text-[#f2994a] tracking-wider uppercase">{{ \App\Helpers\StaticContent::HERO_BADGE }}</span>
-                </div>
                 <!-- Heading -->
                 <div class="space-y-4">
                     <h1 class="text-4xl sm:text-5xl lg:text-6.5xl font-extrabold text-white leading-[1.1] tracking-tight">

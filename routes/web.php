@@ -11,9 +11,8 @@
 */
 
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\GaleriController;
-use App\Http\Controllers\KalkulatorController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PesananController;
@@ -21,11 +20,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\TransaksiController;
-use App\Models\Keranjang;
-use App\Models\Layanan;
 use Illuminate\Support\Facades\Route;
-
-// use App\Http\Controllers\Admin\OfflineOrderController;
 
 /*
  * Middleware throttle:60,5 — Proteksi agar user tidak melakukan
@@ -48,21 +43,21 @@ Route::middleware('throttle:60,5')->group(function () {
             ->header('Content-Type', 'text/plain; version=0.0.4');
     });
 
-    Route::get('/', [DashboardController::class, 'index'])->name('home');
-    Route::get('/profil-perusahaan', [DashboardController::class, 'profile'])->name('profil.perusahaan');
-    Route::get('/tentang-kami', [DashboardController::class, 'tentangKami'])->name('tentang-kami');
-    Route::get('/layanan', [DashboardController::class, 'layanan'])->name('layanan');
+    Route::get('/', [LandingPageController::class, 'index'])->name('home');
+    Route::get('/profil-perusahaan', [LandingPageController::class, 'profile'])->name('profil.perusahaan');
+    Route::get('/tentang-kami', [LandingPageController::class, 'tentangKami'])->name('tentang-kami');
+    Route::get('/layanan', [LandingPageController::class, 'layanan'])->name('layanan');
     Route::get('/katalog-layanan', [CustomerController::class, 'katalog'])->name('katalog.user');
     Route::get('/galeri-karya', [GaleriController::class, 'index'])->name('galeri.user');
     Route::get('/galeri/{kategori}', [GaleriController::class, 'kategori'])->name('galeri.kategori');
-    Route::get('/kebijakan-privasi', [DashboardController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
+    Route::get('/kebijakan-privasi', [LandingPageController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
     Route::get('/testimoni', [TestimoniController::class, 'index'])->name('testimoni.index');
 
-    // ====================================================================
-    // KALKULATOR WRAPPING & ESTIMASI BIAYA (FASE 2)
-    // ====================================================================
-    Route::get('/kalkulator-wrapping', [KalkulatorController::class, 'index'])->name('kalkulator.index');
-    Route::post('/kalkulator-wrapping/hitung', [KalkulatorController::class, 'hitung'])->name('kalkulator.hitung');
+    // [REMOVED] KALKULATOR WRAPPING & ESTIMASI BIAYA
+    // Fitur dinonaktifkan sesuai permintaan pengguna; URL lama dialihkan ke booking.
+    Route::redirect('/kalkulator-wrapping', '/booking/buat')->name('kalkulator.index');
+    Route::redirect('/admin/login.', '/admin/login');
+    Route::post('/admin/login', [\App\Http\Controllers\AdminAuthController::class, 'login'])->name('admin.login.submit');
 
     // Logout via GET — solusi jika form POST logout mengalami Error 419
     Route::get('/logout', function () {
@@ -90,16 +85,6 @@ Route::middleware('throttle:60,5')->group(function () {
 
             // Cetak laporan — hanya admin (filter ada di blade)
             Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('admin.laporan');
-
-            // Pemesanan Offline — khusus admin untuk membuat pesanan manual
-            // tanpa melalui proses checkout online (misal: pelanggan datang langsung)
-            // Route::middleware('role:admin')->prefix('admin-offline')->name('admin.offline.')->group(function () {
-            //     Route::get('/orders', [OfflineOrderController::class, 'index'])->name('orders.index');
-            //     Route::get('/orders/create', [OfflineOrderController::class, 'create'])->name('orders.create');
-            //     Route::post('/orders', [OfflineOrderController::class, 'store'])->name('orders.store');
-            //     Route::get('/orders/{id}/edit', [OfflineOrderController::class, 'edit'])->name('orders.edit');
-            //     Route::put('/orders/{id}', [OfflineOrderController::class, 'update'])->name('orders.update');
-            //     Route::delete('/orders/{id}', [OfflineOrderController::class, 'destroy'])->name('orders.destroy');
         });
 
         // ================================================================
@@ -124,29 +109,20 @@ Route::middleware('throttle:60,5')->group(function () {
         Route::prefix('pesanan')->group(function () {
             Route::get('/', [PesananController::class, 'index'])->name('pesanan.index');
 
-            // Direct order: pesan langsung dari halaman layanan (skip keranjang)
+            // Direct order diarahkan ke Booking Jadwal (Fase Integrasi)
             Route::get('/buat', function () {
                 $packageId = request('package_id');
-                if (! $packageId) {
-                    return redirect()->route('katalog.user')->with('error', 'Paket tidak ditemukan.');
-                }
-                $package = Layanan::findOrFail($packageId);
-
-                return view('dashboard.customer.pesanan.direct-order', compact('package'));
+                return redirect()->route('booking.create', $packageId ? ['layanan_id' => $packageId] : []);
             })->name('pesanan.direct-order');
 
-            // Checkout: proses dari keranjang → form data kendaraan → pembayaran
+            // Checkout keranjang diarahkan langsung ke Booking Jadwal
             Route::get('/checkout', function () {
                 $keranjang = Keranjang::where('id_user', auth()->id())
                     ->where('status', 'active')
                     ->first();
+                $packageId = $keranjang?->details?->first()?->id_paket;
 
-                if (! $keranjang || $keranjang->details->count() == 0) {
-                    return redirect()->route('katalog.user')
-                        ->with('error', 'Keranjang Anda kosong. Silakan pilih paket terlebih dahulu.');
-                }
-
-                return view('dashboard.customer.pesanan.checkout', compact('keranjang'));
+                return redirect()->route('booking.create', $packageId ? ['layanan_id' => $packageId] : []);
             })->name('pesanan.checkout.form');
 
             Route::post('/checkout', [PesananController::class, 'checkout'])->name('pesanan.checkout.store');

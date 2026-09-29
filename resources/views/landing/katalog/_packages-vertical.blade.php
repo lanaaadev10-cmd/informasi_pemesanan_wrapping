@@ -130,19 +130,19 @@
                                                 <i class="ph-bold ph-shopping-cart-simple text-sm shrink-0"></i> <span>Keranjang</span>
                                             </button>
                                         </form>
-                                        <a href="{{ route('pesanan.direct-order', ['package_id' => $package->id_layanan]) }}"
+                                        <a href="{{ route('booking.create', ['layanan_id' => $package->id_layanan]) }}"
                                            class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3 bg-[#ff6b00] hover:bg-[#ea580c] text-white rounded-xl text-[11px] sm:text-xs font-montserrat font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-1 shadow-md shadow-[#ff6b00]/25 active:scale-95 min-h-[40px] sm:min-h-[44px]">
-                                            <i class="ph-bold ph-lightning text-sm shrink-0"></i> <span>{{ $profil->cta_pesan ?? 'Pesan' }}</span>
+                                            <i class="ph-bold ph-calendar-plus text-sm shrink-0"></i> <span>Booking</span>
                                         </a>
                                     @else
                                         <button type="button" onclick="showRegisterPrompt()"
                                                 class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3 bg-[#ff6b00]/10 border border-[#ff6b00]/30 text-[#ff6b00] rounded-xl text-[11px] sm:text-xs font-montserrat font-bold uppercase tracking-wider hover:bg-[#ff6b00]/20 transition-all duration-200 flex items-center justify-center gap-1 active:scale-95 min-h-[40px] sm:min-h-[44px]">
                                             <i class="ph-bold ph-shopping-cart-simple text-sm shrink-0"></i> <span>Keranjang</span>
                                         </button>
-                                        <button type="button" onclick="showRegisterPrompt()"
-                                                class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3 bg-[#ff6b00] hover:bg-[#ea580c] text-white rounded-xl text-[11px] sm:text-xs font-montserrat font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-1 shadow-md shadow-[#ff6b00]/25 active:scale-95 min-h-[40px] sm:min-h-[44px]">
-                                            <i class="ph-bold ph-lightning text-sm shrink-0"></i> <span>{{ $profil->cta_pesan ?? 'Pesan' }}</span>
-                                        </button>
+                                        <a href="{{ route('booking.create', ['layanan_id' => $package->id_layanan]) }}"
+                                           class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3 bg-[#ff6b00] hover:bg-[#ea580c] text-white rounded-xl text-[11px] sm:text-xs font-montserrat font-bold uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-1 shadow-md shadow-[#ff6b00]/25 active:scale-95 min-h-[40px] sm:min-h-[44px]">
+                                            <i class="ph-bold ph-calendar-plus text-sm shrink-0"></i> <span>Booking</span>
+                                        </a>
                                     @endauth
                                 </div>
                             </div>

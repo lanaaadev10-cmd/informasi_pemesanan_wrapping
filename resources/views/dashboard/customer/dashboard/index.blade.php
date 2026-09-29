@@ -1,4 +1,4 @@
-@extends('layouts.dashboard_customer')
+@extends('layouts.dashboard-customer')
 
 @section('title', ($profil->nama_perusahaan ?? 'Dantie Stiker') . ' - Dashboard')
 
@@ -10,12 +10,6 @@
     ═══════════════════════════════════════════════════════════ --}}
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-5">
         <div>
-            <div class="flex items-center gap-2 mb-1.5">
-                <span class="w-2 h-2 rounded-full bg-[#FF6B00]"></span>
-                <span class="text-[10px] font-montserrat font-black uppercase tracking-widest text-[#FF6B00]">
-                    Pusat Kontrol Pelanggan
-                </span>
-            </div>
             <h1 class="text-2xl sm:text-3xl md:text-4xl font-audiowide font-bold text-white tracking-wide">
                 Hello, {{ explode(' ', trim(Auth::user()->name))[0] }} 👋
             </h1>
@@ -26,15 +20,15 @@
 
         {{-- Quick CTA --}}
         <div class="hidden sm:flex items-center gap-3 shrink-0">
-            <a href="{{ route('kalkulator.index') }}"
-               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-[#16161A] hover:bg-white/10 border border-white/10 rounded-xl text-xs font-montserrat font-bold text-white transition-all active:scale-95 shadow-sm">
-                <i class="ph-bold ph-calculator text-[#FF6B00] text-base"></i>
-                <span>Wrap Studio</span>
-            </a>
             <a href="{{ route('katalog.user') }}"
-               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 rounded-xl text-xs font-montserrat font-bold text-white transition-all active:scale-95">
-                <i class="ph-bold ph-tag text-[#FF6B00] text-base"></i>
+               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-[#16161A] hover:bg-white/10 border border-white/10 rounded-xl text-xs font-montserrat font-bold text-white transition-all active:scale-95 shadow-sm">
+                <i class="ph-bold ph-storefront text-[#FF6B00] text-base"></i>
                 <span>Katalog Layanan</span>
+            </a>
+            <a href="{{ route('booking.create') }}"
+               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-[44px] bg-[#FF6B00] hover:bg-[#E05D00] text-black font-montserrat font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_4px_16px_rgba(255,107,0,0.35)] active:scale-95">
+                <i class="ph-bold ph-calendar-plus text-base"></i>
+                <span>Booking Baru</span>
             </a>
         </div>
     </div>

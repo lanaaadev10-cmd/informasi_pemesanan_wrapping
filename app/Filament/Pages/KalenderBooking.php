@@ -11,11 +11,11 @@ use Filament\Pages\Page;
 
 class KalenderBooking extends Page
 {
-    protected static ?string $navigationLabel = 'Kalender Kuota Booking';
+    protected static ?string $navigationLabel = 'Kalender Kuota';
     protected static ?string $title = 'Kalender Kuota & Jadwal Booking';
     protected static \UnitEnum|string|null $navigationGroup = 'Transaksi';
-    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-calendar-days';
-    protected static ?int $navigationSort = 1;
+    protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-calendar';
+    protected static ?int $navigationSort = 3;
     protected static ?string $slug = 'kalender-booking';
 
     protected string $view = 'filament.pages.kalender-booking';

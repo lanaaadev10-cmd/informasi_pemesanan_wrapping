@@ -31,6 +31,11 @@ class LaporanController extends Controller
             $query->whereMonth('created_at', Carbon::now()->month)
                   ->whereYear('created_at', Carbon::now()->year);
             $title = "Bulanan (" . $now->format('F Y') . ")";
+        } elseif ($type === 'custom' || ($request->filled('start_date') && $request->filled('end_date'))) {
+            $startDate = Carbon::parse($request->get('start_date'))->startOfDay();
+            $endDate = Carbon::parse($request->get('end_date'))->endOfDay();
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+            $title = "Periode (" . $startDate->format('d M Y') . " s/d " . $endDate->format('d M Y') . ")";
         }
 
         $pesanans = $query->latest()->get();

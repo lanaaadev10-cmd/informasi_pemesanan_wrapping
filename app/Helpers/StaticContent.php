@@ -17,8 +17,12 @@ namespace App\Helpers;
  *
  * @see \App\Providers\SettingsServiceProvider (still serves internal dashboard settings)
  */
+use App\Helpers\Traits\ProvidesStaticMediaData;
+
 class StaticContent
 {
+    use ProvidesStaticMediaData;
+
     // ──────────────────────────────────────────────
     //  NAVBAR — Logo, brand, menu labels
     // ──────────────────────────────────────────────
@@ -149,28 +153,6 @@ class StaticContent
     const GALERI_ITEM_6_BADGE = 'Best Seller';
 
     /**
-     * Gallery image URL mapping — local placeholder path → live Unsplash image.
-     */
-    private static array $galeriFotoMap = [
-        'images/galeri/tesla-model-s.jpg'       => 'https://images.unsplash.com/photo-1619767886558-efdc7b9af8e6?w=600&q=80',
-        'images/galeri/range-rover-sport.jpg'   => 'https://images.unsplash.com/photo-1609521263047-f8f205293f92?w=600&q=80',
-        'images/galeri/ferrari-f8.jpg'          => 'https://images.unsplash.com/photo-1592198084037-a1c1c5f96c28?w=600&q=80',
-        'images/galeri/porsche-911.jpg'         => 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=600&q=80',
-        'images/galeri/mercedes-s-class.jpg'    => 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=80',
-        'images/galeri/lamborghini-urus.jpg'    => 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80',
-    ];
-
-    /**
-     * Resolve gallery image URL: local placeholder path → live Unsplash URL.
-     */
-    public static function galeriFoto(string $path): string
-    {
-        return self::$galeriFotoMap[$path]
-            ?? self::$galeriFotoMap['images/galeri/tesla-model-s.jpg']
-            ?? 'https://images.unsplash.com/photo-1619767886558-efdc7b9af8e6?w=600&q=80';
-    }
-
-    /**
      * Resolve any stored photo path to a renderable URL.
      * - Full http(s) URLs (Unsplash/external) pass through unchanged.
      * - Paths that exist under public/ (e.g. images/layanan/...) → asset($path).
@@ -190,70 +172,6 @@ class StaticContent
         return asset('storage/' . $path);
     }
 
-    /**
-     * Static gallery items.
-     * Each item: ['judul', 'foto', 'deskripsi', 'kategori', 'badge_text']
-     */
-    public static function galeriItems(): array
-    {
-        return [
-            [
-                'judul'     => self::GALERI_ITEM_1_JUDUL,
-                'foto'      => 'images/galeri/tesla-model-s.jpg',
-                'deskripsi' => self::GALERI_ITEM_1_DESC,
-                'kategori'  => 'matte',
-                'badge_text' => self::GALERI_ITEM_1_BADGE,
-            ],
-            [
-                'judul'     => self::GALERI_ITEM_2_JUDUL,
-                'foto'      => 'images/galeri/range-rover-sport.jpg',
-                'deskripsi' => self::GALERI_ITEM_2_DESC,
-                'kategori'  => 'satin',
-                'badge_text' => self::GALERI_ITEM_2_BADGE,
-            ],
-            [
-                'judul'     => self::GALERI_ITEM_3_JUDUL,
-                'foto'      => 'images/galeri/ferrari-f8.jpg',
-                'deskripsi' => self::GALERI_ITEM_3_DESC,
-                'kategori'  => 'satin',
-                'badge_text' => '',
-            ],
-            [
-                'judul'     => self::GALERI_ITEM_4_JUDUL,
-                'foto'      => 'images/galeri/porsche-911.jpg',
-                'deskripsi' => self::GALERI_ITEM_4_DESC,
-                'kategori'  => 'matte',
-                'badge_text' => self::GALERI_ITEM_4_BADGE,
-            ],
-            [
-                'judul'     => self::GALERI_ITEM_5_JUDUL,
-                'foto'      => 'images/galeri/mercedes-s-class.jpg',
-                'deskripsi' => self::GALERI_ITEM_5_DESC,
-                'kategori'  => 'glossy',
-                'badge_text' => '',
-            ],
-            [
-                'judul'     => self::GALERI_ITEM_6_JUDUL,
-                'foto'      => 'images/galeri/lamborghini-urus.jpg',
-                'deskripsi' => self::GALERI_ITEM_6_DESC,
-                'kategori'  => 'satin',
-                'badge_text' => self::GALERI_ITEM_6_BADGE,
-            ],
-        ];
-    }
-
-    /**
-     * Gallery filter categories.
-     */
-    public static function galeriCategories(): array
-    {
-        return [
-            ['slug' => 'matte',  'label' => 'Matte Series'],
-            ['slug' => 'satin',  'label' => 'Satin Series'],
-            ['slug' => 'glossy', 'label' => 'Glossy Series'],
-        ];
-    }
-
     // ──────────────────────────────────────────────
     //  LAYANAN  (halaman /layanan)
     // ──────────────────────────────────────────────
@@ -263,10 +181,10 @@ class StaticContent
      * Used consistently across both /layanan and /katalog-layanan pages.
      */
     const LAYANAN_FALLBACK_IMAGES = [
-        'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=800&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=800&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=800&auto=format&fit=crop',
+        'images/layanan/wrapping-mobil.jpg',
+        'images/layanan/kaca-film.jpg',
+        'images/layanan/audio-head.jpg',
+        'images/layanan/lampu-biled.jpg',
     ];
 
     const LAYANAN_HERO_TITLE = 'Presisi di Setiap Lapisan.';
@@ -305,33 +223,4 @@ class StaticContent
     const CTA_TENTANG_DESC   = 'Jadikan kendaraan Anda pusat perhatian hari ini. Konsultasikan kebutuhan Anda secara gratis dengan tim kami yang berpengalaman.';
     const CTA_TENTANG_BTN    = 'Hubungi Kami Sekarang';
     const CTA_TENTANG_SEC    = 'Lihat Portofolio';
-
-    /**
-     * Team members.
-     */
-    public static function teamMembers(): array
-    {
-        return [
-            [
-                'nama'   => 'Silahkan isi nama anda',
-                'posisi' => 'Owner & Founder',
-                'foto'   => 'public/images/team/Owner&Founder.jpg',
-            ],
-            [
-                'nama'   => '...',
-                'posisi' => 'Admin & Content Creator',
-                'foto'   => 'public/images/team/Admin&ContentCreator.jpg',
-            ],
-            [
-                'nama'   => '...',
-                'posisi' => 'Team Wrapping',
-                'foto'   => 'public/images/team/TeamWrapping.jpg',
-            ],
-            [
-                'nama'   => '....',
-                'posisi' => 'Team Wrapping',
-                'foto'   => 'public/images/team/TeamWrapping.jpg',
-            ],
-        ];
-    }
 }

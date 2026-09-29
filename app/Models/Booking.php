@@ -8,6 +8,38 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * Model Booking (Penjadwalan Pengerjaan Wrapping)
+ *
+ * @property int $id Primary key booking
+ * @property string $booking_code Kode referensi booking unik
+ * @property int|null $user_id ID akun customer (null jika booking via walk-in)
+ * @property string|null $customer_name Nama pemesan
+ * @property string|null $customer_phone Nomor telepon / WhatsApp pemesan
+ * @property string|null $customer_email Alamat email pemesan
+ * @property int $layanan_id Foreign key ke tabel layanans (id_layanan)
+ * @property \Carbon\Carbon $booking_date Tanggal pengerjaan yang dijadwalkan
+ * @property string|null $booking_time Jam pengerjaan
+ * @property string $payment_type Skema pembayaran: 'dp' atau 'lunas'
+ * @property string|null $vehicle_name Nama kendaraan (contoh: Honda HR-V 2023)
+ * @property string|null $vehicle_color Warna asli kendaraan
+ * @property string|null $vehicle_license Plat nomor polisi
+ * @property string|null $notes Catatan dari customer
+ * @property \App\Enums\BookingStatus $status Status alur booking
+ * @property string|null $admin_notes Catatan internal dari admin
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ *
+ * @property-read User|null $user
+ * @property-read Layanan $layanan
+ * @property-read BookingPayment|null $payment
+ * @property-read string $label_status
+ * @property-read string $warna_badge
+ * @property-read string $pelanggan_nama
+ * @property-read string $pelanggan_phone
+ * @property-read string $pelanggan_email
+ * @property-read string $whatsapp_notification_url
+ */
 class Booking extends Model
 {
     use HasFactory;

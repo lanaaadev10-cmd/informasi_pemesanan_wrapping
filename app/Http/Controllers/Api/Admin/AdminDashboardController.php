@@ -23,7 +23,7 @@ class AdminDashboardController extends Controller
     public function getStats()
     {
         $cacheKey = 'admin_dashboard_stats';
-        $cacheDuration = config('app-settings.cache.dashboard_stats', 3600);
+        $cacheDuration = config('app_settings.cache.dashboard_stats', 3600);
 
         return Cache::remember($cacheKey, $cacheDuration, function () {
             $now = now();
@@ -45,7 +45,7 @@ class AdminDashboardController extends Controller
             $totalCustomers = User::whereDoesntHave('roles')->count();
 
             // Top services
-            $topServicesLimit = config('app-settings.dashboard.top_services_limit', 5);
+            $topServicesLimit = config('app_settings.dashboard.top_services_limit', 5);
             $topServices = DB::table('detail_pesanans')
                 ->join('layanans', 'detail_pesanans.id_paket', '=', 'layanans.id_layanan')
                 ->select('layanans.nama_layanan', DB::raw('COUNT(*) as total_orders'))
@@ -78,10 +78,10 @@ class AdminDashboardController extends Controller
     public function getChartData()
     {
         $cacheKey = 'admin_dashboard_chart_data';
-        $cacheDuration = config('app-settings.cache.dashboard_chart_data', 3600);
+        $cacheDuration = config('app_settings.cache.dashboard_chart_data', 3600);
 
         return Cache::remember($cacheKey, $cacheDuration, function () {
-            $monthsLookback = config('app-settings.dashboard.chart_months_lookback', 12);
+            $monthsLookback = config('app_settings.dashboard.chart_months_lookback', 12);
             // Monthly revenue for last 12 months - single query with GROUP BY
             $monthlyRevenue = Pesanan::where('status', 'selesai')
                 ->where('tanggal_pesan', '>=', now()->subMonths($monthsLookback))

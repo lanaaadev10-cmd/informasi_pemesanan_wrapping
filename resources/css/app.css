@@ -1,9 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Questrial&display=swap');
 
+/* Gaya spesifik dashboard customer (topbar, bottom nav, sidebar) */
+@import './dashboard.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   @layer base — Global Defaults
+   Hindari menambah aturan global di sini kecuali benar-benar
+   diperlukan di seluruh halaman (body, heading, dll.)
+   ============================================================ */
 @layer base {
     body {
         font-family: 'Questrial', 'Montserrat', sans-serif;
@@ -11,57 +19,204 @@
         color: #ffffff;
     }
 
-    h1,
-    h2,
-    h3,
-    .font-heading {
+    h1, h2, h3, .font-heading {
         font-family: 'Audiowide', cursive, sans-serif;
     }
 
-    [x-cloak] {
-        display: none !important;
-    }
+    /* Alpine.js: sembunyikan element sebelum JS siap */
+    [x-cloak] { display: none !important; }
 }
 
-.font-audiowide {
-    font-family: 'Audiowide', cursive, sans-serif !important;
-}
-
-.font-montserrat {
-    font-family: 'Montserrat', sans-serif !important;
-}
-
-.font-questrial {
-    font-family: 'Questrial', sans-serif !important;
-}
-
-/* Hide scrollbars for clean horizontal slider look */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-
-.no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-/* Split panel smooth expand / collapse */
-.split-panel {
-    transition: flex 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-        min-width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-}
-
-.split-panel>div>div {
-    transition: opacity 0.3s ease;
-}
-
+/* ============================================================
+   @layer components — Design System Utility Classes
+   
+   Panduan penggunaan:
+   - Gunakan class di sini di template Blade untuk menghindari
+     pengulangan class Tailwind yang panjang.
+   - Jangan gunakan arbitrary values seperti `bg-[#f2994a]`
+     di HTML. Gunakan token `bg-racing-orangeLight` dari config,
+     atau class @apply di bawah ini.
+   
+   Kategori:
+     1. AUTH — Form, Input, Button halaman login/register
+     2. BUTTON — Tombol aksi umum
+     3. BADGE — Status label / chip
+     4. CARD — Wadah konten (kartu, panel)
+     5. TYPOGRAPHY — Kelas teks berulang
+     6. UTILITY — Scrollbar, split-panel, dll.
+   ============================================================ */
 @layer components {
 
+    /* ----------------------------------------------------------
+       1. AUTH — Field input form dark theme (login, register)
+       Penggunaan: <input class="input-dark" ...>
+       ---------------------------------------------------------- */
+    .input-dark {
+        @apply w-full pl-11 pr-4 py-3 bg-racing-input border border-white/5 rounded-xl
+               text-white text-xs placeholder-gray-600 outline-none transition-all
+               focus:ring-1 focus:ring-racing-orangeLight focus:border-racing-orangeLight;
+    }
+
+    /* Input dengan padding kanan lebih besar (ada ikon toggle/check di kanan) */
+    .input-dark-icon-right {
+        @apply input-dark pr-12;
+    }
+
+    /* Input mobile (py sedikit lebih besar) */
+    .input-dark-mobile {
+        @apply w-full pl-12 pr-4 py-3.5 bg-white/[0.04] border border-white/[0.08] rounded-xl
+               text-white text-sm placeholder-gray-600 outline-none transition-all
+               focus:border-racing-orangeLight focus:bg-racing-orangeLight/5;
+    }
+
+    /* ----------------------------------------------------------
+       2. BUTTON — Tombol primer (oranye, full-width auth)
+       Penggunaan: <button class="btn-primary">Masuk</button>
+       ---------------------------------------------------------- */
+    .btn-primary {
+        @apply w-full py-3.5 bg-racing-orangeLight text-black font-extrabold text-xs
+               uppercase tracking-widest rounded-xl transition-all
+               flex items-center justify-center gap-2
+               hover:bg-racing-orangeHover active:scale-95
+               shadow-glow-orange;
+    }
+
+    /* Varian tombol primer dengan padding vertikal lebih besar (desktop auth) */
+    .btn-primary-lg {
+        @apply btn-primary py-4;
+    }
+
+    /* Tombol sekunder (border tipis, latar transparan) */
+    .btn-ghost {
+        @apply flex items-center justify-center gap-2 py-3.5 px-5
+               bg-white/5 hover:bg-white/10 border border-white/10
+               text-gray-300 hover:text-white font-extrabold
+               text-[10px] tracking-[0.1em] uppercase rounded-xl
+               transition-all hover:scale-[1.02] active:scale-95;
+    }
+
+    /* Tombol outline bahaya (hapus, cancel) */
+    .btn-danger {
+        @apply inline-flex items-center px-4 py-2 bg-red-600 border border-transparent
+               rounded-md font-semibold text-xs text-white uppercase tracking-widest
+               hover:bg-red-500 active:bg-red-700
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
+               focus:ring-offset-racing-black transition ease-in-out duration-150;
+    }
+
+    /* ----------------------------------------------------------
+       3. LABEL — Label form halaman auth
+       Penggunaan: <label class="label-form">Email</label>
+       ---------------------------------------------------------- */
+    .label-form {
+        @apply block text-[10px] font-bold text-gray-400 uppercase tracking-widest;
+    }
+
+    /* Label form versi mobile (sedikit lebih besar) */
+    .label-form-mobile {
+        @apply block text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2;
+    }
+
+    /* ----------------------------------------------------------
+       4. CARD — Container halaman auth (2-kolom desktop)
+       Penggunaan: <div class="auth-card">...</div>
+       ---------------------------------------------------------- */
+    .auth-card {
+        @apply max-w-5xl w-full bg-racing-card rounded-3xl overflow-hidden
+               border border-white/5 flex shadow-2xl;
+    }
+
+    /* Panel kiri/kanan auth */
+    .auth-panel-form {
+        @apply w-1/2 p-10 lg:p-14 bg-racing-formDark flex flex-col justify-center;
+    }
+
+    .auth-panel-visual {
+        @apply w-1/2 flex flex-col justify-between text-white relative min-h-[620px]
+               bg-cover bg-center;
+    }
+
+    /* Gradient overlay di atas gambar visual auth */
+    .auth-visual-overlay {
+        @apply absolute inset-0 bg-gradient-to-b
+               from-racing-dark/75 via-racing-dark/85 to-racing-dark z-0;
+    }
+
+    /* Kartu testimonial / kutipan di panel visual auth */
+    .auth-testimonial-card {
+        @apply border border-racing-orangeLight/30 rounded-2xl p-5
+               bg-racing-dark/40 backdrop-blur-sm;
+    }
+
+    /* ----------------------------------------------------------
+       5. AMBIENT GLOW — Dekorasi lingkaran blur latar belakang
+       Penggunaan: <div class="glow-orb glow-orb-tr"></div>
+       ---------------------------------------------------------- */
+    .glow-orb {
+        @apply fixed rounded-full blur-3xl pointer-events-none z-0 bg-racing-orangeLight/5;
+    }
+
+    /* Posisi: kanan atas */
+    .glow-orb-tr {
+        @apply w-96 h-96 -top-24 -right-24;
+    }
+
+    /* Posisi: kiri bawah */
+    .glow-orb-bl {
+        @apply w-72 h-72 -bottom-20 -left-20;
+    }
+
+    /* ----------------------------------------------------------
+       6. BACK-LINK — "Kembali ke beranda" di halaman auth
+       Penggunaan: <a href="/" class="back-link">← Beranda</a>
+       ---------------------------------------------------------- */
+    .back-link {
+        @apply inline-flex items-center gap-1 text-[10px] text-gray-500
+               hover:text-racing-orangeLight transition-colors font-medium;
+    }
+
+    /* ----------------------------------------------------------
+       7. TYPOGRAPHY — Teks berulang
+       ---------------------------------------------------------- */
+    .page-eyebrow {
+        @apply text-[10px] font-montserrat font-black uppercase tracking-widest
+               text-racing-orange;
+    }
+
+    /* ----------------------------------------------------------
+       8. UTILITY — Komponen teknis
+       ---------------------------------------------------------- */
+
+    /* Sembunyikan scrollbar (slider horizontal) */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    /* Split panel booking (expand/collapse animasi) */
+    .split-panel {
+        transition: flex 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+                    min-width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+
+    .split-panel > div > div {
+        transition: opacity 0.3s ease;
+    }
+
+    /* ----------------------------------------------------------
+       9. LEGACY — Kelas lama (deprecated, akan dihapus)
+       Jangan gunakan pada kode baru.
+       ---------------------------------------------------------- */
+
+    /* @deprecated — Gunakan .input-dark dan .btn-primary sebagai gantinya */
     .form-dark input[type="text"],
     .form-dark input[type="email"],
     .form-dark input[type="password"] {
-        @apply w-full bg-white border-none rounded-2xl px-6 py-4 text-gray-900 font-bold shadow-sm focus:ring-2 focus:ring-[#f2994a] outline-none transition-all placeholder:text-gray-400 placeholder:font-medium;
+        @apply w-full bg-white border-none rounded-2xl px-6 py-4 text-gray-900 font-bold
+               shadow-sm focus:ring-2 focus:ring-racing-orangeLight outline-none
+               transition-all placeholder:text-gray-400 placeholder:font-medium;
     }
 
     .form-dark label {
@@ -69,6 +224,8 @@
     }
 
     .form-dark button[type="submit"] {
-        @apply px-10 py-4 bg-[#f2994a] text-black rounded-2xl font-black text-xs tracking-widest uppercase hover:bg-orange-600 hover:text-white transition-all shadow-xl;
+        @apply px-10 py-4 bg-racing-orangeLight text-black rounded-2xl font-black
+               text-xs tracking-widest uppercase hover:bg-orange-600 hover:text-white
+               transition-all shadow-xl;
     }
 }

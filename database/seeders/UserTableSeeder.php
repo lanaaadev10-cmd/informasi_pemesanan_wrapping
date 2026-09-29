@@ -17,7 +17,7 @@ class UserTableSeeder extends Seeder
             ['email' => 'fauziahmad@gmail.com'],
             [
                 'name' => 'Ahmad Fauzi',
-                'password' => Hash::make('kelompok3'),
+                'password' => 'kelompok3',
                 'email_verified_at' => now(),
             ]
         );
@@ -27,7 +27,7 @@ class UserTableSeeder extends Seeder
             ['email' => 'izaldev@gmail.com'],
             [
                 'name' => 'Syahrizaldev',
-                'password' => Hash::make('password'),
+                'password' => 'password',
                 'email_verified_at' => now(),
             ]
         );

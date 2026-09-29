@@ -1,4 +1,4 @@
-@extends('layouts.dashboard_customer')
+@extends('layouts.dashboard-customer')
 
 @php
     $accentColor = '#ff6b00';
@@ -96,40 +96,6 @@
             ],
         ];
 
-        $mainTabs = [
-            'all' => [
-                'label' => 'Semua',
-                'count' => $stats['tab_all'] ?? $stats['total'] ?? 0,
-                'url' => route('booking.index'),
-                'icon' => 'ph-squares-four',
-            ],
-            'unpaid' => [
-                'label' => 'Menunggu Bayar',
-                'count' => $stats['tab_unpaid'] ?? 0,
-                'url' => route('booking.index', ['tab' => 'unpaid']),
-                'icon' => 'ph-credit-card',
-                'highlight' => ($stats['tab_unpaid'] ?? 0) > 0,
-            ],
-            'processing' => [
-                'label' => 'Sedang Diproses',
-                'count' => $stats['tab_processing'] ?? 0,
-                'url' => route('booking.index', ['tab' => 'processing']),
-                'icon' => 'ph-gear-six',
-            ],
-            'completed' => [
-                'label' => 'Selesai',
-                'count' => $stats['tab_completed'] ?? 0,
-                'url' => route('booking.index', ['tab' => 'completed']),
-                'icon' => 'ph-check-circle',
-            ],
-            'cancelled' => [
-                'label' => 'Dibatalkan',
-                'count' => $stats['tab_cancelled'] ?? 0,
-                'url' => route('booking.index', ['tab' => 'cancelled']),
-                'icon' => 'ph-x-circle',
-            ],
-        ];
-
         $emptyMessage = match($currentTab) {
             'unpaid' => 'Tidak Ada Booking yang Menunggu Pembayaran',
             'processing' => 'Tidak Ada Booking yang Sedang Diproses',
@@ -163,31 +129,6 @@
                 </div>
             </a>
         @endforeach
-    </div>
-
-    {{-- ── BARIS TAB STATUS TUNGGAL (BERSIH & TANPA DUPLIKASI) ── --}}
-    <div class="z-10 relative">
-        <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-            @foreach($mainTabs as $key => $tabItem)
-                @php
-                    $isActiveTab = ($currentTab === $key);
-                @endphp
-                <a href="{{ $tabItem['url'] }}"
-                   class="inline-flex items-center gap-2 px-4 py-2.5 min-h-[42px] rounded-xl text-xs font-montserrat font-bold uppercase tracking-wider transition-all whitespace-nowrap {{ $isActiveTab ? 'bg-[#FF6B00] text-black shadow-[0_4px_16px_rgba(255,107,0,0.35)] scale-[1.02]' : 'bg-[#0E0E10] text-[#8A8D93] hover:text-white hover:bg-white/10 border border-white/10' }}">
-                    <i class="ph-bold {{ $tabItem['icon'] }} text-sm {{ $isActiveTab ? 'text-black' : 'text-[#8A8D93]' }}"></i>
-                    <span>{{ $tabItem['label'] }}</span>
-                    @if(!empty($tabItem['highlight']))
-                        <span class="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#FF6B00] text-black">
-                            {{ $tabItem['count'] }}
-                        </span>
-                    @else
-                        <span class="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold {{ $isActiveTab ? 'bg-black/20 text-black' : 'bg-white/10 text-gray-300' }}">
-                            {{ $tabItem['count'] }}
-                        </span>
-                    @endif
-                </a>
-            @endforeach
-        </div>
     </div>
 
     {{-- Daftar booking --}}

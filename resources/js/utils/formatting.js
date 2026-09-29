@@ -1,6 +1,12 @@
 /**
- * Formatting Utilities
- * Currency, numbers, dates formatting
+ * formatting.js — Utilitas Format Data
+ *
+ * Berisi fungsi pembantu untuk memformat angka, mata uang (Rupiah),
+ * dan tanggal ke format lokal Indonesia.
+ *
+ * Penggunaan di Blade/skrip inline:
+ *   formatters.currency(150000)  → 'Rp 150.000'
+ *   formatters.date('2026-09-29') → '29 Sep 2026'
  */
 
 const formatters = {
@@ -32,7 +38,10 @@ const formatters = {
   dateTime: (date) => formatters.date(date, 'time'),
 };
 
-// Export for module environments
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = formatters;
+// ES Module export (digunakan oleh app.js via Vite)
+export { formatters };
+
+// Fallback ke window agar bisa diakses dari inline script Blade
+if (typeof window !== 'undefined') {
+  window.formatters = formatters;
 }

@@ -11,6 +11,8 @@ use App\Models\Keranjang;
 use App\Models\User;
 use App\Events\OrderCreated;
 use App\Events\PaymentUploaded;
+use App\Http\Requests\Pesanan\StorePesananRequest;
+use App\Http\Requests\Pesanan\UploadBuktiPesananRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -71,19 +73,8 @@ class PesananController extends Controller
     /**
      * LANGKAH 1: User checkout → status: menunggu_konfirmasi_admin
      */
-    public function checkout(Request $request)
+    public function checkout(StorePesananRequest $request)
     {
-        $request->validate([
-            'nama_pemesan'        => 'required|string|max:100',
-            'alamat_pengiriman'   => 'required|string',
-            'no_hp'               => 'required|string|max:20',
-            'model_kendaraan'     => 'required|string|max:100',
-            'warna_kendaraan'     => 'required|string|max:100',
-            'lokasi_pengerjaan'   => 'required|string|in:toko',
-            'jadwal_pengerjaan'   => 'required|date|after_or_equal:today',
-            'keterangan_tambahan' => 'nullable|string|max:500',
-        ]);
-
         // Validasi kuota slot harian & tanggal libur bengkel
         $slotKuotaService = app(\App\Services\SlotKuotaService::class);
         $quota = $slotKuotaService->checkQuota($request->jadwal_pengerjaan);
@@ -182,13 +173,8 @@ class PesananController extends Controller
     /**
      * LANGKAH 3: User upload bukti pembayaran → status: menunggu_verifikasi_pembayaran
      */
-    public function uploadBukti(Request $request, $id_pesanan)
+    public function uploadBukti(UploadBuktiPesananRequest $request, $id_pesanan)
     {
-        $request->validate([
-            'metode_pembayaran' => 'required|string',
-            'bukti_transfer'    => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
-        ]);
-
         $pesanan = Pesanan::where('id_pesanan', $id_pesanan)
             ->where('id_user', Auth::id())
             ->firstOrFail();

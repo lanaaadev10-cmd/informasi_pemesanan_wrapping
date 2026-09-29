@@ -1,4 +1,4 @@
-@extends('layouts.dashboard_customer')
+@extends('layouts.dashboard-customer')
 
 @php
     $accentColor = $profil->accent_color ?? '#f2994a';

@@ -1,4 +1,4 @@
-@extends('layouts.dashboard_customer')
+@extends('layouts.dashboard-customer')
 
 @section('title', 'Pesan Langsung - ' . ($package->nama_layanan ?? 'Pesanan Baru'))
 

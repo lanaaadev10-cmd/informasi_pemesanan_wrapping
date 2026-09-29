@@ -18,7 +18,7 @@ use App\Http\Controllers\Api\Admin\AdminPembayaranController;
 use App\Http\Controllers\Api\Admin\AdminPesananController;
 use App\Http\Controllers\Api\Admin\AdminBookingController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\GaleriApiController;
+use App\Http\Controllers\Api\GaleriController;
 use App\Http\Controllers\Api\KeranjangController;
 use App\Http\Controllers\Api\LayananController;
 use App\Http\Controllers\Api\NotifikasiController;
@@ -63,9 +63,9 @@ Route::prefix('layanan')->group(function () {
 
 // Galeri publik
 Route::prefix('galeri')->group(function () {
-    Route::get('/', [GaleriApiController::class, 'index']);             // semua karya galeri
-    Route::get('/kategori', [GaleriApiController::class, 'categories']); // daftar kategori
-    Route::get('/{kategori}/jenis', [GaleriApiController::class, 'jenisList']); // filter by kategori
+    Route::get('/', [GaleriController::class, 'index']);             // semua karya galeri
+    Route::get('/kategori', [GaleriController::class, 'categories']); // daftar kategori
+    Route::get('/{kategori}/jenis', [GaleriController::class, 'jenisList']); // filter by kategori
 });
 
 // Testimoni/Rating publik

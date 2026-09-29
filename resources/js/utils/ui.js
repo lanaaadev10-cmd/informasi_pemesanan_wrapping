@@ -1,6 +1,15 @@
 /**
- * UI Utilities
- * Toast notifications, loading states, modals
+ * ui.js — Utilitas Antarmuka Pengguna
+ *
+ * Menyediakan komponen UI dinamis yang digunakan di seluruh halaman:
+ * - `UI.toast.*`   — Notifikasi pop-up (success, error, info, warning)
+ * - `UI.loading.*` — Overlay loading / spinner layar penuh
+ * - `UI.confirm()` — Dialog konfirmasi (pengganti window.confirm)
+ *
+ * Penggunaan:
+ *   UI.toast.success('Berhasil disimpan!')
+ *   UI.loading.show('Memproses...')
+ *   UI.confirm('Yakin?').then(ok => { if (ok) doSomething() })
  */
 
 const UI = {
@@ -131,7 +140,10 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Export for module environments
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = UI;
+// ES Module export (digunakan oleh app.js via Vite)
+export { UI };
+
+// Fallback ke window agar bisa diakses dari inline script Blade
+if (typeof window !== 'undefined') {
+  window.UI = UI;
 }

@@ -7,10 +7,10 @@ use App\Filament\Resources\BlockedDates\Pages\EditBlockedDate;
 use App\Filament\Resources\BlockedDates\Pages\ListBlockedDates;
 use App\Models\BlockedDate;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -28,7 +28,7 @@ class BlockedDateResource extends Resource
     protected static ?string $slug = 'tanggal-diblokir';
     protected static string|null|\UnitEnum $navigationGroup = 'Transaksi';
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-no-symbol';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Schema $schema): Schema
     {

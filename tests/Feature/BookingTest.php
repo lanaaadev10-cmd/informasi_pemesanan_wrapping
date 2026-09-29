@@ -49,6 +49,20 @@ class BookingTest extends TestCase
     }
 
     /**
+     * Test Case:
+     * Accessing booking creation page renders successfully with Date Strip.
+     */
+    public function test_verified_user_can_access_booking_create_page()
+    {
+        $response = $this->actingAs($this->verifiedUser)->get(route('booking.create'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Jadwal Booking Pengerjaan');
+        $response->assertSee('Pilih Cepat Jadwal');
+        $response->assertSee('14 Hari ke Depan');
+    }
+
+    /**
      * Test Case 1 (Positive Case):
      * Successful booking creation by a verified customer with valid inputs.
      */

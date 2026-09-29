@@ -7,7 +7,6 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             <!-- Left: Description -->
             <div class="space-y-6 lg:col-span-5">
-                <span class="text-xs uppercase font-extrabold tracking-widest text-[#f2994a]">{{ \App\Helpers\StaticContent::SEJARAH_BADGE }}</span>
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
                     {{ \App\Helpers\StaticContent::SEJARAH_TITLE }}
                 </h2>
@@ -25,10 +24,10 @@
             <div class="grid grid-cols-12 gap-4 lg:col-span-7">
                 <div class="col-span-7 flex flex-col gap-4">
                     <!-- Shop photo -->
-                    <div class="rounded-[24px] overflow-hidden shadow-2xl border border-white/5 h-48 sm:h-56 relative group">
-                        <img src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=800&auto=format&fit=crop" 
+                    <div class="rounded-[24px] overflow-hidden shadow-2xl border border-white/5 h-48 sm:h-56 relative group bg-[#161616]">
+                        <img src="{{ asset('images/banner_exclusive_car.jpg') }}" 
                              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                             alt="Detailing Shop">
+                             alt="Workshop Studio">
                         <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/80 via-transparent to-transparent"></div>
                     </div>
                     <!-- Stats card -->
@@ -42,7 +41,7 @@
                 <!-- 10th Anniversary vertical card -->
                 <div class="col-span-5 bg-[#121212]/90 border border-white/5 rounded-[24px] overflow-hidden relative group hover:border-[#f2994a]/30 transition-all duration-300 flex flex-col justify-between h-[360px] sm:h-[416px]">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent z-10"></div>
-                    <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=800&auto=format&fit=crop" 
+                    <img src="{{ asset('images/hero_racing_car.jpg') }}" 
                          class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                          alt="Supercar">
                     <div class="relative z-20 p-6 flex flex-col justify-between h-full">

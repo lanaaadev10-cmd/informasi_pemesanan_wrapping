@@ -6,6 +6,8 @@ use App\Models\Booking;
 use App\Models\Layanan;
 use App\Services\BookingService;
 use App\Enums\PaymentType;
+use App\Http\Requests\Booking\StoreBookingRequest;
+use App\Http\Requests\Booking\UploadBuktiBookingRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -50,48 +52,32 @@ class BookingController extends Controller
 
         $user = Auth::user();
 
-        return view('customer.booking.create', compact('layanans', 'selectedDate', 'todayQuota', 'user'));
+        // Ambil ID layanan dari query parameter (dari katalog / keranjang)
+        $selectedLayananId = $request->get('layanan_id');
+        if (!$selectedLayananId && Auth::check()) {
+            $activeCart = \App\Models\Keranjang::where('id_user', Auth::id())
+                ->where('status', 'active')
+                ->with('details')
+                ->first();
+            if ($activeCart && $activeCart->details->isNotEmpty()) {
+                $selectedLayananId = $activeCart->details->first()->id_paket;
+            }
+        }
+
+        return view('customer.booking.create', compact('layanans', 'selectedDate', 'todayQuota', 'user', 'selectedLayananId'));
     }
 
     /**
      * Proses simpan booking (dengan anti-overbooking di service).
      */
-    public function store(Request $request)
+    public function store(StoreBookingRequest $request)
     {
         if (Auth::check() && !Auth::user()->hasVerifiedEmail()) {
             return redirect()->route('verification.notice')
                 ->with('toast_warning', 'Email Anda belum terverifikasi. Verifikasi email terlebih dahulu sebelum mengajukan booking.');
         }
 
-        if (!$request->filled('customer_name') && Auth::check()) {
-            $request->merge(['customer_name' => Auth::user()->name]);
-        }
-        if (!$request->filled('customer_phone') && Auth::check()) {
-            $phone = Auth::user()->no_hp ?: (Auth::user()->phone ?: '081234567890');
-            $request->merge(['customer_phone' => $phone]);
-        }
-
-        $data = $request->validate([
-            'customer_name'    => 'required|string|max:150',
-            'customer_phone'   => 'required|string|max:30',
-            'customer_email'   => 'nullable|email|max:150',
-            'layanan_id'       => 'required|exists:layanans,id_layanan',
-            'booking_date'     => 'required|date|after_or_equal:today',
-            'booking_time'     => 'nullable|string|max:10',
-            'payment_type'     => 'required|in:dp,lunas',
-            'payment_method'   => 'nullable|string|max:50',
-            'vehicle_name'     => 'nullable|string|max:150',
-            'vehicle_color'    => 'nullable|string|max:100',
-            'vehicle_license'  => 'nullable|string|max:50',
-            'notes'            => 'nullable|string|max:1000',
-            'proof_file'       => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-        ], [
-            'customer_name.required' => 'Nama lengkap wajib diisi.',
-            'customer_phone.required' => 'Nomor WhatsApp wajib diisi.',
-            'layanan_id.required' => 'Pilih paket layanan yang diinginkan.',
-            'booking_date.required' => 'Pilih tanggal booking yang tersedia.',
-            'booking_date.after_or_equal' => 'Tanggal booking tidak boleh tanggal yang sudah lewat.',
-        ]);
+        $data = $request->validated();
 
         try {
             $booking = $this->bookingService->createBooking(
@@ -99,6 +85,16 @@ class BookingController extends Controller
                 data: $data,
                 proofFile: $request->file('proof_file'),
             );
+
+            // Tandai keranjang aktif user sebagai checked_out jika ada
+            if (Auth::check()) {
+                $activeCart = \App\Models\Keranjang::where('id_user', Auth::id())
+                    ->where('status', 'active')
+                    ->first();
+                if ($activeCart) {
+                    $activeCart->update(['status' => 'checked_out']);
+                }
+            }
 
             return redirect()->route('booking.show', $booking->id)
                 ->with('toast_success', 'Booking berhasil dibuat! Kode booking: ' . $booking->booking_code);
@@ -135,12 +131,8 @@ class BookingController extends Controller
     /**
      * Upload bukti transfer (status: awaiting_payment -> payment_uploaded).
      */
-    public function uploadBukti(Request $request, $id)
+    public function uploadBukti(UploadBuktiBookingRequest $request, $id)
     {
-        $request->validate([
-            'payment_method' => 'required|string|max:50',
-            'proof_file'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-        ]);
 
         $booking = Booking::where('id', $id)
             ->where('user_id', Auth::id())

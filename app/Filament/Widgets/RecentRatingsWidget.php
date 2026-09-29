@@ -11,7 +11,7 @@ class RecentRatingsWidget extends BaseWidget
 {
     protected static ?string $heading = 'Rating & Testimoni Terbaru';
     protected static ?string $description = '5 ulasan paling baru dari pelanggan';
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 7;
 
     protected int|string|array $columnSpan = 'full';
 

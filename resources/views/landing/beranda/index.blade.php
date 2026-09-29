@@ -1,4 +1,4 @@
-@extends('layouts.tampilan_utama')
+@extends('layouts.tampilan-utama')
 
 @section('title', 'Beranda')
 

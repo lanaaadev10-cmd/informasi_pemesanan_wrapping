@@ -5,11 +5,11 @@ namespace App\Filament\Resources\Bookings\Schemas;
 use App\Enums\BookingStatus;
 use App\Enums\PaymentType;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class BookingForm

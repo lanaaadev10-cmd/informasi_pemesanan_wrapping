@@ -9,9 +9,14 @@ use Illuminate\Support\Facades\DB;
 
 class RevenueChartWidget extends ChartWidget
 {
-    protected ?string $heading = 'Pendapatan Bulanan';
-    protected ?string $description = 'Pendapatan 12 bulan terakhir';
-    protected static ?int $sort = 4;
+    protected ?string $heading = 'Grafik Tren Pendapatan Bulanan';
+    protected ?string $description = 'Performa akumulasi pendapatan 12 bulan terakhir (dalam Juta Rupiah)';
+    protected static ?int $sort = 3;
+
+    protected int | string | array $columnSpan = [
+        'default' => 'full',
+        'lg' => 1,
+    ];
 
     protected function getData(): array
     {
@@ -42,21 +47,21 @@ class RevenueChartWidget extends ChartWidget
             $key = $date->format('Y-m');
             $months[] = $date->format('M Y');
             $monthTotal = (float) ($rawRevenue[$key] ?? 0) + (float) ($bookingRevenue[$key] ?? 0);
-            $revenue[11 - $i] = $monthTotal / 1000000;
+            $revenue[11 - $i] = round($monthTotal / 1000000, 2);
         }
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Pendapatan (Juta Rupiah)',
+                    'label' => 'Pendapatan (Juta Rp)',
                     'data' => array_values($revenue),
-                    'borderColor' => '#10B981',
-                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                    'borderColor' => '#FF6B00',
+                    'backgroundColor' => 'rgba(255, 107, 0, 0.1)',
                     'borderWidth' => 3,
                     'fill' => true,
                     'tension' => 0.4,
-                    'pointRadius' => 5,
-                    'pointBackgroundColor' => '#10B981',
+                    'pointRadius' => 4,
+                    'pointBackgroundColor' => '#FF6B00',
                     'pointBorderColor' => '#fff',
                     'pointBorderWidth' => 2,
                 ],

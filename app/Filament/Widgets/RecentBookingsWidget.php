@@ -5,21 +5,26 @@ namespace App\Filament\Widgets;
 use App\Enums\BookingStatus;
 use App\Filament\Resources\Bookings\BookingResource;
 use App\Models\Booking;
+use Filament\Actions\Action;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
 class RecentBookingsWidget extends BaseWidget
 {
-    protected static ?string $heading = 'Daftar Booking Terbaru';
-    protected static ?string $description = 'Pemesanan jadwal online terbaru dari pelanggan';
-    protected static ?int $sort = 2;
-    protected int | string | array $columnSpan = 'full';
+    protected static ?string $heading = 'Booking Online Terbaru';
+    protected static ?string $description = '5 booking online paling baru';
+    protected static ?int $sort = 5;
+
+    protected int | string | array $columnSpan = [
+        'default' => 'full',
+        'lg' => 1,
+    ];
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(Booking::with('layanan', 'user')->latest()->limit(8))
+            ->query(Booking::with('layanan', 'user')->latest()->limit(5))
             ->columns([
                 Tables\Columns\TextColumn::make('booking_code')
                     ->label('Kode Booking')
@@ -68,17 +73,18 @@ class RecentBookingsWidget extends BaseWidget
                     ->since(),
             ])
             ->actions([
-                Tables\Actions\Action::make('whatsapp')
+                Action::make('whatsapp')
                     ->label('WA')
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->color('success')
                     ->url(fn (Booking $record) => $record->whatsapp_notification_url)
                     ->openUrlInNewTab(),
 
-                Tables\Actions\Action::make('view')
+                Action::make('view')
                     ->label('Buka')
                     ->icon('heroicon-o-eye')
                     ->url(fn (Booking $record): string => BookingResource::getUrl('view', ['record' => $record])),
-            ]);
+            ])
+            ->paginated(false);
     }
 }

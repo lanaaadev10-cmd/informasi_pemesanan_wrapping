@@ -1,6 +1,15 @@
 /**
- * Local Storage Utilities
- * Simple key-value storage with TTL support
+ * storage.js — Utilitas Local Storage
+ *
+ * Abstraksi tipis di atas `localStorage` browser dengan:
+ * - Namespace prefix agar tidak bentrok dengan storage app lain
+ * - Dukungan TTL (Time-To-Live / kadaluarsa otomatis)
+ * - Sub-modul `.cart` khusus operasi keranjang belanja
+ *
+ * Penggunaan:
+ *   storage.set('token', 'abc123', 60) // simpan selama 60 menit
+ *   storage.get('token')               // ambil nilai (null jika expired)
+ *   storage.cart.add({ id: 1, ... })   // tambah ke keranjang
  */
 
 const storage = {
@@ -81,7 +90,10 @@ const storage = {
   },
 };
 
-// Export for module environments
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = storage;
+// ES Module export (digunakan oleh app.js via Vite)
+export { storage };
+
+// Fallback ke window agar bisa diakses dari inline script Blade
+if (typeof window !== 'undefined') {
+  window.storage = storage;
 }
