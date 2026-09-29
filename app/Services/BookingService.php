@@ -102,18 +102,13 @@ class BookingService
      * File bukti transfer disimpan terlebih dahulu (filesystem tanpa
      * transaksi), lalu dibuat booking didalam DB::transaction.
      */
-    public function createBooking(User $user, array $data, ?UploadedFile $proofFile = null): Booking
+    public function createBooking(?User $user, array $data, ?UploadedFile $proofFile = null): Booking
     {
-        // Anti-slot-hoarding: wajib verifikasi email sebelum mengunci slot.
-        // (tanpa ini, bot bisa membuat ribuan akun untuk memborong semua slot.)
-        if ($user->email_verified_at === null) {
-            throw new BookingEmailUnverifiedException();
-        }
-
         $layanan = Layanan::findOrFail($data['layanan_id']);
         $bookingDate = $data['booking_date'];
 
-        $amount = $data['payment_type'] === PaymentType::DP->value
+        $paymentType = $data['payment_type'] ?? 'dp';
+        $amount = $paymentType === PaymentType::DP->value
             ? $this->calculateDpAmount($layanan)
             : (float) $layanan->harga;
 
@@ -127,26 +122,36 @@ class BookingService
             $data,
             $layanan,
             $bookingDate,
+            $paymentType,
             $amount,
-            $proofPath,
+            $proofPath
         ) {
             DB::beginTransaction();
             try {
                 // Cek kuota gabungan (booking + pesanan) dengan pessimistic lock.
-                // Dilempar SlotPenuhException jika sudah mencapai 5 slot/hari.
+                // Dilempar SlotPenuhException jika sudah mencapai 5 slot/hari atau tanggal diblokir.
                 $this->slotKuotaService->assertSlotAvailable($bookingDate);
 
-                // Mencegah satu user memborong banyak slot di tanggal sama
-                // (double-submit / booking beberapa layanan untuk hari sama).
-                $this->assertSlotAvailableForUser($user, $bookingDate);
+                // Mencegah double-click submit instan yang sama dari user non-admin
+                if ($user && !$user->hasRole('admin')) {
+                    $this->assertSlotAvailableForUser($user, $bookingDate);
+                }
+
+                $customerName = $data['customer_name'] ?? ($user?->name ?? 'Pelanggan');
+                $customerPhone = $data['customer_phone'] ?? ($user?->no_hp ?? ($user?->phone ?? '-'));
+                $customerEmail = $data['customer_email'] ?? $user?->email;
 
                 $booking = Booking::create([
-                    'booking_code' => 'BKG-' . date('YmdHis') . '-' . strtoupper(Str::random(6)),
-                    'user_id' => $user->id,
+                    'booking_code' => 'BKG-' . date('Ymd') . '-' . strtoupper(Str::random(5)),
+                    'user_id' => $user?->id,
+                    'customer_name' => $customerName,
+                    'customer_phone' => $customerPhone,
+                    'customer_email' => $customerEmail,
                     'layanan_id' => $layanan->id_layanan,
                     'booking_date' => $bookingDate,
-                    'payment_type' => $data['payment_type'],
-                    'vehicle_name' => $data['vehicle_name'],
+                    'booking_time' => $data['booking_time'] ?? null,
+                    'payment_type' => $paymentType,
+                    'vehicle_name' => $data['vehicle_name'] ?? 'Mobil Pelanggan',
                     'vehicle_color' => $data['vehicle_color'] ?? null,
                     'vehicle_license' => $data['vehicle_license'] ?? null,
                     'notes' => $data['notes'] ?? null,
@@ -201,6 +206,103 @@ class BookingService
         }
 
         return $processBooking();
+    }
+
+    /**
+     * Admin membuat booking manual.
+     * Mengikuti batas kuota 5/hari kecuali $overrideQuota = true.
+     */
+    public function createManualBooking(array $data, bool $overrideQuota = false): Booking
+    {
+        $bookingDate = $data['booking_date'];
+
+        if (!$overrideQuota) {
+            $this->slotKuotaService->assertSlotAvailable($bookingDate);
+        }
+
+        $layanan = Layanan::find($data['layanan_id'] ?? null);
+        $amount = (float) ($layanan?->harga ?? 0);
+        if (($data['payment_type'] ?? 'lunas') === PaymentType::DP->value && $layanan) {
+            $amount = $this->calculateDpAmount($layanan);
+        }
+
+        DB::beginTransaction();
+        try {
+            $booking = Booking::create([
+                'booking_code' => 'BKG-M-' . date('Ymd') . '-' . strtoupper(Str::random(5)),
+                'user_id' => $data['user_id'] ?? null,
+                'customer_name' => $data['customer_name'] ?? 'Pelanggan Manual',
+                'customer_phone' => $data['customer_phone'] ?? '-',
+                'customer_email' => $data['customer_email'] ?? null,
+                'layanan_id' => $data['layanan_id'],
+                'booking_date' => $bookingDate,
+                'booking_time' => $data['booking_time'] ?? null,
+                'payment_type' => $data['payment_type'] ?? 'lunas',
+                'vehicle_name' => $data['vehicle_name'] ?? 'Mobil Pelanggan',
+                'vehicle_color' => $data['vehicle_color'] ?? null,
+                'vehicle_license' => $data['vehicle_license'] ?? null,
+                'notes' => $data['notes'] ?? null,
+                'status' => $data['status'] ?? BookingStatus::CONFIRMED->value,
+                'admin_notes' => $data['admin_notes'] ?? ($overrideQuota ? '[Admin Override Kuota]' : null),
+            ]);
+
+            BookingPayment::create([
+                'booking_id' => $booking->id,
+                'payment_method' => $data['payment_method'] ?? 'cash',
+                'amount' => $amount,
+                'proof_file' => null,
+                'status' => in_array($booking->status, [BookingStatus::CONFIRMED, BookingStatus::APPROVED, BookingStatus::COMPLETED]) ? 'approved' : 'pending',
+            ]);
+
+            DB::commit();
+
+            $this->slotKuotaService->clearCache($bookingDate);
+            $booking->load(['layanan', 'user', 'payment']);
+
+            return $booking;
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Admin mengubah jadwal booking (Reschedule).
+     */
+    public function rescheduleBooking(Booking $booking, string $newDate, ?string $newTime = null, ?string $adminNotes = null, bool $overrideQuota = false): Booking
+    {
+        $oldDate = $booking->booking_date ? $booking->booking_date->toDateString() : null;
+
+        if ($oldDate !== $newDate && !$overrideQuota) {
+            $this->slotKuotaService->assertSlotAvailable($newDate);
+        }
+
+        DB::beginTransaction();
+        try {
+            $notes = $booking->admin_notes ? $booking->admin_notes . "\n" : '';
+            $notes .= "[Reschedule " . now()->format('d/m/Y H:i') . "] Dari {$oldDate} ke {$newDate}";
+            if ($adminNotes) {
+                $notes .= ": {$adminNotes}";
+            }
+
+            $booking->update([
+                'booking_date' => $newDate,
+                'booking_time' => $newTime ?: $booking->booking_time,
+                'admin_notes' => $notes,
+            ]);
+
+            DB::commit();
+
+            if ($oldDate) {
+                $this->slotKuotaService->clearCache($oldDate);
+            }
+            $this->slotKuotaService->clearCache($newDate);
+
+            return $booking->fresh();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -456,16 +558,33 @@ class BookingService
     /**
      * Daftar booking milik user dengan pagination.
      */
-    public function getUserBookings(int $userId, int $perPage = 10, ?string $status = null): LengthAwarePaginator
+    public function getUserBookings(int $userId, int $perPage = 10, ?string $status = null, ?string $tab = null): LengthAwarePaginator
     {
         $query = Booking::with(['layanan', 'payment'])
             ->where('user_id', $userId);
 
-        if ($status) {
-            $query->where('status', $status);
+        $filter = $tab ?: $status;
+
+        if ($filter && $filter !== 'all') {
+            match ($filter) {
+                'unpaid', 'menunggu_bayar', 'awaiting_payment' => $query->where('status', BookingStatus::AWAITING_PAYMENT->value),
+                'processing', 'diproses', 'active', 'berjalan' => $query->whereIn('status', [
+                    BookingStatus::PENDING->value,
+                    BookingStatus::CONFIRMED->value,
+                    BookingStatus::PAYMENT_UPLOADED->value,
+                    BookingStatus::APPROVED->value,
+                    BookingStatus::IN_PROGRESS->value,
+                ]),
+                'completed', 'selesai' => $query->where('status', BookingStatus::COMPLETED->value),
+                'cancelled', 'dibatalkan', 'rejected', 'ditolak', 'batal' => $query->whereIn('status', [
+                    BookingStatus::CANCELLED->value,
+                    BookingStatus::REJECTED->value,
+                ]),
+                default => $query->where('status', $filter),
+            };
         }
 
-        return $query->orderByDesc('booking_date')->paginate($perPage);
+        return $query->orderByDesc('booking_date')->paginate($perPage)->withQueryString();
     }
 
     /**
@@ -484,6 +603,20 @@ class BookingService
             fn (string $status): int => (int) ($counts[$status] ?? 0)
         );
 
+        $unpaidCount = (int) ($counts[BookingStatus::AWAITING_PAYMENT->value] ?? 0);
+        $processingCount = $sum([
+            BookingStatus::PENDING->value,
+            BookingStatus::CONFIRMED->value,
+            BookingStatus::PAYMENT_UPLOADED->value,
+            BookingStatus::APPROVED->value,
+            BookingStatus::IN_PROGRESS->value,
+        ]);
+        $completedCount = (int) ($counts[BookingStatus::COMPLETED->value] ?? 0);
+        $cancelledCount = $sum([
+            BookingStatus::CANCELLED->value,
+            BookingStatus::REJECTED->value,
+        ]);
+
         return [
             'total' => $counts->sum(),
             'pending' => (int) ($counts[BookingStatus::PENDING->value] ?? 0),
@@ -491,12 +624,15 @@ class BookingService
                 BookingStatus::AWAITING_PAYMENT->value,
                 BookingStatus::PAYMENT_UPLOADED->value,
             ]),
-            'aktif' => $sum([
-                BookingStatus::CONFIRMED->value,
-                BookingStatus::APPROVED->value,
-                BookingStatus::IN_PROGRESS->value,
-            ]),
-            'selesai' => (int) ($counts[BookingStatus::COMPLETED->value] ?? 0),
+            'aktif' => $processingCount,
+            'selesai' => $completedCount,
+
+            // Tab agregat bersih (Opsi Rekomendasi 1)
+            'tab_all' => $counts->sum(),
+            'tab_unpaid' => $unpaidCount,
+            'tab_processing' => $processingCount,
+            'tab_completed' => $completedCount,
+            'tab_cancelled' => $cancelledCount,
         ];
     }
 

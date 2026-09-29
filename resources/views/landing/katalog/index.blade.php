@@ -4,10 +4,10 @@
 
 @section('content')
     <!-- Container Utama -->
-    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-10 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-10 relative overflow-hidden">
 
         @php
-            $accentColor = $profil->accent_color ?? '#f2994a';
+            $accentColor = '#ff6b00';
             $heroTitle = $profil->katalog_hero_title ?? 'Katalog Layanan';
             $heroDesc = $profil->katalog_hero_desc ?? 'Pilih Layanan yang Anda Inginkan';
             $introText = $profil->katalog_intro_text ?? 'Kami menyediakan berbagai layanan wrapping premium untuk kendaraan Anda. Pilih jenis finishing yang sesuai dengan selera dan kebutuhan Anda.';

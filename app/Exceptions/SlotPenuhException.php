@@ -16,10 +16,10 @@ class SlotPenuhException extends Exception
         public readonly string $date,
         public readonly int $totalUsed,
         public readonly int $maxSlot,
+        ?string $customMessage = null,
     ) {
         $tgl = \Carbon\Carbon::parse($date)->translatedFormat('d F Y');
-        parent::__construct(
-            "Slot penuh untuk tanggal {$tgl}. Kapasitas harian ({$maxSlot} kendaraan) telah tercapai dari gabungan booking dan pesanan langsung."
-        );
+        $msg = $customMessage ?: "Slot penuh untuk tanggal {$tgl}. Kapasitas harian ({$maxSlot} kendaraan) telah tercapai. Silakan pilih tanggal lain.";
+        parent::__construct($msg);
     }
 }

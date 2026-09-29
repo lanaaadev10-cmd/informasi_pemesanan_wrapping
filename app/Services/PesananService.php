@@ -208,7 +208,7 @@ class PesananService
 
         match ($status) {
             OrderStatus::MENUNGGU_PEMBAYARAN => event(new \App\Events\OrderConfirmed($pesananWithRelations)),
-            OrderStatus::SEDANG_DIPROSES => event(new \App\Events\PaymentVerified($pesananWithRelations)),
+            OrderStatus::DIKONFIRMASI, OrderStatus::SEDANG_DIPROSES => event(new \App\Events\PaymentVerified($pesananWithRelations)),
             OrderStatus::SELESAI => event(new \App\Events\OrderCompleted($pesananWithRelations)),
             OrderStatus::DITOLAK => event(new \App\Events\OrderRejected($pesananWithRelations)),
             default => null,

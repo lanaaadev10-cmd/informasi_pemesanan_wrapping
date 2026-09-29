@@ -12,10 +12,26 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Questrial', 'Montserrat', ...defaultTheme.fontFamily.sans],
+                audiowide: ['Audiowide', 'cursive', 'sans-serif'],
+                montserrat: ['Montserrat', 'sans-serif'],
+                questrial: ['Questrial', 'sans-serif'],
             },
+            colors: {
+                racing: {
+                    black: '#000000',
+                    dark: '#0a0a0a',
+                    card: '#121212',
+                    cardLight: '#181818',
+                    border: 'rgba(255, 255, 255, 0.08)',
+                    orange: '#ff6b00',
+                    orangeLight: '#f2994a',
+                    orangeBright: '#f97316',
+                }
+            }
         },
     },
 
     plugins: [forms],
 };
+

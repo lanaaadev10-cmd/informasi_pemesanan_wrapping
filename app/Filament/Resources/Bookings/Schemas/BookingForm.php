@@ -26,12 +26,26 @@ class BookingForm
                             ->dehydrated()
                             ->default(fn () => 'BKG-' . date('YmdHis') . '-' . strtoupper(\Illuminate\Support\Str::random(6))),
 
+                        TextInput::make('customer_name')
+                            ->label('Nama Lengkap Pelanggan')
+                            ->placeholder('Nama pemesan...')
+                            ->required(),
+
+                        TextInput::make('customer_phone')
+                            ->label('Nomor WhatsApp')
+                            ->placeholder('081234567890')
+                            ->required(),
+
+                        TextInput::make('customer_email')
+                            ->label('Email (Opsional)')
+                            ->email(),
+
                         Select::make('user_id')
-                            ->label('Pelanggan')
+                            ->label('Akun Pengguna (Opsional)')
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
-                            ->required(),
+                            ->nullable(),
 
                         Select::make('layanan_id')
                             ->label('Paket Layanan')
@@ -42,7 +56,13 @@ class BookingForm
 
                         DatePicker::make('booking_date')
                             ->label('Tanggal Pengerjaan')
+                            ->default(now()->toDateString())
                             ->required(),
+
+                        TextInput::make('booking_time')
+                            ->label('Jam Booking')
+                            ->default('09:00')
+                            ->placeholder('09:00'),
 
                         Select::make('payment_type')
                             ->label('Tipe Pembayaran')
@@ -51,6 +71,11 @@ class BookingForm
                                 ->toArray())
                             ->default(PaymentType::DP->value)
                             ->required(),
+
+                        \Filament\Forms\Components\Toggle::make('override_quota')
+                            ->label('Admin Override Kuota (Maks 5 Booking)')
+                            ->helperText('Aktifkan jika ingin mengabaikan batas kuota 5 booking per hari.')
+                            ->default(false),
                     ])
                     ->columns(['default' => 2])
                     ->columnSpan(2),

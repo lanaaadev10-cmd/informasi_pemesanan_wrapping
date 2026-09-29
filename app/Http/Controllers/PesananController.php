@@ -80,9 +80,20 @@ class PesananController extends Controller
             'model_kendaraan'     => 'required|string|max:100',
             'warna_kendaraan'     => 'required|string|max:100',
             'lokasi_pengerjaan'   => 'required|string|in:toko',
-            'jadwal_pengerjaan'   => 'required|date',
+            'jadwal_pengerjaan'   => 'required|date|after_or_equal:today',
             'keterangan_tambahan' => 'nullable|string|max:500',
         ]);
+
+        // Validasi kuota slot harian & tanggal libur bengkel
+        $slotKuotaService = app(\App\Services\SlotKuotaService::class);
+        $quota = $slotKuotaService->checkQuota($request->jadwal_pengerjaan);
+        if ($quota['is_blocked']) {
+            $reason = $quota['blocked_reason'] ?? 'Tutup / Hari Libur';
+            return back()->with('toast_error', "Tanggal {$request->jadwal_pengerjaan} tidak dapat dipilih: {$reason}. Silakan pilih jadwal lain.")->withInput();
+        }
+        if ($quota['is_full']) {
+            return back()->with('toast_error', "Kuota pengerjaan untuk tanggal {$request->jadwal_pengerjaan} sudah penuh (5/5 slot). Silakan pilih tanggal lain.")->withInput();
+        }
 
         $keranjang = Keranjang::where('id_user', Auth::id())
             ->where('status', 'active')
@@ -96,6 +107,7 @@ class PesananController extends Controller
             'id_user'       => Auth::id(),
             'kode_pesanan'  => 'PSN-' . strtoupper(Str::random(8)),
             'tanggal_pesan' => now()->toDateString(),
+            'booking_date'  => $request->jadwal_pengerjaan,
             'status'        => Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN,
             'total_harga'   => $totalHarga,
         ]);
@@ -159,6 +171,9 @@ class PesananController extends Controller
 
         // Kosongkan keranjang
         $keranjang->update(['status' => 'checked_out']);
+
+        // Refresh cache kuota kalender
+        $slotKuotaService->clearCache($request->jadwal_pengerjaan);
 
         return redirect()->route('pesanan.show', $pesanan->id_pesanan)
             ->with('toast_success', 'Pesanan berhasil dibuat! Tunggu konfirmasi dari admin.');

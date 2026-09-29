@@ -13,12 +13,14 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GaleriController;
+use App\Http\Controllers\KalkulatorController;
 use App\Http\Controllers\KeranjangController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\TestimoniController;
+use App\Http\Controllers\TransaksiController;
 use App\Models\Keranjang;
 use App\Models\Layanan;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +58,12 @@ Route::middleware('throttle:60,5')->group(function () {
     Route::get('/kebijakan-privasi', [DashboardController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
     Route::get('/testimoni', [TestimoniController::class, 'index'])->name('testimoni.index');
 
+    // ====================================================================
+    // KALKULATOR WRAPPING & ESTIMASI BIAYA (FASE 2)
+    // ====================================================================
+    Route::get('/kalkulator-wrapping', [KalkulatorController::class, 'index'])->name('kalkulator.index');
+    Route::post('/kalkulator-wrapping/hitung', [KalkulatorController::class, 'hitung'])->name('kalkulator.hitung');
+
     // Logout via GET — solusi jika form POST logout mengalami Error 419
     Route::get('/logout', function () {
         auth()->logout();
@@ -92,8 +100,12 @@ Route::middleware('throttle:60,5')->group(function () {
             //     Route::get('/orders/{id}/edit', [OfflineOrderController::class, 'edit'])->name('orders.edit');
             //     Route::put('/orders/{id}', [OfflineOrderController::class, 'update'])->name('orders.update');
             //     Route::delete('/orders/{id}', [OfflineOrderController::class, 'destroy'])->name('orders.destroy');
-            // });
         });
+
+        // ================================================================
+        // HUB TRANSAKSI TERPADU (FASE 1)
+        // ================================================================
+        Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
 
         // ================================================================
         // KERANJANG BELANJA

@@ -10,6 +10,8 @@ let katalogCategory = 'all';
 // Terapkan search + filter sekaligus ke semua kartu
 function applyCatalogFilters() {
     const items = document.querySelectorAll('.katalog-item');
+    let visibleCount = 0;
+
     items.forEach(item => {
         const categories = (item.getAttribute('data-category') || '').toLowerCase().split(' ');
 
@@ -20,8 +22,28 @@ function applyCatalogFilters() {
         const matchCategory = katalogCategory === 'all' || categories.includes(katalogCategory);
         const matchSearch = katalogQuery === '' || text.includes(katalogQuery);
 
-        item.style.display = (matchCategory && matchSearch) ? '' : 'none';
+        if (matchCategory && matchSearch) {
+            item.style.display = '';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
     });
+
+    // Tampilkan keterangan "Stok Habis / Belum Diisi" jika hasil filter kosong
+    const emptyState = document.getElementById('catalog-empty-state');
+    if (emptyState) {
+        emptyState.style.display = visibleCount === 0 ? 'flex' : 'none';
+    }
+
+    // Sembunyikan tombol navigasi carousel jika tidak ada item
+    const prevBtn = document.querySelector('.carousel-prev');
+    const nextBtn = document.querySelector('.carousel-next');
+    if (prevBtn && nextBtn) {
+        const showNav = visibleCount > 1;
+        prevBtn.style.display = showNav ? '' : 'none';
+        nextBtn.style.display = showNav ? '' : 'none';
+    }
 }
 
 // Javascript Live Search

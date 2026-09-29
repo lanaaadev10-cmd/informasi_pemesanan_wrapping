@@ -122,7 +122,7 @@ class PesanansTable
                     ->modalDescription('Pesanan sudah dicek dan valid? User akan mendapat notifikasi untuk melakukan pembayaran.')
                     ->modalSubmitActionLabel('Ya, Konfirmasi')
                     ->action(function (Pesanan $record) {
-                        $record->update(['status' => Pesanan::STATUS_MENUNGGU_PEMBAYARAN]);
+                        app(\App\Services\PesananService::class)->updateStatus($record, \App\Enums\OrderStatus::MENUNGGU_PEMBAYARAN->value);
                         \Filament\Notifications\Notification::make()
                             ->title('Pesanan dikonfirmasi!')
                             ->body('User telah dinotifikasi untuk melakukan pembayaran.')
@@ -144,14 +144,11 @@ class PesanansTable
                     ->modalDescription('Pastikan uang sudah masuk ke rekening. User akan bisa mengunduh invoice setelah ini.')
                     ->modalSubmitActionLabel('Ya, Pembayaran Valid')
                     ->action(function (Pesanan $record) {
-                        $record->update(['status' => Pesanan::STATUS_DIKONFIRMASI]);
-
-                        // Update status pembayaran
                         if ($record->pembayaran) {
                             $record->pembayaran->update(['verifikasi_admin' => 'diverifikasi']);
                         }
+                        app(\App\Services\PesananService::class)->updateStatus($record, \App\Enums\OrderStatus::DIKONFIRMASI->value);
 
-                        // Notifikasi ke user dikirim otomatis via Pesanan::booted()
                         \Filament\Notifications\Notification::make()
                             ->title('Pembayaran diverifikasi!')
                             ->body('User telah dinotifikasi. Invoice tersedia untuk diunduh.')
@@ -173,7 +170,7 @@ class PesanansTable
                     ->modalDescription('Tandai pesanan ini sedang dikerjakan. User akan mendapat notifikasi.')
                     ->modalSubmitActionLabel('Mulai Kerjakan')
                     ->action(function (Pesanan $record) {
-                        $record->update(['status' => Pesanan::STATUS_SEDANG_DIPROSES]);
+                        app(\App\Services\PesananService::class)->updateStatus($record, \App\Enums\OrderStatus::SEDANG_DIPROSES->value);
                         \Filament\Notifications\Notification::make()
                             ->title('Pengerjaan dimulai!')
                             ->success()->send();
@@ -194,7 +191,7 @@ class PesanansTable
                     ->modalDescription('Pengerjaan sudah selesai? User akan mendapat notifikasi untuk mengambil kendaraan.')
                     ->modalSubmitActionLabel('Ya, Tandai Selesai')
                     ->action(function (Pesanan $record) {
-                        $record->update(['status' => Pesanan::STATUS_SELESAI]);
+                        app(\App\Services\PesananService::class)->updateStatus($record, \App\Enums\OrderStatus::SELESAI->value);
                         \Filament\Notifications\Notification::make()
                             ->title('Pesanan diselesaikan!')
                             ->success()->send();
@@ -218,11 +215,11 @@ class PesanansTable
                             ->placeholder('Jelaskan alasan penolakan pesanan ini...'),
                     ])
                     ->action(function (Pesanan $record, array $data) {
-                        $record->update([
-                            'status'        => \App\Enums\OrderStatus::DITOLAK,
-                            'catatan_admin' => $data['alasan_tolak'],
-                        ]);
-                        // Notifikasi ke user dikirim otomatis via Pesanan::booted()
+                        app(\App\Services\PesananService::class)->updateStatus(
+                            $record,
+                            \App\Enums\OrderStatus::DITOLAK->value,
+                            $data['alasan_tolak']
+                        );
                         \Filament\Notifications\Notification::make()
                             ->title('Pesanan ditolak.')
                             ->danger()->send();

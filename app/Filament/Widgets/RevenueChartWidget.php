@@ -25,7 +25,14 @@ class RevenueChartWidget extends ChartWidget
 
         $rawRevenue = Pesanan::selectRaw("{$dateFormat} as month, SUM(total_harga) as total")
             ->where('created_at', '>=', Carbon::now()->subMonths(11)->startOfMonth())
-            ->where('status', \App\Enums\OrderStatus::SELESAI->value)
+            ->whereIn('status', [\App\Enums\OrderStatus::SELESAI->value, 'selesai', 'dikonfirmasi', 'sedang_diproses'])
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month');
+
+        $bookingRevenue = \App\Models\BookingPayment::selectRaw("{$dateFormat} as month, SUM(amount) as total")
+            ->where('created_at', '>=', Carbon::now()->subMonths(11)->startOfMonth())
+            ->whereIn('status', ['verified', 'approved'])
             ->groupBy('month')
             ->orderBy('month')
             ->pluck('total', 'month');
@@ -34,7 +41,8 @@ class RevenueChartWidget extends ChartWidget
             $date = Carbon::now()->subMonths($i);
             $key = $date->format('Y-m');
             $months[] = $date->format('M Y');
-            $revenue[11 - $i] = ($rawRevenue[$key] ?? 0) / 1000000;
+            $monthTotal = (float) ($rawRevenue[$key] ?? 0) + (float) ($bookingRevenue[$key] ?? 0);
+            $revenue[11 - $i] = $monthTotal / 1000000;
         }
 
         return [

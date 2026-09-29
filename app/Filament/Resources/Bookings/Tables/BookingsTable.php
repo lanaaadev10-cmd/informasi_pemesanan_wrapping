@@ -29,10 +29,21 @@ class BookingsTable
                     ->weight('bold')
                     ->copyable(),
 
-                TextColumn::make('user.name')
+                TextColumn::make('pelanggan_nama')
                     ->label('Pelanggan')
-                    ->searchable()
+                    ->searchable(query: function ($query, string $search) {
+                        $query->where('customer_name', 'like', "%{$search}%")
+                              ->orWhereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%"));
+                    })
                     ->sortable(),
+
+                TextColumn::make('pelanggan_phone')
+                    ->label('WhatsApp')
+                    ->searchable(query: function ($query, string $search) {
+                        $query->where('customer_phone', 'like', "%{$search}%")
+                              ->orWhereHas('user', fn ($q) => $q->where('phone', 'like', "%{$search}%")->orWhere('no_hp', 'like', "%{$search}%"));
+                    })
+                    ->copyable(),
 
                 TextColumn::make('layanan.nama_layanan')
                     ->label('Paket')
@@ -41,11 +52,11 @@ class BookingsTable
                     ->limit(20),
 
                 TextColumn::make('booking_date')
-                    ->label('Tanggal')
-                    ->date('d M Y')
+                    ->label('Jadwal')
+                    ->formatStateUsing(fn ($state, Booking $record) => ($record->booking_date ? $record->booking_date->format('d M Y') : '-') . ($record->booking_time ? ' • ' . $record->booking_time : ''))
                     ->sortable()
                     ->badge()
-                    ->color(fn (Booking $record): string => $record->booking_date->isPast() ? 'gray' : 'info'),
+                    ->color(fn (Booking $record): string => $record->booking_date && $record->booking_date->isPast() ? 'gray' : 'info'),
 
                 TextColumn::make('payment_type')
                     ->label('Tipe Bayar')
@@ -192,6 +203,86 @@ class BookingsTable
                             ->title('Booking ditolak.')
                             ->danger()->send();
                     }),
+
+                // Admin reschedule jadwal booking
+                Action::make('reschedule')
+                    ->label('Ubah Jadwal')
+                    ->icon('heroicon-o-calendar')
+                    ->color('info')
+                    ->visible(fn (Booking $record): bool => !in_array($record->status, [BookingStatus::CANCELLED, BookingStatus::REJECTED, BookingStatus::COMPLETED]))
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('new_date')
+                            ->label('Tanggal Baru')
+                            ->required()
+                            ->minDate(now()->toDateString())
+                            ->default(fn (Booking $record) => $record->booking_date?->format('Y-m-d')),
+                        \Filament\Forms\Components\TextInput::make('new_time')
+                            ->label('Jam Baru')
+                            ->placeholder('09:00')
+                            ->default(fn (Booking $record) => $record->booking_time ?: '09:00'),
+                        \Filament\Forms\Components\TextInput::make('reason')
+                            ->label('Catatan Alasan Reschedule')
+                            ->placeholder('Permintaan pelanggan / penyesuaian teknisi'),
+                        \Filament\Forms\Components\Toggle::make('override_quota')
+                            ->label('Override Kuota Maksimal 5 Slot')
+                            ->helperText('Aktifkan jika ada izin khusus mengabaikan kuota harian.'),
+                    ])
+                    ->action(function (Booking $record, array $data) {
+                        try {
+                            app(BookingService::class)->rescheduleBooking(
+                                $record,
+                                $data['new_date'],
+                                $data['new_time'] ?? null,
+                                $data['reason'] ?? null,
+                                (bool) ($data['override_quota'] ?? false)
+                            );
+                            \Filament\Notifications\Notification::make()
+                                ->title('Jadwal booking berhasil diperbarui!')
+                                ->success()->send();
+                        } catch (\Exception $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Gagal ubah jadwal')
+                                ->body($e->getMessage())
+                                ->danger()->send();
+                        }
+                    }),
+
+                // Admin batalkan booking (mengembalikan kuota)
+                Action::make('cancelBooking')
+                    ->label('Batalkan')
+                    ->icon('heroicon-o-x-mark')
+                    ->color('danger')
+                    ->visible(fn (Booking $record): bool => !in_array($record->status, [BookingStatus::CANCELLED, BookingStatus::REJECTED, BookingStatus::COMPLETED]))
+                    ->requiresConfirmation()
+                    ->modalHeading('Batalkan Booking')
+                    ->modalDescription('Slot kuota pada tanggal ini akan otomatis kembali tersedia untuk pelanggan lain.')
+                    ->form([
+                        \Filament\Forms\Components\Textarea::make('alasan')
+                            ->label('Alasan Pembatalan')
+                            ->required()
+                            ->placeholder('Masukkan alasan pembatalan booking...'),
+                    ])
+                    ->action(function (Booking $record, array $data) {
+                        try {
+                            app(BookingService::class)->cancelBooking($record, $data['alasan']);
+                            \Filament\Notifications\Notification::make()
+                                ->title('Booking berhasil dibatalkan dan kuota slot dikembalikan!')
+                                ->success()->send();
+                        } catch (\Exception $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Gagal membatalkan')
+                                ->body($e->getMessage())
+                                ->danger()->send();
+                        }
+                    }),
+
+                // Tombol WhatsApp
+                Action::make('whatsapp')
+                    ->label('WhatsApp')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('success')
+                    ->url(fn (Booking $record) => $record->whatsapp_notification_url)
+                    ->openUrlInNewTab(),
 
                 Action::make('view')
                     ->label('Detail')

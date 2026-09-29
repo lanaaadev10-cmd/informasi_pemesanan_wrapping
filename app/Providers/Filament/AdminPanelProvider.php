@@ -55,8 +55,8 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('Admin Wrapping')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                \App\Filament\Widgets\BookingStatsWidget::class,
+                \App\Filament\Widgets\RecentBookingsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

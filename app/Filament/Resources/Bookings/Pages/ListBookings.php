@@ -15,7 +15,53 @@ class ListBookings extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            \Filament\Actions\Action::make('viewQuota')
+                ->label('Kuota Hari Ini')
+                ->icon('heroicon-o-chart-pie')
+                ->color('info')
+                ->modalHeading('Status Kuota Hari Ini')
+                ->modalDescription(function () {
+                    $q = app(\App\Services\SlotKuotaService::class)->getTodayQuota();
+                    return "Tanggal " . now()->translatedFormat('d F Y') . ": Terisi {$q['total_used']}/5 slot (Booking: {$q['booked_count']}, Pesanan: {$q['pesanan_count']}). Sisa kuota tersedia: {$q['available']} slot.";
+                })
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Tutup'),
+
+            \Filament\Actions\Action::make('exportCsv')
+                ->label('Ekspor CSV / Excel')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->color('success')
+                ->action(function () {
+                    return response()->streamDownload(function () {
+                        $handle = fopen('php://output', 'w');
+                        fputs($handle, "\xEF\xBB\xBF");
+                        fputcsv($handle, ['Kode Booking', 'Nama Pelanggan', 'WhatsApp', 'Email', 'Layanan', 'Tanggal Booking', 'Jam', 'Tipe Bayar', 'Status', 'Catatan', 'Dibuat']);
+
+                        Booking::with('layanan', 'user')->orderBy('created_at', 'desc')->chunk(100, function ($bookings) use ($handle) {
+                            foreach ($bookings as $b) {
+                                fputcsv($handle, [
+                                    $b->booking_code,
+                                    $b->pelanggan_nama,
+                                    $b->pelanggan_phone,
+                                    $b->pelanggan_email,
+                                    $b->layanan?->nama_layanan ?? '-',
+                                    $b->booking_date ? $b->booking_date->format('Y-m-d') : '-',
+                                    $b->booking_time ?: '-',
+                                    $b->payment_type,
+                                    $b->label_status,
+                                    $b->notes ?: '-',
+                                    $b->created_at ? $b->created_at->format('Y-m-d H:i:s') : '-',
+                                ]);
+                            }
+                        });
+
+                        fclose($handle);
+                    }, 'booking-report-' . date('Ymd-His') . '.csv', [
+                        'Content-Type' => 'text/csv; charset=UTF-8',
+                    ]);
+                }),
+
+            CreateAction::make()->label('Tambah Booking Manual'),
         ];
     }
 

@@ -18,15 +18,19 @@ class BookingController extends Controller
      */
     public function index(Request $request)
     {
+        $status = $request->status ?: null;
+        $tab = $request->tab ?: ($status ? null : 'all');
+
         $bookings = $this->bookingService->getUserBookings(
             userId: Auth::id(),
             perPage: 10,
-            status: $request->status ?: null,
+            status: $status,
+            tab: $tab,
         );
 
         $stats = $this->bookingService->getUserBookingStats(Auth::id());
 
-        return view('customer.booking.index', compact('bookings', 'stats'));
+        return view('customer.booking.index', compact('bookings', 'stats', 'tab', 'status'));
     }
 
     /**
@@ -44,7 +48,9 @@ class BookingController extends Controller
             $selectedDate = now()->addDay()->toDateString();
         }
 
-        return view('customer.booking.create', compact('layanans', 'selectedDate', 'todayQuota'));
+        $user = Auth::user();
+
+        return view('customer.booking.create', compact('layanans', 'selectedDate', 'todayQuota', 'user'));
     }
 
     /**
@@ -52,16 +58,39 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
+        if (Auth::check() && !Auth::user()->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice')
+                ->with('toast_warning', 'Email Anda belum terverifikasi. Verifikasi email terlebih dahulu sebelum mengajukan booking.');
+        }
+
+        if (!$request->filled('customer_name') && Auth::check()) {
+            $request->merge(['customer_name' => Auth::user()->name]);
+        }
+        if (!$request->filled('customer_phone') && Auth::check()) {
+            $phone = Auth::user()->no_hp ?: (Auth::user()->phone ?: '081234567890');
+            $request->merge(['customer_phone' => $phone]);
+        }
+
         $data = $request->validate([
+            'customer_name'    => 'required|string|max:150',
+            'customer_phone'   => 'required|string|max:30',
+            'customer_email'   => 'nullable|email|max:150',
             'layanan_id'       => 'required|exists:layanans,id_layanan',
             'booking_date'     => 'required|date|after_or_equal:today',
+            'booking_time'     => 'nullable|string|max:10',
             'payment_type'     => 'required|in:dp,lunas',
-            'payment_method'   => 'required|string|max:50',
-            'vehicle_name'     => 'required|string|max:150',
+            'payment_method'   => 'nullable|string|max:50',
+            'vehicle_name'     => 'nullable|string|max:150',
             'vehicle_color'    => 'nullable|string|max:100',
             'vehicle_license'  => 'nullable|string|max:50',
             'notes'            => 'nullable|string|max:1000',
-            'proof_file'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'proof_file'       => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ], [
+            'customer_name.required' => 'Nama lengkap wajib diisi.',
+            'customer_phone.required' => 'Nomor WhatsApp wajib diisi.',
+            'layanan_id.required' => 'Pilih paket layanan yang diinginkan.',
+            'booking_date.required' => 'Pilih tanggal booking yang tersedia.',
+            'booking_date.after_or_equal' => 'Tanggal booking tidak boleh tanggal yang sudah lewat.',
         ]);
 
         try {
@@ -72,7 +101,7 @@ class BookingController extends Controller
             );
 
             return redirect()->route('booking.show', $booking->id)
-                ->with('toast_success', 'Booking berhasil diajukan! Kode booking: ' . $booking->booking_code);
+                ->with('toast_success', 'Booking berhasil dibuat! Kode booking: ' . $booking->booking_code);
         } catch (\App\Exceptions\SlotPenuhException $e) {
             return back()->with('toast_error', $e->getMessage())->withInput();
         } catch (\App\Exceptions\Booking\BookingFullException $e) {
@@ -80,8 +109,7 @@ class BookingController extends Controller
         } catch (\App\Exceptions\Booking\BookingDuplicateException $e) {
             return back()->with('toast_error', $e->getMessage())->withInput();
         } catch (\App\Exceptions\Booking\BookingEmailUnverifiedException $e) {
-            return redirect()->route('verification.notice')
-                ->with('toast_warning', 'Verifikasi email Anda terlebih dahulu untuk mengajukan booking.');
+            return redirect()->route('verification.notice')->with('toast_warning', $e->getMessage());
         } catch (\Exception $e) {
             return back()->with('toast_error', 'Gagal membuat booking: ' . $e->getMessage())->withInput();
         }

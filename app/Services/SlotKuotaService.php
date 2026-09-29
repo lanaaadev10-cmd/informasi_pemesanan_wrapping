@@ -81,6 +81,9 @@ class SlotKuotaService
         $cacheKey = "slot_quota_{$date}";
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($date) {
+            $isBlocked = \App\Models\BlockedDate::isBlocked($date);
+            $blockedReason = $isBlocked ? \App\Models\BlockedDate::getBlockedReason($date) : null;
+
             // Hitung booking aktif untuk tanggal ini
             $bookedCount = Booking::query()
                 ->whereDate('booking_date', $date)
@@ -99,15 +102,17 @@ class SlotKuotaService
                 ->count();
 
             $totalUsed = $bookedCount + $pesananCount;
-            $available = max(self::MAX_SLOT_PER_DAY - $totalUsed, 0);
+            $available = $isBlocked ? 0 : max(self::MAX_SLOT_PER_DAY - $totalUsed, 0);
 
             return [
-                'available'     => $available,
-                'is_full'       => $available <= 0,
-                'booked_count'  => $bookedCount,   // dari fitur booking
-                'pesanan_count' => $pesananCount,  // dari fitur pesanan
-                'total_used'    => $totalUsed,
-                'max'           => self::MAX_SLOT_PER_DAY,
+                'available'      => $available,
+                'is_full'        => $isBlocked || $available <= 0,
+                'is_blocked'     => $isBlocked,
+                'blocked_reason' => $blockedReason,
+                'booked_count'   => $bookedCount,   // dari fitur booking
+                'pesanan_count'  => $pesananCount,  // dari fitur pesanan
+                'total_used'     => $totalUsed,
+                'max'            => self::MAX_SLOT_PER_DAY,
             ];
         });
     }
@@ -152,8 +157,19 @@ class SlotKuotaService
             ->pluck('total', 'tgl')
             ->toArray();
 
+        // Agregat tanggal libur / diblokir
+        $blockedDates = \App\Models\BlockedDate::query()
+            ->whereBetween('date', [$start, $end])
+            ->where('is_active', true)
+            ->pluck('reason', 'date')
+            ->toArray();
+
         // Gabungkan semua tanggal unik
-        $allDates = array_unique(array_merge(array_keys($bookingData), array_keys($pesananData)));
+        $allDates = array_unique(array_merge(
+            array_keys($bookingData),
+            array_keys($pesananData),
+            array_map(fn($d) => substr($d, 0, 10), array_keys($blockedDates))
+        ));
 
         $result = [];
         foreach ($allDates as $date) {
@@ -161,14 +177,17 @@ class SlotKuotaService
             $bCount    = (int) ($bookingData[$date] ?? 0);
             $pCount    = (int) ($pesananData[$date] ?? 0);
             $totalUsed = $bCount + $pCount;
+            $isBlocked = isset($blockedDates[$date]);
 
             $result[$date] = [
-                'available'     => max(self::MAX_SLOT_PER_DAY - $totalUsed, 0),
-                'is_full'       => $totalUsed >= self::MAX_SLOT_PER_DAY,
-                'booked_count'  => $bCount,
-                'pesanan_count' => $pCount,
-                'total_used'    => $totalUsed,
-                'max'           => self::MAX_SLOT_PER_DAY,
+                'available'      => $isBlocked ? 0 : max(self::MAX_SLOT_PER_DAY - $totalUsed, 0),
+                'is_full'        => $isBlocked || $totalUsed >= self::MAX_SLOT_PER_DAY,
+                'is_blocked'     => $isBlocked,
+                'blocked_reason' => $blockedDates[$date] ?? null,
+                'booked_count'   => $bCount,
+                'pesanan_count'  => $pCount,
+                'total_used'     => $totalUsed,
+                'max'            => self::MAX_SLOT_PER_DAY,
             ];
         }
 
@@ -178,7 +197,7 @@ class SlotKuotaService
     /**
      * -------------------------------------------------------
      * Assert slot tersedia untuk tanggal tertentu.
-     * Lempar exception jika sudah penuh.
+     * Lempar exception jika sudah penuh atau diblokir.
      *
      * Digunakan oleh BookingService dan PesananService
      * sebelum menyimpan data ke database.
@@ -188,6 +207,18 @@ class SlotKuotaService
      */
     public function assertSlotAvailable(string $date): void
     {
+        // Cek apakah tanggal diblokir / hari libur
+        if (\App\Models\BlockedDate::isBlocked($date)) {
+            $reason = \App\Models\BlockedDate::getBlockedReason($date) ?: 'Tanggal ditutup';
+            $tgl = \Carbon\Carbon::parse($date)->translatedFormat('d F Y');
+            throw new \App\Exceptions\SlotPenuhException(
+                $date,
+                self::MAX_SLOT_PER_DAY,
+                self::MAX_SLOT_PER_DAY,
+                "Tanggal {$tgl} tidak tersedia untuk pemesanan ({$reason}). Silakan pilih tanggal lain."
+            );
+        }
+
         // Gunakan DB::transaction + lockForUpdate agar tidak ada race condition
         // ketika dua request masuk bersamaan (anti-overbooking).
         $totalUsed = DB::table('bookings')

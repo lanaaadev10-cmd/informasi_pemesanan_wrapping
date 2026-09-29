@@ -1,8 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Questrial&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    body {
+        font-family: 'Questrial', 'Montserrat', sans-serif;
+        background-color: #000000;
+        color: #ffffff;
+    }
+
+    h1,
+    h2,
+    h3,
+    .font-heading {
+        font-family: 'Audiowide', cursive, sans-serif;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+}
+
+.font-audiowide {
+    font-family: 'Audiowide', cursive, sans-serif !important;
+}
+
+.font-montserrat {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+.font-questrial {
+    font-family: 'Questrial', sans-serif !important;
+}
+
+/* Hide scrollbars for clean horizontal slider look */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Split panel smooth expand / collapse */
+.split-panel {
+    transition: flex 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+        min-width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.split-panel>div>div {
+    transition: opacity 0.3s ease;
+}
+
 @layer components {
+
     .form-dark input[type="text"],
     .form-dark input[type="email"],
     .form-dark input[type="password"] {

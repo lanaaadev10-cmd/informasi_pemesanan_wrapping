@@ -19,7 +19,7 @@
         return match($status) {
             'pending'                                            => 'bg-yellow-400',
             'confirmed','awaiting_payment','payment_uploaded'   => 'bg-blue-400',
-            'approved','in_progress'                            => 'bg-[#f2994a]',
+            'approved','in_progress'                            => 'bg-[#FF6B00]',
             'completed'                                         => 'bg-emerald-400',
             'rejected','cancelled'                              => 'bg-red-400',
             default                                             => '',
@@ -28,35 +28,36 @@
 @endphp
 
 {{-- ════════════════════ WIDGET CARD ════════════════════ --}}
-<div class="bg-[#111111] border border-white/5 rounded-3xl p-6 md:p-8 hover:border-[#f2994a]/20 transition-all duration-300 shadow-xl relative overflow-hidden"
+<div class="bg-[#0E0E10] border border-white/10 rounded-[28px] p-3.5 sm:p-6 md:p-8 hover:border-[#FF6B00]/40 transition-all duration-300 shadow-xl relative overflow-hidden"
      x-data="bookingCalWidget()"
      x-init="init()">
 
-    <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#f2994a]/5 rounded-full blur-[80px] pointer-events-none"></div>
+    <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#FF6B00]/10 rounded-full blur-[80px] pointer-events-none"></div>
 
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/5">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10">
         <div>
             <div class="flex items-center gap-2">
-                <span class="inline-flex items-center gap-1.5 bg-[#f2994a]/10 border border-[#f2994a]/25 text-[#f2994a] text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg">
-                    <i class="ph-bold ph-calendar-check"></i> Ketersediaan Slot
+                <span class="w-1.5 h-1.5 rounded-full bg-[#FF6B00]"></span>
+                <span class="text-[10px] font-montserrat font-bold uppercase tracking-widest text-[#FF6B00]">
+                    Ketersediaan Slot
                 </span>
-                <span class="text-xs text-gray-500">&bull; Kuota Harian</span>
+                <span class="text-xs font-questrial text-[#8A8D93]">&bull; Kuota Harian</span>
             </div>
-            <h3 class="text-xl font-extrabold text-white mt-2 tracking-tight">
+            <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white mt-2 tracking-wide">
                 {{ $today->translatedFormat('F Y') }}
             </h3>
-            <p class="text-xs text-gray-400 mt-0.5">Klik tanggal di bawah untuk melihat rincian slot yang terisi.</p>
+            <p class="text-xs font-questrial text-[#8A8D93] mt-0.5">Pilih tanggal di kalender kotak untuk melihat rincian slot yang terisi.</p>
         </div>
-        <a href="{{ route('booking.create') }}"
-           class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#e28a44] to-[#f2994a] text-black font-black text-[10px] uppercase tracking-wider rounded-xl hover:scale-[1.02] active:scale-95 transition-all shadow-[0_4px_16px_rgba(242,153,74,0.3)] shrink-0">
-            <i class="ph-bold ph-plus-circle text-sm"></i> Booking Baru
-        </a>
+        <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-xs font-mono text-[#8A8D93] shrink-0">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Maks. 5 Slot / Hari</span>
+        </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
 
-        {{-- ── Mini Kalender (7 Cols Span) ── --}}
+        {{-- ── Kolom Kiri: Kalender Kotak Bulanan (7 Cols Span) ── --}}
         <div class="lg:col-span-7 flex flex-col justify-between">
             <div>
                 {{-- Day labels --}}
@@ -67,18 +68,18 @@
                 </div>
 
                 {{-- Day cells --}}
-                <div class="grid grid-cols-7 gap-1.5">
+                <div class="grid grid-cols-7 gap-1 sm:gap-2">
                     {{-- Skeleton loading --}}
                     <template x-if="loading">
                         <template x-for="i in 35" :key="i">
-                            <div class="aspect-square rounded-xl bg-white/[0.02] border border-white/5 animate-pulse"></div>
+                            <div class="aspect-square min-h-[38px] sm:min-h-[44px] rounded-xl bg-white/[0.02] border border-white/5 animate-pulse"></div>
                         </template>
                     </template>
 
                     {{-- Offset kosong --}}
                     <template x-if="!loading">
                         <template x-for="i in {{ $startOffset }}" :key="'off'+i">
-                            <div class="aspect-square rounded-xl bg-transparent border border-transparent"></div>
+                            <div class="aspect-square min-h-[38px] sm:min-h-[44px] rounded-xl bg-transparent border border-transparent"></div>
                         </template>
                     </template>
 
@@ -89,7 +90,7 @@
                                 type="button"
                                 @click="onDayClick(day)"
                                 :class="cellClass(day)"
-                                class="relative flex flex-col items-center justify-center aspect-square rounded-xl text-xs font-bold transition-all duration-150 p-1">
+                                class="relative flex flex-col items-center justify-center aspect-square min-h-[38px] sm:min-h-[44px] rounded-xl text-xs sm:text-sm font-montserrat font-bold transition-all duration-150 p-1">
 
                                 <span x-text="day"></span>
 
@@ -99,15 +100,15 @@
 
                                 {{-- Badge jumlah slot terpakai --}}
                                 <template x-if="slotCount(day) > 0">
-                                    <span class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full text-black text-[8px] font-black flex items-center justify-center leading-none shadow-md"
-                                          :class="slotCount(day) >= 5 ? 'bg-red-500 text-white' : (slotCount(day) >= 3 ? 'bg-[#f2994a]' : 'bg-emerald-500')"
+                                    <span class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full text-black text-[8px] font-black flex items-center justify-center leading-none shadow-md font-montserrat"
+                                          :class="slotCount(day) >= 5 ? 'bg-red-500 text-white' : (slotCount(day) >= 3 ? 'bg-[#ff6b00] text-white' : 'bg-emerald-500 text-black')"
                                           x-text="slotCount(day)">
                                     </span>
                                 </template>
 
                                 {{-- FULL badge --}}
                                 <template x-if="isFull(day)">
-                                    <span class="absolute -top-1 -left-1 text-[6px] font-black bg-red-500 text-white px-1 rounded-full leading-tight shadow">FULL</span>
+                                    <span class="absolute -top-1 -left-1 text-[6px] font-black bg-red-500 text-white px-1 rounded-full leading-tight shadow font-montserrat">FULL</span>
                                 </template>
                             </button>
                         </template>
@@ -116,10 +117,10 @@
             </div>
 
             {{-- Legenda --}}
-            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-6 pt-4 border-t border-white/5">
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-6 pt-4 border-t border-white/5 font-questrial">
                 @foreach([
                     ['bg-emerald-500', 'Tersedia (1–2 slot)'],
-                    ['bg-[#f2994a]',   'Sisa Sedikit (3–4 slot)'],
+                    ['bg-[#ff6b00]',   'Sisa Sedikit (3–4 slot)'],
                     ['bg-red-500',     'Penuh (5/5 slot)'],
                 ] as [$clr, $lbl])
                     <span class="inline-flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
@@ -129,220 +130,162 @@
             </div>
         </div>
 
-        {{-- ── Booking Mendatang Milik Saya (5 Cols Span) ── --}}
-        <div class="lg:col-span-5 flex flex-col h-full bg-white/[0.015] border border-white/5 rounded-2xl p-5">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/5">
-                <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
-                    <i class="ph-bold ph-bookmark-simple text-[#f2994a]"></i> Booking Saya yang Aktif
-                </p>
-                <span class="text-[9px] font-bold text-gray-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/5">{{ $upcomingBookings->count() }} Booking</span>
-            </div>
+        {{-- ── Kolom Kanan: Panel Interaktif Detail Ketersediaan Slot (5 Cols Span) ── --}}
+        <div id="calendar-slot-panel" class="lg:col-span-5 flex flex-col h-full">
 
-            <div class="flex-1 flex flex-col gap-3 min-h-[220px]">
-                @forelse($upcomingBookings as $bk)
-                    @php
-                        $bkStatus = $bk->status instanceof \App\Enums\BookingStatus
-                            ? $bk->status->value : (string)$bk->status;
-                        $bkDot    = $dotColor($bkStatus);
-                        $bkLabel  = $bk->status instanceof \App\Enums\BookingStatus
-                            ? $bk->status->label()
-                            : ucfirst(str_replace('_', ' ', $bkStatus));
-                        $isPast   = $bk->booking_date?->isPast();
-                    @endphp
-                    <a href="{{ route('booking.show', $bk->id) }}"
-                       class="group/bk flex items-center gap-3.5 bg-white/[0.02] hover:bg-[#f2994a]/5 border border-white/5 hover:border-[#f2994a]/30 rounded-xl p-3 transition-all duration-200">
-                        <div class="w-10 h-10 rounded-lg {{ $isPast ? 'bg-white/[0.03]' : 'bg-[#f2994a]/10' }} flex flex-col items-center justify-center shrink-0">
-                            <span class="text-sm font-black leading-none {{ $isPast ? 'text-gray-500' : 'text-[#f2994a]' }}">{{ $bk->booking_date?->format('d') }}</span>
-                            <span class="text-[7px] font-extrabold uppercase text-gray-500">{{ $bk->booking_date?->format('M') }}</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-xs font-black text-white truncate group-hover/bk:text-[#f2994a] transition-colors">{{ $bk->layanan?->nama_layanan ?? '-' }}</p>
-                            <p class="text-[10px] text-gray-500 mt-0.5 truncate">{{ $bk->vehicle_name }} &bull; {{ $bk->booking_code }}</p>
-                        </div>
-                        <span class="inline-flex items-center gap-1.5 text-[8px] font-extrabold uppercase tracking-wider whitespace-nowrap px-2 py-1 rounded-full bg-white/5 border border-white/10">
-                            <span class="w-1.5 h-1.5 rounded-full {{ $bkDot }} shrink-0"></span>
-                            {{ $bkLabel }}
-                        </span>
-                    </a>
-                @empty
-                    <div class="flex-1 flex flex-col items-center justify-center text-center py-6 px-4 space-y-3">
-                        <div class="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center text-gray-500">
-                            <i class="ph-bold ph-calendar-slash text-2xl"></i>
-                        </div>
-                        <div class="space-y-1">
-                            <p class="text-xs font-bold text-gray-300">Belum Ada Booking Aktif</p>
-                            <p class="text-[10px] text-gray-500 leading-relaxed max-w-[200px] mx-auto">Anda tidak memiliki jadwal booking kendaraan yang sedang aktif.</p>
-                        </div>
-                        <a href="{{ route('booking.create') }}"
-                           class="inline-flex items-center gap-1.5 px-4 py-2 text-[10px] font-black uppercase tracking-wider text-black bg-[#f2994a] rounded-xl hover:bg-[#e28a44] transition-all active:scale-95 shadow-md">
-                            <i class="ph-bold ph-plus"></i> Buat Booking
-                        </a>
-                    </div>
-                @endforelse
-            </div>
-
-            @if($upcomingBookings->count() > 0)
-                <a href="{{ route('booking.index') }}"
-                   class="mt-3 text-center text-[10px] font-black uppercase tracking-widest text-[#f2994a] hover:underline pt-2 border-t border-white/5">
-                    Lihat Semua Booking <i class="ph-bold ph-arrow-right"></i>
-                </a>
-            @endif
-        </div>
-    </div>
-
-    {{-- ════ Modal Detail Hari ════ --}}
-    <div x-show="modalOpen"
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-         @click.self="closeModal()"
-         style="display:none;">
-
-        <div x-show="modalOpen"
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0 scale-95"
-             x-transition:enter-end="opacity-100 scale-100"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100 scale-100"
-             x-transition:leave-end="opacity-0 scale-95"
-             class="relative w-full max-w-lg bg-[#161616] border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
-
-            <div class="absolute -top-8 -right-8 w-28 h-28 bg-[#f2994a]/10 rounded-full blur-[50px] pointer-events-none"></div>
-
-            {{-- Modal Header --}}
-            <div class="flex items-start justify-between px-6 pt-6 pb-4 border-b border-white/5">
-                <div>
-                    <p class="text-[9px] font-black uppercase tracking-widest text-[#f2994a] mb-1">Ketersediaan Slot</p>
-                    <h4 class="text-lg font-black text-white tracking-tight" x-text="modalTitle">—</h4>
+            {{-- Placeholder Saat Belum Ada Tanggal yang Dipilih --}}
+            <div x-show="!modalOpen"
+                 class="h-full min-h-[220px] p-5 sm:p-6 rounded-2xl bg-white/[0.015] border border-dashed border-white/10 flex flex-col items-center justify-center text-center transition-all">
+                <div class="w-12 h-12 rounded-2xl bg-[#ff6b00]/10 border border-[#ff6b00]/20 flex items-center justify-center text-[#ff6b00] mb-3">
+                    <i class="ph-bold ph-calendar-check text-2xl"></i>
                 </div>
-                <button @click="closeModal()"
-                        class="mt-1 w-8 h-8 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-all shrink-0">
-                    <i class="ph-bold ph-x text-xs"></i>
-                </button>
+                <h4 class="text-sm font-montserrat font-bold text-white">Detail Ketersediaan Slot</h4>
+                <p class="text-xs font-questrial text-[#8A8D93] mt-1 max-w-xs leading-relaxed">
+                    Pilih salah satu tanggal pada kalender di sebelah kiri untuk melihat rincian slot yang telah terisi dan kuota harian.
+                </p>
+                <div class="mt-4 flex items-center gap-2 text-[10px] font-mono text-[#8A8D93] bg-white/[0.03] px-3 py-1.5 rounded-lg border border-white/5">
+                    <i class="ph-bold ph-cursor-click text-[#FF6B00]"></i>
+                    <span>Klik kotak tanggal mana saja</span>
+                </div>
             </div>
 
-            {{-- Quota Bar --}}
-            <div class="px-6 py-3 bg-white/[0.02] border-b border-white/5">
-                <template x-if="modalLoading">
-                    <div class="h-5 bg-white/5 rounded animate-pulse w-48"></div>
-                </template>
-                <template x-if="!modalLoading && modalData">
-                    <div class="flex items-center gap-4 flex-wrap">
-                        {{-- Progress bar kuota --}}
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="text-[10px] font-black uppercase tracking-wider text-gray-400">Slot Terpakai</span>
-                                <span class="text-[10px] font-black"
-                                      :class="modalData.quota.is_full ? 'text-red-400' : (modalData.quota.total_used >= 3 ? 'text-[#f2994a]' : 'text-emerald-400')"
-                                      x-text="modalData.quota.total_used + ' / ' + modalData.quota.max + ' slot'"></span>
+            {{-- Card Detail Saat Tanggal Dipilih --}}
+            <div x-show="modalOpen"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 translate-y-2"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="relative bg-[#16161A] border border-[#FF6B00]/30 rounded-2xl shadow-xl overflow-hidden flex flex-col h-full"
+                 style="display:none;">
+
+                <div class="absolute -top-6 -right-6 w-24 h-24 bg-[#FF6B00]/10 rounded-full blur-[40px] pointer-events-none"></div>
+
+                {{-- Panel Header --}}
+                <div class="flex items-start justify-between px-5 pt-4 pb-3 border-b border-white/10">
+                    <div>
+                        <p class="text-[9px] font-montserrat font-bold uppercase tracking-widest text-[#FF6B00] mb-0.5">Ketersediaan Slot</p>
+                        <h4 class="text-base font-audiowide font-bold text-white tracking-wide" x-text="modalTitle">—</h4>
+                    </div>
+                    <button @click="closeModal()"
+                            title="Tutup detail tanggal"
+                            class="mt-0.5 w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-[#8A8D93] hover:text-white transition-all shrink-0">
+                        <i class="ph-bold ph-x text-xs"></i>
+                    </button>
+                </div>
+
+                {{-- Quota Bar --}}
+                <div class="px-5 py-3 bg-white/[0.02] border-b border-white/5">
+                    <template x-if="modalLoading">
+                        <div class="h-5 bg-white/5 rounded animate-pulse w-48"></div>
+                    </template>
+                    <template x-if="!modalLoading && modalData">
+                        <div class="flex items-center gap-4 flex-wrap">
+                            {{-- Progress bar kuota --}}
+                            <div class="flex-1 min-w-[140px]">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-[10px] font-montserrat font-bold uppercase tracking-wider text-[#8A8D93]">Slot Terpakai</span>
+                                    <span class="text-[10px] font-montserrat font-bold"
+                                          :class="modalData.quota.is_full ? 'text-red-400' : (modalData.quota.total_used >= 3 ? 'text-[#FF6B00]' : 'text-emerald-400')"
+                                          x-text="modalData.quota.total_used + ' / ' + modalData.quota.max + ' slot'"></span>
+                                </div>
+                                <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full transition-all duration-500"
+                                         :class="modalData.quota.is_full ? 'bg-red-500' : (modalData.quota.total_used >= 3 ? 'bg-[#FF6B00]' : 'bg-emerald-500')"
+                                         :style="`width: ${Math.round((modalData.quota.total_used / modalData.quota.max) * 100)}%`"></div>
+                                </div>
                             </div>
-                            <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full transition-all duration-500"
-                                     :class="modalData.quota.is_full ? 'bg-red-500' : (modalData.quota.total_used >= 3 ? 'bg-[#f2994a]' : 'bg-emerald-500')"
-                                     :style="`width: ${Math.round((modalData.quota.total_used / modalData.quota.max) * 100)}%`"></div>
+                            <div class="flex items-center gap-1.5 text-[10px] font-montserrat font-bold uppercase tracking-wider shrink-0">
+                                <span class="w-1.5 h-1.5 rounded-full"
+                                      :class="modalData.quota.is_full ? 'bg-red-500' : (modalData.quota.available <= 2 ? 'bg-[#FF6B00]' : 'bg-white')"></span>
+                                <span :class="modalData.quota.is_full ? 'text-red-400' : (modalData.quota.available <= 2 ? 'text-[#FF6B00]' : 'text-white')"
+                                      x-text="modalData.quota.is_full ? 'PENUH' : (modalData.quota.available + ' Slot Tersedia')"></span>
                             </div>
                         </div>
-                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-full shrink-0"
-                              :class="modalData.quota.is_full
-                                ? 'bg-red-500/15 text-red-400 border border-red-500/25'
-                                : (modalData.quota.available <= 2
-                                    ? 'bg-[#f2994a]/15 text-[#f2994a] border border-[#f2994a]/25'
-                                    : 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25')"
-                              x-text="modalData.quota.is_full ? 'PENUH' : (modalData.quota.available + ' Slot Tersedia')">
-                        </span>
-                    </div>
-                </template>
-            </div>
-
-            {{-- Slot List --}}
-            <div class="px-6 py-4 space-y-2.5 max-h-64 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:rgba(242,153,74,0.25)_transparent]">
-
-                {{-- Loading skeleton --}}
-                <template x-if="modalLoading">
-                    <template x-for="i in 3" :key="i">
-                        <div class="h-14 rounded-xl bg-white/[0.03] animate-pulse"></div>
                     </template>
-                </template>
+                </div>
 
-                {{-- Empty state --}}
-                <template x-if="!modalLoading && modalData && modalData.slots.length === 0">
-                    <div class="text-center py-6">
-                        <p class="text-sm font-bold text-emerald-400">Semua slot masih tersedia!</p>
-                        <p class="text-xs text-gray-500 mt-1">Belum ada yang booking di tanggal ini.</p>
-                    </div>
-                </template>
-
-                {{-- Slot items --}}
-                <template x-if="!modalLoading && modalData">
-                    <template x-for="(slot, idx) in modalData.slots" :key="idx">
-                        <component :is="slot.show_url ? 'a' : 'div'"
-                                   :href="slot.show_url || undefined"
-                                   class="flex items-center gap-3 rounded-2xl px-3.5 py-3 border transition-all"
-                                   :class="slot.is_mine
-                                     ? 'bg-[#f2994a]/8 border-[#f2994a]/30 hover:bg-[#f2994a]/12'
-                                     : 'bg-white/[0.02] border-white/5'">
-
-                            {{-- Nomor slot --}}
-                            <div class="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-[10px] font-black"
-                                 :class="slot.is_mine ? 'bg-[#f2994a] text-black' : 'bg-white/[0.05] text-gray-400'"
-                                 x-text="idx + 1"></div>
-
-                            {{-- Info --}}
-                            <div class="flex-1 min-w-0">
-                                <p class="text-xs font-black text-white truncate flex items-center gap-2">
-                                    <span x-text="slot.layanan"></span>
-                                    <template x-if="slot.is_mine">
-                                        <span class="text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#f2994a]/20 text-[#f2994a]">Milik Saya</span>
-                                    </template>
-                                </p>
-                                <p class="text-[10px] text-gray-500 mt-0.5 flex items-center gap-2">
-                                    <span class="inline-flex items-center gap-1">
-                                        <i class="ph-bold ph-clock text-[9px]"></i>
-                                        <span x-text="'Dikirim ' + slot.submitted_at"></span>
-                                    </span>
-                                    <span class="text-gray-700">·</span>
-                                    <span x-text="slot.slot_type === 'booking' ? 'Booking' : 'Pesanan'"></span>
-                                </p>
-                            </div>
-
-                            {{-- Status badge --}}
-                            <span class="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase whitespace-nowrap px-2 py-1 rounded-full"
-                                  :style="`background: ${statusDot(slot.status)}22; color: ${statusDot(slot.status)}; border: 1px solid ${statusDot(slot.status)}44;`">
-                                <span class="w-1.5 h-1.5 rounded-full shrink-0"
-                                      :style="`background: ${statusDot(slot.status)}`"></span>
-                                <span x-text="slot.status_label"></span>
-                            </span>
-                        </component>
+                {{-- Slot List --}}
+                <div class="px-5 py-3.5 space-y-2 flex-1 max-h-60 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:rgba(255,107,0,0.25)_transparent]">
+                    {{-- Loading skeleton --}}
+                    <template x-if="modalLoading">
+                        <template x-for="i in 2" :key="i">
+                            <div class="h-12 rounded-xl bg-white/[0.03] animate-pulse"></div>
+                        </template>
                     </template>
-                </template>
-            </div>
 
-            {{-- Footer --}}
-            <div class="px-6 pb-5 pt-3 flex gap-3">
-                <template x-if="modalData && modalIsPast">
-                    <div class="flex-1 text-center py-3 bg-white/5 border border-white/10 text-gray-400 font-bold text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5">
-                        <i class="ph-bold ph-clock-counter-clockwise"></i> Tanggal Sudah Berlalu
-                    </div>
-                </template>
-                <template x-if="modalData && !modalIsPast && !modalData.quota.is_full">
-                    <a :href="'{{ route('booking.create') }}?date=' + modalDate"
-                       class="flex-1 text-center py-3 bg-gradient-to-r from-[#e28a44] to-[#f2994a] text-black font-black text-xs uppercase tracking-wider rounded-xl hover:opacity-90 transition-all active:scale-95">
-                        <i class="ph-bold ph-plus-circle mr-1"></i> Booking Tanggal Ini
-                    </a>
-                </template>
-                <template x-if="modalData && !modalIsPast && modalData.quota.is_full">
-                    <div class="flex-1 text-center py-3 bg-red-500/10 border border-red-500/30 text-red-400 font-black text-xs uppercase tracking-wider rounded-xl">
-                        Slot Penuh — Pilih Tanggal Lain
-                    </div>
-                </template>
-                <button @click="closeModal()"
-                        class="px-5 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-400 hover:text-white font-black text-xs uppercase tracking-wider rounded-xl transition-all">
-                    Tutup
-                </button>
+                    {{-- Empty state --}}
+                    <template x-if="!modalLoading && modalData && modalData.slots.length === 0">
+                        <div class="text-center py-6">
+                            <p class="text-xs font-montserrat font-bold text-emerald-400">Semua slot masih tersedia!</p>
+                            <p class="text-[11px] font-questrial text-[#8A8D93] mt-0.5">Belum ada booking pengerjaan di tanggal ini.</p>
+                        </div>
+                    </template>
+
+                    {{-- Slot items --}}
+                    <template x-if="!modalLoading && modalData">
+                        <template x-for="(slot, idx) in modalData.slots" :key="idx">
+                            <component :is="slot.show_url ? 'a' : 'div'"
+                                       :href="slot.show_url || undefined"
+                                       class="flex items-center gap-2.5 rounded-xl px-3 py-2 border transition-all text-left"
+                                       :class="slot.is_mine
+                                         ? 'bg-[#FF6B00]/10 border-[#FF6B00]/30 hover:bg-[#FF6B00]/15'
+                                         : 'bg-white/[0.02] border-white/5'">
+
+                                {{-- Nomor slot --}}
+                                <div class="w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-[10px] font-montserrat font-bold"
+                                     :class="slot.is_mine ? 'bg-[#FF6B00] text-black' : 'bg-white/[0.05] text-[#8A8D93]'"
+                                     x-text="idx + 1"></div>
+
+                                {{-- Info --}}
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-montserrat font-bold text-white truncate flex items-center gap-1.5">
+                                        <span x-text="slot.layanan"></span>
+                                        <template x-if="slot.is_mine">
+                                            <span class="text-[9px] font-mono font-bold text-[#FF6B00]">(Milik Saya)</span>
+                                        </template>
+                                    </p>
+                                    <p class="text-[9px] font-questrial text-[#8A8D93] mt-0.5 flex items-center gap-2">
+                                        <span class="inline-flex items-center gap-1">
+                                            <i class="ph-bold ph-clock text-[9px]"></i>
+                                            <span x-text="'Dikirim ' + slot.submitted_at"></span>
+                                        </span>
+                                        <span class="text-white/20">&bull;</span>
+                                        <span x-text="slot.slot_type === 'booking' ? 'Booking' : 'Pesanan'"></span>
+                                    </p>
+                                </div>
+
+                                {{-- Status clean text (No pill badge) --}}
+                                <span class="inline-flex items-center gap-1.5 text-[9px] font-montserrat font-bold uppercase whitespace-nowrap text-[#FF6B00]">
+                                    <span class="w-1.5 h-1.5 rounded-full shrink-0 bg-[#FF6B00]"></span>
+                                    <span x-text="slot.status_label"></span>
+                                </span>
+                            </component>
+                        </template>
+                    </template>
+                </div>
+
+                {{-- Actions --}}
+                <div class="px-5 pb-4 pt-2.5 flex items-center gap-2.5 border-t border-white/5">
+                    <template x-if="modalData && modalIsPast">
+                        <div class="flex-1 text-center py-2.5 min-h-[44px] bg-white/5 border border-white/10 text-[#8A8D93] font-montserrat font-bold text-[11px] uppercase tracking-wider rounded-xl flex items-center justify-center gap-1.5">
+                            <i class="ph-bold ph-clock-counter-clockwise"></i> Tanggal Sudah Berlalu
+                        </div>
+                    </template>
+                    <template x-if="modalData && !modalIsPast && !modalData.quota.is_full">
+                        <a :href="'{{ route('booking.create') }}?date=' + modalDate"
+                           class="flex-1 text-center py-2.5 min-h-[44px] bg-[#FF6B00] hover:bg-[#E05D00] text-black font-montserrat font-extrabold text-[11px] uppercase tracking-wider rounded-xl hover:opacity-95 transition-all active:scale-95 shadow-md shadow-[#FF6B00]/25 flex items-center justify-center gap-1.5">
+                            <i class="ph-bold ph-plus-circle text-sm"></i> Booking Tanggal Ini
+                        </a>
+                    </template>
+                    <template x-if="modalData && !modalIsPast && modalData.quota.is_full">
+                        <div class="flex-1 text-center py-2.5 min-h-[44px] bg-red-500/10 border border-red-500/30 text-red-400 font-montserrat font-bold text-[11px] uppercase tracking-wider rounded-xl flex items-center justify-center">
+                            Slot Penuh — Pilih Tanggal Lain
+                        </div>
+                    </template>
+                    <button @click="closeModal()"
+                            class="px-4 py-2.5 min-h-[44px] bg-white/5 hover:bg-white/10 border border-white/10 text-[#8A8D93] hover:text-white font-montserrat font-bold text-[11px] uppercase tracking-wider rounded-xl transition-all">
+                        Tutup
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -361,8 +304,8 @@ function bookingCalWidget() {
         confirmed:         '#60a5fa',
         awaiting_payment:  '#60a5fa',
         payment_uploaded:  '#60a5fa',
-        approved:          '#f2994a',
-        in_progress:       '#f2994a',
+        approved:          '#FF6B00',
+        in_progress:       '#FF6B00',
         completed:         '#34d399',
         rejected:          '#f87171',
         cancelled:         '#f87171',
@@ -370,7 +313,7 @@ function bookingCalWidget() {
         menunggu_konfirmasi_admin:    '#facc15',
         menunggu_pembayaran:          '#60a5fa',
         pembayaran_diproses:          '#60a5fa',
-        sedang_diproses:              '#f2994a',
+        sedang_diproses:              '#FF6B00',
     };
 
     const BULAN = ['Januari','Februari','Maret','April','Mei','Juni',
@@ -429,29 +372,35 @@ function bookingCalWidget() {
             const q = this.quotaForDay(day);
             if (!q || q.total_used === 0) return 'bg-transparent';
             if (q.is_full)          return 'bg-red-500';
-            if (q.total_used >= 3)  return 'bg-[#f2994a]';
+            if (q.total_used >= 3)  return 'bg-[#ff6b00]';
             return 'bg-emerald-500';
         },
 
         cellClass(day) {
-            const isToday = day === TODAY_D;
-            const past    = this.isPast(day);
-            const full    = this.isFull(day);
-            const used    = this.slotCount(day);
+            const isToday    = day === TODAY_D;
+            const isSelected = this.modalOpen && this.modalDate === this.dateKey(day);
+            const past       = this.isPast(day);
+            const full       = this.isFull(day);
+            const used       = this.slotCount(day);
 
-            if (isToday) return 'bg-[#f2994a]/20 border border-[#f2994a]/60 text-[#f2994a] ring-2 ring-[#f2994a]/30 font-black cursor-pointer hover:bg-[#f2994a]/30 shadow-[0_0_12px_rgba(242,153,74,0.2)]';
-            if (past)    return 'bg-white/[0.015] border border-white/[0.04] text-gray-400 opacity-60 cursor-pointer hover:bg-white/[0.06] hover:opacity-100 hover:text-white';
-            if (full)    return 'bg-red-500/10 border border-red-500/30 text-red-400 cursor-pointer hover:bg-red-500/20';
-            if (used >= 3) return 'bg-[#f2994a]/10 border border-[#f2994a]/30 text-[#f2994a] cursor-pointer hover:bg-[#f2994a]/20';
-            if (used > 0)  return 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 cursor-pointer hover:bg-emerald-500/20';
-            return 'bg-white/[0.03] border border-white/5 text-gray-300 cursor-pointer hover:bg-white/[0.08] hover:border-white/20 hover:text-white';
+            let base = 'relative flex flex-col items-center justify-center aspect-square min-h-[38px] sm:min-h-[44px] rounded-xl text-xs sm:text-sm font-montserrat font-bold transition-all duration-150 p-1 cursor-pointer ';
+
+            if (isSelected) {
+                return base + 'bg-[#ff6b00] text-black font-extrabold ring-2 ring-white scale-105 z-10 shadow-[0_4px_16px_rgba(255,107,0,0.5)]';
+            }
+            if (isToday) return base + 'bg-[#ff6b00]/20 border border-[#ff6b00]/70 text-[#ff6b00] ring-2 ring-[#ff6b00]/30 hover:bg-[#ff6b00]/30 shadow-[0_0_12px_rgba(255,107,0,0.3)]';
+            if (past)    return base + 'bg-white/[0.015] border border-white/[0.04] text-gray-500 opacity-60 hover:bg-white/[0.06] hover:opacity-100 hover:text-white';
+            if (full)    return base + 'bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20';
+            if (used >= 3) return base + 'bg-[#ff6b00]/15 border border-[#ff6b00]/30 text-[#ff6b00] hover:bg-[#ff6b00]/25';
+            if (used > 0)  return base + 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20';
+            return base + 'bg-white/[0.03] border border-white/5 text-gray-300 hover:bg-white/[0.08] hover:border-white/20 hover:text-white';
         },
 
         statusDot(status) {
             return STATUS_DOT[status] ?? '#6b7280';
         },
 
-        // ── Modal ────────────────────────────────────────────────────
+        // ── Inline Detail ─────────────────────────────────────────────
         async onDayClick(day) {
             const dk = this.dateKey(day);
             const d  = new Date(TODAY_Y, TODAY_M - 1, day);
@@ -461,6 +410,13 @@ function bookingCalWidget() {
             this.modalOpen   = true;
             this.modalData   = null;
             this.modalLoading = true;
+
+            // Scroll on mobile into panel smoothly
+            if (window.innerWidth < 1024) {
+                this.$nextTick(() => {
+                    document.getElementById('calendar-slot-panel')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                });
+            }
 
             try {
                 const res  = await fetch(`/api/booking/day-detail/${dk}`);
@@ -475,6 +431,7 @@ function bookingCalWidget() {
         closeModal() {
             this.modalOpen = false;
             this.modalData = null;
+            this.modalDate = null;
         },
     };
 }

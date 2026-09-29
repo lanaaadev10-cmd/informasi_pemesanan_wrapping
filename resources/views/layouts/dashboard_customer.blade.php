@@ -10,26 +10,55 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com">
 
-    <!-- Plus Jakarta Sans & Phosphor Icons (Deferred & Preloaded) -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Fonts: Audiowide (Display), Montserrat (Bold/UI), Questrial (Clean Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Questrial&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
+        :root {
+            --font-audiowide: 'Audiowide', cursive, sans-serif;
+            --font-montserrat: 'Montserrat', sans-serif;
+            --font-questrial: 'Questrial', sans-serif;
+            --bg-carbon: #000000;
+            --surface-dark: #0E0E10;
+            --surface-elevated: #16161A;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --primary-orange: #FF6B00;
+            --primary-orange-hover: #E05D00;
+            --text-white: #FFFFFF;
+            --text-muted: #8A8D93;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
         body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #0a0a0a;
+            font-family: 'Questrial', 'Montserrat', sans-serif; 
+            background-color: #000000;
             color: #ffffff;
         }
-        .sidebar-link-active { 
-            background-color: #f2994a; 
-            color: #000000 !important; 
-            box-shadow: 0 4px 15px rgba(242, 153, 74, 0.25);
+
+        h1, h2, h3, .font-heading, .brand-font {
+            font-family: 'Audiowide', cursive, sans-serif;
         }
+
+        .font-audiowide { font-family: 'Audiowide', cursive, sans-serif !important; }
+        .font-montserrat { font-family: 'Montserrat', sans-serif !important; }
+        .font-questrial { font-family: 'Questrial', sans-serif !important; }
+
+        .sidebar-link-active { 
+            background-color: #ff6b00; 
+            color: #000000 !important; 
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.35);
+        }
+
+        /* Hide scrollbars for clean horizontal slider look */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         /* Pengaturan Khusus agar Desktop tidak rusak oleh gaya HP */
         @media (min-width: 1024px) {
-            #side-menu { transform: translateX(0) !important; }
-            #side-overlay { display: none !important; }
             #bottom-nav { display: none !important; }
         }
         /* Bottom Nav Mobile */
@@ -39,245 +68,254 @@
             left: 0;
             right: 0;
             z-index: 8999;
-            background: rgba(12,12,12,0.97);
-            border-top: 1px solid rgba(255,255,255,0.07);
+            background: rgba(8, 8, 8, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             padding-bottom: env(safe-area-inset-bottom);
         }
     </style>
 </head>
-<body class="bg-[#0a0a0a] text-white antialiased">
-    
-    {{-- OVERLAY GELAP --}}
-    <div id="side-overlay" onclick="tutupMenu()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(6px); z-index:9000;"></div>
+<body class="bg-black text-white antialiased font-questrial">
 
-    {{-- SIDEBAR --}}
-    <aside id="side-menu" style="position:fixed; top:0; bottom:0; left:0; width:288px; background:#0c0c0c; border-right:1px solid rgba(255,255,255,0.05); z-index:9001; transition:0.3s; transform:translateX(-100%);" class="flex flex-col">
-        
-        <!-- Logo & Exclusive Member -->
-        <div class="p-8 flex flex-col gap-1 border-b border-white/5">
-            <div class="flex justify-between items-center w-full">
-                <div class="flex flex-col gap-0.5">
-                    <span class="font-extrabold text-xl tracking-wider text-[#f2994a] uppercase">Premium Wrap</span>
-                    <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">Exclusive Member</span>
-                </div>
-                {{-- TOMBOL TUTUP HP --}}
-                <button onclick="tutupMenu()" class="lg:hidden w-8 h-8 bg-white/5 rounded-full flex items-center justify-center border border-white/10 hover:bg-white/10">
-                    <i class="ph-bold ph-x text-white"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Navigation Menu -->
-        <nav class="flex-grow p-6 space-y-1.5 overflow-y-auto">
-            <a href="{{ route('dashboard') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('dashboard') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-layout text-lg"></i> {{ $profil->nav_beranda ?? 'Beranda' }}
-            </a>
-            
-            <div class="pt-5 pb-2">
-                <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_belanja ?? 'Belanja' }}</span>
-            </div>
-
-            <a href="{{ route('katalog.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('katalog.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-tag text-lg"></i> {{ $profil->section_katalog_layanan ?? 'Katalog Layanan' }}
-            </a>
-            <a href="{{ route('keranjang.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('keranjang.index') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }} relative">
-                <i class="ph-bold ph-shopping-cart text-lg"></i> {{ $profil->nav_keranjang ?? 'Keranjang' }}
-                @if($cartCount > 0)
-                <span class="absolute -top-2 -right-2 min-w-[20px] h-[20px] px-1.5 bg-[#f2994a] text-black text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-lg">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                @endif
-            </a>
-
-            <div class="pt-5 pb-2">
-                <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_manajemen ?? 'Manajemen' }}</span>
-            </div>
-
-            <a href="{{ route('booking.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('booking.*') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-calendar-dots text-lg"></i> Booking Saya
-            </a>
-            <a href="{{ route('pesanan.index') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('pesanan.index') && !request()->has('status') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-folder text-lg"></i> {{ $profil->nav_riwayat_pesanan ?? 'Riwayat Pesanan' }}
-            </a>
-            <a href="{{ route('pesanan.index', ['status' => 'menunggu_pembayaran']) }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ request('status') == 'menunggu_pembayaran' ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-credit-card text-lg"></i> {{ $profil->nav_pembayaran ?? 'Pembayaran' }}
-            </a>
-
-            <div class="pt-5 pb-2">
-                <span class="px-4 text-[9px] font-bold text-gray-600 uppercase tracking-widest">{{ $profil->nav_pengaturan ?? 'Pengaturan' }}</span>
-            </div>
-
-            <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('profile.edit') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-user text-lg"></i> {{ $profil->nav_profil_saya ?? 'Profil Saya' }}
-            </a>
-            
-            <div class="h-[1px] bg-white/5 my-4"></div>
-            
-            <a href="{{ route('profil.perusahaan') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('profil.perusahaan') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-buildings text-lg"></i> {{ $profil->nav_profil_perusahaan ?? 'Profil Perusahaan' }}
-            </a>
-            <a href="{{ route('galeri.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('galeri.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-image-square text-lg"></i> {{ $profil->sidebar_galeri_portofolio ?? 'Galeri Portofolio' }}
-            </a>
-            <a href="{{ route('katalog.user') }}" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all {{ Request::routeIs('katalog.user') ? 'sidebar-link-active' : 'text-gray-400 hover:text-white hover:bg-white/[0.02]' }}">
-                <i class="ph-bold ph-tag text-lg"></i> {{ $profil->sidebar_layanan_paket ?? 'Layanan & Paket' }}
-            </a>
-
-            <!-- CTA Pesan Layanan di Sidebar -->
-            <div class="pt-6">
-                <a href="{{ route('katalog.user') }}" class="flex items-center justify-center gap-2 py-3 bg-[#ffd8a8]/90 hover:bg-[#ffd8a8] text-black font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_4px_15px_rgba(255,216,168,0.2)] hover:scale-[1.02] active:scale-95">
-                    <i class="ph-bold ph-plus-circle text-sm"></i> {{ $profil->sidebar_pesan_baru ?? 'Pesan Layanan Baru' }}
+    <div class="min-h-screen flex flex-col bg-black">
+        <!-- Top bar: Brand Identity, Modern Center Nav Links, Bell, Wishlist & Profile Dropdown -->
+        <header class="py-3.5 px-4 sm:px-6 md:px-8 bg-black/85 sticky top-0 z-[100] backdrop-blur-md border-b border-white/5">
+            <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+                
+                <!-- Left: Brand Logo & Title -->
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-3 group shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 flex items-center justify-center text-[#FF6B00] group-hover:scale-105 group-hover:border-[#FF6B00]/60 transition-all shadow-[0_0_12px_rgba(255,107,0,0.15)]">
+                        <i class="ph-bold ph-steering-wheel text-xl"></i>
+                    </div>
+                    
+                    <div class="flex flex-col justify-center min-w-0">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wider leading-tight group-hover:text-[#FF6B00] transition-colors truncate">
+                                {{ $profil->nama_perusahaan ?? 'Dantie Stiker' }}
+                            </span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#FF6B00] shrink-0"></span>
+                        </div>
+                        <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-[#8A8D93] truncate">
+                            {{ $profil->dashboard_subtitle ?? 'Car Wrapping & Detailing' }}
+                        </span>
+                    </div>
                 </a>
-            </div>
-        </nav>
 
-        <!-- Bottom Actions (Support & Settings) -->
-        <div class="p-6 border-t border-white/5 space-y-1">
-            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '') }}" target="_blank" class="flex items-center gap-4 px-4 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider text-gray-400 hover:text-white hover:bg-white/[0.02] transition-all">
-                <i class="ph-bold ph-question text-base"></i> {{ $profil->nav_bantuan ?? 'Bantuan' }}
-            </a>
-            <a href="{{ route('profile.edit') }}" class="flex items-center gap-4 px-4 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider text-gray-400 hover:text-white hover:bg-white/[0.02] transition-all">
-                <i class="ph-bold ph-gear text-base"></i> Pengaturan
-            </a>
-            
-            <div class="pt-4">
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="w-full py-3 text-red-500 font-extrabold text-[10px] uppercase tracking-widest bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl transition-all active:scale-95">
-                        {{ $profil->nav_keluar ?? 'Keluar' }}
-                    </button>
-                </form>
-            </div>
-        </div>
-    </aside>
+                <!-- Center: Sleek Desktop Navigation Links (Clean Automotive Bar) -->
+                <nav class="hidden lg:flex items-center gap-1 bg-[#16161A]/80 border border-white/10 rounded-2xl p-1.5 shadow-inner">
+                    <a href="{{ route('dashboard') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-montserrat font-bold transition-all {{ Request::routeIs('dashboard') ? 'bg-[#FF6B00] text-black shadow-md shadow-[#FF6B00]/25' : 'text-[#8A8D93] hover:text-white hover:bg-white/5' }}">
+                        Beranda
+                    </a>
+                    <a href="{{ route('katalog.user') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-montserrat font-bold transition-all {{ Request::routeIs('katalog.*') ? 'bg-[#FF6B00] text-black shadow-md shadow-[#FF6B00]/25' : 'text-[#8A8D93] hover:text-white hover:bg-white/5' }}">
+                        Katalog
+                    </a>
+                    <a href="{{ route('booking.index') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-montserrat font-bold transition-all {{ Request::routeIs('booking.*') ? 'bg-[#FF6B00] text-black shadow-md shadow-[#FF6B00]/25' : 'text-[#8A8D93] hover:text-white hover:bg-white/5' }}">
+                        Booking
+                    </a>
+                    <a href="{{ route('pesanan.index') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-montserrat font-bold transition-all {{ Request::routeIs('pesanan.*') ? 'bg-[#FF6B00] text-black shadow-md shadow-[#FF6B00]/25' : 'text-[#8A8D93] hover:text-white hover:bg-white/5' }}">
+                        Pesanan
+                    </a>
+                    <a href="{{ route('kalkulator.index') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-montserrat font-bold transition-all {{ Request::routeIs('kalkulator.*') ? 'bg-[#FF6B00] text-black shadow-md shadow-[#FF6B00]/25' : 'text-[#8A8D93] hover:text-white hover:bg-white/5' }}">
+                        Wrap Studio
+                    </a>
+                    <a href="{{ route('galeri.user') }}"
+                       class="px-4 py-2 rounded-xl text-xs font-montserrat font-bold transition-all {{ Request::routeIs('galeri.*') ? 'bg-[#FF6B00] text-black shadow-md shadow-[#FF6B00]/25' : 'text-[#8A8D93] hover:text-white hover:bg-white/5' }}">
+                        Galeri
+                    </a>
+                </nav>
+                
+                <!-- Right: Notification Bell, Wishlist & Desktop User Profile Menu -->
+                <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+                    <!-- Notification Bell & Dropdown -->
+                    <div class="relative" id="notif-wrapper">
+                        <button id="notif-btn" onclick="toggleNotifPanel()" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#141414] border border-white/10 flex items-center justify-center text-white hover:border-[#ff6b00]/50 hover:text-[#ff6b00] transition-all shadow-sm relative active:scale-95">
+                            <i class="ph-bold ph-bell text-lg sm:text-xl"></i>
+                            <span id="notif-badge" class="absolute -top-1 -right-1 hidden min-w-[18px] h-[18px] px-1 bg-[#ff6b00] text-white text-[9px] font-montserrat font-extrabold rounded-full flex items-center justify-center shadow-lg"></span>
+                        </button>
 
-    <div class="lg:ml-72 min-h-screen flex flex-col">
-        <!-- Top bar (only notifications and avatar on the right, rest transparent) -->
-        <header class="h-20 bg-transparent px-6 md:px-8 flex items-center justify-between sticky top-0 z-[100] backdrop-blur-sm">
-            {{-- TOMBOL BUKA HP --}}
-            <button onclick="bukaMenu()" class="lg:hidden p-3 bg-white/5 border border-white/10 rounded-xl text-white">
-                <i class="ph-bold ph-list text-xl"></i>
-            </button>
-            
-            <div class="ml-auto flex items-center gap-6">
-                <!-- Notification Bell & Dropdown -->
-                <div class="relative" id="notif-wrapper">
-                    <button id="notif-btn" onclick="toggleNotifPanel()" class="relative w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all">
-                        <i class="ph ph-bell text-xl"></i>
-                        <span id="notif-badge" class="absolute -top-1 -right-1 hidden min-w-[18px] h-[18px] px-1 bg-[#f2994a] text-black text-[9px] font-extrabold rounded-full flex items-center justify-center shadow-lg"></span>
-                    </button>
-
-                    <!-- Dropdown Panel -->
-                    <div id="notif-panel" class="hidden fixed z-[9999] top-20 inset-x-4 w-auto sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:w-96 bg-[#111111] border border-white/8 rounded-2xl shadow-2xl overflow-hidden" style="box-shadow: 0 20px 60px rgba(0,0,0,0.6);">
-                        <!-- Header -->
-                        <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
-                            <div class="flex items-center gap-2">
-                                <i class="ph-bold ph-bell text-[#f2994a]"></i>
-                                <span class="text-sm font-bold text-white">Notifikasi</span>
-                                <span id="notif-count-label" class="hidden text-[9px] font-extrabold text-[#f2994a] bg-[#f2994a]/10 px-2 py-0.5 rounded-full"></span>
+                        <!-- Dropdown Panel -->
+                        <div id="notif-panel" class="hidden fixed z-[9999] top-20 inset-x-4 w-auto sm:inset-x-auto sm:right-6 sm:w-96 bg-[#111111] border border-white/10 rounded-2xl shadow-2xl overflow-hidden" style="box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between px-5 py-4 border-b border-white/5">
+                                <div class="flex items-center gap-2">
+                                    <i class="ph-bold ph-bell text-[#ff6b00]"></i>
+                                    <span class="text-sm font-montserrat font-bold text-white">Notifikasi</span>
+                                    <span id="notif-count-label" class="hidden text-[10px] font-montserrat font-bold text-[#ff6b00] uppercase tracking-wider"></span>
+                                </div>
+                                <button onclick="markAllRead()" class="text-[10px] font-montserrat font-bold text-gray-400 hover:text-[#ff6b00] transition-colors uppercase tracking-wide">
+                                    Tandai semua dibaca
+                                </button>
                             </div>
-                            <button onclick="markAllRead()" class="text-[10px] font-bold text-gray-500 hover:text-[#f2994a] transition-colors uppercase tracking-wide">
-                                Tandai semua dibaca
-                            </button>
-                        </div>
 
-                        <!-- Notification List -->
-                        <div id="notif-list" class="max-h-80 overflow-y-auto divide-y divide-white/5">
-                            <div class="flex flex-col items-center justify-center py-10 text-gray-600">
-                                <i class="ph ph-circle-notch ph-spin text-3xl mb-2 animate-spin"></i>
-                                <span class="text-xs">Memuat notifikasi...</span>
+                            <!-- Notification List -->
+                            <div id="notif-list" class="max-h-80 overflow-y-auto divide-y divide-white/5 font-questrial">
+                                <div class="flex flex-col items-center justify-center py-10 text-gray-500">
+                                    <i class="ph ph-circle-notch ph-spin text-3xl mb-2 animate-spin text-[#ff6b00]"></i>
+                                    <span class="text-xs">Memuat notifikasi...</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Footer -->
-                        <div class="px-5 py-3 border-t border-white/5 bg-[#0c0c0c]">
-                            <a href="{{ route('pesanan.index') }}" class="text-[10px] font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest flex items-center justify-center gap-1.5">
-                                Lihat semua pesanan <i class="ph-bold ph-arrow-right text-xs"></i>
-                            </a>
+                            <!-- Footer -->
+                            <div class="px-5 py-3 border-t border-white/5 bg-[#0c0c0c]">
+                                <a href="{{ route('pesanan.index') }}" class="text-[10px] font-montserrat font-bold text-gray-400 hover:text-[#ff6b00] transition-colors uppercase tracking-widest flex items-center justify-center gap-1.5">
+                                    Lihat semua pesanan <i class="ph-bold ph-arrow-right text-xs"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- User Profile -->
-                <div class="flex items-center gap-4">
-                    <div class="text-right hidden sm:block">
-                        <p class="text-xs font-extrabold text-white leading-none">{{ Auth::user()->name }}</p>
-                        <p class="text-[9px] font-bold text-[#f2994a] uppercase tracking-wider mt-1">Premium Member</p>
-                    </div>
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#e28a44] to-[#f2994a] text-black font-extrabold flex items-center justify-center shadow-lg">
-                        {{ substr(Auth::user()->name, 0, 1) }}
+                    <!-- Wishlist / Keranjang Button -->
+                    <a href="{{ route('keranjang.index') }}" title="Keranjang Belanja" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#141414] border border-white/10 flex items-center justify-center text-white hover:border-[#ff6b00]/50 hover:text-[#ff6b00] transition-all shadow-sm relative active:scale-95">
+                        <i class="ph-bold ph-shopping-cart text-lg sm:text-xl"></i>
+                        @if(isset($cartCount) && $cartCount > 0)
+                        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#ff6b00] text-black text-[9px] font-montserrat font-black rounded-full flex items-center justify-center shadow-lg">
+                            {{ $cartCount > 9 ? '9+' : $cartCount }}
+                        </span>
+                        @endif
+                    </a>
+
+                    <!-- User Profile Dropdown (Desktop & Quick Access) -->
+                    <div class="relative" x-data="{ userOpen: false }" @click.away="userOpen = false">
+                        <button @click="userOpen = !userOpen"
+                                class="flex items-center gap-3 p-1.5 sm:px-3 sm:py-2 rounded-2xl bg-[#16161A] hover:bg-white/5 border border-white/10 transition-all active:scale-95">
+                            <div class="w-8 h-8 rounded-xl bg-[#FF6B00] text-black font-montserrat font-extrabold flex items-center justify-center text-xs shadow-md shadow-[#FF6B00]/25">
+                                {{ substr(Auth::user()->name, 0, 1) }}
+                            </div>
+                            <div class="hidden sm:block text-left">
+                                <p class="text-xs font-montserrat font-bold text-white leading-none truncate max-w-[100px]">{{ explode(' ', Auth::user()->name)[0] }}</p>
+                                <span class="text-[9px] font-montserrat font-bold text-[#FF6B00] uppercase tracking-wider block mt-0.5">Member</span>
+                            </div>
+                            <i class="ph-bold ph-caret-down text-xs text-[#8A8D93] transition-transform duration-200 hidden sm:block" :class="userOpen ? 'rotate-180 text-white' : ''"></i>
+                        </button>
+
+                        {{-- Dropdown Menu --}}
+                        <div x-show="userOpen"
+                             x-cloak
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
+                             class="absolute right-0 mt-2 w-64 rounded-2xl bg-[#16161A] border border-white/10 shadow-2xl overflow-hidden z-[9999] py-2">
+
+                            {{-- User Info Header --}}
+                            <div class="px-4 py-3 border-b border-white/5 bg-white/[0.02]">
+                                <p class="text-xs font-montserrat font-bold text-white truncate">{{ Auth::user()->name }}</p>
+                                <p class="text-[10px] font-questrial text-[#8A8D93] truncate mt-0.5">{{ Auth::user()->email }}</p>
+                            </div>
+
+                            {{-- Menu Links --}}
+                            <div class="p-2 space-y-0.5 font-montserrat text-xs">
+                                <a href="{{ route('profile.edit') }}"
+                                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#8A8D93] hover:text-white hover:bg-white/5 transition-all">
+                                    <i class="ph-bold ph-user-circle text-base text-[#FF6B00]"></i>
+                                    <span>Profil &amp; Akun Saya</span>
+                                </a>
+                                <a href="{{ route('profil.perusahaan') }}"
+                                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#8A8D93] hover:text-white hover:bg-white/5 transition-all">
+                                    <i class="ph-bold ph-buildings text-base text-[#FF6B00]"></i>
+                                    <span>Profil Workshop</span>
+                                </a>
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '') }}"
+                                   target="_blank"
+                                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#8A8D93] hover:text-white hover:bg-white/5 transition-all">
+                                    <i class="ph-bold ph-whatsapp-logo text-base text-emerald-400"></i>
+                                    <span>Konsultasi CS</span>
+                                </a>
+                            </div>
+
+                            {{-- Logout Form --}}
+                            <div class="p-2 pt-1 border-t border-white/5">
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                            class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-500/10 font-montserrat font-bold text-xs uppercase tracking-wider transition-all">
+                                        <i class="ph-bold ph-sign-out text-base"></i>
+                                        <span>Keluar</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
 
-        <main class="p-6 md:p-8 flex-grow pb-24 lg:pb-8">
+        <main class="p-4 sm:p-6 md:p-8 flex-grow pb-24 lg:pb-8">
             @yield('content')
         </main>
         
         <!-- Footer matching mockup style -->
-        <footer class="p-6 md:p-8 border-t border-white/5 bg-[#080808] text-[10px] text-gray-500 font-medium">
+        <footer class="p-6 md:p-8 border-t border-white/5 bg-[#050505] text-[10px] font-questrial text-gray-400">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-                <p>{{ $profil->footer_copyright ?? '&copy; 2026 Wapping Premium Service. All rights reserved.' }}</p>
-                <div class="flex items-center gap-6">
-                    <a href="#" class="hover:text-white transition-colors">Support</a>
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
-                    <a href="#" class="hover:text-white transition-colors">Contact</a>
+                <p>{{ $profil->footer_copyright ?? '&copy; ' . date('Y') . ' ' . ($profil->nama_perusahaan ?? 'Dantie Stiker') . '. All rights reserved.' }}</p>
+                <div class="flex items-center gap-6 font-montserrat text-[10px]">
+                    <a href="#" class="hover:text-[#ff6b00] transition-colors">Support</a>
+                    <a href="#" class="hover:text-[#ff6b00] transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-[#ff6b00] transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-[#ff6b00] transition-colors">Contact</a>
                 </div>
             </div>
         </footer>
     </div>
 
-    {{-- BOTTOM NAVIGATION (Mobile Only) --}}
+    {{-- BOTTOM NAVIGATION — Fitur asli sistem --}}
     <nav id="bottom-nav" class="lg:hidden">
-        <div class="flex items-stretch justify-around h-16">
-            {{-- Beranda --}}
-            <a href="{{ route('dashboard') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('dashboard') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
-                <i class="ph-bold ph-layout text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->nav_beranda ?? 'Beranda' }}</span>
+        <div class="flex items-center justify-around h-16 px-2 bg-black/95 backdrop-blur-xl border-t border-white/10">
+
+            {{-- 1. Beranda --}}
+            <a href="{{ route('dashboard') }}"
+               class="flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-all {{ Request::routeIs('dashboard') ? 'text-[#ff6b00]' : 'text-gray-400 hover:text-white' }}">
+                <i class="ph-bold ph-house text-2xl"></i>
+                <span class="text-[10px] font-montserrat font-semibold tracking-wide">Beranda</span>
             </a>
-            {{-- Katalog --}}
-            <a href="{{ route('katalog.user') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('katalog.user') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
-                <i class="ph-bold ph-tag text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->section_katalog_layanan ?? 'Katalog' }}</span>
+
+            {{-- 2. Katalog Layanan --}}
+            <a href="{{ route('katalog.user') }}"
+               class="flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-all {{ Request::routeIs('katalog.*') ? 'text-[#ff6b00]' : 'text-gray-400 hover:text-white' }}">
+                <i class="ph-bold ph-storefront text-2xl"></i>
+                <span class="text-[10px] font-montserrat font-semibold tracking-wide">Katalog</span>
             </a>
-            {{-- Keranjang --}}
-            <a href="{{ route('keranjang.index') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('keranjang.index') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }} relative">
-                <i class="ph-bold ph-shopping-cart text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->nav_keranjang ?? 'Keranjang' }}</span>
-                @if($cartCount > 0)
-                <span class="absolute top-0 right-1 min-w-[18px] h-[18px] px-1 bg-[#f2994a] text-black text-[8px] font-extrabold rounded-full flex items-center justify-center shadow-lg">{{ $cartCount > 9 ? '9+' : $cartCount }}</span>
-                @endif
+
+            {{-- 3. Keranjang / Booking --}}
+            <a href="{{ route('booking.index') }}"
+               class="flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-all {{ Request::routeIs('booking.*') ? 'text-[#ff6b00]' : 'text-gray-400 hover:text-white' }}">
+                <i class="ph-bold ph-calendar-check text-2xl"></i>
+                <span class="text-[10px] font-montserrat font-semibold tracking-wide">Booking</span>
             </a>
-            {{-- Pesanan --}}
-            <a href="{{ route('pesanan.index') }}" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all {{ Request::routeIs('pesanan.index') ? 'text-[#f2994a]' : 'text-gray-500 hover:text-white' }}">
-                <i class="ph-bold ph-folder text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->nav_riwayat_pesanan ?? 'Pesanan' }}</span>
+
+            {{-- 4. Keranjang Belanja --}}
+            <a href="{{ route('keranjang.index') }}"
+               class="flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-all {{ Request::routeIs('keranjang.*') ? 'text-[#ff6b00]' : 'text-gray-400 hover:text-white' }} relative">
+                <div class="relative">
+                    <i class="ph-bold ph-shopping-cart text-2xl"></i>
+                    @if(isset($cartCount) && $cartCount > 0)
+                    <span class="absolute -top-1.5 -right-2 min-w-[17px] h-[17px] px-1 bg-[#ff6b00] text-white text-[9px] font-montserrat font-bold rounded-full flex items-center justify-center shadow-lg">
+                        {{ $cartCount > 9 ? '9+' : $cartCount }}
+                    </span>
+                    @endif
+                </div>
+                <span class="text-[10px] font-montserrat font-semibold tracking-wide">Keranjang</span>
             </a>
-            {{-- Menu Lebih (Hamburger) --}}
-            <button onclick="bukaMenu()" class="flex flex-col items-center justify-center gap-1 flex-1 transition-all text-gray-500 hover:text-white">
-                <i class="ph-bold ph-list text-xl"></i>
-                <span class="text-[9px] font-bold uppercase tracking-wide">{{ $profil->nav_manajemen ?? 'Menu' }}</span>
-            </button>
+
+            {{-- 5. Profil Saya --}}
+            <a href="{{ route('profile.edit') }}"
+               class="flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-all {{ Request::routeIs('profile.*') ? 'text-[#ff6b00]' : 'text-gray-400 hover:text-white' }}">
+                <i class="ph-bold ph-user-circle text-2xl"></i>
+                <span class="text-[10px] font-montserrat font-semibold tracking-wide">Profil</span>
+            </a>
+
         </div>
     </nav>
 
     <script>
-        // =============================================
-        // Sidebar Menu (Mobile)
-        // =============================================
-        function bukaMenu() {
-            document.getElementById('side-menu').style.transform = 'translateX(0)';
-            document.getElementById('side-overlay').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-        function tutupMenu() {
-            document.getElementById('side-menu').style.transform = 'translateX(-100%)';
-            document.getElementById('side-overlay').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
         // =============================================
         // Notification Panel
         // =============================================
@@ -359,7 +397,7 @@
                 }
 
                 list.innerHTML = data.map(n => `
-                    <div id="notif-item-${n.id_notif}" class="flex items-start gap-3 px-5 py-4 transition-all ${n.is_read ? 'opacity-60' : 'bg-[#f2994a]/[0.03]'} hover:bg-white/[0.03] cursor-pointer group" onclick="handleNotifClick(${n.id_notif}, ${n.id_pesanan || 'null'})">
+                    <div id="notif-item-${n.id_notif}" class="flex items-start gap-3 px-5 py-4 transition-all ${n.is_read ? 'opacity-60' : 'bg-[#f2994a]/[0.03]'} hover:bg-white/[0.03] cursor-pointer group" onclick="handleNotifClick(${n.id_notif}, ${n.id_pesanan || 'null'}, '${(n.judul || '').replace(/'/g, "\\'")}')">
                         <div class="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
                             <i class="ph ${getIconByJudul(n.judul)} text-lg"></i>
                         </div>
@@ -383,7 +421,7 @@
             }
         }
 
-        async function handleNotifClick(id_notif, id_pesanan) {
+        async function handleNotifClick(id_notif, id_pesanan, judul = '') {
             const item = document.getElementById('notif-item-' + id_notif);
             if (item) {
                 item.classList.remove('bg-[#f2994a]/[0.03]');
@@ -393,8 +431,8 @@
             }
 
             try {
-                await fetch(`{{ url('/api/notifikasi') }}/${id_notif}`, {
-                    method: 'PATCH',
+                await fetch(`{{ url('/api/notifikasi') }}/${id_notif}/read`, {
+                    method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
                         'X-Requested-With': 'XMLHttpRequest',
@@ -407,6 +445,8 @@
 
             if (id_pesanan && id_pesanan !== 'null') {
                 window.location.href = `{{ url('/pesanan') }}/${id_pesanan}`;
+            } else if ((judul || '').toLowerCase().includes('booking')) {
+                window.location.href = `{{ route('booking.index') }}`;
             }
         }
 
@@ -417,7 +457,7 @@
         async function markAllRead() {
             try {
                 await fetch('{{ route("api.notifikasi.markAllAsRead") }}', {
-                    method: 'PATCH',
+                    method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
                         'X-Requested-With': 'XMLHttpRequest',
@@ -454,8 +494,7 @@
                     headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
                 });
                 const json = await res.json();
-                const count = json.data?.length ?? (json.data ?? 0);
-                const total = Array.isArray(count) ? count.length : (parseInt(count) || 0);
+                const total = json.data?.unread_count ?? (typeof json.data === 'number' ? json.data : 0);
                 updateBadge(total);
             } catch(e) {}
         }
@@ -473,12 +512,12 @@
 
     <!-- Floating Toast Notification Component -->
     @if(session('toast_success'))
-        <div id="floating-toast" class="fixed bottom-24 right-6 z-50 flex items-center gap-3 bg-[#121212] border border-[#f2994a] text-white px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(242,153,74,0.3)] animate-bounce-short transition-all duration-500">
-            <div class="w-8 h-8 rounded-full bg-[#f2994a]/20 flex items-center justify-center text-[#f2994a] shrink-0">
+        <div id="floating-toast" class="fixed bottom-24 right-6 z-50 flex items-center gap-3 bg-[#0E0E10] border border-[#FF6B00] text-white px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(255,107,0,0.3)] animate-bounce-short transition-all duration-500">
+            <div class="w-8 h-8 rounded-full bg-[#FF6B00]/20 flex items-center justify-center text-[#FF6B00] shrink-0">
                 <i class="ph-bold ph-check-circle text-lg"></i>
             </div>
             <p class="text-xs font-bold">{{ session('toast_success') }}</p>
-            <button onclick="document.getElementById('floating-toast').remove()" class="text-gray-400 hover:text-white ml-2">
+            <button onclick="document.getElementById('floating-toast').remove()" class="text-[#8A8D93] hover:text-white ml-2">
                 <i class="ph-bold ph-x text-sm"></i>
             </button>
         </div>

@@ -23,23 +23,14 @@
                     <div class="h-full bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/10 rounded-2xl overflow-hidden group/card hover:border-[#f2994a]/50 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col">
 
                         <!-- Image Section -->
-                        <div class="relative h-48 bg-gradient-to-br from-[#f2994a]/20 to-transparent overflow-hidden">
+                        <div class="relative h-48 bg-gradient-to-br from-[#ff6b00]/20 to-transparent overflow-hidden">
                             @if($package->foto_contoh)
                             <img src="{{ \App\Helpers\StaticContent::fotoUrl($package->foto_contoh) }}"
                                  alt="{{ $package->nama_layanan }}"
                                  class="w-full h-full object-cover group-hover/card:scale-110 transition-transform duration-300">
                             @else
-                            <div class="w-full h-full bg-gradient-to-br from-[#f2994a]/30 to-[#f2994a]/10 flex items-center justify-center">
-                                <i class="ph-bold ph-package text-5xl text-[#f2994a]/40"></i>
-                            </div>
-                            @endif
-
-                            <!-- Badge Tipe Paket -->
-                            @if($package->tipe_paket)
-                            <div class="absolute top-3 right-3 bg-[#f2994a]/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                                <p class="text-[10px] font-bold text-white uppercase tracking-wider">
-                                    {{ $package->tipe_paket }}
-                                </p>
+                            <div class="w-full h-full bg-gradient-to-br from-[#ff6b00]/30 to-[#ff6b00]/10 flex items-center justify-center">
+                                <i class="ph-bold ph-package text-5xl text-[#ff6b00]/40"></i>
                             </div>
                             @endif
                         </div>
@@ -47,15 +38,21 @@
                         <!-- Content Section -->
                         <div class="p-4 flex flex-col justify-between flex-1">
                             <!-- Title & Description -->
-                            <div class="space-y-2 mb-4">
-                                <h4 class="text-sm font-bold text-white line-clamp-2 group-hover/card:text-[#f2994a] transition-colors">
+                            <div class="space-y-1.5 mb-4">
+                                @if($package->tipe_paket)
+                                <span class="text-[9px] font-montserrat font-bold uppercase tracking-widest text-[#ff6b00] block">
+                                    {{ $package->tipe_paket }}
+                                </span>
+                                @endif
+
+                                <h4 class="text-sm font-bold text-white line-clamp-2 group-hover/card:text-[#ff6b00] transition-colors">
                                     {{ $package->nama_layanan }}
                                 </h4>
 
                                 <!-- Rating Summary -->
                                 @if($packageSummary && $packageSummary['count'] > 0)
                                 <div class="flex items-center gap-1.5">
-                                    <span class="text-[#f2994a] font-bold text-xs flex items-center gap-1">
+                                    <span class="text-[#ff6b00] font-bold text-xs flex items-center gap-1">
                                         <i class="ph-fill ph-star text-xs"></i> {{ number_format((float) $packageSummary['avg'], 1, ',', '.') }}
                                     </span>
                                     <span class="text-[10px] text-gray-500">({{ $packageSummary['count'] }} ulasan)</span>
@@ -71,7 +68,7 @@
                             <div class="mb-4 space-y-1">
                                 @foreach(array_slice($package->fitur, 0, 2) as $fitur)
                                 <div class="flex items-center gap-2">
-                                    <i class="ph-bold ph-check-circle text-[#f2994a] text-xs"></i>
+                                    <i class="ph-bold ph-check-circle text-[#ff6b00] text-xs"></i>
                                     <span class="text-[10px] text-gray-300">{{ is_array($fitur) ? ($fitur['nama_fitur'] ?? ($fitur[0] ?? '')) : $fitur }}</span>
                                 </div>
                                 @endforeach
@@ -84,7 +81,7 @@
                             <!-- Price & Buttons -->
                             <div class="space-y-3 border-t border-white/10 pt-3 mt-auto">
                                 <div class="flex items-baseline gap-2">
-                                    <span class="text-2xl font-bold text-[#f2994a]">
+                                    <span class="text-2xl font-bold font-audiowide text-[#ff6b00]">
                                         Rp {{ number_format($package->harga, 0, ',', '.') }}
                                     </span>
                                     @if($package->estimasi_waktu)
@@ -102,12 +99,12 @@
                                         <input type="hidden" name="id_paket" value="{{ $package->id_layanan }}">
                                         <input type="hidden" name="jumlah" value="1">
                                         <button type="submit"
-                                                class="w-full py-2 px-3 bg-[#f2994a]/20 border border-[#f2994a] text-[#f2994a] rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/30 transition-all duration-200">
+                                                class="w-full py-2.5 px-3 bg-white/5 border border-white/10 text-white hover:text-[#ff6b00] hover:border-[#ff6b00]/40 rounded-xl text-xs font-bold uppercase tracking-wide transition-all duration-200">
                                             <i class="ph-bold ph-shopping-cart-simple mr-1"></i> Keranjang
                                         </button>
                                     </form>
                                     <a href="{{ route('pesanan.direct-order', ['package_id' => $package->id_layanan]) }}"
-                                       class="flex-1 py-2 px-3 bg-[#f2994a] text-white rounded-lg text-xs font-bold uppercase tracking-wide hover:bg-[#f2994a]/90 transition-all duration-200 flex items-center justify-center">
+                                       class="flex-1 py-2.5 px-3 bg-[#ff6b00] hover:bg-[#ea580c] text-white rounded-xl text-xs font-bold uppercase tracking-wide transition-all duration-200 flex items-center justify-center shadow-md">
                                         <i class="ph-bold ph-lightning-fill mr-1"></i> {{ $profil->cta_pesan ?? 'Pesan' }}
                                     </a>
                                 </div>
@@ -118,9 +115,9 @@
                 @empty
                 <div class="w-full py-16 text-center border border-dashed border-white/10 rounded-[32px] bg-white/[0.02]">
                     <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-500 mx-auto mb-4">
-                        <i class="ph-bold ph-package text-2xl text-[#f2994a]"></i>
+                        <i class="ph-bold ph-package text-2xl text-[#ff6b00]"></i>
                     </div>
-                    <h4 class="text-base font-bold text-white mb-1">admin belum menambahkan</h4>
+                    <h4 class="text-base font-bold text-white mb-1">Paket Layanan Belum Tersedia</h4>
                     <p class="text-xs text-gray-500 font-light">Admin belum menambahkan paket layanan saat ini.</p>
                 </div>
                 @endforelse

@@ -67,6 +67,8 @@ enum BookingStatus: string
             self::PENDING,
             self::CONFIRMED,
             self::AWAITING_PAYMENT,
+            self::PAYMENT_UPLOADED,
+            self::APPROVED,
         ]);
     }
 
@@ -81,9 +83,9 @@ enum BookingStatus: string
             self::PENDING => [self::CONFIRMED, self::REJECTED, self::CANCELLED],
             self::CONFIRMED => [self::AWAITING_PAYMENT, self::REJECTED, self::CANCELLED],
             self::AWAITING_PAYMENT => [self::PAYMENT_UPLOADED, self::CANCELLED],
-            self::PAYMENT_UPLOADED => [self::APPROVED, self::REJECTED],
-            self::APPROVED => [self::IN_PROGRESS, self::REJECTED],
-            self::IN_PROGRESS => [self::COMPLETED],
+            self::PAYMENT_UPLOADED => [self::APPROVED, self::REJECTED, self::CANCELLED],
+            self::APPROVED => [self::IN_PROGRESS, self::REJECTED, self::CANCELLED],
+            self::IN_PROGRESS => [self::COMPLETED, self::CANCELLED],
             self::COMPLETED => [],
             self::REJECTED => [],
             self::CANCELLED => [],

@@ -105,6 +105,10 @@ class EditCompany extends EditRecord
             $settings->{$key} = $value;
         }
         $settings->save();
+        
+        \App\Services\CacheService::clear(\App\Services\CacheService::COMPANY_SETTINGS);
+        \Illuminate\Support\Facades\Cache::forget('company_settings');
+
         $this->callHook('afterSave');
 
         Notification::make()

@@ -43,6 +43,26 @@
         </button>
     </div>
 
+    {{-- Flash Toast Success Notification --}}
+    @if(session('toast_success'))
+        <div class="p-5 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-200 text-sm font-semibold flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-10 relative shadow-xl">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <div>
+                    <p class="font-black text-white text-base">Booking Berhasil Diajukan!</p>
+                    <p class="text-xs text-emerald-300 mt-0.5">{{ session('toast_success') }}</p>
+                </div>
+            </div>
+            <a href="{{ $booking->whatsapp_notification_url }}" target="_blank"
+               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-black text-xs uppercase tracking-wider transition-all shrink-0 shadow-md">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                Kirim Bukti ke WhatsApp
+            </a>
+        </div>
+    @endif
+
     {{-- Hero Kartu Booking --}}
     <div class="bg-[#111111]/90 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 z-10 relative shadow-2xl overflow-hidden">
         <div class="absolute -top-20 -right-20 w-64 h-64 bg-[#f2994a]/15 rounded-full blur-[100px] pointer-events-none"></div>
@@ -57,11 +77,17 @@
                     Diajukan pada {{ $booking->created_at?->translatedFormat('l, d F Y • H:i') }} WIB
                 </p>
             </div>
-            <div class="flex items-center gap-4">
-                <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/10 text-right min-w-[180px]">
-                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">Jadwal Pengerjaan</p>
+            <div class="flex items-center gap-3 flex-wrap">
+                <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/10 text-right min-w-[200px]">
+                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-gray-400">Jadwal & Jam Pengerjaan</p>
                     <p class="font-black text-lg text-[#f2994a] mt-0.5">{{ $booking->booking_date?->translatedFormat('l, d M Y') }}</p>
+                    <p class="text-xs font-bold text-white mt-0.5">Pukul {{ $booking->booking_time ?: '09:00' }} WIB</p>
                 </div>
+                <a href="{{ $booking->whatsapp_notification_url }}" target="_blank"
+                   class="inline-flex items-center gap-2 px-5 py-4 rounded-2xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-emerald-300 font-black text-xs uppercase tracking-wider transition-all shadow-md">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    WhatsApp
+                </a>
             </div>
         </div>
     </div>
@@ -139,10 +165,12 @@
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Metode Transfer</label>
-                        <select name="payment_method" class="w-full px-4 py-3.5 rounded-2xl bg-[#1a1a1a] border border-white/10 text-white font-medium focus:border-[#f2994a] focus:outline-none">
-                            <option value="transfer_bank">Transfer Bank (BCA / Mandiri / BRI)</option>
-                            <option value="transfer_e_wallet">Transfer E-Wallet (Gopay / OVO / Dana)</option>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Metode Transfer Bank Tujuan</label>
+                        <select name="payment_method" class="w-full px-4 py-3.5 rounded-2xl bg-[#1a1a1a] border border-white/10 text-white font-medium focus:border-[#ff6b00] focus:outline-none">
+                            <option value="Transfer BCA">Bank Central Asia (BCA) - 8720-9988-11</option>
+                            <option value="Transfer BRI">Bank Rakyat Indonesia (BRI) - 0123-01-001234-53-0</option>
+                            <option value="Transfer BSI">Bank Syariah Indonesia (BSI) - 7123-4567-89</option>
+                            <option value="Transfer E-Wallet">Transfer E-Wallet (QRIS / Gopay / OVO / Dana)</option>
                         </select>
                     </div>
                     <div>
@@ -196,9 +224,14 @@
                     </div>
                     @if($booking->payment_type === 'dp')
                         <div class="flex justify-between items-center gap-4 pt-1">
-                            <dt class="text-gray-400">Nilai DP 50%</dt>
-                            <dd class="font-black text-[#f2994a]">Rp {{ number_format($dpAmount, 0, ',', '.') }}</dd>
+                            <dt class="text-gray-400">Nilai DP 50% (Ditransfer)</dt>
+                            <dd class="font-black text-[#ff6b00]">Rp {{ number_format($dpAmount, 0, ',', '.') }}</dd>
                         </div>
+                        <div class="flex justify-between items-center gap-4 pt-1 border-t border-dashed border-white/10 text-xs">
+                            <dt class="text-gray-400">Pelunasan di Workshop (Opsi A)</dt>
+                            <dd class="font-bold text-gray-200">Rp {{ number_format($dpAmount, 0, ',', '.') }}</dd>
+                        </div>
+                        <p class="text-[10px] text-[#ff6b00] leading-tight pt-1">*Sisa 50% dibayar langsung saat serah terima kendaraan di workshop.</p>
                     @endif
                 </div>
             </dl>
@@ -210,20 +243,26 @@
             </h2>
             <dl class="space-y-4 text-xs">
                 <div class="flex justify-between items-center gap-4">
+                    <dt class="text-gray-400">Nama Pemesan</dt>
+                    <dd class="font-extrabold text-white text-right">{{ $booking->pelanggan_nama }}</dd>
+                </div>
+                <div class="flex justify-between items-center gap-4">
+                    <dt class="text-gray-400">Nomor WhatsApp</dt>
+                    <dd class="font-extrabold text-[#f2994a] text-right">{{ $booking->pelanggan_phone }}</dd>
+                </div>
+                @if($booking->pelanggan_email && $booking->pelanggan_email !== '-')
+                    <div class="flex justify-between items-center gap-4">
+                        <dt class="text-gray-400">Email</dt>
+                        <dd class="font-extrabold text-white text-right">{{ $booking->pelanggan_email }}</dd>
+                    </div>
+                @endif
+                <div class="flex justify-between items-center gap-4">
                     <dt class="text-gray-400">Model Kendaraan</dt>
                     <dd class="font-extrabold text-white text-right">{{ $booking->vehicle_name ?? '-' }}</dd>
                 </div>
                 <div class="flex justify-between items-center gap-4">
-                    <dt class="text-gray-400">Warna Kendaraan</dt>
-                    <dd class="font-extrabold text-white text-right">{{ $booking->vehicle_color ?: '-' }}</dd>
-                </div>
-                <div class="flex justify-between items-center gap-4">
-                    <dt class="text-gray-400">Nomor Polisi</dt>
-                    <dd class="font-extrabold text-white text-right">{{ $booking->vehicle_license ?: '-' }}</dd>
-                </div>
-                <div class="flex justify-between items-center gap-4">
-                    <dt class="text-gray-400">Tanggal Booking</dt>
-                    <dd class="font-black text-[#f2994a] text-right">{{ $booking->booking_date?->translatedFormat('d M Y') }}</dd>
+                    <dt class="text-gray-400">Tanggal &amp; Jam</dt>
+                    <dd class="font-black text-[#f2994a] text-right">{{ $booking->booking_date?->translatedFormat('d M Y') }} • {{ $booking->booking_time ?: '09:00' }} WIB</dd>
                 </div>
                 @if($booking->notes)
                     <div class="border-t border-white/10 pt-3">

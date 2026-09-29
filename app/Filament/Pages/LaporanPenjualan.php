@@ -39,21 +39,31 @@ class LaporanPenjualan extends Page
     // Method untuk mengirim data hasil kalkulasi ke view Blade
     protected function getViewData(): array
     {
-        // Query dasar: Hanya pesanan yang tuntas / Selesai
-        $completedQuery = Pesanan::where('status', 'Selesai');
+        $todayBookingRevenue = (float) \App\Models\BookingPayment::whereIn('status', ['verified', 'approved'])
+            ->whereDate('created_at', Carbon::today())
+            ->sum('amount');
 
-        return [
-            // Total Pendapatan Hari Ini
-            'totalPendapatanHariIni' => (clone $completedQuery)
+        $completedPesananQuery = Pesanan::whereIn('status', [\App\Enums\OrderStatus::SELESAI->value, 'selesai']);
+
+        $totalPendapatanHariIni = (float) (clone $completedPesananQuery)
             ->whereDate('tanggal_pesan', Carbon::today())
-            ->sum('total_harga'),
+            ->sum('total_harga') + $todayBookingRevenue;
 
-            'butuhDiverifikasi' => Pesanan::where('status', 'menunggu_konfirmasi_admin')->count(),
+        $butuhDiverifikasi = Pesanan::whereIn('status', [Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN, Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN])->count()
+            + \App\Models\Booking::whereIn('status', [\App\Enums\BookingStatus::PENDING->value, \App\Enums\BookingStatus::PAYMENT_UPLOADED->value])->count();
 
-            'jumlahPesananSelesaiBulanIni' => (clone $completedQuery)
+        $jumlahSelesaiBulanIni = (clone $completedPesananQuery)
             ->whereMonth('tanggal_pesan', Carbon::now()->month)
             ->whereYear('tanggal_pesan', Carbon::now()->year)
-            ->count(),
+            ->count() + \App\Models\Booking::where('status', \App\Enums\BookingStatus::COMPLETED->value)
+            ->whereMonth('booking_date', Carbon::now()->month)
+            ->whereYear('booking_date', Carbon::now()->year)
+            ->count();
+
+        return [
+            'totalPendapatanHariIni' => $totalPendapatanHariIni,
+            'butuhDiverifikasi' => $butuhDiverifikasi,
+            'jumlahPesananSelesaiBulanIni' => $jumlahSelesaiBulanIni,
         ];
     }
 }
