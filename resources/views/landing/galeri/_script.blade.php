@@ -12,9 +12,9 @@
             const filterCategory = category.toLowerCase();
 
             if (btnCategory === filterCategory) {
-                btn.className = "filter-btn shrink-0 px-6 py-2.5 rounded-full bg-[#f2994a] text-black font-extrabold text-xs border border-[#f2994a] transition-all duration-300 shadow-lg shadow-[#f2994a]/10 flex items-center gap-2 active:scale-95";
+                btn.className = "filter-btn shrink-0 px-6 py-2.5 rounded-full bg-[#FF6B00] text-black font-extrabold text-xs border border-[#FF6B00] transition-all duration-300 shadow-lg shadow-[#FF6B00]/25 flex items-center gap-2 active:scale-95";
             } else {
-                btn.className = "filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:border-[#f2994a]/30 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95";
+                btn.className = "filter-btn shrink-0 px-6 py-2.5 rounded-full bg-white/5 text-gray-400 font-bold text-xs border border-white/10 hover:border-[#FF6B00]/40 hover:text-white transition-all duration-300 flex items-center gap-2 active:scale-95";
             }
         });
 

@@ -53,9 +53,15 @@
             </div>
             <h3 class="text-xl font-audiowide font-bold mb-2">{{ $isPembayaranTab ? ($profil->empty_pesanan_title ?? 'Belum Ada Tagihan Pembayaran') : ($profil->empty_pesanan_title ?? 'Belum Ada Pesanan') }}</h3>
             <p class="text-xs font-questrial text-[#8A8D93] mb-6">{{ $isPembayaranTab ? ($profil->empty_pesanan_desc ?? 'Anda tidak memiliki pesanan yang menunggu pembayaran saat ini.') : ($profil->empty_pesanan_desc ?? 'Anda belum melakukan pesanan layanan pembungkusan.') }}</p>
-            <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 px-6 py-3.5 min-h-[44px] bg-[#FF6B00] hover:bg-[#E05D00] text-black rounded-xl font-montserrat font-extrabold text-xs uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(255,107,0,0.3)] active:scale-95">
-                Mulai Proyek Baru &rarr;
-            </a>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <a href="{{ route('transaksi.index', ['type' => 'booking']) }}" class="inline-flex items-center gap-2 px-6 py-3.5 min-h-[44px] bg-[#FF6B00] hover:bg-[#E05D00] text-black rounded-xl font-montserrat font-extrabold text-xs uppercase tracking-wider transition-all shadow-[0_4px_15px_rgba(255,107,0,0.3)] active:scale-95">
+                    <i class="ph-bold ph-calendar-check text-base"></i>
+                    Lihat Riwayat Booking Wrapping &rarr;
+                </a>
+                <a href="{{ route('katalog.user') }}" class="inline-flex items-center gap-2 px-6 py-3.5 min-h-[44px] bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl font-montserrat font-bold text-xs uppercase tracking-wider transition-all active:scale-95">
+                    Katalog Layanan
+                </a>
+            </div>
         </div>
     @else
         <div class="space-y-6 z-10 relative">

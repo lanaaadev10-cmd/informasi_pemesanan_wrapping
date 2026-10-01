@@ -140,14 +140,13 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5 relative z-10">
         <div>
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#ff6b00]/15 border border-[#ff6b00]/30 text-[#ff6b00] text-[11px] font-montserrat font-bold uppercase tracking-wider mb-2 shadow-[0_0_15px_rgba(255,107,0,0.25)]">
-                <span>BOOKING ONLINE</span>
-                <span class="w-2 h-2 rounded-full bg-[#ff6b00] animate-pulse"></span>
+                <span>RESERVASI ONLINE</span>
             </div>
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-audiowide font-bold text-white tracking-wide">
                 Jadwal Booking Pengerjaan
             </h1>
             <p class="text-xs sm:text-sm font-questrial text-gray-400 mt-1 max-w-xl">
-                Online car wrapping service booking &amp; reservation dashboard
+                Sistem reservasi dan booking jadwal pengerjaan variasi kendaraan terpercaya
             </p>
         </div>
 
@@ -221,7 +220,7 @@
 
         {{-- Segmented Track Bar --}}
         <div class="w-full bg-[#1e1e23] h-1.5 rounded-full overflow-hidden mt-4">
-            <div class="h-full bg-gradient-to-r from-[#ff6b00] to-[#ff8c00] transition-all duration-300 rounded-full"
+            <div class="h-full bg-[#FF6B00] transition-all duration-300 rounded-full"
                  :style="'width: ' + ((currentStep / 4) * 100) + '%'"></div>
         </div>
     </div>

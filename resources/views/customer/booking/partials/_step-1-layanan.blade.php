@@ -6,12 +6,9 @@
 
     {{-- Step Header & Filter Tabs Sesuai Katalog --}}
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
-        <div class="flex items-center gap-2.5">
-            <span class="w-3 h-3 rounded-full bg-[#ff6b00] shadow-[0_0_10px_rgba(255,107,0,0.8)]"></span>
-            <h2 class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wide">
-                Langkah 1: Pilih Layanan
-            </h2>
-        </div>
+        <h2 class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wide">
+            Langkah 1: Pilih Layanan
+        </h2>
 
         {{-- Filter Tabs (Semua, Wrapping, Kaca Film, Audio) --}}
         <div class="flex items-center bg-[#0d0d0f] border border-white/10 p-1 rounded-2xl w-fit">

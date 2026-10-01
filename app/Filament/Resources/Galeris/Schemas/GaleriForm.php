@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Galeris\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
@@ -28,6 +29,24 @@ class GaleriForm
                 ->maxLength(255)
                 ->columnSpan(1)
                 ->helperText('Detail tambahan atau kategori jenis pekerjaan.'),
+
+            Select::make('kategori')
+                ->label('Kategori')
+                ->options([
+                    'matte'  => 'Variasi mobil',
+                    'glossy' => 'Kaca film',
+                    'satin'  => 'Audio mobil',
+                ])
+                ->placeholder('Pilih kategori galeri')
+                ->searchable()
+                ->columnSpan(1)
+                ->helperText('Kategori filter tampilan galeri di landing page.'),
+
+            TextInput::make('jenis')
+                ->label('Jenis Pekerjaan (Opsional)')
+                ->placeholder('Contoh: Full Wrapping, Kaca Depan, Audio Set')
+                ->maxLength(100)
+                ->columnSpan(1),
 
             Textarea::make('deskripsi')
                 ->label('Deskripsi Pekerjaan')

@@ -6,16 +6,13 @@
 
     {{-- Header Langkah 2 --}}
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-5">
-        <div class="flex items-center gap-2.5">
-            <span class="w-3 h-3 rounded-full bg-[#ff6b00] shadow-[0_0_10px_rgba(255,107,0,0.8)]"></span>
-            <div>
-                <h2 class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wide">
-                    Langkah 2: Pilih Tanggal &amp; Waktu
-                </h2>
-                <p class="text-xs font-questrial text-gray-400 mt-0.5">
-                    Batas kapasitas workshop 5 booking kendaraan per hari untuk menjaga kualitas terbaik.
-                </p>
-            </div>
+        <div>
+            <h2 class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wide">
+                Langkah 2: Pilih Tanggal &amp; Waktu
+            </h2>
+            <p class="text-xs font-questrial text-gray-400 mt-0.5">
+                Batas kapasitas workshop 5 booking kendaraan per hari untuk menjaga kualitas terbaik.
+            </p>
         </div>
 
         {{-- Tombol Buka/Tutup Kalender Lengkap --}}
@@ -37,7 +34,7 @@
                     Pilih Cepat Jadwal (14 Hari ke Depan)
                 </span>
                 <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-montserrat font-bold border border-emerald-500/20">
-                    Live Quota Slot
+                    Pantauan Kuota Slot Langsung
                 </span>
             </div>
 
@@ -101,7 +98,7 @@
     </div>
 
     {{-- ── 2. TANGGAL TERPILIH & JAM KEDATANGAN ── --}}
-    <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-[#ff6b00]/15 via-[#1a1a1f] to-transparent border border-[#ff6b00]/30 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="p-4 sm:p-5 rounded-2xl bg-[#19191e] border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
             <span class="text-[10px] font-montserrat font-bold uppercase tracking-widest text-[#ff6b00] block mb-1">
                 Tanggal Booking Terpilih

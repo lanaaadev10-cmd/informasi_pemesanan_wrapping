@@ -91,7 +91,24 @@
                         </div>
 
                         {{-- Aksi --}}
-                        <div class="flex items-center justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/5 shrink-0">
+                        <div class="flex items-center justify-end gap-2.5 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/5 shrink-0 flex-wrap">
+                            @if($statusVal === 'completed')
+                                @if($bk->rating)
+                                    <span class="inline-flex items-center gap-1 px-3 py-2 text-[10px] font-montserrat font-bold text-[#FFB800] bg-[#FFB800]/10 border border-[#FFB800]/25 rounded-xl">
+                                        <i class="ph-fill ph-star"></i> Telah Diulas
+                                    </span>
+                                @else
+                                    <button type="button"
+                                            onclick="window.openRatingModal({
+                                                bookingId: {{ $bk->id }},
+                                                serviceName: '{{ addslashes($bk->layanan?->nama_layanan ?? 'Layanan Wrapping') }}',
+                                                orderCode: '{{ $bk->booking_code }}'
+                                            })"
+                                            class="inline-flex items-center justify-center gap-1 px-4 py-2.5 min-h-[44px] text-xs font-montserrat font-black uppercase tracking-wider text-black bg-[#FF6B00] hover:bg-[#E05D00] rounded-xl transition-all shadow-[0_4px_14px_rgba(255,107,0,0.3)] active:scale-95">
+                                        <i class="ph-bold ph-star text-xs"></i> Beri Ulasan
+                                    </button>
+                                @endif
+                            @endif
                             <a href="{{ route('booking.show', $bk->id) }}"
                                class="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-5 py-2.5 min-h-[44px] bg-[#16161A] hover:bg-[#FF6B00] hover:text-black border border-white/10 hover:border-[#FF6B00] rounded-xl text-xs font-montserrat font-bold uppercase tracking-wider text-white transition-all shadow-md active:scale-95">
                                 <span>Rincian Booking</span>

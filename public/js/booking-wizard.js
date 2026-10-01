@@ -109,10 +109,10 @@ function bookingWizardApp(config) {
         },
 
         get quotaBadgeText() {
-            if (this.selectedDateQuota.is_full) return 'Slot Penuh';
-            if (this.selectedDateQuota.is_blocked) return 'Tutup';
+            if (this.selectedDateQuota.is_full) return 'Slot Penuh (0/5)';
+            if (this.selectedDateQuota.is_blocked) return 'Workshop Tutup';
             const count = this.selectedDateQuota.available ?? MAX_SLOT;
-            return count + ' Slot Tersedia';
+            return `Tersedia ${count} dari ${MAX_SLOT} Slot`;
         },
 
         get quotaBadgeClass() {
@@ -127,10 +127,10 @@ function bookingWizardApp(config) {
 
         get primaryButtonLabel() {
             if (this.isSubmitting) return 'Memproses Booking...';
-            if (this.currentStep === 1) return 'Lanjut ke Pilih Tanggal';
-            if (this.currentStep === 2) return 'Lanjut ke Data Diri';
+            if (this.currentStep === 1) return 'Lanjut ke Pemilihan Jadwal';
+            if (this.currentStep === 2) return 'Lanjut ke Data Kendaraan';
             if (this.currentStep === 3) return 'Lanjut ke Pembayaran';
-            return 'Konfirmasi Booking Sekarang';
+            return 'Konfirmasi & Buat Booking Sekarang';
         },
 
         get primaryButtonIcon() {

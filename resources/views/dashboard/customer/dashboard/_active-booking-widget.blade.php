@@ -60,7 +60,6 @@
                         </p>
                         <div class="mt-1">
                             <span class="inline-flex items-center gap-1.5 text-[9px] font-montserrat font-bold uppercase tracking-wider text-white">
-                                <span class="w-1.5 h-1.5 rounded-full {{ in_array($bkStatus, ['completed']) ? 'bg-white' : 'bg-[#FF6B00]' }} shrink-0"></span>
                                 <span class="{{ in_array($bkStatus, ['completed']) ? 'text-white' : 'text-[#FF6B00]' }}">{{ $bkLabel }}</span>
                             </span>
                         </div>

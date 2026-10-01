@@ -20,6 +20,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\TransaksiController;
+use App\Models\Keranjang;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -82,8 +83,13 @@ Route::middleware('throttle:60,5')->group(function () {
                 Route::patch('/profile', 'update')->name('profile.update');
                 Route::delete('/profile', 'destroy')->name('profile.destroy');
             });
+        });
 
-            // Cetak laporan — hanya admin (filter ada di blade)
+        // ================================================================
+        // RUTE KHUSUS ADMIN — Hanya dapat diakses oleh role:admin
+        // ================================================================
+        Route::middleware('role:admin')->group(function () {
+            // Cetak laporan penjualan
             Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('admin.laporan');
         });
 
@@ -91,6 +97,7 @@ Route::middleware('throttle:60,5')->group(function () {
         // HUB TRANSAKSI TERPADU (FASE 1)
         // ================================================================
         Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+        Route::get('/transaksi/tagihan', [TransaksiController::class, 'tagihan'])->name('transaksi.tagihan');
 
         // ================================================================
         // KERANJANG BELANJA
@@ -153,11 +160,18 @@ Route::middleware('throttle:60,5')->group(function () {
                 ->middleware('throttle:3,1')
                 ->name('store');
             Route::get('/{id}', [\App\Http\Controllers\BookingController::class, 'show'])->name('show');
+            Route::get('/{id}/invoice', [\App\Http\Controllers\BookingController::class, 'invoice'])->name('invoice');
             Route::post('/{id}/upload-bukti', [\App\Http\Controllers\BookingController::class, 'uploadBukti'])
                 ->middleware('throttle:3,1')
                 ->name('upload-bukti');
             Route::post('/{id}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel'])->name('cancel');
+
+            // Rating Booking (Hanya untuk booking berstatus selesai)
+            Route::post('/{id}/rating', [RatingController::class, 'storeBooking'])->name('rating.store');
         });
+
+        // Endpoint Terpadu Quick Submit Rating (Modal)
+        Route::post('/rating/quick-submit', [RatingController::class, 'quickSubmit'])->name('rating.quick-submit');
     });
 });
 

@@ -9,14 +9,11 @@
             </div>
             
             <div class="flex flex-col justify-center min-w-0">
-                <div class="flex items-center gap-1.5">
-                    <span class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wider leading-tight group-hover:text-racing-orange transition-colors truncate">
-                        {{ $profil->nama_perusahaan ?? 'Dantie Stiker' }}
-                    </span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-racing-orange shrink-0"></span>
-                </div>
+                <span class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wider leading-tight group-hover:text-racing-orange transition-colors truncate">
+                    {{ $profil->nama_perusahaan ?? 'Dantie Stiker' }}
+                </span>
                 <span class="text-[9px] font-mono font-bold uppercase tracking-widest text-racing-muted truncate">
-                    {{ $profil->dashboard_subtitle ?? 'Car Wrapping & Detailing' }}
+                    {{ $profil->dashboard_subtitle ?? 'Wrapping & Variasi Kendaraan' }}
                 </span>
             </div>
         </a>
@@ -104,7 +101,7 @@
                     </div>
                     <div class="hidden sm:block text-left">
                         <p class="text-xs font-montserrat font-bold text-white leading-none truncate max-w-[100px]">{{ explode(' ', Auth::user()->name)[0] }}</p>
-                        <span class="text-[9px] font-montserrat font-bold text-racing-orange uppercase tracking-wider block mt-0.5">Member</span>
+                        <span class="text-[9px] font-montserrat font-bold text-racing-orange uppercase tracking-wider block mt-0.5">Pelanggan</span>
                     </div>
                     <i class="ph-bold ph-caret-down text-xs text-racing-muted transition-transform duration-200 hidden sm:block" :class="userOpen ? 'rotate-180 text-white' : ''"></i>
                 </button>

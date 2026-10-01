@@ -73,7 +73,7 @@
         if (existing) existing.remove();
 
         const colors = {
-            success: 'bg-[#f2994a]/10 border-[#f2994a]/30 text-white',
+            success: 'bg-[#FF6B00]/15 border-[#FF6B00]/40 text-white',
             error: 'bg-red-500/10 border-red-500/30 text-red-300',
             info: 'bg-white/5 border-white/10 text-gray-300',
         };
@@ -131,7 +131,7 @@
 <div id="confirm-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
     <div id="modal-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
     <div class="relative bg-[#121212] border border-white/10 rounded-[28px] p-8 max-w-sm w-full mx-4 shadow-2xl animate-modal-in">
-        <div class="absolute -right-8 -top-8 w-32 h-32 bg-[#f2994a]/5 blur-[60px] rounded-full pointer-events-none"></div>
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-[#FF6B00]/10 blur-[60px] rounded-full pointer-events-none"></div>
         <div class="relative z-10 text-center space-y-6">
             <div class="w-16 h-16 mx-auto rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
                 <i class="ph-bold ph-trash-simple text-2xl text-red-400"></i>

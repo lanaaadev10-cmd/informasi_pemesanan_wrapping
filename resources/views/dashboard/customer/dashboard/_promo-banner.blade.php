@@ -15,25 +15,25 @@
         <div class="relative z-10 p-6 sm:p-8 max-w-md space-y-2">
             <!-- Orange Tag -->
             <span class="inline-block text-[11px] font-montserrat font-bold text-[#ff6b00] tracking-wider uppercase">
-                Exclusive Collection
+                Koleksi Eksklusif
             </span>
 
             <!-- Bold Title in Audiowide Font -->
             <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white tracking-wide leading-tight drop-shadow-md">
-                Built for Speed<br>
-                <span class="text-white">Driven by Passion</span>
+                Presisi Estetika<br>
+                <span class="text-white">Kualitas Tanpa Kompromi</span>
             </h3>
 
             <!-- Subtitle in Questrial -->
             <p class="text-xs font-questrial text-gray-300 leading-relaxed drop-shadow">
-                Limited cars. Unlimited adrenaline. Custom wraps tailored for high-performance excellence.
+                Kustomisasi wrapping kendaraan berstandar tinggi yang dirancang khusus untuk estetika dan ketahanan maksimal.
             </p>
 
-            <!-- Pill Button: "Discover More ->" -->
+            <!-- Pill Button: "Jelajahi Sekarang ->" -->
             <div class="pt-3">
                 <a href="{{ route('katalog.user') }}" 
                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black hover:bg-[#ff6b00] hover:text-white font-montserrat font-bold text-xs uppercase tracking-wider rounded-full shadow-lg transition-all active:scale-95 group/btn">
-                    <span>Discover More</span>
+                    <span>Jelajahi Sekarang</span>
                     <div class="w-5 h-5 rounded-full bg-black text-white group-hover/btn:bg-white group-hover/btn:text-black flex items-center justify-center text-xs transition-colors">
                         <i class="ph-bold ph-arrow-right"></i>
                     </div>

@@ -4,16 +4,13 @@
 <section x-show="currentStep === 3" x-transition.opacity
          class="bg-[#141416]/95 border border-white/10 rounded-3xl p-5 sm:p-7 shadow-2xl space-y-6">
 
-    <div class="flex items-center gap-2.5 border-b border-white/10 pb-5">
-        <span class="w-3 h-3 rounded-full bg-[#ff6b00] shadow-[0_0_10px_rgba(255,107,0,0.8)]"></span>
-        <div>
-            <h2 class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wide">
-                Langkah 3: Data Kontak &amp; Kendaraan
-            </h2>
-            <p class="text-xs font-questrial text-gray-400 mt-0.5">
-                Informasi detail kendaraan untuk persiapan bahan dan teknisi workshop.
-            </p>
-        </div>
+    <div class="border-b border-white/10 pb-5">
+        <h2 class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wide">
+            Langkah 3: Data Kontak &amp; Kendaraan
+        </h2>
+        <p class="text-xs font-questrial text-gray-400 mt-0.5">
+            Informasi detail kendaraan untuk persiapan bahan dan teknisi workshop.
+        </p>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">

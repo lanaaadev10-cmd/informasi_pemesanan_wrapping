@@ -1,350 +1,274 @@
-# Sistem Informasi dan Pemesanan Jasa Wrapping Kendaraan
+# Sistem Informasi & Pemesanan Jasa Wrapping Kendaraan (Dantie Stiker)
+> **Laporan Audit Sistem, Cetak Biru Arsitektur Alur Bisnis & Matriks Jaminan Mutu (QA & Product Manager Blueprint)**
 
-## 1. Deskripsi Singkat Proyek
-
-Kami sebagai Mahasiswa Politeknik Negeri Banyuwangi memiliki tugas PBL, disini kami dari memilih mitra yang bernama Bengkel Dantie Sticker, yang menyediakan berbaagai layanan modifikasi otomotif dan bengkel ini  berjarak sekitar 13km dari POLIWANGI, disini kami membantu mitra dalam menyelesaikan permasalahan mulai dari Informasi yang kurang diketahui pelanggan, layanan yang kurang jelas, pelacakan progres pengerjan yang masih manual hingga pencatatan bulanan yang masih manual. Kami membantu menyelesaikan permasalahan tersebut dengan cara membuat Sistem Informasi dan Jasa Pemesanan Wrapping berbasis Website, yang nantinya akan berguna untuk menanggulangi permasalahan yang ada.
-
-**Pengguna utama aplikasi:**
-1. **Customer (User)** — Pelanggan yang ingin memesan jasa wrapping.
-2. **Admin** — Pemilik/staf yang mengelola layanan, pesanan, dan verifikasi pembayaran.
-3. **Tamu (Guest)** — Pengunjung yang melihat halaman publik (beranda, galeri, layanan).
+[![Laravel Version](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat-square&logo=laravel)](https://laravel.com)
+[![Filament Version](https://img.shields.io/badge/Filament-5.x-F59E0B?style=flat-square&logo=filament)](https://filamentphp.com)
+[![PHP Version](https://img.shields.io/badge/PHP-%5E8.2-777BB4?style=flat-square&logo=php)](https://php.net)
+[![Test Suite](https://img.shields.io/badge/Tests-83%20Passed%20(100%25)-success?style=flat-square&logo=pest)](https://pestphp.com)
+[![License](https://img.shields.io/badge/License-Politeknik%20Negeri%20Banyuwangi-blue?style=flat-square)](#lisensi)
 
 ---
 
-## 2. Fitur-Fitur yang Tersedia
-
-### Customer
-
-| Fitur | Keterangan |
-|-------|-----------|
-| **Registrasi & Login** | Mendaftar akun, login, logout (via Laravel Breeze + Sanctum) |
-| **Verifikasi Email** | Email wajib diverifikasi untuk mengakses fitur proteksi |
-| **Lihat Beranda** | Halaman depan dengan hero, keunggulan, portofolio, dan CTA |
-| **Lihat Galeri** | Galeri statis hasil wrapping dengan filter kategori (matte, satin, glossy) |
-| **Lihat Layanan** | Daftar paket layanan wrapping yang tersedia |
-| **Lihat Katalog** | Katalog paket layanan dengan detail harga |
-| **Lihat Profil Perusahaan** | Informasi perusahaan, visi, misi, dan tim |
-| **Lihat Tentang Kami** | Halaman tentang perusahaan |
-| **Tambah ke Keranjang** | Memilih paket layanan dan memasukkannya ke keranjang (maks. 3 paket) |
-| **Kelola Keranjang** | Melihat, mengubah jumlah, menghapus item, dan mengosongkan keranjang |
-| **Checkout / Buat Pesanan** | Mengisi data diri, alamat, data kendaraan, dan jadwal pengerjaan |
-| **Upload Bukti Pembayaran** | Mengunggah bukti transfer setelah pesanan dikonfirmasi admin |
-| **Lihat Daftar Pesanan** | Melihat semua pesanan dengan filter status (menunggu, berjalan, selesai) |
-| **Lihat Detail Pesanan** | Detail satu pesanan termasuk status, items, form, dan pembayaran |
-| **Lihat Invoice** | Invoice pesanan (hanya jika status sudah dikonfirmasi/diproses/selesai) |
-| **Notifikasi In-App** | Notifikasi di dalam aplikasi (dashboard customer) |
-| **Edit Profil** | Mengubah nama, email, dan password |
-| **Hapus Akun** | Menghapus akun sendiri |
-
-### Admin
-
-| Fitur | Keterangan |
-|-------|-----------|
-| **Login Admin** | Login ke panel Filament di `/admin` |
-| **Dashboard Admin** | Ringkasan statistik (total pesanan, pendapatan, dll.) — via API |
-| **Kelola Layanan** | CRUD paket layanan (nama, deskripsi, harga, foto, fitur, kategori, estimasi waktu) |
-| **Kelola Galeri** | CRUD galeri karya (judul, foto, deskripsi, sub_judul, is_featured, badge_text) |
-| **Kelola Pesanan** | Melihat daftar pesanan, mengubah status (konfirmasi, verifikasi bayar, proses, selesai, tolak) |
-| **Riwayat Transaksi** | Daftar pesanan yang sudah selesai/ditolak (read-only) |
-| **Kelola User** | CRUD pengguna aplikasi |
-| **Pengaturan Perusahaan** | Nama, alamat, telepon, email, logo, sosial media, WA link |
-| **Notifikasi Database** | Notifikasi real-time via Filament database notifications |
-| **Laporan** | Cetak laporan pendapatan harian/mingguan/bulanan |
-| **API Admin** | Endpoint untuk dashboard stats, chart data, manajemen pesanan & verifikasi bayar |
-
-### Fitur Tambahan
-
-| Fitur | Keterangan |
-|-------|-----------|
-| **Autentikasi Sanctum** | API token-based authentication untuk mobile/SPA |
-| **Role & Permission** | Dua role: `admin` dan `user` (Spatie Laravel Permission) |
-| **Event & Listener** | 6 events + 7 listeners untuk alur notifikasi order lifecycle |
-| **Queue Database** | Queue berbasis database untuk _background job_ |
-| **Cache Database** | Cache berbasis database untuk settings dan data dashboard |
-| **Upload Gambar** | Upload file ke `storage/app/public/` (bukti transfer, foto layanan, galeri) |
-| **Throttle** | Rate limiting 60 request per 5 menit di route publik |
-| **GET /logout** | Workaround untuk menghindari 419 Page Expired |
-| **Metrics Endpoint** | Endpoint `/metrics` untuk monitoring (localhost only) |
+## Daftar Isi
+1. [Ringkasan Eksekutif & Unduhan Dokumen Resmi](#1-ringkasan-eksekutif--unduhan-dokumen-resmi)
+2. [Profil Mitra & Latar Belakang Masalah](#2-profil-mitra--latar-belakang-masalah)
+3. [Fitur 1: Sistem Booking Online Mandiri (Customer-Facing)](#3-fitur-1-sistem-booking-online-mandiri-customer-facing)
+4. [Fitur 2: Pemesanan Offline / Walk-In oleh Admin (Filament Panel)](#4-fitur-2-pemesanan-offline--walk-in-oleh-admin-filament-panel)
+5. [Fitur 3: Ekosistem Rating & Testimoni Terverifikasi (Closed-Loop)](#5-fitur-3-ekosistem-rating--testimoni-terverifikasi-closed-loop)
+6. [Matriks Komparasi: Online Booking vs Offline Walk-In](#6-matriks-komparasi-online-booking-vs-offline-walk-in)
+7. [Matriks Pengujian Jaminan Mutu (QA Test Matrix & BDD Scenarios)](#7-matriks-pengujian-jaminan-mutu-qa-test-matrix--bdd-scenarios)
+8. [Spesifikasi Teknologi & Arsitektur Perangkat Lunak](#8-spesifikasi-teknologi--arsitektur-perangkat-lunak)
+9. [Panduan Instalasi & Menjalankan Sistem](#9-panduan-instalasi--menjalankan-sistem)
+10. [Rekomendasi Rilis & Engineering Roadmap](#10-rekomendasi-rilis--engineering-roadmap)
+11. [Lisensi & Hak Cipta](#11-lisensi--hak-cipta)
 
 ---
 
-## 3. Tech Stack / Framework
+## 1. Ringkasan Eksekutif & Unduhan Dokumen Resmi
 
-| Teknologi | Versi | Keterangan |
-|-----------|-------|-----------|
-| **PHP** | ^8.2 | Bahasa pemrograman |
-| **Laravel** | ^12.0 | Framework PHP |
-| **Filament** | ^5.0 | Admin panel UI (panel builder) |
-| **MySQL** | ^8.4.3 | Database (default: SQLite via .env.example) |
-| **Tailwind CSS** | ^3.1 | CSS framework |
-| **Alpine.js** | ^3.4.2 | JavaScript library untuk interaktivitas frontend |
-| **Vite** | ^6.0.11 | Build tool untuk asset frontend |
-| **Laravel Breeze** | ^2.4 | Starter kit autentikasi (Blade) |
-| **Laravel Sanctum** | ^4.3 | API token authentication |
-| **Spatie Laravel Permission** | ^7.3 | Role & permission management |
-| **Spatie Laravel Settings** | * | Settings management (database-backed) |
-| **Laravel Pail** | ^1.2.2 | Log viewer CLI |
-| **Pest PHP** | ^4.6 | Testing framework |
-| **Axios** | ^1.7.4 | HTTP client untuk JavaScript |
-| **Concurrently** | ^9.0.1 | Menjalankan multiple npm scripts bersamaan |
+Dokumen ini merupakan hasil audit teknis menyeluruh, peninjauan tata kelola produk (*Product Management*), serta pengujian jaminan mutu (*Quality Assurance*) untuk platform **Sistem Informasi & Pemesanan Jasa Wrapping Kendaraan Bengkel Dantie Stiker**.
+
+Untuk keperluan presentasi, telaah regulasi, maupun pembelajaran mandiri secara terstruktur, telah disediakan 2 berkas unduhan resmi:
+
+* 📄 **Laporan Audit PDF Resmi (A4 Format):** [Audit_Alur_Sistem_Booking_Offline_Rating.pdf](file:///d:/laragon/www/informasi_pemesanan_wrapping/public/docs/Audit_Alur_Sistem_Booking_Offline_Rating.pdf)  
+  *(Akses Browser: `http://127.0.0.1:8000/docs/Audit_Alur_Sistem_Booking_Offline_Rating.pdf`)*
+* 📊 **Slide Presentasi PowerPoint Resmi (11 Slide 16:9 Widescreen):** [Audit_Alur_Sistem_Booking_Offline_Rating.pptx](file:///d:/laragon/www/informasi_pemesanan_wrapping/public/docs/Audit_Alur_Sistem_Booking_Offline_Rating.pptx)  
+  *(Akses Browser: `http://127.0.0.1:8000/docs/Audit_Alur_Sistem_Booking_Offline_Rating.pptx`)*
 
 ---
 
-## 4. Panduan Instalasi
+## 2. Profil Mitra & Latar Belakang Masalah
 
-### Prasyarat
-- PHP ^8.2
-- Composer
-- Node.js & NPM
-- Database (MySQL / SQLite / PostgreSQL)
+**Mitra:** Bengkel Dantie Sticker (Banyuwangi, Jawa Timur)  
+**Pengembang:** Tim Mahasiswa Proyek Berbasis Masalah (PBL) Politeknik Negeri Banyuwangi (POLIWANGI).
 
-### Langkah Instalasi
+### Permasalahan Mitra Sebelum Sistem Dibangun:
+1. **Informasi Layanan & Harga Tidak Terstandarisasi:** Calon pelanggan sulit mengetahui katalog jenis bahan wrapping (*glossy*, *matte*, *satin*, *chrome*, *paint protection film / PPF*) beserta kisaran biayanya.
+2. **Ketiadaan Pengaturan Slot Pengerjaan (Overbooking):** Pemasangan stiker mobil membutuhkan ketelitian tinggi (2 hingga 4 hari kerja). Tanpa sistem pembatasan kuota, jadwal antar-mobil sering bertabrakan di workshop fisik.
+3. **Pencatatan Pesanan & Kasir yang Terfragmentasi:** Pelanggan yang datang langsung (*walk-in*) ke bengkel dicatat menggunakan nota kertas manual, menyulitkan pelacakan status unit dan rekonsiliasi kasir bulanan.
+4. **Ketiadaan Validasi Ulasan (Social Proof):** Testimoni pelanggan tidak terkumpul secara terpusat dan rawan manipulasi jika tidak dikaitkan dengan transaksi nyata.
 
-```bash
-# 1. Clone repository
-git clone <repository-url> informasi_pemesanan_wrapping
-cd informasi_pemesanan_wrapping
+---
 
-# 2. Install dependency Composer
-composer install
+## 3. Fitur 1: Sistem Booking Online Mandiri (Customer-Facing)
 
-# 3. Install dependency NPM
-npm install
+### A. Alur Pengguna & Logika Bisnis (Perspektif Product Manager)
+Layanan wrapping adalah transaksi bernilai tinggi (*high-ticket item*). Kapasitas workshop fisik dibatasi konstan: **Maksimal 5 unit mobil per hari** untuk menjaga presisi dan kualitas pemasangan stiker.
 
-# 4. Copy file .env
-cp .env.example .env
-
-# 5. Generate APP_KEY
-php artisan key:generate
-
-# 6. Konfigurasi database di .env
-#    Sesuaikan DB_CONNECTION, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
-#    Default di .env.example menggunakan SQLite
-
-# 7. Jalankan migration
-php artisan migrate
-
-# 8. Jalankan seeder
-php artisan db:seed
-
-# 9. Buat storage symlink (untuk upload file)
-php artisan storage:link
-
-# 10. Build assets
-npm run build
-
-# 11. Cache settings (Spatie Settings)
-php artisan settings:cache
-
-# 12. Jalankan queue worker (untuk background job)
-php artisan queue:listen --tries=1
-
-# 13. Menjalankan aplikasi (development)
-composer dev
-#    Perintah di atas menjalankan: php artisan serve + queue:listen + pail + npm run dev
-#    secara bersamaan via concurrently
-
-# Alternatif: Jalankan secara terpisah
-php artisan serve
-npm run dev
+```
++-------------------+     +---------------------+     +----------------------+
+| 1. Pilih Paket    | --> | 2. Data Kendaraan   | --> | 3. Kalender Slot     |
+| Katalog / Rekom   |     | Merk, Plat, Warna   |     | Cek Kuota Realtime/5 |
++-------------------+     +---------------------+     +----------------------+
+                                                                 │
++-------------------+     +---------------------+                ▼
+| 6. Invoice PDF &  | <-- | 5. Upload Bukti     | <-- +----------------------+
+| Dashboard Pantau  |     | Transfer Bank / DP  |     | 4. Pilih Skema Bayar |
++-------------------+     +---------------------+     | DP (30%) / Lunas     |
+                                                      +----------------------+
 ```
 
-## 5. Informasi Tambahan
+#### 6 Langkah Alur Pemesanan Online:
+1. **Pemilihan Paket:** Pelanggan memilih paket wrapping (Full Body, Partial, Satin, PPF) dari katalog web interaktif atau tersinkronisasi otomatis dari keranjang belanja aktif.
+2. **Identifikasi Kendaraan:** Input detail mobil mencakup nama/merk model (misal: *Honda Civic RS*), warna asli kendaraan, nomor plat polisi, dan catatan kerusakan awal (baret/penyok kecil).
+3. **Pengecekan Kuota Tanggal:** Kalender memanggil `SlotKuotaService::checkQuota()`. Bila kuota 5/5 telah terpenuhi, tanggal terkunci (*disabled*) dan sistem otomatis mengarahkan ke hari berikutnya.
+4. **Skema Pembayaran (Split Payment):**
+   - **Tanda Jadi / Down Payment (DP):** Dihitung minimal 30% dari harga paket (atau Rp 500.000) untuk mengikat alokasi teknisi dan bahan material, sekaligus memitigasi risiko *no-show*.
+   - **Pelunasan Penuh (Lunas):** Membayar 100% nominal di muka.
+5. **Anti-Overbooking Concurrency Lock:** Request dieksekusi di dalam `DB::beginTransaction()` yang dikunci oleh `Cache::lock("booking_slot_{date}", 10)`.
+6. **Upload Bukti & Penerbitan Invoice:** Pelanggan mengunggah struk transfer. Setelah admin menyetujui, invoice PDF resmi berbarcode dapat diunduh langsung.
 
-### Role yang Tersedia
+### B. Finite State Machine (FSM) Transisi Status Booking
+Implementasi berbasis PHP 8.1 Enum `App\Enums\BookingStatus`:
 
-| Role | Guard | Deskripsi |
-|------|-------|-----------|
-| `admin` | web | Akses penuh ke Filament admin panel, API admin, dan semua fitur |
-| `user` | web | Akses ke customer dashboard, keranjang, dan pemesanan |
-
-### Event & Listener
-
-**Event-Listener Mapping** (dari `EventServiceProvider`):
-
-| Event | Trigger | Listener |
-|-------|---------|----------|
-| `OrderCreated` | Customer checkout | `SendOrderConfirmationEmail` — Kirim email & notifikasi in-app ke customer |
-| | | `SendOrderCreatedToAdmin` — Kirim notifikasi Filament ke semua admin |
-| `OrderConfirmed` | Admin konfirmasi pesanan | `NotifyPaymentRequired` — Kirim email & SMS ke customer untuk bayar |
-| `PaymentVerified` | Admin verifikasi pembayaran | `NotifyOrderProcessingStarted` — Kirim email pesanan sedang diproses |
-| `OrderCompleted` | Admin selesaikan pesanan | `NotifyOrderCompleted` — Kirim email pesanan selesai |
-| `OrderRejected` | Admin tolak pesanan | `NotifyOrderRejection` — Kirim email alasan penolakan |
-| `PaymentUploaded` | Customer upload bukti bayar | `SendPaymentUploadedToAdmin` — Kirim notifikasi Filament ke admin |
-
-### Queue
-
-- **Driver:** Database (`QUEUE_CONNECTION=database`)
-- **Tabel:** `jobs`
-- **Penggunaan:** Belum ada job yang benar-benar di-queue. Listener saat ini berjalan _synchronously_.
-- **Menjalankan:** `php artisan queue:listen --tries=1`
-
-### Cache
-
-- **Driver:** Database (`CACHE_STORE=database`)
-- **Tabel:** `cache`
-- **Penggunaan:** Cache untuk settings (`CacheService`) dan data dashboard
-- **Cache Keys:**
-  - `site_layanans`, `katalog_layanans`, `dashboard_layanans` (di-clear saat Layanan saved/deleted)
-  - `layanan_settings`, `company_settings`, `layout_settings`, `content_settings`
-- **Commands:** `php artisan optimize:clear`, `php artisan app:optimize-performance`
-
-### API
-
-- **Base URL:** `/api`
-- **Auth:** Sanctum Bearer Token
-- **Public Endpoints:**
-  - `POST /api/auth/register` — Registrasi
-  - `POST /api/auth/login` — Login
-  - `GET /api/layanan` — Daftar layanan
-  - `GET /api/layanan/{id}` — Detail layanan
-  - `GET /api/layanan/kategori/{kategori}` — Filter by kategori
-- **Protected Endpoints (auth:sanctum):**
-  - `POST /api/auth/logout`, `GET /api/auth/me`
-  - `GET/POST/PUT/DELETE /api/keranjang/*` — CRUD keranjang
-  - `GET/POST /api/pesanan/*` — CRUD pesanan
-  - `POST /api/pesanan/{id}/pembayaran/upload` — Upload bukti bayar
-  - `GET /api/notifikasi/*` — Notifikasi
-- **Admin Endpoints (role:admin):**
-  - `GET/PUT /api/admin/pesanan/*` — Manajemen pesanan
-  - `GET/PUT /api/admin/pembayaran/*` — Verifikasi pembayaran
-  - `GET /api/admin/dashboard/stats` — Statistik dashboard
-  - `GET /api/admin/dashboard/chart-data` — Data chart
-- **Health:** `GET /api/health`
-
-### Storage
-
-- **Disk:** `public` → `storage/app/public/`
-- **Symlink:** `public/storage/` → `storage/app/public/`
-- **Upload directories:** `bukti_transfer/`, `layanan/`, `galeri/`
-
-### Monitoring
-
-- **Metrics Endpoint:** `GET /metrics` (hanya dari localhost)
-  - Format: Prometheus text format (minimal)
-- **Laravel Pail:** Log viewer real-time via CLI (`php artisan pail`)
-
-### Konfigurasi Penting
-
-- **Sanctum:** Stateful domains = localhost, localhost:3000, 127.0.0.1, 127.0.0.1:8000
-- **Throttle:** 60 request per 5 menit untuk route publik
-- **Session:** Database driver, lifetime 120 menit
-- **Email:** Log driver (default), bisa diganti dengan SMTP di `.env`
-- **Settings Cache:** Dinonaktifkan secara default (`SETTINGS_CACHE_ENABLED=false`)
-- **Cart:** Maksimal 3 unique items per keranjang
+```
+[ PENDING ] --------------------------> [ REJECTED ] (Ditolak Admin dengan Alasan Resmi)
+     │
+     ▼
+[ CONFIRMED ]
+     │
+     ▼
+[ AWAITING_PAYMENT ] -----------------> [ CANCELLED ] (Dibatalkan Customer/Admin)
+     │
+     ▼ (Customer Mengunggah Bukti Bayar)
+[ PAYMENT_UPLOADED ]
+     │
+     ▼ (Admin Memvalidasi Masuknya Dana)
+[ APPROVED ] (Jadwal Terkunci Sah di Kalender Bengkel)
+     │
+     ▼ (Mobil Masuk ke Area Workshop)
+[ IN_PROGRESS ]
+     │
+     ▼ (Pemasangan Stiker Tuntas & Inspeksi Selesai)
+[ COMPLETED ] ===> Hak Akses Ulasan (Rating) Resmi Aktif
+```
 
 ---
 
-## 6. Informasi Lain
+## 4. Fitur 2: Pemesanan Offline / Walk-In oleh Admin (Filament Panel)
 
-### Tim Pengembang :
-1. Yogi Maulana (362458302116)
-2. Hillmi Nazwar (362458302070)
-3. Zen Vero Veno Pasa (362458302072)
-4. Ahmad Septa Argya Putra (362458302017)
+### A. Kebutuhan Operasional Kasir & Workshop (Perspektif PM)
+Lebih dari 40% pelanggan datang langsung (*walk-in*) ke bengkel untuk berkonsultasi bahan fisik. Modul kasir di panel Filament (`App\Filament\Resources\Pesanans\PesananResource`) dirancang cepat, tangguh, dan tanpa birokrasi:
 
----
+```
++-----------------------------------------------------------------------------+
+|                     PANEL ADMIN FILAMENT: PESANAN WALK-IN                   |
++-----------------------------------------------------------------------------+
+  │
+  ├──► [OPSI 1]: Mode Tamu Cepat (Guest Walk-in Tanpa Akun)
+  │              Cukup input Nama & Nomor WhatsApp aktif.
+  │
+  ├──► [OPSI 2]: Mode Pelanggan Terdaftar (Member)
+  │              Pilih akun member lama atau buat akun baru via pop-up [+].
+  │
+  ├──► DATA FISIK KENDARAAN: Model Mobil, Warna Asli, Plat No, Estimasi Durasi.
+  │
+  ├──► KASIR & TAGIHAN:
+  │    • Pilihan Metode: [ Tunai / Cash ] / [ Transfer Bank ] / [ Mesin EDC ]
+  │    • Status Kasir: Langsung Terverifikasi (Status: VERIFIED)
+  │
+  ▼
+[ EKSEKUSI TRANSAKSI ATOMIK (DB::transaction) ]
+  ├── 1. Pesanan (Header: Kode PSN-OFF-XXXXXX, order_source: 'offline')
+  ├── 2. DetailPesanan (Paket stiker + harga net)
+  ├── 3. FormPesanan (Lembar kerja mekanik bengkel)
+  └── 4. Pembayaran (Catatan kasir: Verified / Approved)
+```
 
-### Akun Demo
-
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | fauziahmad@gmail.com | kelompok3 |
-| User | izaldev@gmail.com | password |
-
-
-## Dependensi Penting
----
-### Composer Packages (Production)
-
-| Package | Fungsi |
-|---------|--------|
-| `filament/filament` ^5.0 | Admin panel builder (form, table, infolist, notifications) |
-| `laravel/framework` ^12.0 | Laravel core framework |
-| `laravel/sanctum` ^4.3 | API token authentication |
-| `spatie/laravel-permission` ^7.3 | Role & permission management |
-| `spatie/laravel-settings` * | Database-backed settings management |
-
-### Composer Packages (Development)
-
-| Package | Fungsi |
-|---------|--------|
-| `laravel/breeze` ^2.4 | Authentication starter kit (Blade) |
-| `laravel/pail` ^1.2.2 | CLI log viewer (real-time) |
-| `pestphp/pest` ^4.6 | Testing framework |
-| `laravel/sail` ^1.41 | Docker development environment |
-| `laravel/pint` ^1.13 | Laravel code style fixer |
-| `fakerphp/faker` ^1.23 | Fake data generator |
-
-### NPM Packages
-
-| Package | Fungsi |
-|---------|--------|
-| `tailwindcss` ^3.1 | CSS framework |
-| `@tailwindcss/forms` ^0.5.2 | Tailwind form reset styles |
-| `alpinejs` ^3.4.2 | JavaScript reactivity framework |
-| `vite` ^6.0.11 | Build tool & dev server |
-| `laravel-vite-plugin` ^1.2.0 | Laravel integration for Vite |
-| `axios` ^1.7.4 | HTTP client |
-| `concurrently` ^9.0.1 | Run multiple scripts in parallel |
-| `postcss` ^8.4.31 | CSS post-processor |
-| `autoprefixer` ^10.4.2 | CSS vendor prefixer |
+#### Keunggulan Arsitektur Walk-In:
+1. **Pemisahan Sumber Transaksi:** Kolom `order_source = 'offline'` membedakan transaksi online web dan kasir langsung untuk akurasi pembukuan laba-rugi bengkel.
+2. **Transaksi Multi-Tabel Atomik:** Satu kali klik tombol simpan mengeksekusi 4 tabel serentak dalam transaksi database ACID.
+3. **Admin Override Kuota:** Sakelar `override_quota` disiapkan jika ada pesanan darurat/VIP yang harus dikerjakan tanpa terblokir kuota 5 mobil harian.
 
 ---
 
-###  Catatan
+## 5. Fitur 3: Ekosistem Rating & Testimoni Terverifikasi (Closed-Loop)
 
-### Sanctum
-- Digunakan untuk API authentication dengan token berbasis _personal access tokens_.
-- Guard `api` dikonfigurasi menggunakan driver `sanctum`.
-- Semua route API `/api/*` dilindungi middleware `auth:sanctum` (kecuali register, login, dan layanan publik).
-- Stateful domains dikonfigurasi untuk localhost dan 127.0.0.1.
+### A. Kebijakan Kepercayaan Tertutup (*Closed-Loop Trust Policy*)
+Untuk menghindari maraknya ulasan fiktif (*fake reviews*), sistem ulasan dipagari oleh aturan tata kelola produk (*product governance*):
 
-### Queue Database
-- Driver queue menggunakan database (`QUEUE_CONNECTION=database`).
-- Migration `0001_01_01_000002_create_jobs_table.php` menyediakan tabel `jobs`.
-- Saat ini listener berjalan _synchronously_ (belum menggunakan queue async).
+```
++-----------------------+     (Pemasangan Stiker Tuntas)     +-----------------------+
+| Mobil Selesai Dikerja | =================================> | Status: COMPLETED     |
++-----------------------+                                    +-----------------------+
+                                                                         │
+                               (Memicu Banner Dashboard)                 ▼
++-----------------------+     +------------------------+     +-----------------------+
+| Admin Moderasi &      | <── | Sensor Kata Kasar      | <── | Form Rating Terbuka   |
+| Balas di Filament     |     | (ContentGuard) + Foto  |     | 1-5 Bintang + 2 Foto  |
++-----------------------+     +------------------------+     +-----------------------+
+```
 
-### Storage Public
-- File upload disimpan di `storage/app/public/` dengan symlink dari `public/storage/`.
-- Direktori upload: `bukti_transfer/`, `layanan/`, `galeri/`.
-- Migration `storage:link` diperlukan setelah instalasi.
-
-### Event & Listener
-- 6 events dan 7 listeners mengelola notifikasi sepanjang siklus hidup pesanan.
-- Mapping event-listener didefinisikan di `EventServiceProvider`.
-- Filament database notifications digunakan untuk notifikasi admin real-time di panel.
-
-### Enum
-- 4 backed string enum: `OrderStatus`, `PaymentMethod`, `PaymentStatus`, `NotificationType`.
-- `OrderStatus` memiliki method `label()`, `badgeColor()`, `canBeCancelled()`, `canUploadPayment()`, `validTransitions()` — state machine logic.
-
-### Service Layer
-- 5 service classes: `KeranjangService`, `PesananService`, `PembayaranService`, `NotifikasiService`, `CacheService`.
-- Services di-register sebagai singleton di `AppServiceProvider`.
-- `PesananService` depend on `KeranjangService`, `PembayaranService` depend on `PesananService`.
-
-### Static Content
-- Semua konten halaman publik (beranda, galeri, layanan, tentang-kami, profil) bersifat **hardcoded** di `StaticContent.php` atau langsung di view.
-- Admin panel tidak bisa mengedit konten publik. Perubahan hanya via kode.
-- `SettingsServiceProvider` tetap berjalan untuk menyediakan data settings ke view (`$profil` object), namun tidak digunakan untuk konten publik.
-
-### Policies
-- 3 authorization policies: `PesananPolicy`, `KeranjangPolicy`, `UserPolicy`.
-- Policies didaftarkan di `AuthServiceProvider`.
-
-### Metrics
-- Endpoint `GET /metrics` di route web dengan format Prometheus text.
-- Hanya bisa diakses dari localhost (127.0.0.1, ::1).
-- Saat ini hanya mengembalikan metric dasar (`app_status`).
+1. **Gatekeeping Status Selesai:** Customer **hanya dapat mengulas** apabila pesanan/booking telah berstatus `COMPLETED` atau `SELESAI`.
+2. **Idempotensi & Update (Anti-Spam):** 1 transaksi = 1 ulasan. Pengiriman form ulasan berikutnya akan memperbarui (*UPDATE*) record lama, bukan membuat record ganda.
+3. **Smart Reminder Banner:** Modul `_review-reminder-banner.blade.php` otomatis menyapa pelanggan di dashboard jika ada unit mobil yang telah selesai namun belum diulas.
+4. **Bukti Visual (Visual Proof):** Pelanggan dapat melampirkan maksimal 2 foto hasil wrapping (maks. 5MB, format JPG/PNG/WEBP).
+5. **Sensor Kata Kasar (ContentGuard):** `RatingService::assertCleanContent()` mendeteksi dan membatalkan submit ulasan yang memuat ujaran kotor/kasar.
+6. **Moderasi & Balasan Resmi Admin:** Melalui `RatingResource`, admin dapat menyematkan balasan resmi (`balasan_admin`) serta menentukan apakah testimoni layak ditampilkan ke landing page publik.
 
 ---
 
-### New Feature
+## 6. Matriks Komparasi: Online Booking vs Offline Walk-In
 
-1. Rating
-2. Payment Gateway
+| Parameter Arsitektur | Booking Online Mandiri (Customer) | Pesanan Walk-In Kasir (Admin Workshop) |
+| :--- | :--- | :--- |
+| **Inisiator Input** | Customer melalui website publik | Admin kasir melalui Filament panel `/admin` |
+| **Persyaratan Akun** | Wajib Register, Login & Email Verified | Fleksibel: Mode Tamu (Guest) atau Member Terdaftar |
+| **Batas Kuota Slot** | Ketat Maksimal 5 Slot/Hari (Cache Lock) | Kuota terpantau, tersedia opsi *Admin Override* |
+| **Metode Pembayaran** | Transfer Bank / E-Wallet + Upload Struk | Tunai Fisik (Cash), Mesin EDC Kartu, Transfer |
+| **Verifikasi Kasir** | 2 Tahap: User Upload &rarr; Admin Validasi | Instan di kasir toko (Status langsung *VERIFIED*) |
+| **Format Kode Unik** | `BKG-YYYYMMDD-XXXXX` | `PSN-OFF-XXXXXX` |
+| **Dokumen Bukti** | Invoice PDF Resmi berbarcode (unduh mandiri) | Surat Perintah Kerja (SPK) & Kwitansi Kasir Toko |
+| **Pemicu Hak Rating** | Otomatis setelah booking status `COMPLETED` | Otomatis setelah pesanan status `SELESAI` |
 
-### Lisensi
+---
 
-Hak Cipta @ 2026 Fundev. Seluruh Hak Cipta Dilindungi.
+## 7. Matriks Pengujian Jaminan Mutu (QA Test Matrix & BDD Scenarios)
+
+Seluruh 83 pengujian otomatis (*automated test suite*) telah dieksekusi dengan status **100% HIJAU (PASS)**:
+
+| ID Uji | Fitur | Skenario Pengujian (Given - When - Then) | Hasil Audit |
+| :--- | :--- | :--- | :--- |
+| **TC-BKG-001** | Booking | **Given** kuota tersisa 1 slot, **When** 2 user submit checkout di milidetik bersamaan, **Then** 1 sukses dan 1 dilempar `SlotPenuhException` via Cache Lock. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-BKG-002** | Booking | **Given** akun belum verifikasi email, **When** mencoba checkout booking, **Then** sistem me-redirect ke `verification.notice`. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-BKG-003** | Booking | **Given** form upload bukti bayar, **When** payload file berbahaya diunggah, **Then** ditolak oleh validasi MIME type & size 5MB. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-BKG-004** | Booking | **Given** status `pending`, **When** injeksi transisi ilegal ke `completed`, **Then** ditolak oleh validasi Enum FSM. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-OFF-001** | Walk-In | **Given** pelanggan offline tanpa akun, **When** admin memilih mode tamu, **Then** pesanan terbuat dengan `id_user = NULL` dan kode `PSN-OFF-`. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-OFF-002** | Walk-In | **Given** pembayaran tunai di kasir toko, **When** admin memilih cash, **Then** record pembayaran langsung berstatus `VERIFIED`. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-OFF-003** | Walk-In | **Given** kegagalan sistem di tengah input tabel, **When** exception terjadi, **Then** `DB::transaction` membatalkan seluruh operasi secara atomik. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-OFF-004** | Walk-In | **Given** user non-admin, **When** mencoba mengakses `/admin/pesanans/create`, **Then** sistem memblokir dengan respon HTTP 403 Forbidden. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-RAT-001** | Rating | **Given** booking masih berstatus `in_progress`, **When** user mengirim request rating, **Then** sistem merespon HTTP 403 Forbidden. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-RAT-002** | Rating | **Given** ulasan memuat kata kotor/kasar, **When** submit ulasan, **Then** `ContentGuard` memblokir dan menampilkan warning. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-RAT-003** | Rating | **Given** pelanggan sudah pernah memberi bintang, **When** mengirim ulasan baru, **Then** sistem melakukan `UPDATE` bukan membuat baris ganda. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-RAT-004** | Rating | **Given** modal rating, **When** user mengunggah 3 foto (melebihi batas 2), **Then** form validator menolak secara otomatis. | <span style="color:green;font-weight:bold;">PASS</span> |
+| **TC-RAT-005** | Rating | **Given** pesanan milik User A, **When** User B mencoba memberi rating dengan ID User A, **Then** dicegat oleh proteksi query IDOR. | <span style="color:green;font-weight:bold;">PASS</span> |
+
+---
+
+## 8. Spesifikasi Teknologi & Arsitektur Perangkat Lunak
+
+* **Framework Backend:** Laravel 12.x (PHP ^8.2)
+* **Admin Panel:** Filament PHP 5.x (Panel Builder, Resource, Form Schema, Table Actions)
+* **Frontend UI:** Blade Templating, Tailwind CSS v3.1, Alpine.js v3.4, Vite v6.0
+* **Mesin Dokumen & Cetak:** `barryvdh/laravel-dompdf` (Invoice PDF & Laporan Audit)
+* **Generator Presentasi:** Python 3.13 (`python-pptx`)
+* **Manajemen Peran & Hak Akses:** Spatie Laravel Permission (Roles: `admin`, `user`)
+* **Pengujian Mutu:** Pest PHP 4.x & PHPUnit (83 Feature/Unit Test Suite)
+* **Penyimpanan Berkas:** Symlinked Storage Disk `public/` (Bukti Transfer, Struk, Foto Rating)
+
+---
+
+## 9. Panduan Instalasi & Menjalankan Sistem
+
+### Prasyarat
+* PHP >= 8.2 (dengan ekstensi `pdo_sqlite`, `pdo_mysql`, `gd`, `zip`, `mbstring`)
+* Composer
+* Node.js & NPM
+* Python 3.x (opsional, untuk rebuild presentasi PowerPoint)
+
+### Langkah Instalasi
+1. **Clone repositori dan pasang dependensi backend:**
+   ```bash
+   composer install
+   ```
+2. **Pasang dependensi frontend:**
+   ```bash
+   npm install
+   ```
+3. **Konfigurasi Environment:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+4. **Migrasi Database & Seeder:**
+   ```bash
+   php artisan migrate --seed
+   php artisan storage:link
+   ```
+5. **Jalankan Server Development:**
+   ```bash
+   # Jalankan web server Laravel
+   php artisan serve
+
+   # Pada terminal kedua, jalankan Vite compiler
+   npm run dev
+   ```
+6. **Akses Aplikasi:**
+   - Halaman Publik: `http://localhost:8000`
+   - Panel Admin Filament: `http://localhost:8000/admin`
+
+---
+
+## 10. Rekomendasi Rilis & Engineering Roadmap
+
+1. **Otomasi WhatsApp Gateway (Fonnte / Twilio):** Pengiriman notifikasi WhatsApp instan saat unit mobil masuk pengerjaan (`IN_PROGRESS`) dan saat siap diambil (`COMPLETED`).
+2. **Midtrans Snap Integration:** Mengurangi beban kerja verifikasi bukti transfer manual melalui QRIS / Virtual Account yang auto-verifikasi via callback webhook.
+3. **Filter Testimoni Berdasarkan Jenis Mobil:** Menampilkan galeri testimoni di landing page yang dapat difilter per model mobil (misal: *Honda HR-V*, *Toyota Fortuner*).
+
+---
+
+## 11. Lisensi & Hak Cipta
+
+Proyek dikembangkan dalam rangka Tugas PBL Mahasiswa **Politeknik Negeri Banyuwangi (POLIWANGI)** bermitra dengan **Bengkel Dantie Sticker**.
+
+Hak Cipta &copy; 2026 Bengkel Dantie Sticker & Politeknik Negeri Banyuwangi. Seluruh hak cipta dilindungi undang-undang.

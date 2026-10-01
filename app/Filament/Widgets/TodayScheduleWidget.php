@@ -48,8 +48,14 @@ class TodayScheduleWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->formatStateUsing(fn (?string $state): string => $state ? (BookingStatus::tryFrom($state)?->label() ?? $state) : '-')
-                    ->color(fn (?string $state): string => $state ? (BookingStatus::tryFrom($state)?->badgeColor() ?? 'gray') : 'gray'),
+                    ->formatStateUsing(function ($state): string {
+                        $status = $state instanceof BookingStatus ? $state : ($state ? BookingStatus::tryFrom((string) $state) : null);
+                        return $status?->label() ?? (is_string($state) && $state !== '' ? $state : '-');
+                    })
+                    ->color(function ($state): string {
+                        $status = $state instanceof BookingStatus ? $state : ($state ? BookingStatus::tryFrom((string) $state) : null);
+                        return $status?->badgeColor() ?? 'gray';
+                    }),
             ])
             ->actions([
                 Action::make('whatsapp')

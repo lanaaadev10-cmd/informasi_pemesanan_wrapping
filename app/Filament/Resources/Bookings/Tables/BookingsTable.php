@@ -61,26 +61,35 @@ class BookingsTable
                 TextColumn::make('payment_type')
                     ->label('Tipe Bayar')
                     ->badge()
-                    ->formatStateUsing(fn (?string $state): string => $state ? PaymentType::from($state)->label() : '-')
-                    ->color(fn (?string $state): string => $state === PaymentType::DP->value ? 'warning' : 'success'),
+                    ->formatStateUsing(function ($state): string {
+                        if ($state instanceof PaymentType) {
+                            return $state->label();
+                        }
+                        if (is_string($state) && $state !== '') {
+                            return PaymentType::tryFrom($state)?->label() ?? $state;
+                        }
+                        return '-';
+                    })
+                    ->color(function ($state): string {
+                        $val = $state instanceof PaymentType ? $state->value : $state;
+                        return $val === PaymentType::DP->value ? 'warning' : 'success';
+                    }),
 
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->formatStateUsing(fn (?string $state): string => $state ? BookingStatus::from($state)->label() : '-')
-                    ->color(fn (?string $state): string => $state ? BookingStatus::from($state)->badgeColor() : 'gray')
-                    ->icon(fn (?string $state): string => $state
-                        ? match ($state) {
-                            'pending' => 'heroicon-m-clock',
-                            'confirmed' => 'heroicon-m-check-badge',
-                            'awaiting_payment' => 'heroicon-m-credit-card',
-                            'payment_uploaded' => 'heroicon-m-magnifying-glass',
-                            'approved' => 'heroicon-m-check-circle',
-                            'in_progress' => 'heroicon-m-wrench-screwdriver',
-                            'completed' => 'heroicon-m-check-circle',
-                            default => 'heroicon-m-x-circle',
-                        }
-                        : 'heroicon-m-question-mark-circle'),
+                    ->formatStateUsing(function ($state): string {
+                        $status = $state instanceof BookingStatus ? $state : ($state ? BookingStatus::tryFrom((string) $state) : null);
+                        return $status?->label() ?? (is_string($state) && $state !== '' ? $state : '-');
+                    })
+                    ->color(function ($state): string {
+                        $status = $state instanceof BookingStatus ? $state : ($state ? BookingStatus::tryFrom((string) $state) : null);
+                        return $status?->badgeColor() ?? 'gray';
+                    })
+                    ->icon(function ($state): string {
+                        $status = $state instanceof BookingStatus ? $state : ($state ? BookingStatus::tryFrom((string) $state) : null);
+                        return $status?->icon() ?? 'heroicon-m-question-mark-circle';
+                    }),
 
                 ImageColumn::make('payment.proof_file')
                     ->label('Bukti Bayar')

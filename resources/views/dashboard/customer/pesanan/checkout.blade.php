@@ -6,7 +6,7 @@
     $accentColor = $profil->accent_color ?? '#f2994a';
     $step1Label = $profil->checkout_step_1_label ?? 'Pilih Layanan';
     $step2Label = $profil->checkout_step_2_label ?? 'Data Kendaraan';
-    $step3Label = $profil->checkout_step_3_label ?? 'Review';
+    $step3Label = $profil->checkout_step_3_label ?? 'Tinjau Data';
     $step4Label = $profil->checkout_step_4_label ?? 'Pembayaran';
 @endphp
 
@@ -25,7 +25,7 @@
 
     <!-- Top Header -->
     <div class="flex items-center justify-between z-10 relative">
-        <h1 class="text-xl sm:text-2xl font-bold tracking-wide font-serif accent-color">{{ $profil->nama_perusahaan ?? 'Wapping Premium' }}</h1>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-wide font-audiowide accent-color">{{ $profil->nama_perusahaan ?? 'Wrapping Premium' }}</h1>
     </div>
 
     <!-- Stepper (4 Steps) -->
@@ -53,7 +53,7 @@
             <div id="step-circle-3" class="w-10 h-10 rounded-full bg-[#202020] text-gray-400 font-bold flex items-center justify-center text-sm border border-white/10 transition-all">
                 3
             </div>
-            <span id="step-label-3" class="text-[10px] font-bold text-gray-500 transition-all text-center">Review</span>
+            <span id="step-label-3" class="text-[10px] font-bold text-gray-500 transition-all text-center">{{ $step3Label }}</span>
         </div>
         <div class="flex-grow h-px bg-white/10 mx-2"></div>
 

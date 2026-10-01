@@ -20,7 +20,7 @@
                     Pesanan Aktif &bull; #{{ $activePesanan->kode_pesanan }}
                 </div>
                 
-                <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white mt-1.5">{{ $activePesanan->form?->model_kendaraan ?? 'Kendaraan Customer' }}</h3>
+                <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white mt-1.5">{{ $activePesanan->form?->model_kendaraan ?? 'Kendaraan Pelanggan' }}</h3>
                 
                 <!-- Clean Text Status (No Pill Badge) -->
                 <div class="flex items-center gap-2 mt-1">
@@ -36,7 +36,7 @@
                 </div>
                 <a href="{{ route('pesanan.show', $activePesanan->id_pesanan) }}"
                    class="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-5 py-2.5 bg-white/5 hover:bg-[#ff6b00] hover:text-black border border-white/10 hover:border-[#ff6b00] rounded-xl text-xs font-montserrat font-bold text-white transition-all shadow-md active:scale-95">
-                    <span>Lihat Detail</span>
+                    <span>Lihat Rincian</span>
                     <i class="ph-bold ph-arrow-right text-xs"></i>
                 </a>
             </div>
@@ -45,7 +45,7 @@
         <!-- Parameters Grid (Responsive 1 col mobile, 3 cols tablet & desktop) -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 font-questrial">
             <div class="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col justify-between">
-                <span class="text-[10px] font-montserrat font-semibold text-gray-400 uppercase tracking-wider">Service / Paket</span>
+                <span class="text-[10px] font-montserrat font-semibold text-gray-400 uppercase tracking-wider">Layanan / Paket</span>
                 <span class="text-xs sm:text-sm font-bold text-white mt-1">{{ $activePesanan->details?->first()?->layanan?->nama_layanan ?? '-' }}</span>
             </div>
             <div class="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col justify-between">
@@ -53,7 +53,7 @@
                 <span class="text-xs sm:text-sm font-bold text-white mt-1">{{ $activePesanan->form?->warna_kendaraan ?? '-' }}</span>
             </div>
             <div class="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col justify-between">
-                <span class="text-[10px] font-montserrat font-semibold text-gray-400 uppercase tracking-wider">Material Grade</span>
+                <span class="text-[10px] font-montserrat font-semibold text-gray-400 uppercase tracking-wider">Tingkat Bahan / Material</span>
                 <span class="text-xs sm:text-sm font-bold text-white mt-1">{{ $activePesanan->details?->first()?->layanan?->tipe_paket ?? 'Avery Dennison' }}</span>
             </div>
         </div>
@@ -80,7 +80,7 @@
                     Booking Aktif &bull; {{ $activeBooking->booking_code }}
                 </div>
                 
-                <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white mt-1.5">{{ $activeBooking->vehicle_name ?: 'Kendaraan Customer' }}</h3>
+                <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white mt-1.5">{{ $activeBooking->vehicle_name ?: 'Kendaraan Pelanggan' }}</h3>
                 
                 <!-- Clean Text Status (No Pill Badge) -->
                 <div class="flex items-center gap-2 mt-1">
@@ -96,7 +96,7 @@
                 </div>
                 <a href="{{ route('booking.show', $activeBooking->id) }}"
                    class="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-5 py-2.5 bg-[#ff6b00] hover:bg-[#ea580c] rounded-xl text-xs font-montserrat font-bold text-white transition-all shadow-[0_4px_15px_rgba(255,107,0,0.35)] active:scale-95">
-                    <span>Lihat Detail Booking</span>
+                    <span>Lihat Rincian Booking</span>
                     <i class="ph-bold ph-arrow-right text-xs"></i>
                 </a>
             </div>
@@ -105,7 +105,7 @@
         <!-- Parameters Grid (Responsive 1 col mobile, 3 cols tablet & desktop) -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 font-questrial">
             <div class="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col justify-between">
-                <span class="text-[10px] font-montserrat font-semibold text-gray-400 uppercase tracking-wider">Service / Paket</span>
+                <span class="text-[10px] font-montserrat font-semibold text-gray-400 uppercase tracking-wider">Layanan / Paket</span>
                 <span class="text-xs sm:text-sm font-bold text-white mt-1">{{ $activeBooking->layanan?->nama_layanan ?? '-' }}</span>
             </div>
             <div class="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col justify-between">
@@ -113,7 +113,7 @@
                 <span class="text-xs sm:text-sm font-bold text-white mt-1">{{ $activeBooking->vehicle_color ?: '-' }} {{ $activeBooking->vehicle_license ? '(' . $activeBooking->vehicle_license . ')' : '' }}</span>
             </div>
             <div class="bg-black/60 border border-white/5 p-4 rounded-2xl flex flex-col justify-between">
-                <span class="text-[10px] font-montserrat font-semibold text-gray-400 uppercase tracking-wider">Tipe Pembayaran</span>
+                <span class="text-[10px] font-montserrat font-semibold text-gray-400 uppercase tracking-wider">Skema Pembayaran</span>
                 <span class="text-xs sm:text-sm font-bold text-white mt-1">{{ strtoupper($activeBooking->payment_type ?? 'DP') }} ({{ $activeBooking->payment?->status ? ucfirst($activeBooking->payment->status) : 'Menunggu Bayar' }})</span>
             </div>
         </div>

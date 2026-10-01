@@ -1,7 +1,9 @@
 {{-- Status Booking — Clean Text Indicator (White, Black, Orange Palette, No Badges) --}}
 @php
-    $statusValue = $statusValue ?? ($booking->status instanceof \App\Enums\BookingStatus ? $booking->status->value : ($booking->status ?? null));
-    $enum = \App\Enums\BookingStatus::from($statusValue);
+    $statusRaw = $statusValue ?? ($booking->status ?? null);
+    $enum = $statusRaw instanceof \App\Enums\BookingStatus 
+        ? $statusRaw 
+        : (\App\Enums\BookingStatus::tryFrom((string) $statusRaw) ?? \App\Enums\BookingStatus::PENDING);
     $statusVal = $enum->value;
 
     $textColor = match($statusVal) {

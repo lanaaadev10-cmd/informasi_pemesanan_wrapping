@@ -11,7 +11,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-5">
         <div>
             <h1 class="text-2xl sm:text-3xl md:text-4xl font-audiowide font-bold text-white tracking-wide">
-                Hello, {{ explode(' ', trim(Auth::user()->name))[0] }} 👋
+                Hello, {{ explode(' ', trim(Auth::user()->name))[0] }}
             </h1>
             <p class="text-xs sm:text-sm font-questrial text-[#8A8D93] mt-1 max-w-2xl leading-relaxed">
                 Pantau progres pengerjaan kendaraan Anda atau amankan slot pengerjaan workshop minggu ini.
@@ -32,6 +32,9 @@
             </a>
         </div>
     </div>
+
+    {{-- Banner Pengingat Ulasan Pengerjaan Selesai (Jika Ada yang Belum Dinilai) --}}
+    @include('dashboard.customer.dashboard._review-reminder-banner')
 
     {{-- ═══════════════════════════════════════════════════════════
          2. WIDGET: BOOKING SAYA YANG AKTIF (FOTO PERTAMA)

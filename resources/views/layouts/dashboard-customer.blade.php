@@ -29,6 +29,51 @@
         {{-- Top Navigation Bar --}}
         @include('layouts.customer._topbar')
 
+        {{-- Contextual Back Bar: muncul di semua halaman kecuali beranda --}}
+        @if(!Request::routeIs('dashboard'))
+        <div class="sticky top-[69px] z-[90] bg-black/70 backdrop-blur-sm border-b border-white/[0.04] px-4 sm:px-6 md:px-8">
+            <div class="max-w-7xl mx-auto flex items-center h-10">
+                <a href="{{ route('dashboard') }}"
+                   class="inline-flex items-center gap-2 text-sm font-montserrat font-bold text-gray-400 hover:text-[#FF6B00] transition-colors group">
+                    <i class="ph-bold ph-arrow-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
+                    Beranda
+                </a>
+                <span class="mx-2.5 text-gray-700">·</span>
+                <span class="text-sm font-montserrat font-bold text-gray-500 truncate">
+                    @php
+                        $pageLabels = [
+                            'booking.create'      => 'Booking Baru',
+                            'booking.index'       => 'Jadwal Servis',
+                            'booking.show'        => 'Detail Booking',
+                            'booking.invoice'     => 'Invoice Booking',
+                            'katalog.*'           => 'Katalog Layanan',
+                            'katalog.user'        => 'Katalog Layanan',
+                            'keranjang.index'     => 'Keranjang',
+                            'transaksi.index'     => 'Riwayat Order',
+                            'transaksi.tagihan'   => 'Bayar Tagihan',
+                            'pesanan.index'       => 'Pesanan',
+                            'pesanan.show'        => 'Detail Pesanan',
+                            'pesanan.checkout'    => 'Checkout',
+                            'pesanan.invoice'     => 'Invoice Pesanan',
+                            'galeri.user'         => 'Galeri Workshop',
+                            'profil.perusahaan'   => 'Profil Workshop',
+                            'profile.edit'        => 'Akun Saya',
+                            'rating.create'       => 'Beri Ulasan',
+                        ];
+                        $currentLabel = 'Halaman Ini';
+                        foreach ($pageLabels as $routePattern => $label) {
+                            if (Request::routeIs($routePattern)) {
+                                $currentLabel = $label;
+                                break;
+                            }
+                        }
+                    @endphp
+                    {{ $currentLabel }}
+                </span>
+            </div>
+        </div>
+        @endif
+
         {{-- Main Page Content --}}
         <main class="p-4 sm:p-6 md:p-8 flex-grow pb-24 lg:pb-8">
             @yield('content')
@@ -53,6 +98,9 @@
 
     {{-- Notification System & Floating Toasts --}}
     @include('layouts.customer._notification-scripts')
+
+    {{-- Rating & Ulasan Modal Global --}}
+    @include('dashboard.customer.partials._rating-modal')
 
     @stack('scripts')
 </body>

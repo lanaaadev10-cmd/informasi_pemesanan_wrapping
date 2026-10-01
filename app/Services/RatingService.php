@@ -66,6 +66,42 @@ class RatingService
         });
     }
 
+    /**
+     * Simpan rating untuk Booking (Alur Booking).
+     */
+    public function storeForBooking(\App\Models\Booking $booking, int $userId, array $data): Rating
+    {
+        return DB::transaction(function () use ($booking, $userId, $data) {
+            $existing = Rating::where('booking_id', $booking->id)
+                ->where('id_layanan', $booking->layanan_id)
+                ->first();
+
+            if ($existing) {
+                return $this->update($existing, $data);
+            }
+
+            $this->validateData($data);
+
+            $rating = Rating::create([
+                'id_user' => $userId,
+                'booking_id' => $booking->id,
+                'id_pesanan' => null,
+                'id_layanan' => $booking->layanan_id,
+                'order_ref' => 0,
+                'rating' => $data['rating'],
+                'ulasan' => $data['ulasan'] ?? null,
+            ]);
+
+            if (! empty($data['foto_baru'])) {
+                $this->saveMedia($rating, $data['foto_baru']);
+            }
+
+            RatingCreated::dispatch($rating);
+
+            return $rating;
+        });
+    }
+
     // [DISABLED] Alur 2 — service ini hanya dipakai oleh endpoint Alur 2 yang sedang non-aktif.
 
     /**

@@ -24,7 +24,7 @@ trait ManagesBookingQueries
      */
     public function getUserBookings(int $userId, int $perPage = 10, ?string $status = null, ?string $tab = null): LengthAwarePaginator
     {
-        $query = Booking::with(['layanan', 'payment'])->where('user_id', $userId);
+        $query = Booking::with(['layanan', 'payment', 'rating'])->where('user_id', $userId);
         $filter = $tab ?: $status;
 
         if ($filter && $filter !== 'all') {

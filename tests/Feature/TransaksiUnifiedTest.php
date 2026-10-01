@@ -170,4 +170,39 @@ class TransaksiUnifiedTest extends TestCase
         $resUnpaid->assertSee('BK-FILTER-UNPAID');
         $resUnpaid->assertDontSee('BK-FILTER-DONE');
     }
+
+    /**
+     * 5. Halaman Pusat Tagihan: Menampilkan daftar tagihan aktif dan rekening resmi.
+     */
+    public function test_authenticated_user_can_view_tagihan_page_with_unpaid_items()
+    {
+        Booking::create([
+            'booking_code' => 'BK-TAGIHAN-01',
+            'user_id' => $this->userA->id,
+            'customer_name' => $this->userA->name,
+            'customer_phone' => '081234567891',
+            'layanan_id' => $this->layanan->id_layanan,
+            'booking_date' => now()->addDays(2)->toDateString(),
+            'payment_type' => 'dp',
+            'vehicle_name' => 'Fortuner Alpha',
+            'status' => BookingStatus::AWAITING_PAYMENT,
+        ]);
+
+        $response = $this->actingAs($this->userA)->get(route('transaksi.tagihan'));
+        $response->assertStatus(200);
+        $response->assertSee('Bayar Tagihan');
+        $response->assertSee('BK-TAGIHAN-01');
+        $response->assertSee('Fortuner Alpha');
+        $response->assertSee('123-456-7890'); // No rekening BCA
+    }
+
+    /**
+     * 6. Halaman Pusat Tagihan: Menampilkan status lunas jika tidak ada tagihan.
+     */
+    public function test_tagihan_page_shows_all_paid_when_no_unpaid_items()
+    {
+        $response = $this->actingAs($this->userA)->get(route('transaksi.tagihan'));
+        $response->assertStatus(200);
+        $response->assertSee('Semua Tagihan Lunas');
+    }
 }

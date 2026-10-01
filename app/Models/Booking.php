@@ -89,6 +89,11 @@ class Booking extends Model
         return $this->hasOne(BookingPayment::class);
     }
 
+    public function rating(): HasOne
+    {
+        return $this->hasOne(Rating::class, 'booking_id', 'id');
+    }
+
     public function getLabelStatusAttribute(): string
     {
         return $this->status->label();

@@ -17,12 +17,9 @@
 
 <div class="space-y-3" x-data="dateStripWidget()" x-init="init()">
     <div class="flex items-center justify-between px-1">
-        <div class="flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#FF6B00]"></span>
-            <span class="text-[10px] font-montserrat font-black uppercase tracking-widest text-[#8A8D93]">
-                Ketersediaan Slot 14 Hari
-            </span>
-        </div>
+        <span class="text-[10px] font-montserrat font-black uppercase tracking-widest text-[#8A8D93]">
+            Ketersediaan Slot 14 Hari
+        </span>
         <a href="{{ route('booking.index') }}" class="text-[10px] font-montserrat font-bold text-[#FF6B00] hover:underline">
             Lihat Kalender &rarr;
         </a>

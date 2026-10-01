@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Booking;
 use App\Models\Pesanan;
 use App\Models\Rating;
 use App\Models\User;
@@ -9,17 +10,29 @@ use App\Models\User;
 class RatingPolicy
 {
     /**
-     * Boleh buat rating untuk pesanan yang statusnya selesai
+     * Boleh buat rating untuk pesanan / booking yang statusnya selesai
      * dan dimiliki user yang sedang login.
      */
-    public function create(User $user, ?Pesanan $pesanan = null): bool
+    public function create(User $user, Pesanan|Booking|null $source = null): bool
     {
-        if ($pesanan === null) {
+        if ($source === null) {
             return true;
         }
 
-        return $pesanan->id_user === $user->id
-            && $pesanan->status === Pesanan::STATUS_SELESAI;
+        if ($source instanceof Pesanan) {
+            return $source->id_user === $user->id
+                && $source->status === Pesanan::STATUS_SELESAI;
+        }
+
+        if ($source instanceof Booking) {
+            $statusVal = $source->status instanceof \App\Enums\BookingStatus
+                ? $source->status->value
+                : (string) $source->status;
+
+            return $source->user_id === $user->id && $statusVal === 'completed';
+        }
+
+        return false;
     }
 
     /**

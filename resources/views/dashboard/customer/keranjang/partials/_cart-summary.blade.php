@@ -70,7 +70,7 @@
 
         <!-- 2. WARRANTY TRUST BOX -->
         <div class="bg-white/[0.01] border border-white/5 rounded-[24px] p-5 flex gap-4 items-start shadow-sm z-10 relative">
-            <div class="w-10 h-10 rounded-xl bg-[#f2994a]/5 flex items-center justify-center text-[#f2994a] shrink-0 border border-white/5">
+            <div class="w-10 h-10 rounded-xl bg-[#FF6B00]/10 flex items-center justify-center text-[#FF6B00] shrink-0 border border-white/5">
                 <i class="ph-bold ph-shield-check text-lg"></i>
             </div>
             <div class="space-y-1">

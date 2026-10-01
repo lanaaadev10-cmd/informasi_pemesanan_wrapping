@@ -53,20 +53,18 @@ class RecentBookingsWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->formatStateUsing(fn (?string $state): string => $state ? (BookingStatus::tryFrom($state)?->label() ?? $state) : '-')
-                    ->color(fn (?string $state): string => $state ? (BookingStatus::tryFrom($state)?->badgeColor() ?? 'gray') : 'gray')
-                    ->icon(fn (?string $state): string => $state
-                        ? match ($state) {
-                            'pending' => 'heroicon-m-clock',
-                            'confirmed' => 'heroicon-m-check-badge',
-                            'awaiting_payment' => 'heroicon-m-credit-card',
-                            'payment_uploaded' => 'heroicon-m-magnifying-glass',
-                            'approved' => 'heroicon-m-check-circle',
-                            'in_progress' => 'heroicon-m-wrench-screwdriver',
-                            'completed' => 'heroicon-m-check-circle',
-                            default => 'heroicon-m-x-circle',
-                        }
-                        : 'heroicon-m-question-mark-circle'),
+                    ->formatStateUsing(function ($state): string {
+                        $status = $state instanceof BookingStatus ? $state : ($state ? BookingStatus::tryFrom((string) $state) : null);
+                        return $status?->label() ?? (is_string($state) && $state !== '' ? $state : '-');
+                    })
+                    ->color(function ($state): string {
+                        $status = $state instanceof BookingStatus ? $state : ($state ? BookingStatus::tryFrom((string) $state) : null);
+                        return $status?->badgeColor() ?? 'gray';
+                    })
+                    ->icon(function ($state): string {
+                        $status = $state instanceof BookingStatus ? $state : ($state ? BookingStatus::tryFrom((string) $state) : null);
+                        return $status?->icon() ?? 'heroicon-m-question-mark-circle';
+                    }),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dipesan')

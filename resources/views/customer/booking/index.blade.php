@@ -185,12 +185,29 @@
                         </div>
 
                         {{-- Aksi --}}
-                        <div class="flex items-center justify-between sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/5 shrink-0">
+                        <div class="flex items-center justify-between sm:justify-end gap-2.5 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/5 shrink-0 flex-wrap">
                             <div class="inline-flex">
                                 @include('customer.booking.partials.payment-pill', ['paymentType' => $booking->payment_type])
                             </div>
+                            @if($statusValue === 'completed')
+                                @if($booking->rating)
+                                    <span class="inline-flex items-center gap-1 px-3 py-2 text-[10px] font-montserrat font-bold text-[#FFB800] bg-[#FFB800]/10 border border-[#FFB800]/25 rounded-xl">
+                                        <i class="ph-fill ph-star"></i> Telah Diulas
+                                    </span>
+                                @else
+                                    <button type="button"
+                                            onclick="window.openRatingModal({
+                                                bookingId: {{ $booking->id }},
+                                                serviceName: '{{ addslashes($booking->layanan?->nama_layanan ?? 'Layanan Wrapping') }}',
+                                                orderCode: '{{ $booking->booking_code }}'
+                                            })"
+                                            class="inline-flex items-center justify-center gap-1 px-3.5 py-2 text-xs font-montserrat font-black uppercase tracking-wider text-black bg-[#FF6B00] hover:bg-[#E05D00] rounded-xl transition-all shadow-[0_4px_12px_rgba(255,107,0,0.3)] active:scale-95">
+                                        <i class="ph-bold ph-star text-xs"></i> Ulas
+                                    </button>
+                                @endif
+                            @endif
                             <a href="{{ route('booking.show', $booking->id) }}"
-                               class="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-montserrat font-bold uppercase tracking-wider text-white bg-white/5 hover:bg-[#ff6b00] hover:text-black border border-white/10 hover:border-[#ff6b00] rounded-xl transition-all shadow-md active:scale-95">
+                               class="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-montserrat font-bold uppercase tracking-wider text-white bg-white/5 hover:bg-[#ff6b00] hover:text-black border border-white/10 hover:border-[#ff6b00] rounded-xl transition-all shadow-md active:scale-95">
                                 Detail <i class="ph-bold ph-arrow-right text-xs"></i>
                             </a>
                         </div>

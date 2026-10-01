@@ -11,6 +11,10 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
+        if (!auth()->user()?->hasRole('admin')) {
+            abort(403, 'Akses ditolak. Halaman ini hanya untuk Administrator.');
+        }
+
         $type = $request->get('type', 'hari');
         $now = Carbon::now();
 

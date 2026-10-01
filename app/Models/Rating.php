@@ -15,6 +15,7 @@ class Rating extends Model
     protected $fillable = [
         'id_user',
         'id_pesanan',
+        'booking_id',
         'id_layanan',
         'order_ref',
         'rating',
@@ -50,6 +51,11 @@ class Rating extends Model
         return $this->belongsTo(Pesanan::class, 'id_pesanan', 'id_pesanan');
     }
 
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class, 'booking_id', 'id');
+    }
+
     public function layanan()
     {
         return $this->belongsTo(Layanan::class, 'id_layanan', 'id_layanan');
@@ -62,6 +68,9 @@ class Rating extends Model
 
     public function getTipeRatingAttribute(): string
     {
+        if ($this->booking_id) {
+            return 'Booking';
+        }
         return $this->id_pesanan ? 'Pesanan' : 'Layanan';
     }
 }

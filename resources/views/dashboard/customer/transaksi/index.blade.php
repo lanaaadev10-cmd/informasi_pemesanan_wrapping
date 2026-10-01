@@ -27,8 +27,7 @@
     <!-- 1. Header Hub Transaksi -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-10 relative border-b border-white/10 pb-6">
         <div>
-            <div class="flex items-center gap-2 mb-2">
-                <span class="w-2 h-2 rounded-full bg-[#FF6B00]"></span>
+            <div class="mb-2">
                 <span class="text-[10px] font-montserrat font-black uppercase tracking-widest text-[#FF6B00]">
                     Pusat Manajemen Pelanggan
                 </span>

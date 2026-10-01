@@ -347,4 +347,113 @@ class BookingTest extends TestCase
             'status' => 'cancelled',
         ]);
     }
+
+    /**
+     * Test Case 9:
+     * User can view their booking show page with the progress stepper without any operand TypeErrors.
+     */
+    public function test_user_can_view_booking_show_page_with_stepper()
+    {
+        $user = User::factory()->create(['email_verified_at' => now()]);
+        $booking = Booking::create([
+            'booking_code' => 'BKG-SHOW-TEST',
+            'user_id' => $user->id,
+            'layanan_id' => $this->layanan->id_layanan,
+            'booking_date' => now()->addDays(2)->toDateString(),
+            'booking_time' => '10:00',
+            'payment_type' => 'dp',
+            'vehicle_name' => 'Mazda CX-5',
+            'vehicle_color' => 'Soul Red',
+            'pelanggan_nama' => $user->name,
+            'pelanggan_phone' => '081234567890',
+            'status' => 'confirmed',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('booking.show', $booking->id));
+
+        $response->assertStatus(200);
+        $response->assertSee('BKG-SHOW-TEST');
+        $response->assertSee('Mazda CX-5');
+        $response->assertSee('Progress Status Booking');
+    }
+
+    /**
+     * Test Case 10 (Security):
+     * User cannot view another user's booking details.
+     */
+    public function test_user_cannot_view_another_users_booking()
+    {
+        $userA = User::factory()->create(['email_verified_at' => now()]);
+        $userB = User::factory()->create(['email_verified_at' => now()]);
+
+        $booking = Booking::create([
+            'booking_code' => 'BKG-ISOLATION-TEST',
+            'user_id' => $userA->id,
+            'layanan_id' => $this->layanan->id_layanan,
+            'booking_date' => now()->addDays(2)->toDateString(),
+            'payment_type' => 'dp',
+            'vehicle_name' => 'Honda Civic',
+            'status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($userB)->get(route('booking.show', $booking->id));
+
+        $response->assertStatus(404);
+    }
+
+    /**
+     * Test Case 11 (Invoice):
+     * User can view and download official booking invoice when status is completed/approved.
+     */
+    public function test_user_can_view_booking_invoice()
+    {
+        $user = User::factory()->create(['email_verified_at' => now()]);
+
+        $booking = Booking::create([
+            'booking_code' => 'BKG-INV-TEST-001',
+            'user_id'      => $user->id,
+            'customer_name'=> $user->name,
+            'layanan_id'   => $this->layanan->id_layanan,
+            'booking_date' => now()->addDays(2)->toDateString(),
+            'payment_type' => 'lunas',
+            'vehicle_name' => 'Toyota Alphard',
+            'status'       => 'completed',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('booking.invoice', $booking->id));
+
+        // Response must be a successful PDF download
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/pdf');
+        // DomPDF outputs filename without surrounding quotes
+        $this->assertStringContainsString(
+            'Invoice-BKG-INV-TEST-001.pdf',
+            $response->headers->get('Content-Disposition')
+        );
+    }
+
+    /**
+     * Test Case 12 (Security):
+     * User cannot view another user's booking invoice.
+     */
+    public function test_user_cannot_view_another_users_booking_invoice()
+    {
+        $userA = User::factory()->create(['email_verified_at' => now()]);
+        $userB = User::factory()->create(['email_verified_at' => now()]);
+
+        $booking = Booking::create([
+            'booking_code' => 'BKG-INV-SECRET',
+            'user_id' => $userA->id,
+            'customer_name' => $userA->name,
+            'layanan_id' => $this->layanan->id_layanan,
+            'booking_date' => now()->addDays(2)->toDateString(),
+            'payment_type' => 'lunas',
+            'vehicle_name' => 'BMW 330i',
+            'status' => 'completed',
+        ]);
+
+        $response = $this->actingAs($userB)->get(route('booking.invoice', $booking->id));
+
+        $response->assertStatus(404);
+    }
 }

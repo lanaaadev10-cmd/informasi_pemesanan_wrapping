@@ -25,6 +25,17 @@ class GalerisTable
                     ->searchable()
                     ->sortable(),
 
+                TextColumn::make('kategori')
+                    ->label('Kategori')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'matte'  => 'Variasi mobil',
+                        'glossy' => 'Kaca film',
+                        'satin'  => 'Audio mobil',
+                        default  => $state ? ucfirst($state) : '-',
+                    })
+                    ->sortable(),
+
                 TextColumn::make('tanggal_upload')
                     ->label('Tanggal Upload')
                     ->date()
@@ -39,6 +50,13 @@ class GalerisTable
                     ]),
             ])
             ->filters([
+                \Filament\Tables\Filters\SelectFilter::make('kategori')
+                    ->label('Kategori')
+                    ->options([
+                        'matte'  => 'Variasi mobil',
+                        'glossy' => 'Kaca film',
+                        'satin'  => 'Audio mobil',
+                    ]),
                 TernaryFilter::make('is_featured')
                     ->label('Featured Only'),
             ])

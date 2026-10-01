@@ -22,7 +22,7 @@ class BookingResource extends JsonResource
             'payment_type' => $this->payment_type,
             'payment_type_label' => $this->payment_type instanceof PaymentType
                 ? $this->payment_type->label()
-                : PaymentType::from($this->payment_type)->label(),
+                : (is_string($this->payment_type) ? (PaymentType::tryFrom($this->payment_type)?->label() ?? $this->payment_type) : '-'),
             'vehicle_name' => $this->vehicle_name,
             'vehicle_color' => $this->vehicle_color,
             'vehicle_license' => $this->vehicle_license,
@@ -30,10 +30,10 @@ class BookingResource extends JsonResource
             'status' => $this->status instanceof BookingStatus ? $this->status->value : $this->status,
             'status_label' => $this->status instanceof BookingStatus
                 ? $this->status->label()
-                : BookingStatus::from($this->status)->label(),
+                : (is_string($this->status) ? (BookingStatus::tryFrom($this->status)?->label() ?? $this->status) : '-'),
             'status_badge_color' => $this->status instanceof BookingStatus
                 ? $this->status->badgeColor()
-                : BookingStatus::from($this->status)->badgeColor(),
+                : (is_string($this->status) ? (BookingStatus::tryFrom($this->status)?->badgeColor() ?? 'gray') : 'gray'),
             'admin_notes' => $this->admin_notes,
 
             'user' => new UserResource($this->whenLoaded('user')),

@@ -20,7 +20,7 @@
                     <h3 class="text-2xl font-black italic tracking-tight">{{ Auth::user()->name }}</h3>
                     <p class="text-gray-400 text-xs font-medium italic mt-1">{{ Auth::user()->email }}</p>
                     <span class="mt-6 px-4 py-1.5 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-racing-orange border border-white/5">
-                        Member
+                        Pelanggan
                     </span>
                 </div>
             </div>

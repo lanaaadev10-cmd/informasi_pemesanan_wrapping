@@ -6,19 +6,20 @@
         </h2>
         <div class="overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div class="flex items-center gap-0 min-w-max mx-auto px-4">
-                @foreach($allSteps as $idx => $step)
+                @foreach($allSteps as $statusKey => $step)
                     @php
-                        $done = $currentIdx !== false && $idx < $currentIdx;
-                        $active = $idx === $currentIdx;
+                        $stepIndex = $loop->index;
+                        $done = $currentIdx !== false && $stepIndex < $currentIdx;
+                        $active = $stepIndex === $currentIdx;
                     @endphp
                     <div class="flex items-center">
                         <div class="flex flex-col items-center w-24">
-                            <div class="w-12 h-12 rounded-2xl border flex items-center justify-center transition-all {{ $active ? 'bg-gradient-to-br from-[#f2994a] to-[#e28a44] border-[#f2994a] text-black shadow-[0_0_25px_rgba(242,153,74,0.5)] scale-110' : ($done ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400' : 'bg-white/5 border-white/10 text-gray-600') }}">
-                                <span class="text-sm font-black">{{ $idx + 1 }}</span>
+                            <div class="w-12 h-12 rounded-2xl border flex items-center justify-center transition-all {{ $active ? 'bg-[#FF6B00] border-[#FF6B00] text-black shadow-[0_0_20px_rgba(255,107,0,0.4)] scale-110' : ($done ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400' : 'bg-white/5 border-white/10 text-gray-600') }}">
+                                <span class="text-sm font-black">{{ $loop->iteration }}</span>
                             </div>
-                            <span class="text-[11px] font-extrabold mt-3 text-center leading-tight {{ $active ? 'text-[#f2994a]' : ($done ? 'text-emerald-400' : 'text-gray-500') }}">{{ $step['label'] }}</span>
+                            <span class="text-[11px] font-extrabold mt-3 text-center leading-tight {{ $active ? 'text-[#FF6B00]' : ($done ? 'text-emerald-400' : 'text-gray-500') }}">{{ $step['label'] }}</span>
                         </div>
-                        @if($idx < count($allSteps) - 1)
+                        @if(!$loop->last)
                             <div class="w-8 md:w-14 h-1 rounded-full -mt-6 mx-1 {{ $done ? 'bg-emerald-500/50' : 'bg-white/10' }}"></div>
                         @endif
                     </div>
@@ -47,13 +48,13 @@
             <h2 class="text-base font-black {{ $isRejected ? 'text-red-300' : 'text-gray-200' }}">{{ $isRejected ? 'Booking Ditolak Admin' : 'Booking Dibatalkan' }}</h2>
             <p class="text-xs text-gray-400 mt-1 max-w-xl">{{ $booking->admin_notes ? 'Catatan Alasan: ' . $booking->admin_notes : 'Tidak ada catatan keterangan tambahan.' }}</p>
         </div>
-        <a href="{{ route('booking.create') }}" class="inline-flex items-center gap-2 px-5 py-3.5 min-h-[46px] bg-gradient-to-r from-[#e28a44] to-[#f2994a] text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all hover:scale-[1.02] ml-auto shrink-0 shadow-lg">
+        <a href="{{ route('booking.create') }}" class="inline-flex items-center gap-2 px-5 py-3.5 min-h-[46px] bg-[#FF6B00] hover:bg-[#E05D00] text-black font-black text-xs uppercase tracking-wider rounded-xl transition-all hover:scale-[1.02] ml-auto shrink-0 shadow-lg">
             Buat Booking Baru
         </a>
     </div>
 @elseif($statusVal === 'awaiting_payment')
     {{-- Form Upload Bukti Pembayaran --}}
-    <div class="rounded-3xl border border-[#f2994a]/30 bg-gradient-to-br from-[#f2994a]/15 via-[#111111] to-[#111111] p-6 md:p-8 z-10 relative shadow-2xl">
+    <div class="rounded-3xl border border-white/10 bg-[#141416] p-6 md:p-8 z-10 relative shadow-2xl">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/10 pb-6">
             <div class="flex items-start gap-4">
                 <div>
@@ -94,16 +95,37 @@
             @if(session('toast_error'))
                 <p class="text-xs font-bold text-red-300 bg-red-500/15 border border-red-500/30 rounded-xl px-4 py-3">{{ session('toast_error') }}</p>
             @endif
-            <button type="submit" class="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 min-h-[50px] bg-gradient-to-r from-[#e28a44] to-[#f2994a] text-black font-black text-xs uppercase tracking-widest rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_8px_25px_rgba(242,153,74,0.3)]">
-                Kirim Bukti Pembayaran Now
+            <button type="submit" class="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 min-h-[50px] bg-[#FF6B00] hover:bg-[#E05D00] text-black font-black text-xs uppercase tracking-widest rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_8px_25px_rgba(255,107,0,0.3)]">
+                Kirim Bukti Pembayaran Sekarang
             </button>
         </form>
     </div>
 @elseif($callout)
-    <div class="rounded-3xl border p-6 flex items-start gap-5 z-10 relative shadow-xl backdrop-blur-xl {{ $callout['color'] }}">
+    <div class="rounded-3xl border p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-5 z-10 relative shadow-xl backdrop-blur-xl {{ $callout['color'] }}">
         <div>
             <h2 class="text-base font-black text-white">{{ $callout['title'] }}</h2>
             <p class="text-xs mt-1 leading-relaxed opacity-90">{{ $callout['desc'] }}</p>
         </div>
+        @if($statusVal === 'completed')
+            <div class="shrink-0">
+                @if($booking->rating)
+                    <div class="inline-flex items-center gap-1.5 px-4 py-3 rounded-2xl bg-[#FFB800]/15 border border-[#FFB800]/40 text-[#FFB800] text-xs font-montserrat font-bold">
+                        <i class="ph-fill ph-star text-base"></i>
+                        <span>Ulasan Diberikan ({{ $booking->rating->rating }}/5)</span>
+                    </div>
+                @else
+                    <button type="button"
+                            onclick="window.openRatingModal({
+                                bookingId: {{ $booking->id }},
+                                serviceName: '{{ addslashes($booking->layanan->nama_layanan ?? 'Layanan Wrapping') }}',
+                                orderCode: '{{ $booking->booking_code }}'
+                            })"
+                            class="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-[#FF6B00] hover:bg-[#E05D00] text-black font-montserrat font-black text-xs uppercase tracking-wider transition-all shadow-[0_4px_18px_rgba(255,107,0,0.35)] hover:scale-[1.02] active:scale-95">
+                        <i class="ph-bold ph-star text-base"></i>
+                        <span>★ Beri Ulasan Sekarang</span>
+                    </button>
+                @endif
+            </div>
+        @endif
     </div>
 @endif

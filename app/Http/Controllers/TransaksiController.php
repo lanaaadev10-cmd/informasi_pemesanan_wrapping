@@ -84,4 +84,65 @@ class TransaksiController extends Controller
             'activePesanansCount'
         ));
     }
+
+    /**
+     * Halaman Pusat Tagihan & Pembayaran (Payment Center).
+     * Mengumpulkan semua booking dan pesanan yang membutuhkan pembayaran / verifikasi transfer.
+     */
+    public function tagihan(Request $request)
+    {
+        $userId = Auth::id();
+
+        // 1. Booking yang menunggu pembayaran atau bukti diunggah
+        $unpaidBookings = Booking::where('user_id', $userId)
+            ->whereIn('status', [
+                \App\Enums\BookingStatus::AWAITING_PAYMENT->value,
+                \App\Enums\BookingStatus::PAYMENT_UPLOADED->value,
+            ])
+            ->with(['layanan', 'payment'])
+            ->latest()
+            ->get();
+
+        // 2. Pesanan yang menunggu pembayaran
+        $unpaidPesanans = Pesanan::where('id_user', $userId)
+            ->whereIn('status', [
+                Pesanan::STATUS_MENUNGGU_KONFIRMASI_ADMIN,
+                Pesanan::STATUS_MENUNGGU_PEMBAYARAN,
+                Pesanan::STATUS_MENUNGGU_VERIFIKASI_PEMBAYARAN,
+            ])
+            ->with(['form', 'pembayaran', 'details.layanan'])
+            ->latest()
+            ->get();
+
+        $totalUnpaidCount = $unpaidBookings->count() + $unpaidPesanans->count();
+
+        // 3. Transaksi lunas terbaru (Booking / Pesanan) untuk akses unduh invoice instan saat status lunas
+        $latestPaidBooking = Booking::where('user_id', $userId)
+            ->whereIn('status', [
+                \App\Enums\BookingStatus::APPROVED->value,
+                \App\Enums\BookingStatus::IN_PROGRESS->value,
+                \App\Enums\BookingStatus::COMPLETED->value,
+            ])
+            ->with('layanan')
+            ->latest()
+            ->first();
+
+        $latestPaidPesanan = Pesanan::where('id_user', $userId)
+            ->whereIn('status', [
+                Pesanan::STATUS_DIKONFIRMASI,
+                Pesanan::STATUS_SEDANG_DIPROSES,
+                Pesanan::STATUS_SELESAI,
+            ])
+            ->with(['details.layanan', 'form'])
+            ->latest()
+            ->first();
+
+        return view('dashboard.customer.transaksi.tagihan', compact(
+            'unpaidBookings',
+            'unpaidPesanans',
+            'totalUnpaidCount',
+            'latestPaidBooking',
+            'latestPaidPesanan'
+        ));
+    }
 }

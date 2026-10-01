@@ -10,6 +10,8 @@ use App\Http\Requests\Booking\StoreBookingRequest;
 use App\Http\Requests\Booking\UploadBuktiBookingRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Settings\CompanySettings;
 
 class BookingController extends Controller
 {
@@ -116,7 +118,7 @@ class BookingController extends Controller
      */
     public function show($id)
     {
-        $query = Booking::with(['user', 'layanan', 'payment'])
+        $query = Booking::with(['user', 'layanan', 'payment', 'rating'])
             ->where('id', $id);
 
         if (!Auth::user()->hasRole('admin')) {
@@ -126,6 +128,46 @@ class BookingController extends Controller
         $booking = $query->firstOrFail();
 
         return view('customer.booking.show', compact('booking'));
+    }
+
+    /**
+     * Unduh Invoice PDF Resmi untuk Booking Wrapping.
+     * Menggunakan DomPDF untuk menghasilkan PDF langsung tanpa window.print().
+     */
+    public function invoice($id)
+    {
+        $query = Booking::with(['user', 'layanan', 'payment'])
+            ->where('id', $id);
+
+        if (!Auth::user()->hasRole('admin')) {
+            $query->where('user_id', Auth::id());
+        }
+
+        $booking = $query->firstOrFail();
+
+        $statusVal = $booking->status instanceof \App\Enums\BookingStatus
+            ? $booking->status->value
+            : (string) $booking->status;
+
+        $allowedStatuses = ['approved', 'in_progress', 'completed', 'confirmed', 'payment_uploaded'];
+        if (!in_array($statusVal, $allowedStatuses) && !Auth::user()->hasRole('admin')) {
+            return back()->with('toast_error', 'Invoice belum dapat diunduh. Tunggu verifikasi pembayaran.');
+        }
+
+        $profil = app(CompanySettings::class);
+
+        $pdf = Pdf::loadView('customer.booking.invoice-pdf', compact('booking', 'profil'))
+            ->setPaper('a4', 'portrait')
+            ->setOptions([
+                'defaultFont'     => 'DejaVu Sans',
+                'isRemoteEnabled' => false,
+                'isHtml5ParserEnabled' => true,
+                'dpi'             => 96,
+            ]);
+
+        $filename = 'Invoice-' . $booking->booking_code . '.pdf';
+
+        return $pdf->download($filename);
     }
 
     /**

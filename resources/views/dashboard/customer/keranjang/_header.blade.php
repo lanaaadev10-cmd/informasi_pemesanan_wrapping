@@ -1,7 +1,7 @@
 <!-- Header Section -->
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 z-10 relative">
     <div>
-        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">{{ $profil->keranjang_hero_text ?? 'YOUR SELECTION' }}</span>
+        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-widest font-mono">{{ $profil->keranjang_hero_text ?? 'PILIHAN LAYANAN ANDA' }}</span>
         <h1 class="text-3xl font-extrabold text-white tracking-tight mt-1">
             {{ $keranjangTitle }}
         </h1>

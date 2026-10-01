@@ -89,6 +89,122 @@ class RatingController extends Controller
             ->with('toast_success', 'Terima kasih atas ulasan Anda!');
     }
 
+    /**
+     * Alur Booking: Simpan/Update rating untuk suatu booking.
+     */
+    public function storeBooking(Request $request, $id)
+    {
+        $booking = \App\Models\Booking::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $statusVal = $booking->status instanceof \App\Enums\BookingStatus
+            ? $booking->status->value
+            : (string) $booking->status;
+
+        $isCompleted = ($statusVal === 'completed');
+
+        if (! $isCompleted) {
+            if ($request->wantsJson()) {
+                return response()->json(['message' => 'Rating hanya bisa diberikan setelah pengerjaan selesai.'], 403);
+            }
+            abort(403, 'Rating hanya bisa diberikan setelah pengerjaan selesai.');
+        }
+
+        $this->authorize('create', [Rating::class, $booking]);
+
+        $validated = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'ulasan' => 'nullable|string|max:500',
+            'foto' => 'nullable|array|max:2',
+            'foto.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
+        ]);
+
+        RatingService::assertCleanContent($validated['ulasan'] ?? null);
+
+        $fotos = $request->file('foto', []);
+
+        $rating = $this->ratingService->storeForBooking(
+            $booking,
+            Auth::id(),
+            [
+                'rating' => $validated['rating'],
+                'ulasan' => $validated['ulasan'] ?? null,
+                'foto_baru' => $fotos,
+            ]
+        );
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Terima kasih atas ulasan Anda!',
+                'rating' => $rating,
+            ]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('toast_success', 'Terima kasih atas ulasan Anda!');
+    }
+
+    /**
+     * Endpoint terpadu untuk modal / quick submit rating (bisa untuk booking_id atau id_pesanan).
+     */
+    public function quickSubmit(Request $request)
+    {
+        if ($request->filled('booking_id')) {
+            return $this->storeBooking($request, $request->input('booking_id'));
+        }
+
+        if ($request->filled('id_pesanan')) {
+            $pesanan = Pesanan::where('id_pesanan', $request->input('id_pesanan'))
+                ->where('id_user', Auth::id())
+                ->with('details')
+                ->firstOrFail();
+
+            if ($pesanan->status !== Pesanan::STATUS_SELESAI) {
+                if ($request->wantsJson()) {
+                    return response()->json(['message' => 'Rating hanya bisa diberikan setelah pesanan selesai.'], 403);
+                }
+                abort(403, 'Rating hanya bisa diberikan setelah pesanan selesai.');
+            }
+
+            $this->authorize('create', [Rating::class, $pesanan]);
+
+            $idLayanan = $request->input('id_layanan') ?: $pesanan->details->first()?->id_paket;
+            $request->merge(['id_layanan' => $idLayanan]);
+
+            $validated = $this->validateRequest($request);
+            $fotos = $request->file('foto', []);
+
+            $saved = $this->ratingService->storeForPesanan(
+                $pesanan,
+                Auth::id(),
+                [
+                    $validated['id_layanan'] => [
+                        'rating' => $validated['rating'],
+                        'ulasan' => $validated['ulasan'] ?? null,
+                        'foto_baru' => $fotos,
+                    ],
+                ]
+            );
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Terima kasih atas ulasan Anda!',
+                    'rating' => $saved[0] ?? null,
+                ]);
+            }
+
+            return redirect()
+                ->back()
+                ->with('toast_success', 'Terima kasih atas ulasan Anda!');
+        }
+
+        return response()->json(['message' => 'Data pesanan atau booking tidak valid.'], 422);
+    }
+
     // [DISABLED] Alur 2 — method tidak terpakai (rute /rating/buat dikomentari di routes/web.php).
 
     /**
