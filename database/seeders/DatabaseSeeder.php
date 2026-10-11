@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SettingsTableSeeder::class);
         $this->call(LayananSeeder::class);
         $this->call(GaleriSeeder::class);
+        $this->call(VehicleSeeder::class);
+        $this->call(AddonSeeder::class);
     }
 }

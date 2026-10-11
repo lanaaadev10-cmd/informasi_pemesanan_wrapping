@@ -1,125 +1,118 @@
 {{-- ============================================
     BAGIAN: Service Cards Grid
-    Deskripsi: Grid berisi daftar paket layanan yang dinamis dari DB/fallback
+    Deskripsi: Grid berisi daftar paket layanan terstruktur rapi:
+    - Terpisah jelas antara Sepeda Motor & Mobil (tidak campur aduk)
+    - Tanda jelas antara Jasa Pasang Saja vs Paket Toko All-In
 ============================================ --}}
 @if(count($services) > 0)
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-    @foreach($services as $idx => $svc)
-        @php
-            $fiturArr = [];
-            if (!empty($svc['fitur'])) {
-                if (is_array($svc['fitur'])) {
-                    foreach ($svc['fitur'] as $item) {
-                        if (is_array($item)) {
-                            $fiturArr[] = $item['nama_fitur'] ?? $item[0] ?? '';
-                        } else {
-                            $fiturArr[] = $item;
-                        }
-                    }
-                } elseif (is_string($svc['fitur'])) {
-                    $decoded = json_decode($svc['fitur'], true);
-                    $fiturArr = $decoded ?? [];
-                }
-            }
+    @php
+        $motorServices = array_filter($services, fn($s) => strtolower($s['kategori'] ?? '') === 'motor');
+        $mobilServices = array_filter($services, fn($s) => strtolower($s['kategori'] ?? '') !== 'motor');
+    @endphp
 
-            $fotoPath = $svc['foto_contoh'] ?? $svc['gambar'] ?? null;
-                $imgSrc = !empty($fotoPath)
-                ? \App\Helpers\StaticContent::fotoUrl($fotoPath)
-                : ($fallbackImages[$idx % count($fallbackImages)]);
+    <div class="space-y-8 sm:space-y-12" id="public-services-wrapper">
 
-            $badge       = $badgeLabels[$idx % count($badgeLabels)] ?? '';
-            $badgeBg     = $badgeColors[$idx % count($badgeColors)];
-            $badgeClr    = $badgeTextColors[$idx % count($badgeTextColors)];
-            $isFeatured  = ($idx === 1); // Best Seller card
+        {{-- ============================================
+             SEKSI 1: 🛵 LAYANAN SEPEDA MOTOR
+        ============================================ --}}
+        @if(count($motorServices) > 0)
+            <div id="section-motor" data-section-vehicle="motor" class="space-y-4 sm:space-y-6 transition-all duration-300">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-r from-emerald-950/40 via-[#141416] to-[#0e0e10] border border-emerald-500/25 shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="space-y-1 relative z-10">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/35">
+                                🛵 ZONA MOTOR
+                            </span>
+                            <span class="text-[11px] sm:text-xs text-gray-400 font-light">Bebek, Matic, Maxi &amp; Sport</span>
+                        </div>
+                        <h3 class="text-base sm:text-2xl font-black text-white tracking-wide">
+                            Layanan Khusus Sepeda Motor
+                        </h3>
+                        <p class="text-[11px] sm:text-xs text-gray-300 max-w-2xl font-light leading-relaxed">
+                            Opsi <strong class="text-emerald-400 font-semibold">Jasa Pasang Saja (Bawa Bahan)</strong> hemat per tipe motor, serta <strong class="text-[var(--accent)] font-semibold">Paket Full Wrap Oracal</strong> bergaransi resmi toko.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0 relative z-10 self-start sm:self-auto">
+                        <span class="text-[11px] sm:text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                            <i class="ph-bold ph-motorcycle text-xs sm:text-sm"></i>
+                            <span>{{ count($motorServices) }} Paket</span>
+                        </span>
+                    </div>
+                </div>
 
-            $svcSummary = isset($svc['id']) ? ($ratingSummary->get($svc['id']) ?? null) : null;
-        @endphp
-        <div class="bg-gradient-to-b from-[#161616] to-[#0f0f0f] border border-white/[0.06] rounded-2xl overflow-hidden flex flex-col transition-all duration-[400ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1.5 hover:shadow-[0_20px_50px_-12px_rgba(242,153,74,0.15)] hover:border-[rgba(242,153,74,0.25)]{{ $isFeatured ? ' ring-1 ring-[var(--accent)]/20' : '' }}">
-
-            <div class="relative h-48 sm:h-52 overflow-hidden bg-gray-950 flex-shrink-0">
-                <img src="{{ $imgSrc }}"
-                     alt="{{ $svc['nama_layanan'] ?? $svc['nama'] ?? 'Layanan' }}"
-                     class="w-full h-full object-cover object-center transition-transform duration-[600ms] ease-[cubic-bezier(.22,.61,.36,1)] group-hover:scale-106"
-                     loading="lazy">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] to-transparent"></div>
-                <div class="absolute top-4 right-4 z-10">
-                    <span class="text-[0.6rem] font-bold tracking-[0.12em] uppercase px-3 py-1.5 rounded-full backdrop-blur-sm border"
-                            style="background:{{ $badgeBg }};color:{{ $badgeClr }};border-color:rgba(242,153,74,0.25)">
-                        {{ $badge }}
-                    </span>
+                {{-- Grid Motor Cards --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 items-stretch">
+                    @foreach($motorServices as $idx => $svc)
+                        @include('landing.layanan._card_item', ['svc' => $svc, 'idx' => $idx])
+                    @endforeach
                 </div>
             </div>
+        @endif
 
-            <div class="flex flex-col flex-1 p-5 sm:p-6 gap-4">
-                <h3 class="text-lg font-extrabold text-white leading-tight">
-                        {{ $svc['nama_layanan'] ?? $svc['nama'] ?? 'Layanan' }}
-                </h3>
-
-                @if($svcSummary && $svcSummary['count'] > 0)
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-[var(--accent)] font-bold text-xs flex items-center gap-1">
-                            <i class="ph-fill ph-star text-xs"></i> {{ number_format((float) $svcSummary['avg'], 1, ',', '.') }}
+        {{-- ============================================
+             SEKSI 2: 🚗 LAYANAN MOBIL & MODIFIKASI
+        ============================================ --}}
+        @if(count($mobilServices) > 0)
+            <div id="section-mobil" data-section-vehicle="mobil" class="space-y-4 sm:space-y-6 transition-all duration-300">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-r from-orange-950/40 via-[#141416] to-[#0e0e10] border border-[var(--accent)]/25 shadow-xl relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-[var(--accent)]/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="space-y-1 relative z-10">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/35">
+                                🚗 ZONA MOBIL &amp; VARIASI
+                            </span>
+                            <span class="text-[11px] sm:text-xs text-gray-400 font-light">City Car, Sedan, MPV, SUV</span>
+                        </div>
+                        <h3 class="text-base sm:text-2xl font-black text-white tracking-wide">
+                            Layanan Khusus Mobil &amp; Modifikasi
+                        </h3>
+                        <p class="text-[11px] sm:text-xs text-gray-300 max-w-2xl font-light leading-relaxed">
+                            Mulai dari <strong class="text-[var(--accent)] font-semibold">Full Body Wrap</strong>, <strong class="text-sky-400 font-semibold">Kap &amp; Atap Karbon 6D</strong>, jasa pasang panel, kaca film tolak panas, hingga audio/lighting.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0 relative z-10 self-start sm:self-auto">
+                        <span class="text-[11px] sm:text-xs font-bold text-[var(--accent)] bg-[var(--accent)]/10 border border-[var(--accent)]/25 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                            <i class="ph-bold ph-car-profile text-xs sm:text-sm"></i>
+                            <span>{{ count($mobilServices) }} Paket</span>
                         </span>
-                        <span class="text-[11px] text-gray-500">({{ $svcSummary['count'] }} ulasan)</span>
                     </div>
-                @endif
+                </div>
 
-                @if(!empty($svc['harga']))
-                    <div class="flex items-baseline gap-1">
-                        <span class="text-base font-black text-[var(--accent)]">{{ $svc['harga'] }}</span>
-                        <span class="text-xs text-gray-500 font-medium">/unit</span>
-                    </div>
-                @endif
-
-                @if(!empty($svc['deskripsi']))
-                    <p class="text-gray-500 text-xs leading-relaxed line-clamp-3">
-                        {!! $svc['deskripsi'] !!}
-                    </p>
-                @endif
-
-                <div class="border-t border-white/[0.06] my-1"></div>
-
-                @if(!empty($fiturArr))
-                    <ul class="space-y-2.5 flex-1">
-                        @foreach($fiturArr as $item)
-                            @if(!empty($item))
-                                <li class="flex items-start gap-2.5 text-[0.78rem] text-white/55">
-                                    <svg class="w-3.5 h-3.5 text-[var(--accent)] flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    <span>{{ $item }}</span>
-                                </li>
-                            @endif
-                        @endforeach
-                    </ul>
-                @else
-                    <div class="flex-1"></div>
-                @endif
-
-                @auth
-                <a href="{{ route('katalog.user') }}" class="block text-center font-extrabold text-[0.72rem] tracking-[0.1em] uppercase py-3.5 px-5 rounded-xl transition-opacity duration-200 hover:opacity-88 hover:scale-102 mt-2"
-                   style="background:var(--accent);color:#0a0a0a">
-                    {{ \App\Helpers\StaticContent::LAYANAN_CARD_BTN }}
-                </a>
-            @else
-                <button type="button" onclick="showRegisterPrompt()"
-                        class="block text-center font-extrabold text-[0.72rem] tracking-[0.1em] uppercase py-3.5 px-5 rounded-xl transition-opacity duration-200 hover:opacity-88 hover:scale-102 mt-2"
-                        style="background:var(--accent);color:#0a0a0a">
-                    {{ \App\Helpers\StaticContent::LAYANAN_CARD_BTN }}
-                </button>
-            @endauth
+                {{-- Grid Mobil Cards --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 items-stretch">
+                    @foreach($mobilServices as $idx => $svc)
+                        @include('landing.layanan._card_item', ['svc' => $svc, 'idx' => $idx])
+                    @endforeach
+                </div>
             </div>
+        @endif
+
+        {{-- Empty State jika hasil filter/pencarian 0 --}}
+        <div id="public-services-empty" class="hidden py-16 px-6 text-center border border-dashed border-white/10 rounded-[32px] bg-[#121212]/40 w-full col-span-full">
+            <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-500 mx-auto mb-4">
+                <i class="ph-bold ph-magnifying-glass text-2xl text-[var(--accent)]"></i>
+            </div>
+            <h4 class="text-base font-bold text-white mb-1">Tidak ada layanan yang sesuai filter</h4>
+            <p class="text-xs text-gray-400 font-light mb-4 max-w-md mx-auto">
+                Tidak ditemukan paket yang cocok dengan kata kunci atau filter kendaraan yang dipilih. Silakan coba kata kunci lain.
+            </p>
+            <button type="button" onclick="resetPublicLayananFilters()"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] text-black font-extrabold text-xs shadow-lg hover:brightness-110 transition-all">
+                <i class="ph-bold ph-arrow-counter-clockwise"></i>
+                <span>Tampilkan Semua Layanan</span>
+            </button>
         </div>
-    @endforeach
-</div>
+
+    </div>
 @else
- <div class="py-16 text-center border border-dashed border-white/10 rounded-[32px] bg-[#121212]/40 w-full col-span-full" data-aos="fade-up" data-aos-duration="800">
-     <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-500 mx-auto mb-4">
-         <i class="ph-bold ph-package text-2xl text-[var(--accent)]"></i>
-     </div>
-     <h4 class="text-base font-bold text-white mb-1">{{ \App\Helpers\StaticContent::LAYANAN_EMPTY }}</h4>
-     <p class="text-xs text-gray-500 font-light">Silakan periksa kembali nanti.</p>
- </div>
- @endif
+    <div class="py-16 text-center border border-dashed border-white/10 rounded-[32px] bg-[#121212]/40 w-full col-span-full">
+        <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-gray-500 mx-auto mb-4">
+            <i class="ph-bold ph-package text-2xl text-[var(--accent)]"></i>
+        </div>
+        <h4 class="text-base font-bold text-white mb-1">{{ \App\Helpers\StaticContent::LAYANAN_EMPTY }}</h4>
+        <p class="text-xs text-gray-500 font-light">Silakan periksa kembali nanti.</p>
+    </div>
+@endif
 
 <x-register-prompt />

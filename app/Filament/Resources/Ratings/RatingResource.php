@@ -45,7 +45,9 @@ class RatingResource extends Resource
                 TextEntry::make('user.name')->label('User'),
                 TextEntry::make('tipe_rating')->label('Tipe'),
                 TextEntry::make('layanan.nama_layanan')->label('Layanan')->placeholder('-'),
-                TextEntry::make('pesanan.kode_pesanan')->label('Kode Pesanan')->placeholder('-'),
+                TextEntry::make('kode_transaksi')
+                    ->label('Referensi Transaksi')
+                    ->state(fn (Rating $record) => $record->booking?->booking_code ?? ($record->pesanan?->kode_pesanan ?? '-')),
                 TextEntry::make('rating')->label('Rating')->badge(),
                 TextEntry::make('ulasan')->label('Ulasan')->columnSpanFull(),
                 TextEntry::make('balasan_admin')
@@ -67,7 +69,7 @@ class RatingResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->hasRole('admin') ?? false;
+        return auth()->user()?->can('ratings index') ?? false;
     }
 
     public static function canCreate(): bool
@@ -82,6 +84,6 @@ class RatingResource extends Resource
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()?->hasRole('admin') ?? false;
+        return auth()->user()?->can('ratings delete') ?? false;
     }
 }

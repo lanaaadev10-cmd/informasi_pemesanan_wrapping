@@ -31,6 +31,40 @@ class PermissionsTableSeeder extends Seeder
             'permissions create',
             'permissions edit',
             'permissions delete',
+
+            // pesanans
+            'pesanans index',
+            'pesanans create',
+            'pesanans edit',
+            'pesanans delete',
+
+            // bookings
+            'bookings index',
+            'bookings create',
+            'bookings edit',
+            'bookings delete',
+
+            // layanans
+            'layanans index',
+            'layanans create',
+            'layanans edit',
+            'layanans delete',
+
+            // galeris
+            'galeris index',
+            'galeris create',
+            'galeris edit',
+            'galeris delete',
+
+            // ratings
+            'ratings index',
+            'ratings create',
+            'ratings edit',
+            'ratings delete',
+
+            // settings & laporan
+            'settings edit',
+            'laporan view',
         ];
 
         foreach ($permissions as $permission) {

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Booking;
+use App\Models\BookingPayment;
 use App\Models\DetailKeranjang;
 use App\Models\DetailPesanan;
 use App\Models\FormPesanan;
@@ -375,6 +376,47 @@ class ComprehensiveFeatureAuditTest extends TestCase
         $resAdmin->assertSee('Laporan Penjualan Transaksi');
     }
 
+    public function test_admin_laporan_unifies_both_pesanan_and_booking_payments(): void
+    {
+        // 1. Pesanan Selesai Rp 750.000
+        Pesanan::create([
+            'id_user' => $this->customer->id,
+            'kode_pesanan' => 'PSN-UNIFY-001',
+            'tanggal_pesan' => now(),
+            'status' => Pesanan::STATUS_SELESAI,
+            'total_harga' => 750000,
+        ]);
+
+        // 2. Booking dengan BookingPayment verified Rp 250.000
+        $booking = Booking::create([
+            'booking_code' => 'BKG-UNIFY-001',
+            'user_id' => $this->customer->id,
+            'customer_name' => $this->customer->name,
+            'layanan_id' => $this->layananA->id_layanan,
+            'booking_date' => now()->toDateString(),
+            'booking_time' => '10:00',
+            'payment_type' => 'dp',
+            'vehicle_name' => 'Toyota Avanza',
+            'status' => 'confirmed',
+        ]);
+
+        \App\Models\BookingPayment::create([
+            'booking_id' => $booking->id,
+            'payment_method' => 'BCA',
+            'amount' => 250000,
+            'status' => 'verified',
+            'verified_at' => now(),
+        ]);
+
+        // Akses laporan
+        $resAdmin = $this->actingAs($this->admin)->get(route('admin.laporan', ['type' => 'hari']));
+        $resAdmin->assertStatus(200);
+        $resAdmin->assertSee('PSN-UNIFY-001');
+        $resAdmin->assertSee('BKG-UNIFY-001');
+        // Total pendapatan 750.000 + 250.000 = 1.000.000
+        $resAdmin->assertSee('1.000.000');
+    }
+
     public function test_filament_admin_panel_strictly_forbidden_for_normal_customer(): void
     {
         $resCustomer = $this->actingAs($this->customer)->get('/admin');
@@ -477,10 +519,146 @@ class ComprehensiveFeatureAuditTest extends TestCase
         $resCartCount = $this->getJson('/api/keranjang/count');
         $resCartCount->assertStatus(200);
 
+        // Create a booking notification
+        $booking = Booking::create([
+            'booking_code' => 'BKG-NOTIF-001',
+            'user_id' => $this->customer->id,
+            'customer_name' => $this->customer->name,
+            'layanan_id' => $this->layananA->id_layanan,
+            'booking_date' => now()->toDateString(),
+            'booking_time' => '10:00',
+            'payment_type' => 'dp',
+            'vehicle_name' => 'Toyota Avanza',
+            'status' => 'pending',
+        ]);
+
+        Notifikasi::create([
+            'id_user' => $this->customer->id,
+            'booking_id' => $booking->id,
+            'judul' => 'Booking Diajukan',
+            'pesan' => 'Booking Anda sedang diproses.',
+            'tipe' => 'in_app',
+        ]);
+
         $resNotif = $this->getJson('/api/notifikasi');
         $resNotif->assertStatus(200);
+        $this->assertEquals($booking->id, $resNotif->json('data.0.booking_id'));
 
         $resNotifCount = $this->getJson('/api/notifikasi/unread-count');
         $resNotifCount->assertStatus(200);
+    }
+
+    public function test_booking_preserves_unbooked_items_in_user_cart(): void
+    {
+        $this->withoutMiddleware(\Illuminate\Routing\Middleware\ThrottleRequests::class);
+
+        $keranjang = Keranjang::create([
+            'id_user' => $this->customer->id,
+            'status' => 'active',
+        ]);
+
+        DetailKeranjang::create([
+            'id_keranjang' => $keranjang->id_keranjang,
+            'id_paket' => $this->layananA->id_layanan,
+            'jumlah' => 1,
+            'harga_satuan' => $this->layananA->harga,
+            'subtotal' => $this->layananA->harga,
+        ]);
+
+        DetailKeranjang::create([
+            'id_keranjang' => $keranjang->id_keranjang,
+            'id_paket' => $this->layananB->id_layanan,
+            'jumlah' => 1,
+            'harga_satuan' => $this->layananB->harga,
+            'subtotal' => $this->layananB->harga,
+        ]);
+
+        // Customer books Layanan A
+        $bookingDate = now()->addDays(3)->toDateString();
+        $responseA = $this->actingAs($this->customer)->post(route('booking.store'), [
+            'layanan_id' => $this->layananA->id_layanan,
+            'booking_date' => $bookingDate,
+            'booking_time' => '10:00',
+            'payment_type' => 'dp',
+            'payment_method' => 'Transfer BCA',
+            'customer_name' => $this->customer->name,
+            'customer_phone' => '081234567890',
+            'customer_email' => $this->customer->email,
+            'vehicle_name' => 'Honda Civic',
+        ]);
+
+        $responseA->assertSessionHas('toast_success');
+
+        // Verify that Layanan B is still in active cart!
+        $activeCart = Keranjang::where('id_user', $this->customer->id)->where('status', 'active')->first();
+        $this->assertNotNull($activeCart);
+        $this->assertEquals(1, $activeCart->details()->count());
+        $this->assertEquals($this->layananB->id_layanan, $activeCart->details()->first()->id_paket);
+
+        // Now customer books Layanan B
+        $responseB = $this->actingAs($this->customer)->post(route('booking.store'), [
+            'layanan_id' => $this->layananB->id_layanan,
+            'booking_date' => now()->addDays(4)->toDateString(),
+            'booking_time' => '11:00',
+            'payment_type' => 'lunas',
+            'payment_method' => 'Transfer BCA',
+            'customer_name' => $this->customer->name,
+            'customer_phone' => '081234567890',
+            'customer_email' => $this->customer->email,
+            'vehicle_name' => 'Honda Civic',
+        ]);
+
+        $responseB->assertSessionHas('toast_success');
+
+        // Cart is now checked out because all items were booked
+        $checkedOutCart = Keranjang::where('id_user', $this->customer->id)->where('status', 'checked_out')->first();
+        $this->assertNotNull($checkedOutCart);
+        $this->assertEquals(0, $checkedOutCart->details()->count());
+    }
+
+    public function test_booking_invoice_calculates_dynamic_dp_and_remaining_balance(): void
+    {
+        $harga = 4000000;
+        $layanan = Layanan::create([
+            'nama_layanan' => 'Full Wrap Premium Titanium',
+            'harga' => $harga,
+            'tipe_layanan' => 'fix',
+            'status' => 'aktif',
+        ]);
+
+        $booking = Booking::create([
+            'booking_code' => 'BKG-INVOICE-TEST',
+            'user_id' => $this->customer->id,
+            'customer_name' => $this->customer->name,
+            'customer_phone' => '081234567890',
+            'customer_email' => $this->customer->email,
+            'layanan_id' => $layanan->id_layanan,
+            'booking_date' => now()->addDays(2)->toDateString(),
+            'booking_time' => '09:00',
+            'payment_type' => 'dp',
+            'vehicle_name' => 'Toyota GR Yaris',
+            'status' => 'approved',
+        ]);
+
+        BookingPayment::create([
+            'booking_id' => $booking->id,
+            'payment_method' => 'transfer_bank',
+            'amount' => 2000000,
+            'status' => 'verified',
+        ]);
+
+        $booking->load(['layanan', 'payment', 'user']);
+
+        // Test Blade rendering content of invoice-pdf
+        $company = app(\App\Settings\CompanySettings::class);
+        $renderedHtml = view('customer.booking.invoice-pdf', ['booking' => $booking, 'profil' => $company])->render();
+        $this->assertStringContainsString('2.000.000', $renderedHtml);
+        $this->assertStringContainsString('Sisa Tagihan di Workshop', $renderedHtml);
+        $this->assertStringNotContainsString('100.000', $renderedHtml);
+
+        // Test PDF download response
+        $responsePdf = $this->actingAs($this->customer)->get(route('booking.invoice', $booking->id));
+        $responsePdf->assertStatus(200);
+        $this->assertEquals('application/pdf', $responsePdf->headers->get('content-type'));
     }
 }

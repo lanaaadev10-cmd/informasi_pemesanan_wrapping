@@ -13,6 +13,7 @@ class NotifikasiResource extends JsonResource
             'id_notif' => $this->id_notif,
             'id_notifikasi' => $this->id_notif,
             'id_pesanan' => $this->id_pesanan,
+            'booking_id' => $this->booking_id,
             'id_user' => $this->id_user,
             'tipe' => $this->tipe,
             'judul' => $this->judul,

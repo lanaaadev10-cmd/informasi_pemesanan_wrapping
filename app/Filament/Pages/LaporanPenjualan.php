@@ -90,8 +90,11 @@ class LaporanPenjualan extends Page
 
         $totalPendapatan = $pesananRevenue + $bookingRevenue;
 
-        // 2. Total Pesanan Selesai
-        $totalSelesai = (clone $completedPesananQuery)->count();
+        // 2. Total Pesanan & Booking Selesai
+        $completedBookingCount = BookingPayment::whereIn('status', ['verified', 'approved'])
+            ->whereBetween('created_at', [$start, $end])
+            ->count();
+        $totalSelesai = (clone $completedPesananQuery)->count() + $completedBookingCount;
 
         // 3. Pesanan yang butuh verifikasi admin (global realtime)
         $butuhVerifikasi = Pesanan::whereIn('status', [
@@ -102,13 +105,14 @@ class LaporanPenjualan extends Page
             \App\Enums\BookingStatus::PAYMENT_UPLOADED->value,
         ])->count();
 
-        // 4. Total semua order dalam periode
-        $totalOrdersPeriode = Pesanan::whereBetween('created_at', [$start, $end])->count();
+        // 4. Total semua order dalam periode (Pesanan + Booking)
+        $bookingOrdersPeriode = Booking::whereBetween('created_at', [$start, $end])->count();
+        $totalOrdersPeriode = Pesanan::whereBetween('created_at', [$start, $end])->count() + $bookingOrdersPeriode;
 
         // 5. Rata-rata nilai transaksi
         $rataRataTransaksi = $totalSelesai > 0 ? ($totalPendapatan / $totalSelesai) : 0;
 
-        // 6. Preview Transaksi Terkini
+        // 6. Preview Transaksi Terkini Gabungan (Pesanan + Booking)
         $previewQuery = Pesanan::with(['user', 'details.layanan', 'form'])
             ->whereBetween('created_at', [$start, $end]);
 
@@ -125,7 +129,54 @@ class LaporanPenjualan extends Page
             }
         }
 
-        $previewPesanan = $previewQuery->latest('created_at')->limit(8)->get();
+        $pesananItems = $previewQuery->latest('created_at')->limit(8)->get()->map(function ($p) {
+            $isWalkIn = ($p->order_source === 'offline') || empty($p->id_user);
+            return (object) [
+                'id_pesanan' => $p->id_pesanan,
+                'kode_pesanan' => $p->kode_pesanan,
+                'customer_name' => $p->customer_name ?? ($p->user?->name ?? 'Pelanggan Walk-In'),
+                'layanan_nama' => $p->details->first()?->layanan?->nama_layanan ?? 'Wrapping Custom',
+                'vehicle_name' => $p->form?->nama_kendaraan ?? ($p->form?->tipe_kendaraan ?? '-'),
+                'is_walk_in' => $isWalkIn,
+                'tipe_badge' => $isWalkIn ? 'Walk-In' : 'Pesanan Online',
+                'status' => $p->status,
+                'total_harga' => (float) $p->total_harga,
+                'created_at' => $p->created_at,
+                'view_url' => route('filament.admin.resources.pesanans.view', ['record' => $p->id_pesanan]),
+            ];
+        });
+
+        $bookingQuery = BookingPayment::with(['booking.user', 'booking.layanan'])
+            ->whereBetween('created_at', [$start, $end]);
+
+        if ($this->statusFilter !== 'semua') {
+            if ($this->statusFilter === 'selesai') {
+                $bookingQuery->whereIn('status', ['verified', 'approved']);
+            } elseif ($this->statusFilter === 'proses') {
+                $bookingQuery->where('status', 'verified')->whereHas('booking', fn ($bq) => $bq->whereIn('status', ['approved', 'in_progress', 'confirmed']));
+            } elseif ($this->statusFilter === 'verifikasi') {
+                $bookingQuery->where('status', 'pending');
+            }
+        }
+
+        $bookingItems = $bookingQuery->latest('created_at')->limit(8)->get()->map(function ($bp) {
+            $b = $bp->booking;
+            return (object) [
+                'id_pesanan' => $b?->id ?? $bp->id,
+                'kode_pesanan' => $b?->booking_code ?? ('BKG-' . $bp->booking_id),
+                'customer_name' => $b?->customer_name ?? ($b?->user?->name ?? 'Pelanggan Online'),
+                'layanan_nama' => $b?->layanan?->nama_layanan ?? 'Layanan Wrapping',
+                'vehicle_name' => ($b?->vehicle_name ?? 'Mobil') . ($b?->vehicle_license ? ' • ' . $b->vehicle_license : ''),
+                'is_walk_in' => false,
+                'tipe_badge' => 'Booking Online',
+                'status' => $bp->status === 'verified' ? 'selesai' : $bp->status,
+                'total_harga' => (float) $bp->amount,
+                'created_at' => $bp->created_at,
+                'view_url' => $b ? route('filament.admin.resources.booking.view', ['record' => $b->id]) : '#',
+            ];
+        });
+
+        $previewPesanan = $pesananItems->concat($bookingItems)->sortByDesc('created_at')->take(8)->values();
 
         return [
             'totalPendapatan' => $totalPendapatan,

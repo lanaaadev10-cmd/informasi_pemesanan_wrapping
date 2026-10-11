@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -20,6 +21,8 @@ use Illuminate\Support\Facades\Cache;
  * @property array|null $fitur Daftar keunggulan / fitur paket (JSON array)
  * @property string|null $kategori Kategori kendaraan / wrapping
  * @property string|null $estimasi_waktu Estimasi lama pengerjaan (contoh: 2 - 3 Hari)
+ * @property bool $is_active Status ketersediaan layanan
+ * @property \Carbon\Carbon|null $deleted_at
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
@@ -27,7 +30,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class Layanan extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $primaryKey = 'id_layanan';
 
@@ -36,19 +39,28 @@ class Layanan extends Model
         'deskripsi',
         'harga',
         'tipe_layanan',
+        'jenis_layanan',
         'tipe_paket',
         'foto_contoh',
         'fitur',
         'kategori',
         'estimasi_waktu',
+        'is_active',
     ];
 
     protected $casts = [
         'harga' => 'decimal:2',
         'fitur' => 'array',
+        'is_active' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 
     protected static function booted()
     {
@@ -58,6 +70,11 @@ class Layanan extends Model
             Cache::forget('dashboard_layanans');
         });
         static::deleted(function () {
+            Cache::forget('site_layanans');
+            Cache::forget('katalog_layanans');
+            Cache::forget('dashboard_layanans');
+        });
+        static::restored(function () {
             Cache::forget('site_layanans');
             Cache::forget('katalog_layanans');
             Cache::forget('dashboard_layanans');

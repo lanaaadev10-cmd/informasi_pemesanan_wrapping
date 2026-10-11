@@ -10,7 +10,7 @@ class Notifikasi extends Model
     protected $primaryKey = 'id_notif';
 
     protected $fillable = [
-        'id_user', 'id_pesanan', 'judul',
+        'id_user', 'id_pesanan', 'booking_id', 'judul',
         'pesan', 'tipe', 'is_read',
     ];
 
@@ -22,5 +22,10 @@ class Notifikasi extends Model
     public function pesanan()
     {
         return $this->belongsTo(Pesanan::class, 'id_pesanan', 'id_pesanan');
+    }
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class, 'booking_id', 'id');
     }
 }

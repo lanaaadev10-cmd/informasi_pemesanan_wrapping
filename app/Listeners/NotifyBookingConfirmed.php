@@ -28,6 +28,7 @@ class NotifyBookingConfirmed
             pesan: "Booking {$booking->booking_code} telah dikonfirmasi. Mohon unggah bukti pembayaran untuk mengunci jadwal Anda.",
             tipe: 'email',
             idPesanan: null,
+            bookingId: $booking->id,
         );
 
         $this->notifikasiService->sendNotification($notifikasi);
@@ -38,6 +39,7 @@ class NotifyBookingConfirmed
             pesan: "Silakan unggah bukti pembayaran pada halaman booking {$booking->booking_code}.",
             tipe: 'pembayaran',
             idPesanan: null,
+            bookingId: $booking->id,
         );
     }
 }

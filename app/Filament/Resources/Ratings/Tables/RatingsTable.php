@@ -25,15 +25,21 @@ class RatingsTable
                 TextColumn::make('tipe_rating')
                     ->label('Tipe')
                     ->badge()
-                    ->color(fn (string $state): string => $state === 'Pesanan' ? 'info' : 'warning'),
+                    ->color(fn (string $state): string => match ($state) {
+                        'Booking' => 'primary',
+                        'Pesanan' => 'info',
+                        default => 'warning',
+                    }),
 
                 TextColumn::make('layanan.nama_layanan')
                     ->label('Layanan')
                     ->searchable(),
 
-                TextColumn::make('pesanan.kode_pesanan')
-                    ->label('Kode Pesanan')
-                    ->placeholder('-'),
+                TextColumn::make('kode_transaksi')
+                    ->label('Ref Transaksi')
+                    ->state(fn (Rating $record) => $record->booking?->booking_code ?? ($record->pesanan?->kode_pesanan ?? '-'))
+                    ->badge()
+                    ->color('gray'),
 
                 TextColumn::make('rating')
                     ->label('Bintang')

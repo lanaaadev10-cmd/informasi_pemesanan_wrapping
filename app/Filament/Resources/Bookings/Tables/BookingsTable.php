@@ -45,11 +45,15 @@ class BookingsTable
                     })
                     ->copyable(),
 
-                TextColumn::make('layanan.nama_layanan')
-                    ->label('Paket')
-                    ->searchable()
+                TextColumn::make('service_name_snapshot')
+                    ->label('Layanan / Proyek')
+                    ->state(fn (Booking $record) => $record->service_name_snapshot ?: ($record->layanan?->nama_layanan ?? 'Proyek Custom'))
+                    ->searchable(query: function ($query, string $search) {
+                        $query->where('service_name_snapshot', 'like', "%{$search}%")
+                              ->orWhereHas('layanan', fn ($q) => $q->where('nama_layanan', 'like', "%{$search}%"));
+                    })
                     ->sortable()
-                    ->limit(20),
+                    ->limit(25),
 
                 TextColumn::make('booking_date')
                     ->label('Jadwal')
@@ -97,6 +101,31 @@ class BookingsTable
                     ->disk('public')
                     ->visibility('public')
                     ->defaultImageUrl(null),
+
+                TextColumn::make('source')
+                    ->label('Sumber')
+                    ->badge()
+                    ->color(fn ($state) => $state === 'offline' ? 'warning' : 'info')
+                    ->formatStateUsing(fn ($state) => $state === 'offline' ? 'Walk-In' : 'Online'),
+
+                TextColumn::make('vehicle_name')
+                    ->label('Kendaraan')
+                    ->description(fn (Booking $record) => $record->vehicle_size ? strtoupper($record->vehicle_size) : null)
+                    ->searchable(),
+
+                TextColumn::make('material_status')
+                    ->label('Bahan Customer')
+                    ->badge()
+                    ->color(fn ($state) => match ($state) {
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        default    => 'warning',
+                    })
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'approved' => 'Layak',
+                        'rejected' => 'Ditolak',
+                        default    => 'Perlu Cek',
+                    }),
 
                 TextColumn::make('created_at')
                     ->label('Dibuat')
@@ -283,6 +312,77 @@ class BookingsTable
                                 ->body($e->getMessage())
                                 ->danger()->send();
                         }
+                    }),
+
+                // Kurasi Bahan Pelanggan (Khusus Jasa Pasang)
+                Action::make('approveMaterial')
+                    ->label('Setujui Bahan')
+                    ->icon('heroicon-o-check-badge')
+                    ->color('success')
+                    ->visible(fn (Booking $record): bool => $record->material_status === 'pending' && ($record->material_brand !== null || $record->layanan?->jenis_layanan === 'jasa_pasang'))
+                    ->requiresConfirmation()
+                    ->modalHeading('Verifikasi Bahan Customer')
+                    ->modalDescription('Apakah material stiker/vinyl yang dibawa customer sudah diperiksa dan layak pasang?')
+                    ->action(function (Booking $record) {
+                        $record->update(['material_status' => 'approved']);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Material Customer Dinyatakan Layak Pasang!')
+                            ->success()->send();
+                    }),
+
+                Action::make('rejectMaterial')
+                    ->label('Tolak Bahan')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn (Booking $record): bool => $record->material_status === 'pending' && ($record->material_brand !== null || $record->layanan?->jenis_layanan === 'jasa_pasang'))
+                    ->form([
+                        \Filament\Forms\Components\Textarea::make('admin_notes')
+                            ->label('Alasan Penolakan Bahan')
+                            ->required()
+                            ->placeholder('Contoh: Panjang bahan kurang 2 meter / lem rusak / berkerut parah.'),
+                    ])
+                    ->action(function (Booking $record, array $data) {
+                        $record->update([
+                            'material_status' => 'rejected',
+                            'admin_notes'     => $data['admin_notes'],
+                        ]);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Material Customer Ditolak')
+                            ->danger()->send();
+                    }),
+
+                // Quotation Penawaran Harga (Khusus Custom Project)
+                Action::make('sendQuotation')
+                    ->label('Beri Quotation')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('primary')
+                    ->visible(fn (Booking $record): bool => $record->quotation_status === 'pending' || ($record->layanan?->jenis_layanan === 'custom' && empty($record->quotation_amount)))
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('quotation_amount')
+                            ->label('Nominal Penawaran Resmi (Rp)')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->required(),
+                        \Filament\Forms\Components\Textarea::make('quotation_notes')
+                            ->label('Rincian Biaya & Catatan Teknis')
+                            ->required()
+                            ->placeholder('Rincian bahan khusus, durasi kerja, dan spesifikasi pemasangan.'),
+                    ])
+                    ->action(function (Booking $record, array $data) {
+                        $amount = (float) $data['quotation_amount'];
+                        $dp = round($amount * 0.3); // DP 30% untuk custom
+                        $record->update([
+                            'quotation_amount'           => $amount,
+                            'quotation_notes'            => $data['quotation_notes'],
+                            'quotation_status'           => 'sent',
+                            'base_price_snapshot'        => $amount,
+                            'grand_total_snapshot'       => $amount,
+                            'dp_amount_snapshot'         => $dp,
+                            'remaining_balance_snapshot' => $amount - $dp,
+                        ]);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Quotation Resmi Berhasil Disimpan!')
+                            ->success()->send();
                     }),
 
                 // Tombol WhatsApp

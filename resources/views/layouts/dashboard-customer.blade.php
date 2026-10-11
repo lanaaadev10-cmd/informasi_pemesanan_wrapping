@@ -23,23 +23,23 @@
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-black text-white antialiased font-questrial">
+<body class="bg-white text-slate-900 antialiased font-questrial">
 
-    <div class="min-h-screen flex flex-col bg-black">
+    <div class="min-h-screen flex flex-col bg-white">
         {{-- Top Navigation Bar --}}
         @include('layouts.customer._topbar')
 
         {{-- Contextual Back Bar: muncul di semua halaman kecuali beranda --}}
         @if(!Request::routeIs('dashboard'))
-        <div class="sticky top-[69px] z-[90] bg-black/70 backdrop-blur-sm border-b border-white/[0.04] px-4 sm:px-6 md:px-8">
+        <div class="sticky top-[69px] z-[90] bg-white/90 backdrop-blur-sm border-b border-slate-200 px-4 sm:px-6 md:px-8 shadow-sm">
             <div class="max-w-7xl mx-auto flex items-center h-10">
                 <a href="{{ route('dashboard') }}"
-                   class="inline-flex items-center gap-2 text-sm font-montserrat font-bold text-gray-400 hover:text-[#FF6B00] transition-colors group">
+                   class="inline-flex items-center gap-2 text-sm font-montserrat font-bold text-slate-600 hover:text-[#FF6B00] transition-colors group">
                     <i class="ph-bold ph-arrow-left text-sm group-hover:-translate-x-0.5 transition-transform"></i>
                     Beranda
                 </a>
-                <span class="mx-2.5 text-gray-700">·</span>
-                <span class="text-sm font-montserrat font-bold text-gray-500 truncate">
+                <span class="mx-2.5 text-slate-300">·</span>
+                <span class="text-sm font-montserrat font-bold text-slate-500 truncate">
                     @php
                         $pageLabels = [
                             'booking.create'      => 'Booking Baru',
@@ -79,15 +79,15 @@
             @yield('content')
         </main>
         
-        <!-- Footer matching mockup style -->
-        <footer class="p-6 md:p-8 border-t border-white/5 bg-racing-black text-[10px] font-questrial text-gray-400">
+        <!-- Footer matching light design -->
+        <footer class="p-6 md:p-8 border-t border-slate-200 bg-white text-[11px] font-questrial text-slate-500">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
                 <p>{{ $profil->footer_copyright ?? '&copy; ' . date('Y') . ' ' . ($profil->nama_perusahaan ?? 'Dantie Stiker') . '. All rights reserved.' }}</p>
-                <div class="flex items-center gap-6 font-montserrat text-[10px]">
-                    <a href="#" class="hover:text-racing-orange transition-colors">Support</a>
-                    <a href="#" class="hover:text-racing-orange transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-racing-orange transition-colors">Terms of Service</a>
-                    <a href="#" class="hover:text-racing-orange transition-colors">Contact</a>
+                <div class="flex items-center gap-6 font-montserrat text-[11px] font-medium text-slate-500">
+                    <a href="#" class="hover:text-[#FF6B00] transition-colors">Support</a>
+                    <a href="#" class="hover:text-[#FF6B00] transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-[#FF6B00] transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-[#FF6B00] transition-colors">Contact</a>
                 </div>
             </div>
         </footer>

@@ -36,7 +36,7 @@
                 const totalStr = data.total_payment;
                 const totalSum = parseRupiah(totalStr);
 
-                const serviceFee = 150000;
+                const serviceFee = {{ !empty($profil->keranjang_service_charge_amount) ? (float) $profil->keranjang_service_charge_amount : 0 }};
                 const grandTotal = totalSum + serviceFee;
 
                 qtySpan.textContent = data.jumlah;

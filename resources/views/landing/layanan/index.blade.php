@@ -8,12 +8,15 @@
         $accentColor = '#f2994a';
 
         $services = $layanans->map(fn($l) => [
-            'id'        => $l->id_layanan,
-            'nama'      => $l->nama_layanan,
-            'harga'     => $l->harga > 0 ? 'Rp ' . number_format($l->harga, 0, ',', '.') : 'Menyesuaikan',
-            'deskripsi' => $l->deskripsi,
-            'fitur'     => $l->fitur ?? [],
-            'gambar'    => $l->foto_contoh,
+            'id'         => $l->id_layanan,
+            'nama'       => $l->nama_layanan,
+            'harga'      => $l->harga > 0 ? 'Rp ' . number_format($l->harga, 0, ',', '.') : 'Menyesuaikan',
+            'deskripsi'  => $l->deskripsi,
+            'fitur'      => $l->fitur ?? [],
+            'gambar'     => $l->foto_contoh,
+            'kategori'   => $l->kategori ?? 'mobil',
+            'tipe_paket' => $l->tipe_paket ?? 'wrapping',
+            'estimasi'   => $l->estimasi_waktu ?: '1-3 Hari',
         ])->toArray();
 
         $paketLabels = [
@@ -47,12 +50,22 @@
         <div class="absolute inset-x-0 top-0 h-[500px] pointer-events-none z-0"
              style="background:radial-gradient(ellipse 55% 35% at 50% 0,{{$accentColor}}15,transparent 70%)"></div>
 
-        <div class="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 pb-24 space-y-24">
+        <div class="relative z-10 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-16 sm:pb-24 space-y-10 sm:space-y-16 lg:space-y-24">
 
             {{-- ══════════════════════════════════════
                  HERO HEADER
             ══════════════════════════════════════ --}}
             @include('landing.layanan._hero')
+
+            {{-- ══════════════════════════════════════
+                 STUDIO KONFIGURATOR WRAPPING & LIVE ESTIMATOR INTERAKTIF
+            ══════════════════════════════════════ --}}
+            @include('landing.layanan._configurator')
+
+            {{-- ══════════════════════════════════════
+                 FILTER INTERAKTIF & ASISTEN LAYANAN
+            ══════════════════════════════════════ --}}
+            @include('landing.layanan._filter')
 
             {{-- ══════════════════════════════════════
                  SERVICE CARDS GRID

@@ -31,6 +31,11 @@ class WalkInBillingSection
                         ->label('Estimasi Durasi')
                         ->default('3 - 4 Hari Kerja')
                         ->placeholder('Contoh: 3 - 4 Hari Kerja'),
+
+                    \Filament\Forms\Components\Toggle::make('override_quota')
+                        ->label('Override Batas Kuota')
+                        ->helperText('Aktifkan hanya jika ada instruksi khusus untuk menerima kendaraan saat kuota penuh.')
+                        ->default(false),
                 ]),
 
             // ── 2. STATUS & PEMBAYARAN KASIR ──

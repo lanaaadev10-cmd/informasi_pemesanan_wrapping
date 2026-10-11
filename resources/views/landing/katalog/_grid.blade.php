@@ -12,21 +12,48 @@
             $gridItems = $layanan->skip(2);
 
             // Dynamic finish classifications helper
+            // Dynamic finish classifications helper (multi-tag support)
             if (!function_exists('getFinishType')) {
                 function getFinishType($item, $index) {
+                    $tokens = [];
                     if (!empty($item->kategori)) {
-                        return strtolower($item->kategori);
+                        $tokens[] = strtolower(trim($item->kategori));
                     }
-                    $name = strtolower($item->nama_layanan);
-                    $desc = strtolower($item->deskripsi);
+                    if (!empty($item->tipe_paket)) {
+                        $tokens[] = strtolower(trim($item->tipe_paket));
+                    }
+                    $name = strtolower($item->nama_layanan ?? '');
+                    $desc = strtolower($item->deskripsi ?? '');
 
-                    if (str_contains($name, 'wrap') || str_contains($desc, 'wrap')) return 'wrapping';
-                    if (str_contains($name, 'strip') || str_contains($desc, 'strip')) return 'striping';
-                    if (str_contains($name, 'kaca') || str_contains($desc, 'kaca')) return 'kaca_film';
-                    if (str_contains($name, 'audio') || str_contains($desc, 'audio')) return 'audio';       
-                    if (str_contains($name, 'biled') || str_contains($desc, 'biled')) return 'biled';
+                    if (str_contains($name, 'jasa pasang') || str_contains($desc, 'jasa pasang') || str_contains($desc, 'bahan sendiri')) {
+                        $tokens[] = 'jasa-pasang';
+                    }
+                    if (str_contains($name, 'wrap') || str_contains($desc, 'wrap')) {
+                        $tokens[] = 'wrapping';
+                    }
+                    if (str_contains($name, 'strip') || str_contains($desc, 'strip')) {
+                        $tokens[] = 'striping';
+                    }
+                    if (str_contains($name, 'kaca') || str_contains($desc, 'kaca') || str_contains($name, 'film')) {
+                        $tokens[] = 'window-film';
+                        $tokens[] = 'kaca_film';
+                    }
+                    if (str_contains($name, 'audio') || str_contains($desc, 'audio')) {
+                        $tokens[] = 'audio';
+                    }
+                    if (str_contains($name, 'biled') || str_contains($desc, 'biled') || str_contains($name, 'lampu')) {
+                        $tokens[] = 'lighting';
+                        $tokens[] = 'biled';
+                    }
+                    if (str_contains($name, 'atap') || str_contains($name, 'panoramic')) {
+                        $tokens[] = 'partial';
+                    }
+                    if (str_contains($name, 'decal') || str_contains($name, 'custom')) {
+                        $tokens[] = 'custom';
+                        $tokens[] = 'partial';
+                    }
 
-                    return 'wrapping'; // Default fallback
+                    return implode(' ', array_unique($tokens));
                 }
             }
         @endphp
@@ -84,23 +111,38 @@
                                 </span>
                             </div>
 
-                            @auth
-                                <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
-                                    @csrf
-                                    <input type="hidden" name="id_paket" value="{{ $wideItem->id_layanan }}">
-                                    <input type="hidden" name="jumlah" value="1">
-                                    <input type="hidden" name="direct_checkout" value="1">
-                                    <button type="submit" 
+                            @php
+                                $rawWaGrid = !empty($profil->nomor_telepon) ? preg_replace('/[^0-9]/', '', $profil->nomor_telepon) : '6283117163605';
+                                if (str_starts_with($rawWaGrid, '0')) {
+                                    $rawWaGrid = '62' . substr($rawWaGrid, 1);
+                                }
+                            @endphp
+
+                            @if($wideItem->tipe_layanan == 'fix')
+                                @auth
+                                    <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <input type="hidden" name="id_paket" value="{{ $wideItem->id_layanan }}">
+                                        <input type="hidden" name="jumlah" value="1">
+                                        <input type="hidden" name="direct_checkout" value="1">
+                                        <button type="submit" 
+                                                class="flex items-center gap-2 bg-[#f2994a] hover:bg-[#e28a44] text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-2xl transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-105 active:scale-95">
+                                            <i class="ph-bold ph-phone text-xs"></i> {{ $profil->katalog_card_book_button ?? 'Book Discovery Call' }}
+                                        </button>
+                                    </form>
+                                @else
+                                    <button type="button" onclick="showRegisterPrompt()"
                                             class="flex items-center gap-2 bg-[#f2994a] hover:bg-[#e28a44] text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-2xl transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-105 active:scale-95">
                                         <i class="ph-bold ph-phone text-xs"></i> {{ $profil->katalog_card_book_button ?? 'Book Discovery Call' }}
                                     </button>
-                                </form>
+                                @endauth
                             @else
-                                <button type="button" onclick="showRegisterPrompt()"
-                                        class="flex items-center gap-2 bg-[#f2994a] hover:bg-[#e28a44] text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-2xl transition-all shadow-[0_4px_15px_rgba(242,153,74,0.3)] hover:scale-105 active:scale-95">
-                                    <i class="ph-bold ph-phone text-xs"></i> {{ $profil->katalog_card_book_button ?? 'Book Discovery Call' }}
-                                </button>
-                            @endauth
+                                <a href="https://wa.me/{{ $rawWaGrid }}?text={{ urlencode('Halo Tim Dantie Stiker, saya ingin konsultasi & negosiasi harga untuk custom ' . $wideItem->nama_layanan . '...') }}"
+                                   target="_blank" rel="noopener noreferrer"
+                                   class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black font-extrabold text-xs uppercase tracking-wider px-6 py-3.5 rounded-2xl transition-all shadow-[0_4px_15px_rgba(16,185,129,0.3)] hover:scale-105 active:scale-95">
+                                    <i class="ph-bold ph-whatsapp-logo text-sm"></i> Negosiasi via WA
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -149,24 +191,34 @@
                                 @endif
                             </span>
 
-                            @auth
-                                <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
-                                    @csrf
-                                    <input type="hidden" name="id_paket" value="{{ $mediumItem->id_layanan }}">
-                                    <input type="hidden" name="jumlah" value="1">
-                                    <button type="submit" 
-                                            class="w-11 h-11 bg-white/5 text-gray-300 rounded-2xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black transition-all border border-white/10 active:scale-95" 
-                                            title="Add to Cart">
+                            @if($mediumItem->tipe_layanan == 'fix')
+                                @auth
+                                    <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <input type="hidden" name="id_paket" value="{{ $mediumItem->id_layanan }}">
+                                        <input type="hidden" name="jumlah" value="1">
+                                        <button type="submit" 
+                                                class="w-11 h-11 bg-white/5 text-gray-300 rounded-2xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black transition-all border border-white/10 active:scale-95" 
+                                                title="Add to Cart">
+                                            <i class="ph-bold ph-plus text-base"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <button type="button" onclick="showRegisterPrompt()"
+                                            class="w-11 h-11 bg-white/5 text-gray-300 rounded-2xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black transition-all border border-white/10 active:scale-95"
+                                            title="Daftar untuk memesan">
                                         <i class="ph-bold ph-plus text-base"></i>
                                     </button>
-                                </form>
+                                @endauth
                             @else
-                                <button type="button" onclick="showRegisterPrompt()"
-                                        class="w-11 h-11 bg-white/5 text-gray-300 rounded-2xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black transition-all border border-white/10 active:scale-95"
-                                        title="Daftar untuk memesan">
-                                    <i class="ph-bold ph-plus text-base"></i>
-                                </button>
-                            @endauth
+                                <a href="https://wa.me/{{ $rawWaGrid }}?text={{ urlencode('Halo Tim Dantie Stiker, saya ingin konsultasi & negosiasi harga untuk custom ' . $mediumItem->nama_layanan . '...') }}"
+                                   target="_blank" rel="noopener noreferrer"
+                                   class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-black text-xs font-bold transition-all border border-emerald-500/30 flex items-center gap-1.5"
+                                   title="Negosiasi via WhatsApp">
+                                    <i class="ph-bold ph-whatsapp-logo text-sm"></i>
+                                    <span>Negosiasi WA</span>
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -225,24 +277,34 @@
                                 @endif
                             </span>
 
-                            @auth
-                                <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
-                                    @csrf
-                                    <input type="hidden" name="id_paket" value="{{ $item->id_layanan }}">
-                                    <input type="hidden" name="jumlah" value="1">
-                                    <button type="submit" 
-                                            class="w-10 h-10 bg-white/5 text-gray-400 rounded-xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black border border-white/10 transition-all active:scale-95" 
-                                            title="Add to Cart">
+                            @if($item->tipe_layanan == 'fix')
+                                @auth
+                                    <form action="{{ route('keranjang.tambah') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <input type="hidden" name="id_paket" value="{{ $item->id_layanan }}">
+                                        <input type="hidden" name="jumlah" value="1">
+                                        <button type="submit" 
+                                                class="w-10 h-10 bg-white/5 text-gray-400 rounded-xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black border border-white/10 transition-all active:scale-95" 
+                                                title="Add to Cart">
+                                            <i class="ph-bold ph-plus text-xs"></i>
+                                        </button>
+                                    </form>
+                                @else
+                                    <button type="button" onclick="showRegisterPrompt()"
+                                            class="w-10 h-10 bg-white/5 text-gray-400 rounded-xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black border border-white/10 transition-all active:scale-95"
+                                            title="Daftar untuk memesan">
                                         <i class="ph-bold ph-plus text-xs"></i>
                                     </button>
-                                </form>
+                                @endauth
                             @else
-                                <button type="button" onclick="showRegisterPrompt()"
-                                        class="w-10 h-10 bg-white/5 text-gray-400 rounded-xl flex items-center justify-center hover:bg-[#f2994a] hover:text-black border border-white/10 transition-all active:scale-95"
-                                        title="Daftar untuk memesan">
-                                    <i class="ph-bold ph-plus text-xs"></i>
-                                </button>
-                            @endauth
+                                <a href="https://wa.me/{{ $rawWaGrid }}?text={{ urlencode('Halo Tim Dantie Stiker, saya ingin konsultasi & negosiasi harga untuk custom ' . $item->nama_layanan . '...') }}"
+                                   target="_blank" rel="noopener noreferrer"
+                                   class="px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-black text-xs font-bold transition-all border border-emerald-500/30 flex items-center gap-1"
+                                   title="Negosiasi via WhatsApp">
+                                    <i class="ph-bold ph-whatsapp-logo text-xs"></i>
+                                    <span>Negosiasi WA</span>
+                                </a>
+                            @endif
                         </div>
                     </div>
                 @endforeach

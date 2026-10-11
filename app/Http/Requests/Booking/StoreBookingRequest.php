@@ -37,20 +37,50 @@ class StoreBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_name'   => 'required|string|max:150',
-            'customer_phone'  => 'required|string|max:30',
-            'customer_email'  => 'nullable|email|max:150',
-            'layanan_id'      => 'required|exists:layanans,id_layanan',
-            'booking_date'    => 'required|date|after_or_equal:today',
-            'booking_time'    => 'nullable|string|max:10',
-            'payment_type'    => 'required|in:dp,lunas',
-            'payment_method'  => 'nullable|string|max:50',
-            'vehicle_name'    => 'nullable|string|max:150',
-            'vehicle_color'   => 'nullable|string|max:100',
-            'vehicle_license' => 'nullable|string|max:50',
-            'notes'           => 'nullable|string|max:1000',
-            'proof_file'      => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'customer_name'              => 'required|string|max:150',
+            'customer_phone'             => 'required|string|max:30',
+            'customer_email'             => 'nullable|email|max:150',
+            'layanan_id'                 => 'required|exists:layanans,id_layanan',
+            'booking_date'               => 'required|date|after_or_equal:today',
+            'booking_time'               => 'nullable|string|max:10',
+            'payment_type'               => 'required|in:dp,lunas',
+            'payment_method'             => 'nullable|string|max:50',
+            'brand_id'                   => 'nullable|exists:vehicle_brands,id',
+            'model_id'                   => 'nullable|exists:vehicle_models,id',
+            'vehicle_size'               => 'nullable|in:small,medium,large,xlarge',
+            'vehicle_name'               => 'nullable|string|max:150',
+            'vehicle_color'              => 'nullable|string|max:100',
+            'vehicle_license'            => 'nullable|string|max:50',
+            'addons'                     => 'nullable|array',
+            'addons.*'                   => 'exists:addons,id',
+            'material_brand'             => 'nullable|string|max:100',
+            'material_size'              => 'nullable|string|max:100',
+            'material_condition'         => 'nullable|string|max:500',
+            'material_photo'             => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+            'material_disclaimer_agreed' => 'nullable',
+            'custom_request_notes'       => 'nullable|string|max:1000',
+            'custom_reference_photo'     => 'nullable|file|mimes:jpg,jpeg,png|max:5120',
+            'notes'                      => 'nullable|string|max:1000',
+            'proof_file'                 => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
+    }
+
+    /**
+     * Validasi lanjutan: Cegah booking otomatis bernilai Rp 0 untuk paket custom quote tanpa harga.
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            if ($this->filled('layanan_id')) {
+                $layanan = \App\Models\Layanan::find($this->layanan_id);
+                if ($layanan && (float) $layanan->harga <= 0) {
+                    $validator->errors()->add(
+                        'layanan_id',
+                        'Layanan ini bertipe penawaran kustom (Custom Quote). Silakan lakukan konsultasi estimasi biaya dan spesifikasi terlebih dahulu via WhatsApp sebelum mengajukan reservasi mandiri.'
+                    );
+                }
+            }
+        });
     }
 
     /**

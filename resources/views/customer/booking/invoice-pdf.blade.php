@@ -275,9 +275,11 @@
 
 @php
     $layanan      = $booking->layanan;
-    $harga        = $layanan?->harga ?? 0;
+    $harga        = (float) ($booking->base_price_snapshot ?? ($booking->quotation_amount ?? ($layanan?->harga ?? 0)));
+    $payment      = $booking->payment;
     $isDp         = $booking->payment_type === 'dp';
-    $nominalBayar = $isDp ? 100000 : $harga;
+    $nominalBayar = (float) ($payment?->amount ?? ($booking->dp_amount_snapshot ?? ($isDp ? round($harga * 0.5) : $harga)));
+    $sisaTagihan  = (float) ($booking->remaining_balance_snapshot ?? max(0, $harga - $nominalBayar));
 
     $statusVal = $booking->status instanceof \App\Enums\BookingStatus
         ? $booking->status->value
@@ -403,7 +405,7 @@
     <tbody>
         <tr>
             <td>
-                <div class="td-name">{{ $layanan?->nama_layanan ?? 'Paket Wrapping' }}</div>
+                <div class="td-name">{{ $booking->service_name_snapshot ?? ($layanan?->nama_layanan ?? 'Proyek Custom Wrapping') }}</div>
                 <div class="td-note">Kendaraan: {{ $booking->vehicle_name ?? '-' }} &nbsp;|&nbsp; Workshop Dantie Stiker</div>
             </td>
             <td style="text-align:center; color:#777; font-weight:600; font-size:10px; text-transform:uppercase;">
@@ -436,10 +438,10 @@
                         <td>Skema Pembayaran</td>
                         <td>{{ $isDp ? 'Uang Muka (DP)' : 'Pelunasan Penuh' }}</td>
                     </tr>
-                    @if($isDp)
+                    @if($isDp && $sisaTagihan > 0)
                     <tr>
-                        <td style="color:#c2410c;">Sisa Tagihan</td>
-                        <td style="color:#c2410c;">Rp {{ number_format($harga - 100000, 0, ',', '.') }}</td>
+                        <td style="color:#c2410c;">Sisa Tagihan di Workshop</td>
+                        <td style="color:#c2410c;">Rp {{ number_format($sisaTagihan, 0, ',', '.') }}</td>
                     </tr>
                     @endif
                     <tr class="total-grand-row">

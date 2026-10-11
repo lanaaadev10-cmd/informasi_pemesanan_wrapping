@@ -28,6 +28,7 @@ class NotifyBookingCreated
             pesan: "Booking Anda dengan kode {$booking->booking_code} untuk tanggal {$booking->booking_date->format('d-m-Y')} telah kami terima. Menunggu konfirmasi admin.",
             tipe: 'email',
             idPesanan: null,
+            bookingId: $booking->id,
         );
 
         $this->notifikasiService->sendNotification($notifikasi);
@@ -38,6 +39,7 @@ class NotifyBookingCreated
             pesan: "Booking {$booking->booking_code} sedang menunggu konfirmasi admin. Pantau status di halaman Booking Anda.",
             tipe: 'in_app',
             idPesanan: null,
+            bookingId: $booking->id,
         );
     }
 }

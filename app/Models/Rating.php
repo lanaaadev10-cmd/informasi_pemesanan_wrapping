@@ -17,7 +17,6 @@ class Rating extends Model
         'id_pesanan',
         'booking_id',
         'id_layanan',
-        'order_ref',
         'rating',
         'ulasan',
         'balasan_admin',

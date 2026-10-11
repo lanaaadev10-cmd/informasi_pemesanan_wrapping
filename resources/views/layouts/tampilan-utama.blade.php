@@ -2,7 +2,7 @@
 <html lang="id" class="scroll-smooth">
 <head>
     @php
-        $is_frontend = in_array(Route::currentRouteName(), ['home', 'profil.perusahaan', 'galeri.user', 'katalog.user', 'tentang-kami', 'layanan', 'kebijakan-privasi', 'testimoni.index']);
+        $is_frontend = in_array(Route::currentRouteName(), ['home', 'profil.perusahaan', 'galeri.user', 'tentang-kami', 'layanan', 'kebijakan-privasi', 'testimoni.index']);
     @endphp
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

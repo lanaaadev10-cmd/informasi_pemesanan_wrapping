@@ -10,8 +10,8 @@
     @endphp
     @if($cartCount > 0)
         <a href="{{ route('keranjang.index') }}" 
-           class="fixed bottom-8 right-8 z-[9999] w-14 h-14 bg-[#f2994a] hover:bg-[#e28a44] text-black rounded-full hidden md:flex items-center justify-center shadow-[0_6px_20px_rgba(242,153,74,0.4)] transition-all hover:scale-110 active:scale-95 group">
-            <span class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border border-black shadow">
+           class="fixed bottom-8 right-8 z-[9999] w-14 h-14 bg-[#ff6b00] hover:bg-[#ea580c] text-white rounded-full hidden md:flex items-center justify-center shadow-[0_6px_20px_rgba(255,107,0,0.35)] transition-all hover:scale-110 active:scale-95 group">
+            <span class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
                 {{ $cartCount }}
             </span>
             <i class="ph-bold ph-shopping-cart text-xl"></i>

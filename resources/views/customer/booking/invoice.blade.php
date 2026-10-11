@@ -12,11 +12,12 @@
 
 @php
     $layanan = $booking->layanan;
-    $harga = $layanan?->harga ?? 0;
+    $harga = (float) ($booking->base_price_snapshot ?? ($booking->quotation_amount ?? ($layanan?->harga ?? 0)));
     $payment = $booking->payment;
     $paymentType = $booking->payment_type;
     $isDp = $paymentType === 'dp';
-    $nominalBayar = $isDp ? 100000 : $harga;
+    $nominalBayar = (float) ($payment?->amount ?? ($booking->dp_amount_snapshot ?? ($isDp ? round($harga * 0.5) : $harga)));
+    $sisaTagihan = (float) ($booking->remaining_balance_snapshot ?? max(0, $harga - $nominalBayar));
 
     $tglBayar = $booking->updated_at
         ? \Carbon\Carbon::parse($booking->updated_at)->translatedFormat('d F Y')
@@ -74,7 +75,7 @@
             </div>
             <div class="stat-item">
                 <div class="stat-label">Skema Pembayaran</div>
-                <div class="stat-value">{{ $isDp ? 'Uang Muka (DP Rp 100.000)' : 'Pelunasan Penuh' }}</div>
+                <div class="stat-value">{{ $isDp ? 'Uang Muka (DP 50%)' : 'Pelunasan Penuh' }}</div>
             </div>
             <div class="stat-item">
                 <div class="stat-label">Jadwal Pengerjaan</div>
@@ -125,7 +126,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <div class="td-name">{{ $layanan?->nama_layanan ?? 'Paket Wrapping' }}</div>
+                        <div class="td-name">{{ $booking->service_name_snapshot ?? ($layanan?->nama_layanan ?? 'Proyek Custom Wrapping') }}</div>
                         <div class="td-note">Pengerjaan variasi &amp; wrapping kendaraan {{ $booking->vehicle_name }}</div>
                     </td>
                     <td style="color:#888; font-weight:600; text-transform:capitalize;">{{ $booking->payment_type }}</td>
@@ -145,8 +146,14 @@
             </div>
             <div class="total-row">
                 <span>Skema Transaksi</span>
-                <span>{{ $isDp ? 'Uang Muka (DP)' : 'Pelunasan Penuh' }}</span>
+                <span>{{ $isDp ? 'Uang Muka (DP 50%)' : 'Pelunasan Penuh' }}</span>
             </div>
+            @if($isDp && $sisaTagihan > 0)
+            <div class="total-row" style="color:#c2410c;">
+                <span>Sisa Tagihan di Workshop</span>
+                <span>Rp {{ number_format($sisaTagihan, 0, ',', '.') }}</span>
+            </div>
+            @endif
             <div class="total-grand">
                 <div class="total-grand-label">Total Dibayarkan</div>
                 <div class="total-grand-amount">Rp {{ number_format($nominalBayar, 0, ',', '.') }}</div>

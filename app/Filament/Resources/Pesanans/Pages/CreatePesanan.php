@@ -62,6 +62,23 @@ class CreatePesanan extends CreateRecord
             $totalHarga = (float) ($data['total_harga'] ?? 0);
             $orderStatus = $data['status'] ?? Pesanan::STATUS_SEDANG_DIPROSES;
 
+            // Validasi Ketersediaan Kuota & Hari Libur (kecuali admin mengaktifkan override)
+            $override = (bool) ($data['override_quota'] ?? false);
+            if (!$override) {
+                $quota = app(SlotKuotaService::class)->checkQuota($bookingDate);
+                if ($quota['is_blocked']) {
+                    $reason = $quota['blocked_reason'] ?? 'Tutup / Hari Libur';
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'booking_date' => "Tanggal {$bookingDate} tidak dapat dipilih: {$reason}. Aktifkan opsi 'Override Batas Kuota' jika memiliki izin khusus.",
+                    ]);
+                }
+                if ($quota['is_full']) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'booking_date' => "Kuota pengerjaan tanggal {$bookingDate} sudah penuh (5/5 slot terisi). Aktifkan opsi 'Override Batas Kuota' jika memiliki izin khusus.",
+                    ]);
+                }
+            }
+
             // 4. Simpan Header Pesanan
             $pesanan = Pesanan::create([
                 'id_user'             => $user?->id,

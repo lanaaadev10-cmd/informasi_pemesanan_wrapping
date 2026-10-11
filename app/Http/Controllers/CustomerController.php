@@ -13,7 +13,7 @@ class CustomerController extends Controller
 
     public function katalog()
     {
-        $layanan = Layanan::all();
+        $layanan = Layanan::where('is_active', true)->get();
         $ratingSummary = TestimoniController::summaryPerLayananKeyed();
 
         return view('landing.katalog.index', compact('layanan', 'ratingSummary'));
@@ -21,7 +21,7 @@ class CustomerController extends Controller
 
     public function dashboard()
     {
-        $layanans      = Layanan::all();
+        $layanans      = Layanan::where('is_active', true)->get();
         $galeris       = Galeri::all();
         $ratingSummary = \App\Http\Controllers\TestimoniController::summaryPerLayananKeyed();
 

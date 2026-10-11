@@ -28,6 +28,7 @@ class NotifyBookingPaymentVerified
             pesan: "Pembayaran booking {$booking->booking_code} telah terverifikasi. Jadwal Anda untuk {$booking->booking_date->format('d-m-Y')} terkunci.",
             tipe: 'email',
             idPesanan: null,
+            bookingId: $booking->id,
         );
 
         $this->notifikasiService->sendNotification($notifikasi);
@@ -38,6 +39,7 @@ class NotifyBookingPaymentVerified
             pesan: "Booking {$booking->booking_code} disetujui. Akan segera dikerjakan.",
             tipe: 'in_app',
             idPesanan: null,
+            bookingId: $booking->id,
         );
     }
 }

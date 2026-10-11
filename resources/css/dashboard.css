@@ -17,19 +17,19 @@
    CSS Custom Properties (Design Tokens Dashboard)
    ====================================================== */
 :root {
-    --font-audiowide:  'Audiowide', cursive, sans-serif;
+    --font-audiowide: 'Audiowide', cursive, sans-serif;
     --font-montserrat: 'Montserrat', sans-serif;
-    --font-questrial:  'Questrial', sans-serif;
+    --font-questrial: 'Questrial', sans-serif;
 
-    /* Warna Utama */
-    --bg-carbon:           #000000;
-    --surface-dark:        #0E0E10;
-    --surface-elevated:    #16161A;
-    --border-glass:        rgba(255, 255, 255, 0.08);
-    --primary-orange:      #FF6B00;
-    --primary-orange-hover:#E05D00;
-    --text-white:          #FFFFFF;
-    --text-muted:          #8A8D93;
+    /* Warna Utama Clean White & Racing Orange */
+    --bg-carbon: #ffffff;
+    --surface-dark: #f8fafc;
+    --surface-elevated: #ffffff;
+    --border-glass: rgba(0, 0, 0, 0.08);
+    --primary-orange: #FF6B00;
+    --primary-orange-hover: #E05D00;
+    --text-white: #0f172a;
+    --text-muted: #64748b;
 }
 
 /* ======================================================
@@ -41,20 +41,32 @@ body {
     color: var(--text-white);
 }
 
-h1, h2, h3, .font-heading, .brand-font {
+h1,
+h2,
+h3,
+.font-heading,
+.brand-font {
     font-family: var(--font-audiowide);
 }
 
-.font-audiowide  { font-family: var(--font-audiowide) !important; }
-.font-montserrat { font-family: var(--font-montserrat) !important; }
-.font-questrial  { font-family: var(--font-questrial) !important; }
+.font-audiowide {
+    font-family: var(--font-audiowide) !important;
+}
+
+.font-montserrat {
+    font-family: var(--font-montserrat) !important;
+}
+
+.font-questrial {
+    font-family: var(--font-questrial) !important;
+}
 
 /* ======================================================
    Sidebar / Navigasi — Tautan Aktif
    ====================================================== */
 .sidebar-link-active {
     background-color: var(--primary-orange);
-    color: #000000 !important;
+    color: #ffffff !important;
     box-shadow: 0 4px 15px rgba(255, 107, 0, 0.35);
 }
 
@@ -67,14 +79,17 @@ h1, h2, h3, .font-heading, .brand-font {
     left: 0;
     right: 0;
     z-index: 8999;
-    background: rgba(8, 8, 8, 0.95);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.95);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
 }
 
 /* Sembunyikan bottom nav di layar desktop */
 @media (min-width: 1024px) {
-    #bottom-nav { display: none !important; }
+    #bottom-nav {
+        display: none !important;
+    }
 }

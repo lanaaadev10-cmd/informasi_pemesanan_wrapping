@@ -94,37 +94,50 @@
 
     <!-- Meta Informasi -->
     <div class="meta-info">
-        <div><strong>Tipe Laporan:</strong> {{ strtoupper($type) }}</div>
-        <div><strong>Tanggal Cetak:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y H:i') }}</div>
+        <div>
+            <div><strong>Tipe Laporan:</strong> {{ strtoupper($type) }}</div>
+            @if(isset($totalPesananCount) && isset($totalBookingCount))
+                <div style="font-size: 11px; color: #555; margin-top: 3px;">
+                    <strong>Total:</strong> {{ count($pesanans) }} Transaksi ({{ $totalBookingCount }} Booking Online, {{ $totalPesananCount }} Pesanan Walk-in)
+                </div>
+            @endif
+        </div>
+        <div style="text-align: right;">
+            <div><strong>Tanggal Cetak:</strong> {{ \Carbon\Carbon::now()->translatedFormat('d F Y H:i') }}</div>
+        </div>
     </div>
 
-    <!-- Tabel Data Pesanan -->
+    <!-- Tabel Data Transaksi -->
     <table>
         <thead>
             <tr>
-                <th class="text-center" style="width: 5%;">No</th>
-                <th>Kode Pesanan</th>
-                <th>Nama Pelanggan</th>
-                <th>Tanggal Transaksi</th>
-                <th class="text-center">Status</th>
-                <th class="text-right">Total Harga</th>
+                <th class="text-center" style="width: 4%;">No</th>
+                <th style="width: 16%;">Kode Transaksi</th>
+                <th style="width: 15%;">Tipe</th>
+                <th style="width: 18%;">Nama Pelanggan</th>
+                <th style="width: 18%;">Layanan</th>
+                <th style="width: 14%;">Tanggal</th>
+                <th class="text-center" style="width: 15%;">Status</th>
+                <th class="text-right" style="width: 15%;">Total Nominal</th>
             </tr>
         </thead>
         <tbody>
             @forelse($pesanans as $index => $item)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-                    <td><strong>{{ $item->kode_pesanan }}</strong></td>
+                    <td><strong>{{ $item->kode_transaksi ?? $item->kode_pesanan }}</strong></td>
+                    <td><small style="font-weight: 600; color: #444;">{{ $item->tipe_transaksi ?? 'Pesanan' }}</small></td>
                     <td>{{ $item->customer_name ?? ($item->user->name ?? 'Pelanggan Umum') }}</td>
+                    <td><small>{{ $item->layanan_nama ?? '-' }}</small></td>
                     <td>{{ \Carbon\Carbon::parse($item->created_at)->translatedFormat('d/m/Y H:i') }}</td>
                     <td class="text-center">
-                        <span style="text-transform: capitalize;">{{ $item->status }}</span>
+                        <span style="text-transform: capitalize;">{{ str_replace('_', ' ', $item->status) }}</span>
                     </td>
                     <td class="text-right">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center" style="padding: 20px; color: #888;">
+                    <td colspan="8" class="text-center" style="padding: 20px; color: #888;">
                         Tidak ada data transaksi penjualan pada periode ini.
                     </td>
                 </tr>
@@ -132,7 +145,7 @@
         </tbody>
         <tfoot>
             <tr class="total-row">
-                <td colspan="5" class="text-right">TOTAL PENDAPATAN</td>
+                <td colspan="7" class="text-right">TOTAL PENDAPATAN</td>
                 <td class="text-right">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</td>
             </tr>
         </tfoot>

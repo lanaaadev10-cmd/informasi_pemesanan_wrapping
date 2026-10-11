@@ -31,37 +31,37 @@
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
              @click.stop
-             class="relative transform overflow-hidden rounded-3xl bg-[#121215] border border-white/10 text-left shadow-2xl transition-all sm:my-8 w-full max-w-lg p-5 sm:p-7">
+             class="relative transform overflow-hidden rounded-3xl bg-white border border-slate-200/90 text-left shadow-2xl transition-all sm:my-8 w-full max-w-lg p-5 sm:p-7">
 
             {{-- Close Button --}}
             <button type="button"
                     @click="closeModal()"
-                    class="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all">
+                    class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-200 flex items-center justify-center transition-all">
                 <i class="ph-bold ph-x text-base"></i>
             </button>
 
             {{-- Header --}}
             <div class="flex items-center gap-3 mb-5">
-                <div class="w-12 h-12 rounded-2xl bg-[#FF6B00]/15 border border-[#FF6B00]/30 text-[#FF6B00] flex items-center justify-center shrink-0">
+                <div class="w-12 h-12 rounded-2xl bg-orange-50 border border-orange-200 text-[#FF6B00] flex items-center justify-center shrink-0">
                     <i class="ph-fill ph-star text-2xl"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg sm:text-xl font-audiowide font-bold text-white">Beri Ulasan Layanan</h3>
-                    <p class="text-xs font-questrial text-gray-400 mt-0.5" x-text="serviceName || 'Layanan Wrapping & Variasi'"></p>
+                    <h3 class="text-lg sm:text-xl font-audiowide font-bold text-slate-900">Beri Ulasan Layanan</h3>
+                    <p class="text-xs font-questrial text-slate-500 mt-0.5" x-text="serviceName || 'Layanan Wrapping & Variasi'"></p>
                 </div>
             </div>
 
             {{-- Reference Badge --}}
-            <div class="flex items-center justify-between bg-white/[0.03] border border-white/5 rounded-2xl px-4 py-2.5 mb-5 text-xs">
-                <span class="text-gray-400 font-questrial">Referensi Transaksi:</span>
+            <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 mb-5 text-xs">
+                <span class="text-slate-600 font-questrial">Referensi Transaksi:</span>
                 <span class="font-mono font-bold text-[#FF6B00]" x-text="orderCode || '-'"></span>
             </div>
 
             {{-- Form Rating --}}
             <form @submit.prevent="submitRating()" class="space-y-5">
                 {{-- 1. Rating Stars --}}
-                <div class="text-center bg-white/[0.02] border border-white/5 rounded-2xl p-4">
-                    <label class="block text-xs font-montserrat font-bold text-gray-300 uppercase tracking-wider mb-2">
+                <div class="text-center bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                    <label class="block text-xs font-montserrat font-bold text-slate-700 uppercase tracking-wider mb-2">
                         Beri Nilai Kepuasan Anda
                     </label>
                     <div class="flex items-center justify-center gap-2 my-2">
@@ -72,42 +72,42 @@
                                     @mouseleave="hoverRating = 0"
                                     class="p-1 focus:outline-none transition-transform hover:scale-125 active:scale-95">
                                 <i class="ph-fill text-3xl transition-colors"
-                                   :class="(hoverRating ? star <= hoverRating : star <= rating) ? 'text-[#FFB800] drop-shadow-[0_0_8px_rgba(255,184,0,0.5)]' : 'text-white/20'">
+                                   :class="(hoverRating ? star <= hoverRating : star <= rating) ? 'text-[#FFB800] drop-shadow-[0_0_8px_rgba(255,184,0,0.5)]' : 'text-slate-300'">
                                 </i>
                             </button>
                         </template>
                     </div>
                     {{-- Dynamic Star Label --}}
                     <p class="text-xs font-montserrat font-bold transition-all min-h-[18px]"
-                       :class="rating > 0 ? 'text-[#FFB800]' : 'text-gray-500'"
+                       :class="rating > 0 ? 'text-amber-500' : 'text-slate-400'"
                        x-text="getRatingLabel()"></p>
                 </div>
 
                 {{-- 2. Ulasan Textarea --}}
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="ulasan-input" class="text-xs font-montserrat font-bold text-gray-300 uppercase tracking-wider">
-                            Ceritakan Pengalaman Anda <span class="text-gray-500 font-normal lowercase">(opsional)</span>
+                        <label for="ulasan-input" class="text-xs font-montserrat font-bold text-slate-700 uppercase tracking-wider">
+                            Ceritakan Pengalaman Anda <span class="text-slate-400 font-normal lowercase">(opsional)</span>
                         </label>
-                        <span class="text-[10px] font-mono text-gray-500" x-text="`${ulasan.length}/500`"></span>
+                        <span class="text-[10px] font-mono text-slate-400" x-text="`${ulasan.length}/500`"></span>
                     </div>
                     <textarea id="ulasan-input"
                               x-model="ulasan"
                               maxlength="500"
                               rows="3"
                               placeholder="Bagaimana kerapian stiker, ketepatan waktu pengerjaan, dan pelayanan teknisi kami?"
-                              class="w-full bg-[#18181C] border border-white/10 rounded-2xl p-3.5 text-xs text-white placeholder-gray-500 focus:border-[#FF6B00] focus:ring-1 focus:ring-[#FF6B00] outline-none transition-all resize-none"></textarea>
+                              class="w-full bg-white border border-slate-200 rounded-2xl p-3.5 text-xs text-slate-800 placeholder-slate-400 focus:border-[#FF6B00] focus:ring-1 focus:ring-[#FF6B00] outline-none transition-all resize-none"></textarea>
                 </div>
 
                 {{-- 3. Foto Hasil / Media Upload --}}
                 <div>
-                    <label class="block text-xs font-montserrat font-bold text-gray-300 uppercase tracking-wider mb-2">
-                        Foto Hasil Pengerjaan <span class="text-gray-500 font-normal lowercase">(maks. 2 foto)</span>
+                    <label class="block text-xs font-montserrat font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        Foto Hasil Pengerjaan <span class="text-slate-400 font-normal lowercase">(maks. 2 foto)</span>
                     </label>
                     <div class="flex items-center gap-3">
                         {{-- Photo Previews --}}
                         <template x-for="(photo, index) in previews" :key="index">
-                            <div class="relative w-20 h-20 rounded-2xl overflow-hidden border border-white/10 group">
+                            <div class="relative w-20 h-20 rounded-2xl overflow-hidden border border-slate-200 group">
                                 <img :src="photo" class="w-full h-full object-cover">
                                 <button type="button"
                                         @click="removePhoto(index)"
@@ -119,7 +119,7 @@
 
                         {{-- Add Photo Button --}}
                         <label x-show="previews.length < 2"
-                               class="w-20 h-20 rounded-2xl border-2 border-dashed border-white/10 hover:border-[#FF6B00] bg-white/[0.02] hover:bg-white/5 flex flex-col items-center justify-center cursor-pointer transition-all text-gray-400 hover:text-[#FF6B00]">
+                               class="w-20 h-20 rounded-2xl border-2 border-dashed border-slate-300 hover:border-[#FF6B00] bg-slate-50 hover:bg-orange-50/50 flex flex-col items-center justify-center cursor-pointer transition-all text-slate-400 hover:text-[#FF6B00]">
                             <i class="ph-bold ph-camera text-xl"></i>
                             <span class="text-[9px] font-montserrat font-bold mt-1">Upload</span>
                             <input type="file"
@@ -134,7 +134,7 @@
                 {{-- Error Message Display --}}
                 <div x-show="errorMessage"
                      x-transition
-                     class="bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl p-3"
+                     class="bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl p-3"
                      x-text="errorMessage"></div>
 
                 {{-- Submit Button --}}
@@ -142,12 +142,12 @@
                     <button type="button"
                             @click="closeModal()"
                             :disabled="isLoading"
-                            class="w-1/3 py-3 rounded-2xl border border-white/10 text-gray-300 font-montserrat font-bold text-xs uppercase tracking-wider hover:bg-white/5 active:scale-95 transition-all">
+                            class="w-1/3 py-3 rounded-2xl border border-slate-200 text-slate-700 font-montserrat font-bold text-xs uppercase tracking-wider hover:bg-slate-100 active:scale-95 transition-all">
                         Batal
                     </button>
                     <button type="submit"
                             :disabled="isLoading || rating === 0"
-                            class="w-2/3 py-3 rounded-2xl bg-[#FF6B00] hover:bg-[#E05D00] text-black font-montserrat font-black text-xs uppercase tracking-wider shadow-[0_4px_20px_rgba(255,107,0,0.35)] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2">
+                            class="w-2/3 py-3 rounded-2xl bg-[#FF6B00] hover:bg-[#ea580c] text-white font-montserrat font-bold text-xs uppercase tracking-wider shadow-md shadow-orange-500/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2">
                         <i x-show="isLoading" class="ph-bold ph-spinner animate-spin text-base"></i>
                         <span x-text="isLoading ? 'Mengirim...' : (isEdit ? 'Perbarui Ulasan' : 'Kirim Ulasan Sekarang')"></span>
                     </button>

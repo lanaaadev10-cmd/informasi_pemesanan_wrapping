@@ -5,7 +5,9 @@ namespace App\Filament\Resources\Layanans;
 use App\Filament\Resources\Layanans\Pages\CreateLayanan;
 use App\Filament\Resources\Layanans\Pages\EditLayanan;
 use App\Filament\Resources\Layanans\Pages\ListLayanans;
+use App\Filament\Resources\Layanans\Pages\ViewLayanan;
 use App\Filament\Resources\Layanans\Schemas\LayananForm;
+use App\Filament\Resources\Layanans\Schemas\LayananInfolist;
 use App\Filament\Resources\Layanans\Tables\LayanansTable;
 use App\Models\Layanan;
 use Filament\Resources\Resource;
@@ -38,6 +40,14 @@ class LayananResource extends Resource
     }
 
     /**
+     * Konfigurasi Infolist (Detail view)
+     */
+    public static function infolist(Schema $schema): Schema
+    {
+        return LayananInfolist::configure($schema);
+    }
+
+    /**
      * Konfigurasi Table (Logika ada di folder Tables)
      */
     public static function table(Table $table): Table
@@ -53,27 +63,28 @@ class LayananResource extends Resource
         return [
             'index'  => ListLayanans::route('/'),
             'create' => CreateLayanan::route('/create'),
+            'view'   => ViewLayanan::route('/{record}'),
             'edit'   => EditLayanan::route('/{record}/edit'),
         ];
     }
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->hasRole('admin') ?? false;
+        return auth()->user()?->can('layanans index') ?? false;
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()?->hasRole('admin') ?? false;
+        return auth()->user()?->can('layanans create') ?? false;
     }
 
     public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        return auth()->user()?->hasRole('admin') ?? false;
+        return auth()->user()?->can('layanans edit') ?? false;
     }
 
     public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        return auth()->user()?->hasRole('admin') ?? false;
+        return auth()->user()?->can('layanans delete') ?? false;
     }
 }

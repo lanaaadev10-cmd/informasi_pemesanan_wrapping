@@ -2,7 +2,9 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Ratings\RatingResource;
 use App\Models\Rating;
+use Filament\Actions\Action;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -21,7 +23,7 @@ class RecentRatingsWidget extends BaseWidget
     {
         return $table
             ->query(
-                Rating::with(['user', 'layanan', 'pesanan'])
+                Rating::with(['user', 'layanan', 'pesanan', 'booking'])
                     ->latest()
                     ->limit(5)
             )
@@ -30,6 +32,15 @@ class RecentRatingsWidget extends BaseWidget
                     ->label('Pelanggan')
                     ->searchable()
                     ->weight('bold'),
+
+                Tables\Columns\TextColumn::make('tipe_rating')
+                    ->label('Tipe')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Booking' => 'primary',
+                        'Pesanan' => 'info',
+                        default => 'warning',
+                    }),
 
                 Tables\Columns\TextColumn::make('layanan.nama_layanan')
                     ->label('Layanan')
@@ -60,6 +71,12 @@ class RecentRatingsWidget extends BaseWidget
                     ->label('Tanggal')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
+            ])
+            ->actions([
+                Action::make('view')
+                    ->label('Buka')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn (Rating $record): string => RatingResource::getUrl('view', ['record' => $record])),
             ])
             ->paginated(false);
     }

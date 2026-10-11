@@ -2,7 +2,7 @@
 <div class="space-y-4">
     <div class="flex items-end justify-between">
         <div class="relative inline-block">
-            <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white tracking-wide">
+            <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-slate-900 tracking-wide">
                 Aktivitas Terakhir
             </h3>
             <span class="absolute -bottom-1.5 left-0 w-8 h-[3px] bg-[#ff6b00] rounded-full"></span>
@@ -14,7 +14,7 @@
         </a>
     </div>
     
-    <div class="bg-[#121212] border border-white/10 rounded-[28px] divide-y divide-white/5 overflow-hidden shadow-xl">
+    <div class="bg-white border border-slate-200/80 rounded-[28px] divide-y divide-slate-100 overflow-hidden shadow-sm">
         @if($latestOrders->isNotEmpty())
             @foreach($latestOrders as $order)
                 @php
@@ -46,7 +46,7 @@
                             $icon = 'ph-check-circle';
                             $title = $profil->status_dikonfirmasi ?? 'Pesanan Dikonfirmasi';
                             $desc = 'Pembayaran terverifikasi untuk pesanan #' . $order->kode_pesanan;
-                            $rightCol = '<span class="block text-xs font-bold text-white uppercase tracking-wider font-montserrat">' . ($profil->status_lunas ?? 'Lunas') . '</span>';
+                            $rightCol = '<span class="block text-xs font-bold text-slate-900 uppercase tracking-wider font-montserrat">' . ($profil->status_lunas ?? 'Lunas') . '</span>';
                             break;
                         case 'sedang_diproses':
                             $icon = 'ph-wrench';
@@ -58,35 +58,35 @@
                             $icon = 'ph-check-square';
                             $title = $profil->status_pengerjaan_selesai ?? 'Pengerjaan Selesai';
                             $desc = 'Layanan selesai untuk pesanan #' . $order->kode_pesanan;
-                            $rightCol = '<span class="block text-xs font-bold text-white uppercase tracking-wider font-montserrat">' . ($profil->status_pesanan_selesai ?? 'Selesai') . '</span>';
+                            $rightCol = '<span class="block text-xs font-bold text-slate-900 uppercase tracking-wider font-montserrat">' . ($profil->status_pesanan_selesai ?? 'Selesai') . '</span>';
                             break;
                         case 'ditolak':
                             $icon = 'ph-x-circle';
                             $title = $profil->status_pesanan_ditolak ?? 'Pesanan Ditolak';
                             $desc = 'Pesanan #' . $order->kode_pesanan . ' ditolak';
-                            $rightCol = '<span class="block text-xs font-bold text-gray-500 uppercase tracking-wider font-montserrat">Ditolak</span>';
+                            $rightCol = '<span class="block text-xs font-bold text-rose-500 uppercase tracking-wider font-montserrat">Ditolak</span>';
                             break;
                     }
                 @endphp
-                <div class="p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-white/[0.02] transition-all group">
+                <div class="p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-slate-50/70 transition-all group">
                     <div class="flex items-center gap-4">
-                        <div class="w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center text-white group-hover:text-[#ff6b00] group-hover:border-[#ff6b00]/30 transition-all shrink-0">
+                        <div class="w-11 h-11 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 group-hover:text-[#ff6b00] group-hover:border-[#ff6b00]/30 transition-all shrink-0">
                             <i class="ph-bold {{ $icon }} text-xl"></i>
                         </div>
                         <div class="space-y-0.5 min-w-0">
-                            <h4 class="text-xs sm:text-sm font-bold font-montserrat text-white group-hover:text-[#ff6b00] transition-colors truncate">{{ $title }}</h4>
-                            <p class="text-[11px] text-gray-400 font-questrial truncate max-w-sm sm:max-w-md">{{ $desc }}</p>
+                            <h4 class="text-xs sm:text-sm font-bold font-montserrat text-slate-900 group-hover:text-[#ff6b00] transition-colors truncate">{{ $title }}</h4>
+                            <p class="text-[11px] text-slate-500 font-questrial truncate max-w-sm sm:max-w-md">{{ $desc }}</p>
                         </div>
                     </div>
                     
                     <div class="text-left sm:text-right space-y-0.5 ml-15 sm:ml-0 shrink-0">
                         {!! $rightCol !!}
-                        <span class="block text-[10px] text-gray-500 font-questrial">{{ $order->updated_at->translatedFormat('d M Y, H:i') }}</span>
+                        <span class="block text-[10px] text-slate-400 font-questrial">{{ $order->updated_at->translatedFormat('d M Y, H:i') }}</span>
                     </div>
                 </div>
             @endforeach
         @else
-            <div class="p-8 text-center text-gray-500 text-xs font-questrial">
+            <div class="p-8 text-center text-slate-500 text-xs font-questrial">
                 Belum ada riwayat aktivitas pengerjaan.
             </div>
         @endif

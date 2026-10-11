@@ -17,7 +17,7 @@
 
 <div class="space-y-3" x-data="dateStripWidget()" x-init="init()">
     <div class="flex items-center justify-between px-1">
-        <span class="text-[10px] font-montserrat font-black uppercase tracking-widest text-[#8A8D93]">
+        <span class="text-[10px] font-montserrat font-black uppercase tracking-widest text-slate-500">
             Ketersediaan Slot 14 Hari
         </span>
         <a href="{{ route('booking.index') }}" class="text-[10px] font-montserrat font-bold text-[#FF6B00] hover:underline">
@@ -33,9 +33,9 @@
             @endphp
             <a href="{{ $bookingUrl }}"
                id="strip-day-{{ $item['date_str'] }}"
-               class="date-strip-card flex flex-col items-center justify-between p-3 rounded-2xl bg-[#0E0E10] border border-white/10 hover:border-[#FF6B00] active:scale-95 transition-all text-center min-w-[76px] sm:min-w-[84px] shrink-0 min-h-[96px] shadow-lg group relative overflow-hidden"
+               class="date-strip-card flex flex-col items-center justify-between p-3 rounded-2xl bg-white border border-slate-200/80 hover:border-[#FF6B00] active:scale-95 transition-all text-center min-w-[76px] sm:min-w-[84px] shrink-0 min-h-[96px] shadow-sm hover:shadow-md group relative overflow-hidden"
                :class="{
-                   'border-[#FF6B00] bg-[#FF6B00]/10': isSelected('{{ $item['date_str'] }}'),
+                   'border-[#FF6B00] bg-orange-50/70': isSelected('{{ $item['date_str'] }}'),
                    'opacity-60 pointer-events-none': isFull('{{ $item['date_str'] }}')
                }">
 
@@ -47,19 +47,19 @@
                 @endif
 
                 <div class="space-y-0.5 {{ $item['is_today'] ? 'pt-2.5' : 'pt-1' }}">
-                    <span class="text-[10px] font-montserrat font-bold uppercase tracking-wider text-[#8A8D93] group-hover:text-white transition-colors block">
+                    <span class="text-[10px] font-montserrat font-bold uppercase tracking-wider text-slate-500 group-hover:text-slate-700 transition-colors block">
                         {{ $item['day_name'] }}
                     </span>
-                    <span class="text-xl sm:text-2xl font-audiowide font-bold text-white group-hover:text-[#FF6B00] transition-colors block">
+                    <span class="text-xl sm:text-2xl font-audiowide font-bold text-slate-900 group-hover:text-[#FF6B00] transition-colors block">
                         {{ $item['day_num'] }}
                     </span>
-                    <span class="text-[9px] font-questrial text-gray-500 block">
+                    <span class="text-[9px] font-questrial text-slate-400 block">
                         {{ $item['month'] }}
                     </span>
                 </div>
 
                 {{-- Slot Availability Text Indicator --}}
-                <div class="pt-2 border-t border-white/5 w-full">
+                <div class="pt-2 border-t border-slate-100 w-full">
                     <span class="text-[10px] font-montserrat font-bold uppercase tracking-wider text-[#FF6B00]"
                           x-text="getSlotLabel('{{ $item['date_str'] }}')">
                         5 Slot

@@ -103,7 +103,7 @@ class OfflinePesananService
             // 5. Buat Detail Pesanan (Item)
             DetailPesanan::create([
                 'id_pesanan'   => $pesanan->id_pesanan,
-                'id_layanan'   => $layanan->id_layanan,
+                'id_paket'     => $layanan->id_layanan,
                 'jumlah'       => 1,
                 'harga_satuan' => $hargaTotal,
                 'subtotal'     => $hargaTotal,

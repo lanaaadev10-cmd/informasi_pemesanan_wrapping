@@ -3,19 +3,42 @@
  * Handles Step-by-Step Car Wrapping Service Booking Flow
  */
 function bookingWizardApp(config) {
-    const MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-    const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-    const DAYS = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const DAYS = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     const MAX_SLOT = 5;
 
     return {
         // Data Layanan dari Katalog
         layanans: config.layanans || [],
-        categories: config.categories || ['Semua', 'Wrapping', 'Kaca Film', 'Audio'],
+        categories: config.categories || ['Semua', 'Jasa Pasang', 'Wrapping', 'Kaca Film', 'Audio'],
         selectedCategory: 'Semua',
 
-        // Wizard Steps: 1 = Layanan, 2 = Tanggal, 3 = Data Diri, 4 = Pembayaran
+        // Master Kendaraan & Add-ons
+        vehicleBrands: config.vehicleBrands || [],
+        availableAddons: config.availableAddons || [],
+        selectedBrandId: '',
+        selectedModelId: '',
+        selectedVehicleSize: '',
+        selectedAddonIds: [],
+
+        // Data Layanan Khusus
+        materialBrand: '',
+        materialSize: '',
+        materialCondition: 'baru',
+        materialDisclaimerAgreed: false,
+        materialPhotoName: '',
+        customRequestNotes: '',
+        customPhotoName: '',
+
+        // Asisten Pintar Filter
+        selectedVehicleType: 'semua', // 'semua' | 'motor' | 'mobil'
+        selectedNeedType: 'semua',    // 'semua' | 'jasa-pasang' | 'wrapping' | 'partial'
+        searchQuery: '',
+
+        // Wizard / Single-Page Checkout Controls
         currentStep: 1,
+        showServiceModal: false,
 
         // Pilihan Form
         layananId: config.initialLayananId || (config.layanans[0]?.id ?? null),
@@ -93,11 +116,198 @@ function bookingWizardApp(config) {
             return this.layanans.find(l => String(l.id) === String(this.layananId)) || null;
         },
 
-        get filteredLayanans() {
-            if (this.selectedCategory === 'Semua') {
-                return this.layanans;
+        get isJasaPasang() {
+            return Boolean(this.selectedLayanan?.is_jasa_pasang || this.selectedLayanan?.jenis_layanan === 'jasa_pasang');
+        },
+
+        get isCustom() {
+            return Boolean(this.selectedLayanan?.jenis_layanan === 'custom');
+        },
+
+        // Kendaraan Getters & Handlers
+        get currentBrand() {
+            if (!this.selectedBrandId) return null;
+            return this.vehicleBrands.find(b => String(b.id) === String(this.selectedBrandId)) || null;
+        },
+
+        get availableModels() {
+            return this.currentBrand?.models || [];
+        },
+
+        get currentModel() {
+            if (!this.selectedModelId) return null;
+            return this.availableModels.find(m => String(m.id) === String(this.selectedModelId)) || null;
+        },
+
+        onBrandChange() {
+            this.selectedModelId = '';
+            this.selectedVehicleSize = '';
+            if (this.currentBrand) {
+                this.vehicleName = this.currentBrand.name;
             }
-            return this.layanans.filter(l => l.category === this.selectedCategory);
+        },
+
+        onModelChange() {
+            if (this.currentModel) {
+                this.selectedVehicleSize = this.currentModel.vehicle_size || 'medium';
+                this.vehicleName = `${this.currentBrand?.name || ''} ${this.currentModel.name}`.trim();
+            }
+        },
+
+        sizeLabel(size) {
+            const labels = {
+                small: 'Small (S) - Motor / Hatchback',
+                medium: 'Medium (M) - Sedan / Compact SUV',
+                large: 'Large (L) - Medium SUV / MPV',
+                xlarge: 'X-Large (XL) - Big SUV / Premium Van',
+            };
+            return labels[size] || (size ? size.toUpperCase() : '-');
+        },
+
+        sizeBadge(size) {
+            const badges = {
+                small: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+                medium: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+                large: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+                xlarge: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+            };
+            return badges[size] || 'bg-white/10 text-gray-300 border-white/20';
+        },
+
+        // Add-ons Management
+        toggleAddon(id) {
+            const numId = Number(id);
+            const idx = this.selectedAddonIds.indexOf(numId);
+            if (idx > -1) {
+                this.selectedAddonIds.splice(idx, 1);
+            } else {
+                this.selectedAddonIds.push(numId);
+            }
+        },
+
+        isAddonSelected(id) {
+            return this.selectedAddonIds.includes(Number(id));
+        },
+
+        get selectedAddonsList() {
+            return this.availableAddons.filter(a => this.selectedAddonIds.includes(Number(a.id)));
+        },
+
+        // Financial & Breakdown Computations
+        get basePrice() {
+            return this.selectedLayanan ? Number(this.selectedLayanan.price || 0) : 0;
+        },
+
+        get addonsTotal() {
+            return this.selectedAddonsList.reduce((sum, a) => sum + Number(a.price || 0), 0);
+        },
+
+        get grandTotal() {
+            return this.basePrice + this.addonsTotal;
+        },
+
+        get dpAmount() {
+            return Math.round(this.grandTotal * 0.5);
+        },
+
+        get currentPaymentAmount() {
+            return this.paymentType === 'dp' ? this.dpAmount : this.grandTotal;
+        },
+
+        get remainingBalance() {
+            return this.paymentType === 'dp' ? (this.grandTotal - this.dpAmount) : 0;
+        },
+
+        setVehicleFilter(v) {
+            this.selectedVehicleType = v;
+            // Motor tidak memiliki aksesoris: jika beralih ke motor saat aksesoris aktif, reset ke semua
+            if (v === 'motor' && this.selectedNeedType === 'aksesoris') {
+                this.selectedNeedType = 'semua';
+                this.selectedCategory = 'Semua';
+            }
+        },
+
+        setNeedType(need) {
+            this.selectedNeedType = need;
+            if (need === 'semua') {
+                this.selectedCategory = 'Semua';
+            } else if (need === 'wrapping') {
+                this.selectedCategory = 'Full Wrap';
+            } else if (need === 'jasa-pasang') {
+                this.selectedCategory = 'Jasa Pasang';
+            } else if (need === 'partial') {
+                this.selectedCategory = 'Custom';
+            } else if (need === 'aksesoris') {
+                this.selectedCategory = 'Aksesoris & Film';
+            }
+        },
+
+        setCategoryFilter(cat) {
+            this.selectedCategory = cat;
+            if (cat === 'Semua') {
+                this.selectedNeedType = 'semua';
+            } else if (cat === 'Full Wrap' || cat === 'Wrapping') {
+                this.selectedNeedType = 'wrapping';
+            } else if (cat === 'Jasa Pasang') {
+                this.selectedNeedType = 'jasa-pasang';
+            } else if (cat === 'Custom' || cat === 'Parsial & Custom' || cat === 'Parsial') {
+                this.selectedNeedType = 'partial';
+            } else if (cat === 'Aksesoris & Film' || cat === 'Lighting' || cat === 'Audio' || cat === 'Kaca Film') {
+                this.selectedNeedType = 'aksesoris';
+            }
+        },
+
+        get filteredLayanans() {
+            let list = this.layanans;
+
+            // 1. Filter Tipe Kendaraan (semua / motor / mobil)
+            if (this.selectedVehicleType !== 'semua') {
+                list = list.filter(l => (l.kategori || '').toLowerCase() === this.selectedVehicleType);
+            }
+
+            // 2. Filter Jenis Kebutuhan (semua / jasa-pasang / wrapping / partial / aksesoris / custom)
+            if (this.selectedNeedType !== 'semua') {
+                if (this.selectedNeedType === 'custom') {
+                    return []; // Custom tidak ada paket baku; menampilkan kartu negosiasi WhatsApp
+                } else if (this.selectedNeedType === 'jasa-pasang') {
+                    list = list.filter(l => (l.scope_key === 'jasa-pasang') || l.is_jasa_pasang || (l.raw_tipe_paket || '').includes('jasa-pasang'));
+                } else if (this.selectedNeedType === 'wrapping') {
+                    list = list.filter(l => (l.scope_key === 'wrapping') || (!l.is_jasa_pasang && (l.raw_tipe_paket || '') === 'wrapping'));
+                } else if (this.selectedNeedType === 'partial') {
+                    list = list.filter(l => (l.scope_key === 'partial') || ['partial', 'striping'].includes((l.raw_tipe_paket || '').toLowerCase()));
+                } else if (this.selectedNeedType === 'aksesoris') {
+                    // Motor tidak ada aksesoris
+                    list = list.filter(l => (l.kategori || '').toLowerCase() !== 'motor' && ((l.scope_key === 'aksesoris') || ['lighting', 'audio', 'window-film', 'aksesoris'].includes((l.raw_tipe_paket || '').toLowerCase())));
+                }
+            }
+
+            // 3. Pencarian teks live (nama, deskripsi, kecocokan kendaraan, fitur)
+            if (this.searchQuery && this.searchQuery.trim() !== '') {
+                const q = this.searchQuery.toLowerCase().trim();
+                list = list.filter(l => {
+                    const name = (l.name || '').toLowerCase();
+                    const desc = (l.deskripsi || '').toLowerCase();
+                    const compat = (l.compatibility || '').toLowerCase();
+                    const features = (l.fitur || []).join(' ').toLowerCase();
+                    return name.includes(q) || desc.includes(q) || compat.includes(q) || features.includes(q);
+                });
+            }
+
+            return list;
+        },
+
+        resetFilters() {
+            this.selectedVehicleType = 'semua';
+            this.selectedNeedType = 'semua';
+            this.selectedCategory = 'Semua';
+            this.searchQuery = '';
+        },
+
+        get hasActiveFilters() {
+            return this.selectedVehicleType !== 'semua' ||
+                this.selectedNeedType !== 'semua' ||
+                this.selectedCategory !== 'Semua' ||
+                Boolean(this.searchQuery && this.searchQuery.trim() !== '');
         },
 
         get selectedDateQuota() {
@@ -127,15 +337,22 @@ function bookingWizardApp(config) {
 
         get primaryButtonLabel() {
             if (this.isSubmitting) return 'Memproses Booking...';
-            if (this.currentStep === 1) return 'Lanjut ke Pemilihan Jadwal';
+            if (this.currentStep === 1) return 'Lanjut ke Jadwal & Shift';
             if (this.currentStep === 2) return 'Lanjut ke Data Kendaraan';
             if (this.currentStep === 3) return 'Lanjut ke Pembayaran';
-            return 'Konfirmasi & Buat Booking Sekarang';
+            return 'Bayar & Konfirmasi Booking Sekarang';
         },
 
         get primaryButtonIcon() {
-            if (this.currentStep === 4) return 'ph-bold ph-check';
-            return 'ph-bold ph-arrow-right';
+            if (this.currentStep < 4) return 'ph-bold ph-arrow-right';
+            return 'ph-bold ph-shield-check';
+        },
+
+        scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         },
 
         get calMonthLabel() {
@@ -149,60 +366,91 @@ function bookingWizardApp(config) {
             return `${start.dayNum} ${start.monthShort} - ${end.dayNum} ${end.monthShort} ${end.year}`;
         },
 
+        // Validasi per-step sebelum berpindah ke langkah berikutnya
+        validateStep(step) {
+            if (step === 1) {
+                if (!this.layananId) {
+                    alert('Silakan pilih salah satu paket layanan terlebih dahulu!');
+                    return false;
+                }
+                if (this.isJasaPasang && !this.materialDisclaimerAgreed) {
+                    alert('Untuk layanan Jasa Pasang (Bawa Bahan Sendiri), Anda wajib menyetujui pernyataan tanggung jawab material (Disclaimer).');
+                    return false;
+                }
+                return true;
+            }
+            if (step === 2) {
+                if (!this.bookingDate) {
+                    alert('Silakan tentukan tanggal pengerjaan pada kalender atau strip tanggal!');
+                    return false;
+                }
+                if (this.selectedDateQuota && this.selectedDateQuota.is_full) {
+                    alert('Tanggal yang Anda pilih sudah PENUH (5/5). Silakan pilih tanggal lain yang masih tersedia!');
+                    return false;
+                }
+                return true;
+            }
+            if (step === 3) {
+                if (!this.customerName || !this.customerName.trim()) {
+                    alert('Silakan lengkapi nama lengkap pemesan!');
+                    return false;
+                }
+                if (!this.customerPhone || !this.customerPhone.trim()) {
+                    alert('Silakan lengkapi nomor WhatsApp pemesan!');
+                    return false;
+                }
+                return true;
+            }
+            return true;
+        },
+
         // Navigasi Wizard
         goToStep(step) {
-            if (step > 1 && !this.layananId) {
-                alert('Silakan pilih salah satu layanan terlebih dahulu!');
-                return;
-            }
-            if (step > 2 && !this.bookingDate) {
-                alert('Silakan pilih tanggal pengerjaan terlebih dahulu!');
-                return;
-            }
-            if (step > 2 && this.selectedDateQuota.is_full) {
-                alert('Tanggal yang Anda pilih sudah PENUH (5/5). Silakan pilih tanggal lain yang masih memiliki slot!');
-                return;
-            }
-            if (step > 3 && (!this.customerName.trim() || !this.customerPhone.trim())) {
-                alert('Silakan isi Nama Lengkap dan Nomor WhatsApp Anda!');
-                return;
+            if (step === this.currentStep) return true;
+            if (step > this.currentStep) {
+                for (let s = this.currentStep; s < step; s++) {
+                    if (!this.validateStep(s)) {
+                        return false;
+                    }
+                }
             }
             this.currentStep = step;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 80, behavior: 'smooth' });
+            return true;
         },
 
         nextStep() {
-            if (this.currentStep === 1) {
-                this.goToStep(2);
-            } else if (this.currentStep === 2) {
-                this.goToStep(3);
-            } else if (this.currentStep === 3) {
-                this.goToStep(4);
-            } else if (this.currentStep === 4) {
-                this.submitBooking();
+            if (this.currentStep < 4) {
+                if (this.validateStep(this.currentStep)) {
+                    this.currentStep++;
+                    window.scrollTo({ top: 80, behavior: 'smooth' });
+                }
+            } else {
+                this.handlePrimaryButton();
             }
         },
 
         prevStep() {
             if (this.currentStep > 1) {
                 this.currentStep--;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 80, behavior: 'smooth' });
             }
         },
 
         handlePrimaryButton() {
-            if (this.currentStep === 4) {
+            if (this.currentStep < 4) {
+                this.nextStep();
+            } else {
                 const form = document.getElementById('bookingForm');
                 if (form) {
                     form.requestSubmit();
                 }
-            } else {
-                this.nextStep();
             }
         },
 
         selectLayanan(id) {
             this.layananId = id;
+            this.showServiceModal = false;
         },
 
         selectDate(dateStr) {
@@ -237,22 +485,22 @@ function bookingWizardApp(config) {
             const isBlocked = q ? Boolean(q.is_blocked) : false;
 
             if (isSelected) {
-                return 'border-[#ff6b00] bg-gradient-to-b from-[#ff6b00]/25 via-[#ff6b00]/15 to-[#ff6b00]/5 text-white shadow-[0_0_20px_rgba(255,107,0,0.35)] ring-2 ring-[#ff6b00] scale-[1.03] z-10';
+                return 'border-[#ff6b00] bg-orange-50 text-[#ff6b00] font-black shadow-md ring-2 ring-[#ff6b00] scale-[1.03] z-10';
             }
 
             if (isBlocked) {
-                return 'border-white/5 bg-white/[0.02] text-gray-500 cursor-not-allowed opacity-50';
+                return 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-60';
             }
 
             if (isFull) {
-                return 'border-rose-500/20 bg-rose-500/5 text-rose-300/80 cursor-not-allowed opacity-60';
+                return 'border-rose-200 bg-rose-50 text-rose-500 cursor-not-allowed opacity-70';
             }
 
             if (q && q.available === 1) {
-                return 'border-[#ff6b00]/30 bg-[#ff6b00]/5 text-gray-200 hover:border-[#ff6b00] hover:bg-[#ff6b00]/15 hover:scale-[1.02]';
+                return 'border-orange-300 bg-orange-50/60 text-slate-800 hover:border-[#ff6b00] hover:bg-orange-50 hover:scale-[1.02]';
             }
 
-            return 'border-white/10 bg-[#0e0e11] text-gray-300 hover:border-[#ff6b00]/60 hover:bg-white/[0.04] hover:text-white hover:scale-[1.02]';
+            return 'border-slate-200 bg-white text-slate-800 shadow-sm hover:border-[#ff6b00]/60 hover:bg-orange-50/30 hover:scale-[1.02]';
         },
 
         getStripSlotLabel(dateStr) {
@@ -337,7 +585,7 @@ function bookingWizardApp(config) {
 
         renderCalendar() {
             const now = new Date();
-            const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
             const firstDay = new Date(this.calYear, this.calMonth, 1);
             const startWeekday = firstDay.getDay();
@@ -391,7 +639,7 @@ function bookingWizardApp(config) {
             sunday.setDate(baseDate.getDate() - dayOfWeek);
 
             const now = new Date();
-            const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
             const days = [];
             for (let i = 0; i < 7; i++) {
@@ -451,19 +699,19 @@ function bookingWizardApp(config) {
             const isSelected = cell.date === this.bookingDate;
 
             if (isSelected) {
-                return 'border-[#ff6b00] bg-[#ff6b00] text-black font-extrabold shadow-[0_0_18px_rgba(255,107,0,0.5)] ring-2 ring-white scale-105 z-10';
+                return 'border-[#ff6b00] bg-[#ff6b00] text-white font-extrabold shadow-md ring-2 ring-[#ff6b00]/30 scale-105 z-10';
             }
 
             if (cell.status === 'past' || cell.status === 'blocked') {
-                return 'border-white/5 bg-white/[0.02] text-gray-500 cursor-not-allowed opacity-50';
+                return 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed opacity-60';
             }
             if (cell.status === 'full') {
-                return 'border-rose-500/30 bg-rose-500/10 text-rose-300 cursor-not-allowed';
+                return 'border-rose-200 bg-rose-50 text-rose-600 cursor-not-allowed';
             }
             if (cell.status === 'few') {
-                return 'border-[#ff6b00]/30 bg-[#ff6b00]/10 text-[#ff6b00] hover:border-[#ff6b00] hover:bg-[#ff6b00]/20';
+                return 'border-orange-300 bg-orange-50 text-[#ff6b00] hover:border-[#ff6b00] hover:bg-orange-100';
             }
-            return 'border-emerald-500/20 bg-emerald-500/5 text-emerald-100 hover:border-emerald-400 hover:bg-emerald-500/15';
+            return 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-400 hover:bg-emerald-100';
         },
 
         async prevCalMonth() {
@@ -502,7 +750,7 @@ function bookingWizardApp(config) {
             const d = new Date(this.bookingDate);
             d.setDate(d.getDate() - 1);
             const now = new Date();
-            now.setHours(0,0,0,0);
+            now.setHours(0, 0, 0, 0);
             if (d >= now) {
                 this.selectDate(d.toISOString().slice(0, 10));
             }
@@ -539,6 +787,16 @@ function bookingWizardApp(config) {
             this.proofFileName = file ? file.name : '';
         },
 
+        handleMaterialPhoto(event) {
+            const file = event.target.files[0] || null;
+            this.materialPhotoName = file ? file.name : '';
+        },
+
+        handleCustomPhoto(event) {
+            const file = event.target.files[0] || null;
+            this.customPhotoName = file ? file.name : '';
+        },
+
         copyRekening(nomor) {
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(nomor);
@@ -550,35 +808,13 @@ function bookingWizardApp(config) {
         },
 
         submitBooking(e) {
-            if (!this.layananId) {
-                alert('Silakan pilih salah satu paket layanan!');
-                this.currentStep = 1;
-                if (e) e.preventDefault();
-                return false;
-            }
-            if (!this.bookingDate) {
-                alert('Silakan pilih tanggal booking pada kalender!');
-                this.currentStep = 2;
-                if (e) e.preventDefault();
-                return false;
-            }
-            if (this.selectedDateQuota && this.selectedDateQuota.is_full) {
-                alert('Tanggal yang Anda pilih sudah PENUH (5/5). Silakan pilih tanggal lain yang masih tersedia!');
-                this.currentStep = 2;
-                if (e) e.preventDefault();
-                return false;
-            }
-            if (!this.customerName || !this.customerName.trim()) {
-                alert('Silakan isi nama lengkap Anda!');
-                this.currentStep = 3;
-                if (e) e.preventDefault();
-                return false;
-            }
-            if (!this.customerPhone || !this.customerPhone.trim()) {
-                alert('Silakan isi nomor WhatsApp Anda!');
-                this.currentStep = 3;
-                if (e) e.preventDefault();
-                return false;
+            for (let s = 1; s <= 3; s++) {
+                if (!this.validateStep(s)) {
+                    this.currentStep = s;
+                    window.scrollTo({ top: 80, behavior: 'smooth' });
+                    if (e) e.preventDefault();
+                    return false;
+                }
             }
 
             this.isSubmitting = true;

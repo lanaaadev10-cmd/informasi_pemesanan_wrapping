@@ -87,7 +87,6 @@ class RatingService
                 'booking_id' => $booking->id,
                 'id_pesanan' => null,
                 'id_layanan' => $booking->layanan_id,
-                'order_ref' => 0,
                 'rating' => $data['rating'],
                 'ulasan' => $data['ulasan'] ?? null,
             ]);
@@ -175,7 +174,6 @@ class RatingService
                 'id_user' => $userId,
                 'id_pesanan' => $idPesanan,
                 'id_layanan' => $idLayanan,
-                'order_ref' => $idPesanan ?? 0,
                 'rating' => $data['rating'],
                 'ulasan' => $data['ulasan'] ?? null,
             ]);

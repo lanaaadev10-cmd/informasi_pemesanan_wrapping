@@ -28,6 +28,7 @@ class NotifyBookingCompleted
             pesan: "Booking {$booking->booking_code} telah selesai dikerjakan. Terima kasih telah menggunakan layanan kami!",
             tipe: 'email',
             idPesanan: null,
+            bookingId: $booking->id,
         );
 
         $this->notifikasiService->sendNotification($notifikasi);
@@ -38,6 +39,7 @@ class NotifyBookingCompleted
             pesan: "Kendaraan Anda siap diambil. Booking {$booking->booking_code}.",
             tipe: 'in_app',
             idPesanan: null,
+            bookingId: $booking->id,
         );
     }
 }

@@ -48,6 +48,7 @@ trait ManagesBookingSlots
     public function getAvailableLayanans()
     {
         return Layanan::query()
+            ->where('is_active', true)
             ->whereIn('tipe_layanan', ['fix', 'custom'])
             ->orderBy('nama_layanan')
             ->get();

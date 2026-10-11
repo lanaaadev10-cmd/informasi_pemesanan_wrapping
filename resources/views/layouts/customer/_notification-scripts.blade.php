@@ -78,7 +78,7 @@
             }
 
             list.innerHTML = data.map(n => `
-                <div id="notif-item-${n.id_notif}" class="flex items-start gap-3 px-5 py-4 transition-all ${n.is_read ? 'opacity-60' : 'bg-[#f2994a]/[0.03]'} hover:bg-white/[0.03] cursor-pointer group" onclick="handleNotifClick(${n.id_notif}, ${n.id_pesanan || 'null'}, '${(n.judul || '').replace(/'/g, "\\'")}')">
+                <div id="notif-item-${n.id_notif}" class="flex items-start gap-3 px-5 py-4 transition-all ${n.is_read ? 'opacity-60' : 'bg-[#f2994a]/[0.03]'} hover:bg-white/[0.03] cursor-pointer group" onclick="handleNotifClick(${n.id_notif}, ${n.id_pesanan || 'null'}, '${(n.judul || '').replace(/'/g, "\\'")}', ${n.booking_id || 'null'})">
                     <div class="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center shrink-0 mt-0.5">
                         <i class="ph ${getIconByJudul(n.judul)} text-lg"></i>
                     </div>
@@ -102,7 +102,7 @@
         }
     }
 
-    async function handleNotifClick(id_notif, id_pesanan, judul = '') {
+    async function handleNotifClick(id_notif, id_pesanan, judul = '', booking_id = null) {
         const item = document.getElementById('notif-item-' + id_notif);
         if (item) {
             item.classList.remove('bg-[#f2994a]/[0.03]');
@@ -124,7 +124,9 @@
             updateBadge(unread);
         } catch(e) {}
 
-        if (id_pesanan && id_pesanan !== 'null') {
+        if (booking_id && booking_id !== 'null') {
+            window.location.href = `{{ url('/booking') }}/${booking_id}`;
+        } else if (id_pesanan && id_pesanan !== 'null') {
             window.location.href = `{{ url('/pesanan') }}/${id_pesanan}`;
         } else if ((judul || '').toLowerCase().includes('booking')) {
             window.location.href = `{{ route('booking.index') }}`;
@@ -190,12 +192,12 @@
 
 <!-- Floating Toast Notification Component -->
 @if(session('toast_success'))
-    <div id="floating-toast" class="fixed bottom-24 right-6 z-50 flex items-center gap-3 bg-[#0E0E10] border border-[#FF6B00] text-white px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(255,107,0,0.3)] animate-bounce-short transition-all duration-500">
-        <div class="w-8 h-8 rounded-full bg-[#FF6B00]/20 flex items-center justify-center text-[#FF6B00] shrink-0">
+    <div id="floating-toast" class="fixed bottom-24 right-6 z-50 flex items-center gap-3 bg-white border border-[#FF6B00] text-slate-800 px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(255,107,0,0.15)] animate-bounce-short transition-all duration-500">
+        <div class="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-[#FF6B00] shrink-0 border border-orange-200">
             <i class="ph-bold ph-check-circle text-lg"></i>
         </div>
         <p class="text-xs font-bold">{{ session('toast_success') }}</p>
-        <button onclick="document.getElementById('floating-toast').remove()" class="text-[#8A8D93] hover:text-white ml-2">
+        <button onclick="document.getElementById('floating-toast').remove()" class="text-slate-400 hover:text-slate-700 ml-2">
             <i class="ph-bold ph-x text-sm"></i>
         </button>
     </div>
@@ -211,12 +213,12 @@
 @endif
 
 @if(session('toast_error'))
-    <div id="floating-toast-error" class="fixed bottom-24 right-6 z-50 flex items-center gap-3 bg-[#121212] border border-red-500 text-white px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(239,68,68,0.3)] animate-bounce-short transition-all duration-500">
-        <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 shrink-0">
+    <div id="floating-toast-error" class="fixed bottom-24 right-6 z-50 flex items-center gap-3 bg-white border border-red-500 text-slate-800 px-6 py-4 rounded-2xl shadow-[0_10px_30px_rgba(239,68,68,0.15)] animate-bounce-short transition-all duration-500">
+        <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 shrink-0 border border-red-200">
             <i class="ph-bold ph-warning-circle text-lg"></i>
         </div>
         <p class="text-xs font-bold">{{ session('toast_error') }}</p>
-        <button onclick="document.getElementById('floating-toast-error').remove()" class="text-gray-400 hover:text-white ml-2">
+        <button onclick="document.getElementById('floating-toast-error').remove()" class="text-slate-400 hover:text-slate-700 ml-2">
             <i class="ph-bold ph-x text-sm"></i>
         </button>
     </div>

@@ -100,6 +100,6 @@ class BlockedDateResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->hasRole('admin') ?? false;
+        return auth()->user()?->can('bookings index') ?? false;
     }
 }

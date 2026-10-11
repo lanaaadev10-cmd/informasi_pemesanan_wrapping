@@ -28,22 +28,22 @@
 @endphp
 
 {{-- ════════════════════ WIDGET CARD ════════════════════ --}}
-<div class="bg-[#0E0E10] border border-white/10 rounded-[28px] p-3.5 sm:p-6 md:p-8 hover:border-[#FF6B00]/40 transition-all duration-300 shadow-xl relative overflow-hidden"
+<div class="bg-white border border-slate-200/80 rounded-[28px] p-3.5 sm:p-6 md:p-8 hover:border-orange-300 transition-all duration-300 shadow-sm relative overflow-hidden"
      x-data="bookingCalWidget()"
      x-init="init()">
 
-    <div class="absolute -top-10 -right-10 w-40 h-40 bg-[#FF6B00]/10 rounded-full blur-[80px] pointer-events-none"></div>
+    <div class="absolute -top-10 -right-10 w-40 h-40 bg-orange-500/5 rounded-full blur-[80px] pointer-events-none"></div>
 
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-white/10">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
         <div>
-            <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-white tracking-wide">
+            <h3 class="text-xl sm:text-2xl font-audiowide font-bold text-slate-900 tracking-wide">
                 Ketersediaan Slot &bull; {{ $today->translatedFormat('F Y') }}
             </h3>
-            <p class="text-xs font-questrial text-[#8A8D93] mt-1">Pilih tanggal di kalender kotak untuk melihat rincian slot dan kuota harian.</p>
+            <p class="text-xs font-questrial text-slate-500 mt-1">Pilih tanggal di kalender kotak untuk melihat rincian slot dan kuota harian.</p>
         </div>
-        <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-xs font-mono text-[#8A8D93] shrink-0">
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-600 shrink-0">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
             <span>Maks. 5 Slot / Hari</span>
         </div>
     </div>
@@ -56,7 +56,7 @@
                 {{-- Day labels --}}
                 <div class="grid grid-cols-7 gap-1.5 mb-2">
                     @foreach($dayLabels as $dl)
-                        <div class="text-center text-[10px] font-black uppercase tracking-widest text-gray-500 py-1.5">{{ $dl }}</div>
+                        <div class="text-center text-[10px] font-bold uppercase tracking-widest text-slate-500 py-1.5">{{ $dl }}</div>
                     @endforeach
                 </div>
 
@@ -65,7 +65,7 @@
                     {{-- Skeleton loading --}}
                     <template x-if="loading">
                         <template x-for="i in 35" :key="i">
-                            <div class="aspect-square min-h-[38px] sm:min-h-[44px] rounded-xl bg-white/[0.02] border border-white/5 animate-pulse"></div>
+                            <div class="aspect-square min-h-[38px] sm:min-h-[44px] rounded-xl bg-slate-50 border border-slate-100 animate-pulse"></div>
                         </template>
                     </template>
 
@@ -93,15 +93,15 @@
 
                                 {{-- Badge jumlah slot terpakai --}}
                                 <template x-if="slotCount(day) > 0">
-                                    <span class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full text-black text-[8px] font-black flex items-center justify-center leading-none shadow-md font-montserrat"
-                                          :class="slotCount(day) >= 5 ? 'bg-red-500 text-white' : (slotCount(day) >= 3 ? 'bg-[#ff6b00] text-white' : 'bg-emerald-500 text-black')"
+                                    <span class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full text-white text-[8px] font-bold flex items-center justify-center leading-none shadow-sm font-montserrat"
+                                          :class="slotCount(day) >= 5 ? 'bg-red-500 text-white' : (slotCount(day) >= 3 ? 'bg-[#ff6b00] text-white' : 'bg-emerald-500 text-white')"
                                           x-text="slotCount(day)">
                                     </span>
                                 </template>
 
                                 {{-- FULL badge --}}
                                 <template x-if="isFull(day)">
-                                    <span class="absolute -top-1 -left-1 text-[6px] font-black bg-red-500 text-white px-1 rounded-full leading-tight shadow font-montserrat">FULL</span>
+                                    <span class="absolute -top-1 -left-1 text-[6px] font-black bg-red-500 text-white px-1 rounded-full leading-tight shadow-sm font-montserrat">FULL</span>
                                 </template>
                             </button>
                         </template>
@@ -110,13 +110,13 @@
             </div>
 
             {{-- Legenda --}}
-            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-6 pt-4 border-t border-white/5 font-questrial">
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-2 mt-6 pt-4 border-t border-slate-100 font-questrial">
                 @foreach([
                     ['bg-emerald-500', 'Tersedia (1–2 slot)'],
                     ['bg-[#ff6b00]',   'Sisa Sedikit (3–4 slot)'],
                     ['bg-red-500',     'Penuh (5/5 slot)'],
                 ] as [$clr, $lbl])
-                    <span class="inline-flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
+                    <span class="inline-flex items-center gap-1.5 text-[10px] text-slate-500 font-medium">
                         <span class="w-2 h-2 rounded-full {{ $clr }} shrink-0"></span>{{ $lbl }}
                     </span>
                 @endforeach

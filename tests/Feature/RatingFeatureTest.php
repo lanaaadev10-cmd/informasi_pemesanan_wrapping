@@ -128,7 +128,6 @@ describe('Alur 1 - rating via pesanan', function () {
             'id_user' => $this->actor->id,
             'id_pesanan' => $pesanan->id_pesanan,
             'id_layanan' => $this->layanan->id_layanan,
-            'order_ref' => $pesanan->id_pesanan,
             'rating' => 5,
             'ulasan' => 'Hasil wrapping sangat memuaskan!',
         ]);
@@ -442,6 +441,39 @@ describe('Alur Booking - rating via booking', function () {
             'booking_id' => $booking->id,
             'rating' => 5,
             'ulasan' => 'Submit cepat dari modal',
+        ]);
+    });
+
+    test('user yang sama boleh rate layanan yang sama di booking berbeda', function () {
+        ($this->actAs)();
+
+        $bookingA = createCompletedBooking($this->actor, $this->layanan);
+        $bookingB = createCompletedBooking($this->actor, $this->layanan);
+
+        $this->post(route('booking.rating.store', $bookingA->id), [
+            'rating' => 5,
+            'ulasan' => 'Booking pertama sangat memuaskan',
+        ])->assertSessionHas('toast_success');
+
+        $this->post(route('booking.rating.store', $bookingB->id), [
+            'rating' => 4,
+            'ulasan' => 'Booking kedua juga bagus',
+        ])->assertSessionHas('toast_success');
+
+        $this->assertSame(2, Rating::where('id_user', $this->actor->id)
+            ->where('id_layanan', $this->layanan->id_layanan)
+            ->count());
+
+        $this->assertDatabaseHas('ratings', [
+            'booking_id' => $bookingA->id,
+            'rating' => 5,
+            'ulasan' => 'Booking pertama sangat memuaskan',
+        ]);
+
+        $this->assertDatabaseHas('ratings', [
+            'booking_id' => $bookingB->id,
+            'rating' => 4,
+            'ulasan' => 'Booking kedua juga bagus',
         ]);
     });
 });

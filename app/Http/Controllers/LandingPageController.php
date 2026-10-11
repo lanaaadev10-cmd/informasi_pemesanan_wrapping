@@ -36,7 +36,7 @@ class LandingPageController extends Controller
             return redirect()->route('katalog.user');
         }
 
-        $layanans = Layanan::all();
+        $layanans = Layanan::where('is_active', true)->get();
         $ratingSummary = \App\Http\Controllers\TestimoniController::summaryPerLayananKeyed();
 
         return view('landing.layanan.index', compact('layanans', 'ratingSummary'));

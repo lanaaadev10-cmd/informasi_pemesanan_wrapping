@@ -58,6 +58,8 @@
                                     <span>{{ $pesanan->kode_pesanan }}</span>
                                     @if($isWalkIn)
                                         <span style="padding: 0.1rem 0.4rem; font-size: 0.6rem; font-weight: 800; border-radius: 0.3rem; background: #ffedd5; color: #c2410c;">Walk-In</span>
+                                    @elseif(!empty($pesanan->tipe_badge) && $pesanan->tipe_badge === 'Booking Online')
+                                        <span style="padding: 0.1rem 0.4rem; font-size: 0.6rem; font-weight: 800; border-radius: 0.3rem; background: #e0e7ff; color: #4338ca;">Booking Online</span>
                                     @endif
                                 </div>
                                 <div style="font-size: 0.7rem; color: #6b7280;">
@@ -81,9 +83,9 @@
                                 Rp {{ number_format($pesanan->total_harga, 0, ',', '.') }}
                             </td>
                             <td style="text-align: center;">
-                                <a href="{{ route('filament.admin.resources.pesanans.view', ['record' => $pesanan->id_pesanan]) }}" 
+                                <a href="{{ $pesanan->view_url ?? route('filament.admin.resources.pesanans.view', ['record' => $pesanan->id_pesanan]) }}" 
                                    style="display: inline-flex; align-items: center; justify-content: center; width: 1.75rem; height: 1.75rem; border-radius: 0.4rem; border: 1px solid #d1d5db; background: #ffffff; color: #4b5563; text-decoration: none;"
-                                   title="Lihat Detail Pesanan">
+                                   title="Lihat Detail Transaksi">
                                     <x-heroicon-o-eye style="width: 1rem; height: 1rem;" />
                                 </a>
                             </td>

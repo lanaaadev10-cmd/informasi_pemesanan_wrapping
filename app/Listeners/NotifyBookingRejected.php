@@ -30,6 +30,7 @@ class NotifyBookingRejected
             pesan: "Booking {$booking->booking_code} telah ditolak. Alasan: {$alasan}",
             tipe: 'email',
             idPesanan: null,
+            bookingId: $booking->id,
         );
 
         $this->notifikasiService->sendNotification($notifikasi);
@@ -40,6 +41,7 @@ class NotifyBookingRejected
             pesan: $alasan,
             tipe: 'sistem',
             idPesanan: null,
+            bookingId: $booking->id,
         );
     }
 }

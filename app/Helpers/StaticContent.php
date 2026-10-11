@@ -45,7 +45,7 @@ class StaticContent
     const COMPANY_DESCRIPTION = 'Transforming high-performance assets into personalized masterpieces through unparalleled craftsmanship.';
     const COMPANY_ADDRESS     = 'Jl. Wrapping Indah No. 99, Jakarta Selatan, Indonesia 12950';
     const COMPANY_EMAIL       = 'hello@wapping.id';
-    const COMPANY_PHONE       = '628123456789';
+    const COMPANY_PHONE       = '6283117163605';
     const COMPANY_WHATSAPP    = 'https://wa.me/6283117163605';
     const COMPANY_MAPS_URL    = 'https://maps.google.com/?q=-6.1234,106.5678';
     const COMPANY_LOGO        = 'images/logo/logo-wapping.png';

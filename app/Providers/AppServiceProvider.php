@@ -63,5 +63,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Settings cache will be cleared manually in Filament pages
+
+        // Super-admin: user dengan role 'admin' memiliki semua permission secara otomatis.
+        // Kecualikan 'delete' dan 'forceDelete' dari intercept awal agar aturan policy (seperti cegah hapus akun sendiri) tetap dieksekusi.
+        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
+            if (in_array($ability, ['delete', 'forceDelete'])) {
+                return null;
+            }
+
+            return $user->hasRole('admin') ? true : null;
+        });
     }
 }

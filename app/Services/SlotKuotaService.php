@@ -54,11 +54,13 @@ class SlotKuotaService
 
     /**
      * Status pesanan yang dianggap "aktif" / mengisi slot.
+     * Mengacu pada App\Enums\OrderStatus: pesanan aktif yang belum selesai atau ditolak.
      */
     public const PESANAN_ACTIVE_STATUSES = [
         'menunggu_konfirmasi_admin',
         'menunggu_pembayaran',
-        'pembayaran_diproses',
+        'menunggu_verifikasi_pembayaran',
+        'dikonfirmasi',
         'sedang_diproses',
     ];
 

@@ -48,6 +48,7 @@ class NotifyAdminBookingPaymentUploaded
                 pesan: "Booking #{$booking->booking_code} memerlukan verifikasi pembayaran. Total: Rp " . number_format((float) $payment->amount, 0, ',', '.'),
                 tipe: 'pembayaran',
                 idPesanan: null,
+                bookingId: $booking->id,
             );
         }
     }

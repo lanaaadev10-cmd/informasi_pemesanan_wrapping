@@ -1,142 +1,177 @@
 {{-- ════ KOLOM KANAN: RINCIAN RESERVASI & TAGIHAN TRANSPARAN (EXECUTIVE STANDARD) ════ --}}
 <aside class="lg:col-span-1 lg:sticky lg:top-24 space-y-5">
-    <div class="bg-[#141416]/95 border border-white/10 rounded-3xl p-6 shadow-2xl space-y-5 relative overflow-hidden">
+    <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-5 relative overflow-hidden">
         {{-- Ambient decorative glow --}}
-        <div class="absolute -top-16 -right-16 w-44 h-44 rounded-full bg-[#ff6b00]/10 blur-3xl pointer-events-none"></div>
+        <div class="absolute -top-16 -right-16 w-44 h-44 rounded-full bg-[#ff6b00]/5 blur-3xl pointer-events-none"></div>
 
         {{-- 1. Header Rincian Reservasi --}}
-        <div class="border-b border-white/10 pb-4 space-y-1.5">
+        <div class="border-b border-slate-100 pb-4 space-y-1.5">
             <div class="flex items-center justify-between">
-                <h3 class="text-base sm:text-lg font-audiowide font-bold text-white tracking-wide">
+                <h3 class="text-base sm:text-lg font-audiowide font-bold text-slate-900 tracking-wide">
                     Rincian Reservasi
                 </h3>
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-[#ff6b00]/10 border border-[#ff6b00]/25 text-[#ff6b00] text-[9px] font-mono font-bold uppercase tracking-wider">
                     Sistem Aktif
                 </span>
             </div>
-            <p class="text-[11px] font-questrial text-gray-400">
-                Pantauan paket pengerjaan &amp; jadwal kedatangan di workshop
+            <p class="text-[11px] font-questrial text-slate-500">
+                Pantauan paket pengerjaan &amp; kalkulasi tagihan transparan
             </p>
         </div>
 
         {{-- 2. Paket Layanan Terpilih --}}
-        <div class="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-2">
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
             <div class="flex items-center justify-between">
-                <span class="text-[10px] font-montserrat font-bold text-gray-400 uppercase tracking-wider">
+                <span class="text-[10px] font-montserrat font-bold text-slate-500 uppercase tracking-wider">
                     Paket Pengerjaan
                 </span>
-                <span class="text-[9px] font-montserrat font-bold text-[#ff6b00] uppercase tracking-wider bg-[#ff6b00]/15 px-2 py-0.5 rounded-md border border-[#ff6b00]/30"
-                      x-show="selectedLayanan && selectedLayanan.tipe_paket"
-                      x-text="selectedLayanan ? selectedLayanan.tipe_paket : ''"></span>
+                <div class="flex items-center gap-1" x-show="selectedLayanan">
+                    <span class="text-[9px] font-montserrat font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border"
+                          :class="selectedLayanan?.scope_class"
+                          x-text="selectedLayanan?.scope_badge || selectedLayanan?.tipe_paket"></span>
+                    <span class="text-[9px] font-montserrat font-bold uppercase tracking-wider bg-white text-slate-800 px-2 py-0.5 rounded-md border border-slate-200 shadow-sm"
+                          x-text="selectedLayanan?.kategori_label"></span>
+                </div>
             </div>
 
             <div>
-                <p class="text-base font-audiowide font-bold text-white leading-tight"
+                <p class="text-base font-audiowide font-bold text-slate-900 leading-tight"
                    x-text="selectedLayanan ? selectedLayanan.name : 'Belum Memilih Layanan'"></p>
                 <div class="flex items-center justify-between mt-1.5">
-                    <span class="text-xs font-questrial text-gray-400">Tarif Dasar Paket:</span>
+                    <span class="text-xs font-questrial text-slate-500"
+                          x-text="selectedLayanan?.is_jasa_pasang ? 'Ongkos Jasa Pasang:' : (selectedLayanan?.jenis_layanan === 'custom' ? 'Estimasi Dasar:' : 'Tarif Paket:')"></span>
                     <span class="text-sm font-audiowide font-bold text-[#ff6b00]"
-                          x-text="selectedLayanan ? formatRupiah(selectedLayanan.price) : 'Rp 0'"></span>
+                          x-text="formatRupiah(basePrice)"></span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1.5 pt-1 text-[11px] font-questrial text-gray-400 border-t border-white/5" x-show="selectedLayanan">
+            <div class="flex items-center gap-1.5 pt-1 text-[11px] font-questrial text-slate-500 border-t border-slate-200/60" x-show="selectedLayanan">
                 <i class="ph-bold ph-timer text-[#ff6b00]"></i>
-                <span>Estimasi Durasi: <strong class="text-white font-medium" x-text="selectedLayanan?.estimasi || '2-3 Hari Kerja'"></strong></span>
+                <span>Estimasi Durasi: <strong class="text-slate-800 font-semibold" x-text="selectedLayanan?.estimasi || '2-3 Hari Kerja'"></strong></span>
             </div>
         </div>
 
-        {{-- 3. Jadwal Tanggal Kedatangan --}}
-        <div class="space-y-1.5">
-            <label class="block text-xs font-montserrat font-bold text-gray-300 uppercase tracking-wider flex items-center justify-between">
-                <span>Tanggal Pengerjaan</span>
-                <span class="text-[10px] text-[#ff6b00] font-normal cursor-pointer hover:underline" @click="goToStep(2)" x-show="currentStep !== 2">
-                    Ubah Tanggal
+        {{-- 3. Identitas Kendaraan Terpilih (Kondisional jika diisi di Step 3) --}}
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5"
+             x-show="vehicleName || selectedVehicleSize" x-transition.opacity>
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-montserrat font-bold text-slate-500 uppercase tracking-wider">
+                    Kendaraan
                 </span>
-            </label>
-            <button type="button" @click="goToStep(2)"
-                    class="w-full px-3.5 py-3 rounded-xl bg-[#0f0f13] border border-white/10 hover:border-[#ff6b00]/50 text-xs sm:text-sm text-left flex items-center justify-between transition-all text-gray-200 group">
-                <div class="flex items-center gap-2.5 truncate">
-                    <i class="ph-bold ph-calendar text-[#ff6b00] text-base shrink-0 group-hover:scale-110 transition-transform"></i>
-                    <span class="truncate" x-text="hasChosenDate ? formatDateFull(bookingDate) : 'Pilih Tanggal di Kalender'"></span>
-                </div>
-                <i class="ph-bold ph-caret-right text-gray-500 text-xs shrink-0 group-hover:text-white transition-colors"></i>
-            </button>
-        </div>
-
-        {{-- 4. Jam Serah Terima Kendaraan --}}
-        <div class="space-y-1.5">
-            <label class="block text-xs font-montserrat font-bold text-gray-300 uppercase tracking-wider">
-                Jam Kedatangan di Workshop
-            </label>
-            <div class="relative">
-                <select x-model="bookingTime"
-                        class="w-full px-3.5 py-3 rounded-xl bg-[#0f0f13] border border-white/10 text-xs sm:text-sm text-gray-200 font-questrial appearance-none cursor-pointer focus:border-[#ff6b00] outline-none pr-8">
-                    <option value="08:30">08:30 WIB (Pagi - Sesi 1)</option>
-                    <option value="10:00">10:00 WIB (Pagi - Sesi 2)</option>
-                    <option value="11:30">11:30 WIB (Siang - Sesi 3)</option>
-                    <option value="13:30">13:30 WIB (Siang - Sesi 4)</option>
-                    <option value="15:00">15:00 WIB (Sore - Sesi 5)</option>
-                    <option value="16:30">16:30 WIB (Sore - Sesi 6)</option>
-                </select>
-                <i class="ph-bold ph-caret-down text-gray-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-xs"></i>
+                <template x-if="selectedVehicleSize">
+                    <span class="text-[9px] font-mono font-bold px-2 py-0.5 rounded border uppercase"
+                          :class="sizeBadge(selectedVehicleSize)"
+                          x-text="selectedVehicleSize.toUpperCase()"></span>
+                </template>
             </div>
-            <p class="text-[10px] font-questrial text-gray-500">
-                Pilih perkiraan waktu Anda tiba untuk serah terima kendaraan.
-            </p>
+            <p class="text-xs font-montserrat font-bold text-slate-900 truncate" x-text="vehicleName || 'Model Kendaraan'"></p>
+            <div class="flex items-center justify-between text-[11px] font-questrial text-slate-500 pt-0.5">
+                <span x-text="vehicleLicense ? 'Nopol: ' + vehicleLicense : ''"></span>
+                <span x-text="vehicleColor ? 'Warna: ' + vehicleColor : ''"></span>
+            </div>
         </div>
 
-        {{-- 5. Kapasitas Slot Harian Bengkel --}}
-        <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between text-xs">
-            <span class="text-gray-300 font-questrial flex items-center gap-1.5">
-                <i class="ph-bold ph-garage text-gray-400"></i>
-                Kapasitas Bengkel:
-            </span>
-            <span :class="quotaBadgeClass"
-                  class="px-2.5 py-0.5 rounded-full text-[10px] font-montserrat font-bold border transition-all"
-                  x-text="quotaBadgeText"></span>
+        {{-- 4. Rincian Layanan Tambahan (Add-ons) Terpilih --}}
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2"
+             x-show="selectedAddonsList && selectedAddonsList.length > 0" x-transition.opacity>
+            <div class="flex items-center justify-between border-b border-slate-200/60 pb-1.5">
+                <span class="text-[10px] font-montserrat font-bold text-slate-500 uppercase tracking-wider">
+                    Layanan Tambahan (Add-ons)
+                </span>
+                <span class="text-[10px] font-mono font-bold text-[#ff6b00]" x-text="selectedAddonsList.length + ' Item'"></span>
+            </div>
+            <div class="space-y-1.5 max-h-36 overflow-y-auto no-scrollbar">
+                <template x-for="item in selectedAddonsList" :key="'sidebar-addon-' + item.id">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-700 font-questrial truncate pr-2" x-text="item.name"></span>
+                        <span class="text-[#ff6b00] font-mono shrink-0" x-text="'+ ' + formatRupiah(item.price)"></span>
+                    </div>
+                </template>
+            </div>
+            <div class="pt-1.5 border-t border-slate-200/60 flex items-center justify-between text-xs font-montserrat font-bold">
+                <span class="text-slate-500">Total Add-ons:</span>
+                <span class="text-slate-900" x-text="'+ ' + formatRupiah(addonsTotal)"></span>
+            </div>
         </div>
 
-        {{-- 6. Transparansi Tagihan & Skema Pembayaran --}}
-        <div class="pt-3 border-t border-white/10 space-y-3">
+        {{-- 5. Ringkasan Jadwal Kedatangan (Order Summary Real-Time) --}}
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-montserrat font-bold text-slate-500 uppercase tracking-wider">
+                    Jadwal Kedatangan
+                </span>
+                <button type="button" @click="goToStep(2)"
+                        class="text-[10px] text-[#ff6b00] font-montserrat font-bold hover:underline flex items-center gap-1 cursor-pointer">
+                    <span>Ubah</span>
+                    <i class="ph-bold ph-pencil-simple text-xs"></i>
+                </button>
+            </div>
+
+            <div class="space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <i class="ph-bold ph-calendar-check text-[#ff6b00] text-sm shrink-0"></i>
+                    <span class="text-xs sm:text-sm font-montserrat font-bold text-slate-900 truncate"
+                          x-text="formatDateFull(bookingDate)"></span>
+                </div>
+
+                <div class="flex items-center justify-between text-xs font-questrial text-slate-600 pt-1 border-t border-slate-200/60">
+                    <span class="flex items-center gap-1.5">
+                        <i class="ph-bold ph-clock text-[#ff6b00]"></i>
+                        <span>Pukul <strong class="text-slate-800 font-semibold" x-text="bookingTime + ' WIB'"></strong></span>
+                    </span>
+                    <span :class="quotaBadgeClass"
+                          class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold border transition-all"
+                          x-text="quotaBadgeText"></span>
+                </div>
+            </div>
+        </div>
+
+        {{-- 8. Transparansi Tagihan & Skema Pembayaran --}}
+        <div class="pt-3 border-t border-slate-100 space-y-3">
             <div class="flex items-center justify-between text-xs">
-                <span class="text-gray-400 font-questrial">Skema Pembayaran:</span>
-                <span class="font-montserrat font-bold text-white text-[11px]"
+                <span class="text-slate-500 font-questrial">Total Keseluruhan:</span>
+                <span class="font-audiowide font-bold text-slate-900 text-sm"
+                      x-text="formatRupiah(grandTotal)"></span>
+            </div>
+
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-500 font-questrial">Skema Pembayaran:</span>
+                <span class="font-montserrat font-bold text-slate-800 text-[11px]"
                       x-text="paymentType === 'dp' ? 'Uang Muka (DP 50%)' : 'Pelunasan Penuh (100%)'"></span>
             </div>
 
             {{-- Highlight Kotak Nominal Dibayar Sekarang --}}
-            <div class="p-4 rounded-2xl bg-[#18181c] border border-[#ff6b00]/30 space-y-1">
+            <div class="p-4 rounded-2xl bg-orange-50/70 border border-[#ff6b00]/30 space-y-1 shadow-sm">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-montserrat font-bold uppercase tracking-wider text-gray-300">
+                    <span class="text-[11px] font-montserrat font-bold uppercase tracking-wider text-slate-700">
                         Tagihan Saat Ini:
                     </span>
                     <span class="text-[10px] font-mono font-bold text-[#ff6b00]"
                           x-text="paymentType === 'dp' ? 'UANG MUKA (DP)' : 'LUNAS'"></span>
                 </div>
                 <div class="text-2xl font-audiowide font-bold text-[#ff6b00] tracking-tight"
-                     x-text="formatRupiah(paymentType === 'dp' ? (selectedLayanan ? Math.round(selectedLayanan.price * 0.5) : 0) : (selectedLayanan ? selectedLayanan.price : 0))"></div>
+                     x-text="formatRupiah(currentPaymentAmount)"></div>
             </div>
 
             {{-- Info Transparansi Sisa Pelunasan di Workshop (Khusus DP) --}}
-            <div x-show="paymentType === 'dp'" class="p-3 rounded-xl bg-[#0f0f13] border border-white/5 space-y-1">
+            <div x-show="paymentType === 'dp'" class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1 shadow-sm">
                 <div class="flex items-center justify-between text-xs">
-                    <span class="text-gray-400 font-questrial">Sisa Pelunasan di Bengkel:</span>
-                    <span class="font-audiowide font-bold text-white"
-                          x-text="formatRupiah(selectedLayanan ? Math.round(selectedLayanan.price * 0.5) : 0)"></span>
+                    <span class="text-slate-500 font-questrial">Sisa Pelunasan di Bengkel:</span>
+                    <span class="font-audiowide font-bold text-slate-900"
+                          x-text="formatRupiah(remainingBalance)"></span>
                 </div>
-                <p class="text-[10px] text-gray-500 font-questrial italic leading-tight">
+                <p class="text-[10px] text-slate-400 font-questrial italic leading-tight">
                     *Dilunasi saat serah terima kendaraan selesai dikerjakan di workshop.
                 </p>
             </div>
         </div>
 
-        {{-- 7. Tombol Aksi Utama --}}
-        <div class="pt-2 space-y-2">
+        {{-- 9. Tombol Aksi Utama Checkout --}}
+        <div class="pt-2">
             <button type="button"
                     @click="handlePrimaryButton()"
                     :disabled="isSubmitting || (currentStep === 2 && selectedDateQuota.is_full)"
-                    class="w-full py-4 px-6 rounded-2xl bg-[#FF6B00] hover:bg-[#E05D00] text-black font-montserrat font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_8px_25px_rgba(255,107,0,0.35)] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-40">
+                    class="w-full py-4 px-6 rounded-2xl bg-[#FF6B00] hover:bg-[#E05D00] text-white font-montserrat font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_8px_25px_rgba(255,107,0,0.3)] flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-40 cursor-pointer">
                 <svg x-show="isSubmitting" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" style="display: none;">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
@@ -144,24 +179,15 @@
                 <span x-text="primaryButtonLabel"></span>
                 <i x-show="!isSubmitting" :class="primaryButtonIcon" class="text-sm"></i>
             </button>
-
-            {{-- Tombol Kembali --}}
-            <button type="button"
-                    x-show="currentStep > 1"
-                    @click="prevStep()"
-                    class="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white font-montserrat font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5">
-                <i class="ph-bold ph-arrow-left text-xs"></i>
-                <span>Kembali ke Langkah Sebelumnya</span>
-            </button>
         </div>
 
-        {{-- 8. Trust Badges & Jaminan Kualitas --}}
-        <div class="pt-2 border-t border-white/5 space-y-1.5 text-center">
-            <p class="text-[11px] font-questrial text-gray-400 flex items-center justify-center gap-1.5">
+        {{-- 10. Trust Badges & Jaminan Kualitas --}}
+        <div class="pt-2 border-t border-slate-100 space-y-1.5 text-center">
+            <p class="text-[11px] font-questrial text-slate-600 flex items-center justify-center gap-1.5">
                 <i class="ph-bold ph-shield-check text-[#ff6b00] text-sm"></i>
                 <span>Garansi Resmi Pemasangan &amp; Material Orisinil</span>
             </p>
-            <p class="text-[10px] font-questrial text-gray-500">
+            <p class="text-[10px] font-questrial text-slate-400">
                 Jadwal &amp; kuota terkonfirmasi otomatis secara langsung
             </p>
         </div>

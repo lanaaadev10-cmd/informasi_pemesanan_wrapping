@@ -66,7 +66,16 @@ class BookingController extends Controller
             }
         }
 
-        return view('customer.booking.create', compact('layanans', 'selectedDate', 'todayQuota', 'user', 'selectedLayananId'));
+        // Data Master Kendaraan & Add-ons
+        $vehicleBrands = \App\Models\VehicleBrand::with(['models' => fn($q) => $q->where('is_active', true)])
+            ->where('is_active', true)
+            ->get();
+        $availableAddons = \App\Models\Addon::where('is_active', true)->get();
+
+        return view('customer.booking.create', compact(
+            'layanans', 'selectedDate', 'todayQuota', 'user', 'selectedLayananId',
+            'vehicleBrands', 'availableAddons'
+        ));
     }
 
     /**
@@ -81,6 +90,13 @@ class BookingController extends Controller
 
         $data = $request->validated();
 
+        if ($request->hasFile('material_photo')) {
+            $data['material_photo'] = $request->file('material_photo');
+        }
+        if ($request->hasFile('custom_reference_photo')) {
+            $data['custom_reference_photo'] = $request->file('custom_reference_photo');
+        }
+
         try {
             $booking = $this->bookingService->createBooking(
                 user: Auth::user(),
@@ -88,13 +104,16 @@ class BookingController extends Controller
                 proofFile: $request->file('proof_file'),
             );
 
-            // Tandai keranjang aktif user sebagai checked_out jika ada
+            // Hapus item layanan yang di-booking dari keranjang aktif user (tanpa menghapus item lain jika ada)
             if (Auth::check()) {
                 $activeCart = \App\Models\Keranjang::where('id_user', Auth::id())
                     ->where('status', 'active')
                     ->first();
                 if ($activeCart) {
-                    $activeCart->update(['status' => 'checked_out']);
+                    $activeCart->details()->where('id_paket', $booking->layanan_id)->delete();
+                    if ($activeCart->details()->count() === 0) {
+                        $activeCart->update(['status' => 'checked_out']);
+                    }
                 }
             }
 

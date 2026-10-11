@@ -26,54 +26,64 @@ class SettingsServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('*', function ($view) {
-            $profil = new \stdClass();
+            static $profil = null;
+            static $cartCounts = [];
 
-            $settingsClasses = [
-                CompanySettings::class,
-                HomepageSettings::class,
-                LayananSettings::class,
-                TentangKamiSettings::class,
-                KatalogSettings::class,
-                PesananSettings::class,
-                KeranjangCheckoutSettings::class,
-                DashboardCustomerSettings::class,
-                ProfilPageSettings::class,
-                ContentSettings::class,
-                LayoutSettings::class,
-            ];
+            if ($profil === null) {
+                $profil = new \stdClass();
 
-            foreach ($settingsClasses as $settingsClass) {
-                try {
-                    $settings = app($settingsClass);
-                    foreach ($settings->toArray() as $key => $value) {
-                        $profil->{$key} = $value;
+                $settingsClasses = [
+                    CompanySettings::class,
+                    HomepageSettings::class,
+                    LayananSettings::class,
+                    TentangKamiSettings::class,
+                    KatalogSettings::class,
+                    PesananSettings::class,
+                    KeranjangCheckoutSettings::class,
+                    DashboardCustomerSettings::class,
+                    ProfilPageSettings::class,
+                    ContentSettings::class,
+                    LayoutSettings::class,
+                ];
+
+                foreach ($settingsClasses as $settingsClass) {
+                    try {
+                        $settings = app($settingsClass);
+                        foreach ($settings->toArray() as $key => $value) {
+                            $profil->{$key} = $value;
+                        }
+                    } catch (\Exception $e) {
+                        // skip if settings not available
                     }
-                } catch (\Exception $e) {
-                    // skip if settings not available
                 }
-            }
 
-            // Computed properties
-            if (!empty($profil->nomor_telepon)) {
-                $nomor = preg_replace('/[^0-9]/', '', $profil->nomor_telepon);
-                if (str_starts_with($nomor, '0')) {
-                    $nomor = '62' . substr($nomor, 1);
+                // Computed properties
+                if (!empty($profil->nomor_telepon)) {
+                    $nomor = preg_replace('/[^0-9]/', '', $profil->nomor_telepon);
+                    if (str_starts_with($nomor, '0')) {
+                        $nomor = '62' . substr($nomor, 1);
+                    }
+                    $profil->whatsapp_link = "https://wa.me/{$nomor}";
+                } else {
+                    $profil->whatsapp_link = \App\Helpers\StaticContent::COMPANY_WHATSAPP;
                 }
-                $profil->whatsapp_link = "https://wa.me/{$nomor}";
-            } else {
-                $profil->whatsapp_link = \App\Helpers\StaticContent::COMPANY_WHATSAPP;
             }
 
             $view->with('profil', $profil);
 
-            // Jumlah item keranjang aktif untuk badge (hanya untuk user login)
-            $cartCount = 0;
-            if (auth()->check()) {
-                $cartCount = \App\Models\Keranjang::where('id_user', auth()->id())
-                    ->where('status', 'active')
-                    ->first()?->details?->count() ?? 0;
+            // Jumlah item keranjang aktif untuk badge (hanya untuk user login, memoized per request)
+            $userId = auth()->id();
+            if ($userId) {
+                if (!array_key_exists($userId, $cartCounts)) {
+                    $cartCounts[$userId] = \App\Models\Keranjang::where('id_user', $userId)
+                        ->where('status', 'active')
+                        ->withCount('details')
+                        ->first()?->details_count ?? 0;
+                }
+                $view->with('cartCount', $cartCounts[$userId]);
+            } else {
+                $view->with('cartCount', 0);
             }
-            $view->with('cartCount', $cartCount);
         });
     }
 }

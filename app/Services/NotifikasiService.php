@@ -25,11 +25,13 @@ class NotifikasiService
         string $judul,
         string $pesan,
         string $tipe = 'in_app',
-        ?int $idPesanan = null
+        ?int $idPesanan = null,
+        ?int $bookingId = null,
     ): Notifikasi {
         return Notifikasi::create([
             'id_user' => $userId,
             'id_pesanan' => $idPesanan,
+            'booking_id' => $bookingId,
             'tipe' => $tipe,
             'judul' => $judul,
             'pesan' => $pesan,

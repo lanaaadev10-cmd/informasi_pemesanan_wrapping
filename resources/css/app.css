@@ -15,8 +15,8 @@
 @layer base {
     body {
         font-family: 'Questrial', 'Montserrat', sans-serif;
-        background-color: #000000;
-        color: #ffffff;
+        background-color: #ffffff;
+        color: #0f172a;
     }
 
     h1, h2, h3, .font-heading {

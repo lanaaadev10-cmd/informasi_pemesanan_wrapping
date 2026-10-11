@@ -3,7 +3,7 @@
 @section('title', 'Beranda')
 
 @section('content')
-    @php $waNumber = '628123456789'; @endphp
+    @php $waNumber = preg_replace('/[^0-9]/', '', $profil->nomor_telepon ?? '6283117163605') ?: '6283117163605'; @endphp
 
     {{-- 1. Hero Section --}}
     @include('landing.beranda._hero')

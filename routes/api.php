@@ -80,6 +80,44 @@ Route::prefix('booking')->group(function () {
     Route::get('/day-detail/{date}', [BookingPublicController::class, 'getDayDetail'])->middleware('throttle:api');
 });
 
+// Master Kendaraan & Add-ons publik (untuk formulir booking & estimasi harga)
+Route::prefix('vehicles')->group(function () {
+    Route::get('/brands', function (\Illuminate\Http\Request $request) {
+        $type = $request->get('type');
+        $query = \App\Models\VehicleBrand::where('is_active', true);
+        if ($type) {
+            $query->where('vehicle_type', $type);
+        }
+        return response()->json([
+            'status' => 'success',
+            'data'   => $query->orderBy('name')->get(),
+        ]);
+    });
+
+    Route::get('/models/{brandId}', function ($brandId) {
+        $models = \App\Models\VehicleModel::where('brand_id', $brandId)
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+        return response()->json([
+            'status' => 'success',
+            'data'   => $models,
+        ]);
+    });
+});
+
+Route::get('/addons', function (\Illuminate\Http\Request $request) {
+    $category = $request->get('category');
+    $query = \App\Models\Addon::where('is_active', true);
+    if ($category && $category !== 'all') {
+        $query->whereIn('category', [$category, 'all']);
+    }
+    return response()->json([
+        'status' => 'success',
+        'data'   => $query->orderBy('name')->get(),
+    ]);
+});
+
 
 
 // ============================================
