@@ -5,7 +5,7 @@ namespace App\Filament\Resources\VehicleBrands;
 use App\Filament\Resources\VehicleBrands\Pages\CreateVehicleBrand;
 use App\Filament\Resources\VehicleBrands\Pages\EditVehicleBrand;
 use App\Filament\Resources\VehicleBrands\Pages\ListVehicleBrands;
-use App\Models\VehicleBrand;
+use App\Models\MerekKendaraan;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -20,7 +20,7 @@ use Filament\Actions\EditAction;
 
 class VehicleBrandResource extends Resource
 {
-    protected static ?string $model = VehicleBrand::class;
+    protected static ?string $model = MerekKendaraan::class;
 
     protected static ?string $navigationLabel = 'Merk Kendaraan';
     protected static ?string $pluralLabel = 'Merk Kendaraan';

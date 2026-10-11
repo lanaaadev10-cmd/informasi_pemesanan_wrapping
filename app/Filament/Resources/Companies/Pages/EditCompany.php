@@ -119,7 +119,7 @@ class EditCompany extends EditRecord
 
     public function getRecord(): Model
     {
-        return new \App\Models\DummyModel;
+        return new \App\Models\ModelVirtual;
     }
 
     protected function getHeaderActions(): array

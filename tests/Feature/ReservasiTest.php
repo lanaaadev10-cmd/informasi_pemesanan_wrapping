@@ -12,7 +12,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class BookingTest extends TestCase
+class ReservasiTest extends TestCase
 {
     use RefreshDatabase;
 

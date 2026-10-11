@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Ratings;
 use App\Filament\Resources\Ratings\Pages\ListRatings;
 use App\Filament\Resources\Ratings\Pages\ViewRating;
 use App\Filament\Resources\Ratings\Tables\RatingsTable;
-use App\Models\Rating;
+use App\Models\Penilaian;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class RatingResource extends Resource
 {
-    protected static ?string $model = Rating::class;
+    protected static ?string $model = Penilaian::class;
 
     protected static ?string $navigationLabel = 'Rating & Testimoni';
 

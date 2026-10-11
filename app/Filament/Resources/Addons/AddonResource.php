@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Addons;
 use App\Filament\Resources\Addons\Pages\CreateAddon;
 use App\Filament\Resources\Addons\Pages\EditAddon;
 use App\Filament\Resources\Addons\Pages\ListAddons;
-use App\Models\Addon;
+use App\Models\Tambahan;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -22,7 +22,7 @@ use Filament\Actions\EditAction;
 
 class AddonResource extends Resource
 {
-    protected static ?string $model = Addon::class;
+    protected static ?string $model = Tambahan::class;
 
     protected static ?string $navigationLabel = 'Layanan Extra';
     protected static ?string $pluralLabel = 'Layanan Extra';

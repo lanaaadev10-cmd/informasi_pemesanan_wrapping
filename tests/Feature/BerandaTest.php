@@ -2,7 +2,7 @@
 
 use App\Settings\CompanySettings;
 
-it('returns a successful response', function () {
+test('halaman beranda utama dapat diakses dengan sukses', function () {
     $settings = app(CompanySettings::class);
     $settings->nama_perusahaan = 'Dantie Sticker';
     $settings->deskripsi = 'Solusi stiker terbaik kendaraan Anda.';
@@ -14,4 +14,6 @@ it('returns a successful response', function () {
     $response = $this->get('/');
 
     $response->assertStatus(200);
+    $response->assertSee('Dantie Sticker');
+    $response->assertSee('081234567890');
 });

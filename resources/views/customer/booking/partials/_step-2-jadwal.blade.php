@@ -15,7 +15,7 @@
             </div>
             <div>
                 <h2 class="text-base sm:text-lg font-audiowide font-bold text-slate-900 tracking-wide">
-                    Jadwal &amp; Sesi Kedatangan
+                    Jadwal Booking Pengerjaan
                 </h2>
                 <p class="text-xs font-questrial text-slate-500 mt-0.5">
                     Pilih tanggal reservasi dan perkiraan jam serah terima kendaraan di workshop (Maks. 5 kendaraan/hari)
@@ -39,7 +39,7 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
                 <span class="text-xs font-montserrat font-bold text-slate-800 uppercase tracking-wider">
-                    1. Pilih Tanggal Pengerjaan
+                    Pilih Cepat Jadwal (14 Hari ke Depan)
                 </span>
                 <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-montserrat font-bold border border-emerald-500/20 hidden sm:inline-block">
                     Pantauan Slot Real-Time

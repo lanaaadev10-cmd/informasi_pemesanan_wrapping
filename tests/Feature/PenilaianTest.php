@@ -1,17 +1,16 @@
 <?php
 
-use App\Models\Booking;
 use App\Models\DetailPesanan;
 use App\Models\Layanan;
+use App\Models\Penilaian;
 use App\Models\Pesanan;
-use App\Models\Rating;
+use App\Models\Reservasi;
 use App\Models\User;
 use Database\Seeders\RolesTableSeeder;
 use Illuminate\Support\Facades\Artisan;
 
 beforeEach(function () {
-    // Pastikan role admin/user tersedia untuk listener notifikasi admin.
-    // (Seeder global di tests/Pest.php tidak berfungsi di lingkungan DB ini.)
+    // Pastikan peran pengguna dan admin tersedia
     Artisan::call('db:seed', [
         '--class' => RolesTableSeeder::class,
     ]);
@@ -48,9 +47,9 @@ function createSelesaiPesanan(User $user, Layanan $layanan): Pesanan
     return $pesanan;
 }
 
-function createCompletedBooking(User $user, Layanan $layanan): Booking
+function createCompletedBooking(User $user, Layanan $layanan): Reservasi
 {
-    return Booking::create([
+    return Reservasi::create([
         'booking_code' => 'BKG-TEST-' . strtoupper(uniqid()),
         'user_id' => $user->id,
         'customer_name' => $user->name,
@@ -63,8 +62,8 @@ function createCompletedBooking(User $user, Layanan $layanan): Booking
     ]);
 }
 
-describe('Alur 1 - rating via pesanan', function () {
-    test('guest tidak bisa membuka form rating', function () {
+describe('Alur 1 - Penilaian via Pesanan Produk/Paket', function () {
+    test('tamu tanpa autentikasi tidak dapat membuka form penilaian', function () {
         $pesanan = createSelesaiPesanan($this->actor, $this->layanan);
 
         $this->get(route('pesanan.rating.form', $pesanan->id_pesanan))
@@ -74,7 +73,7 @@ describe('Alur 1 - rating via pesanan', function () {
             ->assertRedirect(route('login'));
     });
 
-    test('pesanan yang belum selesai ditolak', function () {
+    test('pesanan yang belum selesai ditolak untuk diberi ulasan', function () {
         ($this->actAs)();
 
         $pesanan = Pesanan::create([
@@ -96,7 +95,7 @@ describe('Alur 1 - rating via pesanan', function () {
         $this->assertDatabaseMissing('ratings', ['id_pesanan' => $pesanan->id_pesanan]);
     });
 
-    test('pesanan milik user lain ditolak', function () {
+    test('pesanan milik pelanggan lain ditolak aksesnya', function () {
         $other = User::factory()->create();
         $pesanan = createSelesaiPesanan($other, $this->layanan);
 
@@ -111,7 +110,7 @@ describe('Alur 1 - rating via pesanan', function () {
         ])->assertNotFound();
     });
 
-    test('simpan rating sukses untuk pesanan selesai', function () {
+    test('simpan penilaian berhasil untuk pesanan selesai', function () {
         ($this->actAs)();
         $pesanan = createSelesaiPesanan($this->actor, $this->layanan);
 
@@ -133,7 +132,7 @@ describe('Alur 1 - rating via pesanan', function () {
         ]);
     });
 
-    test('hanya 1 rating per layanan per pesanan (update, bukan duplikat)', function () {
+    test('hanya satu ulasan per layanan per pesanan (update, bukan duplikat)', function () {
         ($this->actAs)();
         $pesanan = createSelesaiPesanan($this->actor, $this->layanan);
 
@@ -149,7 +148,7 @@ describe('Alur 1 - rating via pesanan', function () {
             'ulasan' => 'Ulasan setelah update',
         ])->assertRedirect(route('dashboard'));
 
-        $this->assertSame(1, Rating::where('id_pesanan', $pesanan->id_pesanan)
+        $this->assertSame(1, Penilaian::where('id_pesanan', $pesanan->id_pesanan)
             ->where('id_layanan', $this->layanan->id_layanan)
             ->count());
 
@@ -161,17 +160,17 @@ describe('Alur 1 - rating via pesanan', function () {
         ]);
     });
 
-    test('validasi: rating wajib 1-5 dan layanan harus ada pada pesanan', function () {
+    test('validasi: nilai bintang wajib 1-5 dan layanan harus ada pada pesanan', function () {
         ($this->actAs)();
         $pesanan = createSelesaiPesanan($this->actor, $this->layanan);
 
-        // rating di luar range
+        // Nilai rating di luar batas 1-5
         $this->post(route('pesanan.rating.store', $pesanan->id_pesanan), [
             'id_layanan' => $this->layanan->id_layanan,
             'rating' => 6,
         ])->assertSessionHasErrors('rating');
 
-        // layanan tidak ada di pesanan
+        // Layanan tidak terdaftar pada pesanan
         $otherLayanan = Layanan::create([
             'nama_layanan' => 'Audio Mobil',
             'harga' => 800000,
@@ -187,7 +186,7 @@ describe('Alur 1 - rating via pesanan', function () {
         $this->assertDatabaseMissing('ratings', ['id_pesanan' => $pesanan->id_pesanan]);
     });
 
-    test('user yang sama boleh rate layanan yang sama di pesanan berbeda', function () {
+    test('pelanggan yang sama boleh memberikan ulasan pada layanan yang sama di pesanan berbeda', function () {
         ($this->actAs)();
 
         $pesananA = createSelesaiPesanan($this->actor, $this->layanan);
@@ -203,94 +202,14 @@ describe('Alur 1 - rating via pesanan', function () {
             'rating' => 4,
         ])->assertRedirect(route('dashboard'));
 
-        $this->assertSame(2, Rating::where('id_user', $this->actor->id)
+        $this->assertSame(2, Penilaian::where('id_user', $this->actor->id)
             ->where('id_layanan', $this->layanan->id_layanan)
             ->count());
     });
 });
 
-/* [DISABLED] Alur 2 - rating layanan tanpa pesanan (dropdown layanan).
- * Fitur non-aktif; rute & endpoint dikomentari. Blok dibiarkan sebagai referensi.
- * (Versi aktif test "user yang sama boleh rate..." sudah dipindah ke describe Alur 1.)
-describe('Alur 2 - rating layanan tanpa pesanan', function () {
-    test('guest tidak bisa mengakses form layanan', function () {
-        $this->get(route('rating.layanan.form'))->assertRedirect(route('login'));
-        $this->post(route('rating.layanan.store'), [
-            'id_layanan' => $this->layanan->id_layanan,
-            'rating' => 5,
-        ])->assertRedirect(route('login'));
-    });
-
-    test('simpan rating layanan sukses', function () {
-        ($this->actAs)();
-
-        $this->post(route('rating.layanan.store'), [
-            'id_layanan' => $this->layanan->id_layanan,
-            'rating' => 5,
-            'ulasan' => 'Suka sekali dengan hasilnya!',
-        ])->assertSessionHas('toast_success')->assertRedirect(route('dashboard'));
-
-        $this->assertDatabaseHas('ratings', [
-            'id_user' => $this->actor->id,
-            'id_pesanan' => null,
-            'id_layanan' => $this->layanan->id_layanan,
-            'order_ref' => 0,
-            'rating' => 5,
-            'is_tampil' => 1,
-        ]);
-    });
-
-    test('1x per layanan per akun (update, bukan duplikat)', function () {
-        ($this->actAs)();
-
-        $this->post(route('rating.layanan.store'), [
-            'id_layanan' => $this->layanan->id_layanan,
-            'rating' => 3,
-        ])->assertSessionHas('toast_success')->assertRedirect(route('dashboard'));
-
-        $this->post(route('rating.layanan.store'), [
-            'id_layanan' => $this->layanan->id_layanan,
-            'rating' => 4,
-        ])->assertSessionHas('toast_success')->assertRedirect(route('dashboard'));
-
-        $this->assertSame(1, Rating::where('id_user', $this->actor->id)
-            ->whereNull('id_pesanan')
-            ->where('id_layanan', $this->layanan->id_layanan)
-            ->count());
-
-        $this->assertDatabaseHas('ratings', [
-            'id_user' => $this->actor->id,
-            'id_layanan' => $this->layanan->id_layanan,
-            'order_ref' => 0,
-            'rating' => 4,
-        ]);
-    });
-
-    test('user yang sama boleh rate layanan yang sama di pesanan berbeda', function () {
-        ($this->actAs)();
-
-        $pesananA = createSelesaiPesanan($this->actor, $this->layanan);
-        $pesananB = createSelesaiPesanan($this->actor, $this->layanan);
-
-        $this->post(route('pesanan.rating.store', $pesananA->id_pesanan), [
-            'id_layanan' => $this->layanan->id_layanan,
-            'rating' => 5,
-        ])->assertRedirect(route('dashboard'));
-
-        $this->post(route('pesanan.rating.store', $pesananB->id_pesanan), [
-            'id_layanan' => $this->layanan->id_layanan,
-            'rating' => 4,
-        ])->assertRedirect(route('dashboard'));
-
-        $this->assertSame(2, Rating::where('id_user', $this->actor->id)
-            ->where('id_layanan', $this->layanan->id_layanan)
-            ->count());
-    });
-});
-*/
-
-describe('Testimoni publik', function () {
-    test('halaman /testimoni menampilkan hanya rating is_tampil = true', function () {
+describe('Testimoni Publik', function () {
+    test('halaman testimoni hanya menampilkan ulasan dengan is_tampil true', function () {
         ($this->actAs)();
 
         $pesanan = createSelesaiPesanan($this->actor, $this->layanan);
@@ -301,7 +220,7 @@ describe('Testimoni publik', function () {
             'ulasan' => 'Ulasan tampil',
         ]);
 
-        $hidden = Rating::create([
+        Penilaian::create([
             'id_user' => $this->actor->id,
             'id_layanan' => $this->layanan->id_layanan,
             'order_ref' => 0,
@@ -317,7 +236,7 @@ describe('Testimoni publik', function () {
         $response->assertDontSee('Ulasan tersembunyi', false);
     });
 
-    test('ringkasan rata-rata dihitung dari semua rating tampil', function () {
+    test('ringkasan rata-rata dihitung dari semua ulasan yang tampil', function () {
         ($this->actAs)();
         $pesanan = createSelesaiPesanan($this->actor, $this->layanan);
 
@@ -326,9 +245,7 @@ describe('Testimoni publik', function () {
             'rating' => 5,
         ]);
 
-        // [DISABLED Alur 2] Rating lama tanpa pesanan tetap diperhitungkan ringkasan
-        // (data lama tetap tampil publik). Dibuat langsung via model, bukan route.
-        Rating::create([
+        Penilaian::create([
             'id_user' => $this->actor->id,
             'id_layanan' => $this->layanan->id_layanan,
             'order_ref' => 0,
@@ -337,12 +254,12 @@ describe('Testimoni publik', function () {
 
         $this->get(route('testimoni.index'))
             ->assertOk()
-            ->assertSee('4,5', false); // (5+4) / 2, pakai format Indonesia (koma)
+            ->assertSee('4,5', false);
     });
 });
 
-describe('Alur Booking - rating via booking', function () {
-    test('guest tidak bisa menyimpan rating booking', function () {
+describe('Alur Reservasi - Penilaian via Booking Slot Workshop', function () {
+    test('tamu tanpa autentikasi tidak dapat menyimpan ulasan reservasi', function () {
         $booking = createCompletedBooking($this->actor, $this->layanan);
 
         $this->post(route('booking.rating.store', $booking->id), [
@@ -350,10 +267,10 @@ describe('Alur Booking - rating via booking', function () {
         ])->assertRedirect(route('login'));
     });
 
-    test('booking yang belum selesai tidak bisa dirating', function () {
+    test('reservasi yang belum berstatus selesai tidak dapat diulas', function () {
         ($this->actAs)();
 
-        $booking = Booking::create([
+        $booking = Reservasi::create([
             'booking_code' => 'BKG-PEND-' . strtoupper(uniqid()),
             'user_id' => $this->actor->id,
             'customer_name' => $this->actor->name,
@@ -371,7 +288,7 @@ describe('Alur Booking - rating via booking', function () {
         $this->assertDatabaseMissing('ratings', ['booking_id' => $booking->id]);
     });
 
-    test('booking milik user lain ditolak', function () {
+    test('reservasi milik pelanggan lain ditolak untuk diulas', function () {
         $other = User::factory()->create();
         $booking = createCompletedBooking($other, $this->layanan);
 
@@ -382,7 +299,7 @@ describe('Alur Booking - rating via booking', function () {
         ])->assertNotFound();
     });
 
-    test('simpan rating booking sukses', function () {
+    test('simpan ulasan reservasi berhasil', function () {
         ($this->actAs)();
         $booking = createCompletedBooking($this->actor, $this->layanan);
 
@@ -402,7 +319,7 @@ describe('Alur Booking - rating via booking', function () {
         ]);
     });
 
-    test('update rating booking jika sudah pernah diulas', function () {
+    test('pembaruan ulasan reservasi jika sudah pernah diulas sebelumnya', function () {
         ($this->actAs)();
         $booking = createCompletedBooking($this->actor, $this->layanan);
 
@@ -416,7 +333,7 @@ describe('Alur Booking - rating via booking', function () {
             'ulasan' => 'Ulasan diubah menjadi 5 bintang',
         ]);
 
-        $this->assertSame(1, Rating::where('booking_id', $booking->id)->count());
+        $this->assertSame(1, Penilaian::where('booking_id', $booking->id)->count());
         $this->assertDatabaseHas('ratings', [
             'booking_id' => $booking->id,
             'rating' => 5,
@@ -424,7 +341,7 @@ describe('Alur Booking - rating via booking', function () {
         ]);
     });
 
-    test('quick-submit endpoint sukses untuk booking via ajax json', function () {
+    test('endpoint quick-submit berhasil untuk penilaian reservasi via ajax json', function () {
         ($this->actAs)();
         $booking = createCompletedBooking($this->actor, $this->layanan);
 
@@ -444,7 +361,7 @@ describe('Alur Booking - rating via booking', function () {
         ]);
     });
 
-    test('user yang sama boleh rate layanan yang sama di booking berbeda', function () {
+    test('pelanggan yang sama boleh memberikan ulasan pada reservasi berbeda dengan layanan sama', function () {
         ($this->actAs)();
 
         $bookingA = createCompletedBooking($this->actor, $this->layanan);
@@ -460,7 +377,7 @@ describe('Alur Booking - rating via booking', function () {
             'ulasan' => 'Booking kedua juga bagus',
         ])->assertSessionHas('toast_success');
 
-        $this->assertSame(2, Rating::where('id_user', $this->actor->id)
+        $this->assertSame(2, Penilaian::where('id_user', $this->actor->id)
             ->where('id_layanan', $this->layanan->id_layanan)
             ->count());
 
@@ -477,4 +394,3 @@ describe('Alur Booking - rating via booking', function () {
         ]);
     });
 });
-

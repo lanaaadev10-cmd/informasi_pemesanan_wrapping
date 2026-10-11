@@ -83,8 +83,8 @@ class SlotKuotaService
         $cacheKey = "slot_quota_{$date}";
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($date) {
-            $isBlocked = \App\Models\BlockedDate::isBlocked($date);
-            $blockedReason = $isBlocked ? \App\Models\BlockedDate::getBlockedReason($date) : null;
+            $isBlocked = \App\Models\TanggalDiblokir::isBlocked($date);
+            $blockedReason = $isBlocked ? \App\Models\TanggalDiblokir::getBlockedReason($date) : null;
 
             // Hitung booking aktif untuk tanggal ini
             $bookedCount = Booking::query()
@@ -160,7 +160,7 @@ class SlotKuotaService
             ->toArray();
 
         // Agregat tanggal libur / diblokir
-        $blockedDates = \App\Models\BlockedDate::query()
+        $blockedDates = \App\Models\TanggalDiblokir::query()
             ->whereBetween('date', [$start, $end])
             ->where('is_active', true)
             ->pluck('reason', 'date')
@@ -210,8 +210,8 @@ class SlotKuotaService
     public function assertSlotAvailable(string $date): void
     {
         // Cek apakah tanggal diblokir / hari libur
-        if (\App\Models\BlockedDate::isBlocked($date)) {
-            $reason = \App\Models\BlockedDate::getBlockedReason($date) ?: 'Tanggal ditutup';
+        if (\App\Models\TanggalDiblokir::isBlocked($date)) {
+            $reason = \App\Models\TanggalDiblokir::getBlockedReason($date) ?: 'Tanggal ditutup';
             $tgl = \Carbon\Carbon::parse($date)->translatedFormat('d F Y');
             throw new \App\Exceptions\SlotPenuhException(
                 $date,

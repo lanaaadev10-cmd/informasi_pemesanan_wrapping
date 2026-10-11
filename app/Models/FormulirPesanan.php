@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Model FormPesanan (Data Kendaraan & Pengerjaan)
+ * Model FormulirPesanan (Data Kendaraan, Pengiriman & Jadwal Pengerjaan Pesanan)
  *
  * @property int $id_form Primary key form pesanan
  * @property int $id_pesanan Foreign key ke tabel pesanans
@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property-read Pesanan $pesanan
  */
-class FormPesanan extends Model
+class FormulirPesanan extends Model
 {
     protected $table = 'form_pesanans';
     protected $primaryKey = 'id_form';

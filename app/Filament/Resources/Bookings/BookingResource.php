@@ -8,14 +8,14 @@ use App\Filament\Resources\Bookings\Pages\ListBookings;
 use App\Filament\Resources\Bookings\Pages\ViewBooking;
 use App\Filament\Resources\Bookings\Schemas\BookingForm;
 use App\Filament\Resources\Bookings\Tables\BookingsTable;
-use App\Models\Booking;
+use App\Models\Reservasi;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
 class BookingResource extends Resource
 {
-    protected static ?string $model = Booking::class;
+    protected static ?string $model = Reservasi::class;
 
     protected static ?string $navigationLabel = 'Booking Online';
     protected static ?string $pluralLabel = 'Booking Online';

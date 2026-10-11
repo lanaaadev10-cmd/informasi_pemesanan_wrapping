@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * Model Master Merk Kendaraan
+ * Model MerekKendaraan (Master Merk Kendaraan: Toyota, Honda, Yamaha, dll)
  *
  * @property int $id
  * @property string $name
@@ -16,9 +16,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
- * @property-read \Illuminate\Database\Eloquent\Collection<int, VehicleModel> $models
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ModelKendaraan> $models
  */
-class VehicleBrand extends Model
+class MerekKendaraan extends Model
 {
     use HasFactory;
 
@@ -36,7 +36,7 @@ class VehicleBrand extends Model
 
     public function models(): HasMany
     {
-        return $this->hasMany(VehicleModel::class, 'brand_id');
+        return $this->hasMany(ModelKendaraan::class, 'brand_id');
     }
 
     public function scopeActive($query)

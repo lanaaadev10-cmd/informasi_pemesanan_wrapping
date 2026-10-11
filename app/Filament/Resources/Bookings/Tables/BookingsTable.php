@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Bookings\Tables;
 use App\Enums\BookingStatus;
 use App\Enums\PaymentType;
 use App\Filament\Resources\Bookings\BookingResource;
-use App\Models\Booking;
+use App\Models\Reservasi;
 use App\Services\BookingService;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -47,7 +47,7 @@ class BookingsTable
 
                 TextColumn::make('service_name_snapshot')
                     ->label('Layanan / Proyek')
-                    ->state(fn (Booking $record) => $record->service_name_snapshot ?: ($record->layanan?->nama_layanan ?? 'Proyek Custom'))
+                    ->state(fn (Reservasi $record) => $record->service_name_snapshot ?: ($record->layanan?->nama_layanan ?? 'Proyek Custom'))
                     ->searchable(query: function ($query, string $search) {
                         $query->where('service_name_snapshot', 'like', "%{$search}%")
                               ->orWhereHas('layanan', fn ($q) => $q->where('nama_layanan', 'like', "%{$search}%"));
@@ -57,10 +57,10 @@ class BookingsTable
 
                 TextColumn::make('booking_date')
                     ->label('Jadwal')
-                    ->formatStateUsing(fn ($state, Booking $record) => ($record->booking_date ? $record->booking_date->format('d M Y') : '-') . ($record->booking_time ? ' • ' . $record->booking_time : ''))
+                    ->formatStateUsing(fn ($state, Reservasi $record) => ($record->booking_date ? $record->booking_date->format('d M Y') : '-') . ($record->booking_time ? ' • ' . $record->booking_time : ''))
                     ->sortable()
                     ->badge()
-                    ->color(fn (Booking $record): string => $record->booking_date && $record->booking_date->isPast() ? 'gray' : 'info'),
+                    ->color(fn (Reservasi $record): string => $record->booking_date && $record->booking_date->isPast() ? 'gray' : 'info'),
 
                 TextColumn::make('payment_type')
                     ->label('Tipe Bayar')
@@ -110,7 +110,7 @@ class BookingsTable
 
                 TextColumn::make('vehicle_name')
                     ->label('Kendaraan')
-                    ->description(fn (Booking $record) => $record->vehicle_size ? strtoupper($record->vehicle_size) : null)
+                    ->description(fn (Reservasi $record) => $record->vehicle_size ? strtoupper($record->vehicle_size) : null)
                     ->searchable(),
 
                 TextColumn::make('material_status')
@@ -159,12 +159,12 @@ class BookingsTable
                     ->label('Konfirmasi Booking')
                     ->icon('heroicon-o-check-badge')
                     ->color('success')
-                    ->visible(fn (Booking $record): bool => $record->status === BookingStatus::PENDING)
+                    ->visible(fn (Reservasi $record): bool => $record->status === BookingStatus::PENDING)
                     ->requiresConfirmation()
                     ->modalHeading('Konfirmasi Booking')
                     ->modalDescription('Booking valid? Customer akan diminta mengunggah bukti pembayaran.')
                     ->modalSubmitActionLabel('Ya, Konfirmasi')
-                    ->action(function (Booking $record) {
+                    ->action(function (Reservasi $record) {
                         app(BookingService::class)->confirmBooking($record);
                         \Filament\Notifications\Notification::make()
                             ->title('Booking dikonfirmasi!')
@@ -176,12 +176,12 @@ class BookingsTable
                     ->label('Verifikasi Pembayaran')
                     ->icon('heroicon-o-banknotes')
                     ->color('warning')
-                    ->visible(fn (Booking $record): bool => $record->status === BookingStatus::PAYMENT_UPLOADED)
+                    ->visible(fn (Reservasi $record): bool => $record->status === BookingStatus::PAYMENT_UPLOADED)
                     ->requiresConfirmation()
                     ->modalHeading('Verifikasi Pembayaran Booking')
                     ->modalDescription('Pastikan uang sudah masuk. Booking akan disetujui dan jadwal terkunci.')
                     ->modalSubmitActionLabel('Ya, Pembayaran Valid')
-                    ->action(function (Booking $record) {
+                    ->action(function (Reservasi $record) {
                         app(BookingService::class)->verifyPayment($record->payment);
                         \Filament\Notifications\Notification::make()
                             ->title('Pembayaran diverifikasi dan booking disetujui!')
@@ -193,11 +193,11 @@ class BookingsTable
                     ->label('Mulai Kerjakan')
                     ->icon('heroicon-o-wrench-screwdriver')
                     ->color('primary')
-                    ->visible(fn (Booking $record): bool => $record->status === BookingStatus::APPROVED)
+                    ->visible(fn (Reservasi $record): bool => $record->status === BookingStatus::APPROVED)
                     ->requiresConfirmation()
                     ->modalHeading('Mulai Pengerjaan')
                     ->modalSubmitActionLabel('Mulai Kerjakan')
-                    ->action(function (Booking $record) {
+                    ->action(function (Reservasi $record) {
                         app(BookingService::class)->startProcessing($record);
                         \Filament\Notifications\Notification::make()
                             ->title('Pengerjaan dimulai!')
@@ -209,11 +209,11 @@ class BookingsTable
                     ->label('Selesaikan')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn (Booking $record): bool => $record->status === BookingStatus::IN_PROGRESS)
+                    ->visible(fn (Reservasi $record): bool => $record->status === BookingStatus::IN_PROGRESS)
                     ->requiresConfirmation()
                     ->modalHeading('Selesaikan Booking')
                     ->modalSubmitActionLabel('Ya, Tandai Selesai')
-                    ->action(function (Booking $record) {
+                    ->action(function (Reservasi $record) {
                         app(BookingService::class)->completeBooking($record);
                         \Filament\Notifications\Notification::make()
                             ->title('Pengerjaan diselesaikan!')
@@ -225,7 +225,7 @@ class BookingsTable
                     ->label('Tolak')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->visible(fn (Booking $record): bool => in_array($record->status, [
+                    ->visible(fn (Reservasi $record): bool => in_array($record->status, [
                         BookingStatus::PENDING,
                         BookingStatus::PAYMENT_UPLOADED,
                     ]))
@@ -235,7 +235,7 @@ class BookingsTable
                             ->required()
                             ->placeholder('Jelaskan alasan penolakan booking ini...'),
                     ])
-                    ->action(function (Booking $record, array $data) {
+                    ->action(function (Reservasi $record, array $data) {
                         app(BookingService::class)->rejectBooking($record, $data['alasan']);
                         \Filament\Notifications\Notification::make()
                             ->title('Booking ditolak.')
@@ -247,17 +247,17 @@ class BookingsTable
                     ->label('Ubah Jadwal')
                     ->icon('heroicon-o-calendar')
                     ->color('info')
-                    ->visible(fn (Booking $record): bool => !in_array($record->status, [BookingStatus::CANCELLED, BookingStatus::REJECTED, BookingStatus::COMPLETED]))
+                    ->visible(fn (Reservasi $record): bool => !in_array($record->status, [BookingStatus::CANCELLED, BookingStatus::REJECTED, BookingStatus::COMPLETED]))
                     ->form([
                         \Filament\Forms\Components\DatePicker::make('new_date')
                             ->label('Tanggal Baru')
                             ->required()
                             ->minDate(now()->toDateString())
-                            ->default(fn (Booking $record) => $record->booking_date?->format('Y-m-d')),
+                            ->default(fn (Reservasi $record) => $record->booking_date?->format('Y-m-d')),
                         \Filament\Forms\Components\TextInput::make('new_time')
                             ->label('Jam Baru')
                             ->placeholder('09:00')
-                            ->default(fn (Booking $record) => $record->booking_time ?: '09:00'),
+                            ->default(fn (Reservasi $record) => $record->booking_time ?: '09:00'),
                         \Filament\Forms\Components\TextInput::make('reason')
                             ->label('Catatan Alasan Reschedule')
                             ->placeholder('Permintaan pelanggan / penyesuaian teknisi'),
@@ -265,7 +265,7 @@ class BookingsTable
                             ->label('Override Kuota Maksimal 5 Slot')
                             ->helperText('Aktifkan jika ada izin khusus mengabaikan kuota harian.'),
                     ])
-                    ->action(function (Booking $record, array $data) {
+                    ->action(function (Reservasi $record, array $data) {
                         try {
                             app(BookingService::class)->rescheduleBooking(
                                 $record,
@@ -290,7 +290,7 @@ class BookingsTable
                     ->label('Batalkan')
                     ->icon('heroicon-o-x-mark')
                     ->color('danger')
-                    ->visible(fn (Booking $record): bool => !in_array($record->status, [BookingStatus::CANCELLED, BookingStatus::REJECTED, BookingStatus::COMPLETED]))
+                    ->visible(fn (Reservasi $record): bool => !in_array($record->status, [BookingStatus::CANCELLED, BookingStatus::REJECTED, BookingStatus::COMPLETED]))
                     ->requiresConfirmation()
                     ->modalHeading('Batalkan Booking')
                     ->modalDescription('Slot kuota pada tanggal ini akan otomatis kembali tersedia untuk pelanggan lain.')
@@ -300,7 +300,7 @@ class BookingsTable
                             ->required()
                             ->placeholder('Masukkan alasan pembatalan booking...'),
                     ])
-                    ->action(function (Booking $record, array $data) {
+                    ->action(function (Reservasi $record, array $data) {
                         try {
                             app(BookingService::class)->cancelBooking($record, $data['alasan']);
                             \Filament\Notifications\Notification::make()
@@ -319,11 +319,11 @@ class BookingsTable
                     ->label('Setujui Bahan')
                     ->icon('heroicon-o-check-badge')
                     ->color('success')
-                    ->visible(fn (Booking $record): bool => $record->material_status === 'pending' && ($record->material_brand !== null || $record->layanan?->jenis_layanan === 'jasa_pasang'))
+                    ->visible(fn (Reservasi $record): bool => $record->material_status === 'pending' && ($record->material_brand !== null || $record->layanan?->jenis_layanan === 'jasa_pasang'))
                     ->requiresConfirmation()
                     ->modalHeading('Verifikasi Bahan Customer')
                     ->modalDescription('Apakah material stiker/vinyl yang dibawa customer sudah diperiksa dan layak pasang?')
-                    ->action(function (Booking $record) {
+                    ->action(function (Reservasi $record) {
                         $record->update(['material_status' => 'approved']);
                         \Filament\Notifications\Notification::make()
                             ->title('Material Customer Dinyatakan Layak Pasang!')
@@ -334,14 +334,14 @@ class BookingsTable
                     ->label('Tolak Bahan')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->visible(fn (Booking $record): bool => $record->material_status === 'pending' && ($record->material_brand !== null || $record->layanan?->jenis_layanan === 'jasa_pasang'))
+                    ->visible(fn (Reservasi $record): bool => $record->material_status === 'pending' && ($record->material_brand !== null || $record->layanan?->jenis_layanan === 'jasa_pasang'))
                     ->form([
                         \Filament\Forms\Components\Textarea::make('admin_notes')
                             ->label('Alasan Penolakan Bahan')
                             ->required()
                             ->placeholder('Contoh: Panjang bahan kurang 2 meter / lem rusak / berkerut parah.'),
                     ])
-                    ->action(function (Booking $record, array $data) {
+                    ->action(function (Reservasi $record, array $data) {
                         $record->update([
                             'material_status' => 'rejected',
                             'admin_notes'     => $data['admin_notes'],
@@ -356,7 +356,7 @@ class BookingsTable
                     ->label('Beri Quotation')
                     ->icon('heroicon-o-banknotes')
                     ->color('primary')
-                    ->visible(fn (Booking $record): bool => $record->quotation_status === 'pending' || ($record->layanan?->jenis_layanan === 'custom' && empty($record->quotation_amount)))
+                    ->visible(fn (Reservasi $record): bool => $record->quotation_status === 'pending' || ($record->layanan?->jenis_layanan === 'custom' && empty($record->quotation_amount)))
                     ->form([
                         \Filament\Forms\Components\TextInput::make('quotation_amount')
                             ->label('Nominal Penawaran Resmi (Rp)')
@@ -368,7 +368,7 @@ class BookingsTable
                             ->required()
                             ->placeholder('Rincian bahan khusus, durasi kerja, dan spesifikasi pemasangan.'),
                     ])
-                    ->action(function (Booking $record, array $data) {
+                    ->action(function (Reservasi $record, array $data) {
                         $amount = (float) $data['quotation_amount'];
                         $dp = round($amount * 0.3); // DP 30% untuk custom
                         $record->update([
@@ -390,13 +390,13 @@ class BookingsTable
                     ->label('WhatsApp')
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->color('success')
-                    ->url(fn (Booking $record) => $record->whatsapp_notification_url)
+                    ->url(fn (Reservasi $record) => $record->whatsapp_notification_url)
                     ->openUrlInNewTab(),
 
                 Action::make('view')
                     ->label('Detail')
                     ->icon('heroicon-o-eye')
-                    ->url(fn (Booking $record): string => BookingResource::getUrl('view', ['record' => $record])),
+                    ->url(fn (Reservasi $record): string => BookingResource::getUrl('view', ['record' => $record])),
 
                 DeleteAction::make(),
             ])

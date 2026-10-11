@@ -6,41 +6,44 @@ use App\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * Model Booking (Penjadwalan Pengerjaan Wrapping)
+ * Model Reservasi (Penjadwalan Pengerjaan / Booking Slot Workshop)
  *
- * @property int $id Primary key booking
- * @property string $booking_code Kode referensi booking unik
- * @property int|null $user_id ID akun customer (null jika booking via walk-in)
+ * Entitas ini merepresentasikan reservasi slot kerja bengkel wrapping & custom livery,
+ * berbeda dari entitas `Pesanan` yang menangani pembelian paket/katalog produk.
+ *
+ * @property int $id Primary key reservasi
+ * @property string $booking_code Kode reservasi unik (misal: BKG-20261011-XXXX)
+ * @property int|null $user_id ID akun customer
  * @property string|null $customer_name Nama pemesan
- * @property string|null $customer_phone Nomor telepon / WhatsApp pemesan
- * @property string|null $customer_email Alamat email pemesan
- * @property int $layanan_id Foreign key ke tabel layanans (id_layanan)
+ * @property string|null $customer_phone Nomor WhatsApp pemesan
+ * @property string|null $customer_email Email pemesan
+ * @property int $layanan_id Layanan paket yang dipilih
  * @property \Carbon\Carbon $booking_date Tanggal pengerjaan yang dijadwalkan
- * @property string|null $booking_time Jam pengerjaan
- * @property string $payment_type Skema pembayaran: 'dp' atau 'lunas'
- * @property string|null $vehicle_name Nama kendaraan (contoh: Honda HR-V 2023)
- * @property string|null $vehicle_color Warna asli kendaraan
+ * @property string|null $booking_time Sesi jam kedatangan di workshop
+ * @property string $payment_type Skema pembayaran ('dp' atau 'lunas')
+ * @property string|null $vehicle_name Nama kendaraan
+ * @property string|null $vehicle_color Warna kendaraan
  * @property string|null $vehicle_license Plat nomor polisi
- * @property string|null $notes Catatan dari customer
- * @property \App\Enums\BookingStatus $status Status alur booking
- * @property string|null $admin_notes Catatan internal dari admin
+ * @property int|null $brand_id Foreign key master merk kendaraan
+ * @property int|null $model_id Foreign key master model kendaraan
+ * @property string|null $vehicle_size Ukuran kendaraan
+ * @property \App\Enums\BookingStatus $status Status alur pengerjaan
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
  * @property-read User|null $user
  * @property-read Layanan $layanan
- * @property-read BookingPayment|null $payment
- * @property-read string $label_status
- * @property-read string $warna_badge
- * @property-read string $pelanggan_nama
- * @property-read string $pelanggan_phone
- * @property-read string $pelanggan_email
- * @property-read string $whatsapp_notification_url
+ * @property-read MerekKendaraan|null $brand
+ * @property-read ModelKendaraan|null $model
+ * @property-read PembayaranReservasi|null $payment
+ * @property-read Penilaian|null $rating
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, TambahanReservasi> $addons
  */
-class Booking extends Model
+class Reservasi extends Model
 {
     use HasFactory;
 
@@ -107,6 +110,11 @@ class Booking extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function pengguna(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function layanan(): BelongsTo
     {
         return $this->belongsTo(Layanan::class, 'layanan_id', 'id_layanan');
@@ -114,32 +122,57 @@ class Booking extends Model
 
     public function brand(): BelongsTo
     {
-        return $this->belongsTo(VehicleBrand::class, 'brand_id');
+        return $this->belongsTo(MerekKendaraan::class, 'brand_id');
+    }
+
+    public function merek(): BelongsTo
+    {
+        return $this->belongsTo(MerekKendaraan::class, 'brand_id');
     }
 
     public function model(): BelongsTo
     {
-        return $this->belongsTo(VehicleModel::class, 'model_id');
+        return $this->belongsTo(ModelKendaraan::class, 'model_id');
     }
 
-    public function addons(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function modelKendaraan(): BelongsTo
     {
-        return $this->hasMany(BookingAddon::class, 'booking_id');
+        return $this->belongsTo(ModelKendaraan::class, 'model_id');
     }
 
-    public function bookingAddons(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function addons(): HasMany
     {
-        return $this->hasMany(BookingAddon::class, 'booking_id');
+        return $this->hasMany(TambahanReservasi::class, 'booking_id');
+    }
+
+    public function bookingAddons(): HasMany
+    {
+        return $this->hasMany(TambahanReservasi::class, 'booking_id');
+    }
+
+    public function tambahanReservasis(): HasMany
+    {
+        return $this->hasMany(TambahanReservasi::class, 'booking_id');
     }
 
     public function payment(): HasOne
     {
-        return $this->hasOne(BookingPayment::class);
+        return $this->hasOne(PembayaranReservasi::class, 'booking_id');
+    }
+
+    public function pembayaran(): HasOne
+    {
+        return $this->hasOne(PembayaranReservasi::class, 'booking_id');
     }
 
     public function rating(): HasOne
     {
-        return $this->hasOne(Rating::class, 'booking_id', 'id');
+        return $this->hasOne(Penilaian::class, 'booking_id', 'id');
+    }
+
+    public function penilaian(): HasOne
+    {
+        return $this->hasOne(Penilaian::class, 'booking_id', 'id');
     }
 
     public function getLabelStatusAttribute(): string
@@ -195,9 +228,6 @@ class Booking extends Model
         return (float) ($this->remaining_balance_snapshot ?: max(0, $this->total_price - $this->dp_amount));
     }
 
-    /**
-     * URL WhatsApp untuk kirim konfirmasi / info booking ke pelanggan
-     */
     public function getWhatsappNotificationUrlAttribute(): string
     {
         $phone = preg_replace('/[^0-9]/', '', $this->pelanggan_phone);
@@ -257,12 +287,12 @@ class Booking extends Model
 
     protected static function booted(): void
     {
-        static::saved(function (Booking $booking) {
+        static::saved(function (Reservasi $booking) {
             \Cache::forget("slot_quota_{$booking->booking_date->format('Y-m-d')}");
             \Cache::forget("booking_quota_{$booking->booking_date->format('Y-m-d')}");
         });
 
-        static::deleted(function (Booking $booking) {
+        static::deleted(function (Reservasi $booking) {
             \Cache::forget("slot_quota_{$booking->booking_date->format('Y-m-d')}");
             \Cache::forget("booking_quota_{$booking->booking_date->format('Y-m-d')}");
         });

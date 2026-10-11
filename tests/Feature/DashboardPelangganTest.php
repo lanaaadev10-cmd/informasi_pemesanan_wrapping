@@ -9,15 +9,17 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CustomerDashboardBerandaTest extends TestCase
+class DashboardPelangganTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected User $user;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Create standard customer
+        // Buat user pelanggan standar
         $this->user = User::factory()->create([
             'email_verified_at' => now(),
         ]);

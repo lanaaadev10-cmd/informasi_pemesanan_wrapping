@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\BookingStatus;
 use App\Models\Booking;
 use App\Models\BookingPayment;
 use App\Models\DetailKeranjang;
@@ -11,14 +12,17 @@ use App\Models\Galeri;
 use App\Models\Keranjang;
 use App\Models\Layanan;
 use App\Models\Notifikasi;
+use App\Models\PembayaranReservasi;
 use App\Models\Pesanan;
+use App\Models\Reservasi;
 use App\Models\User;
+use App\Settings\CompanySettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class ComprehensiveFeatureAuditTest extends TestCase
+class FiturAplikasiTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -34,7 +38,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
 
         $this->seed(\Database\Seeders\RolesTableSeeder::class);
 
-        // 1. Create standard customer
+        // 1. Pelanggan standar
         $this->customer = User::factory()->create([
             'name' => 'Budi Customer',
             'email' => 'budi@example.com',
@@ -42,7 +46,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
         ]);
         $this->customer->assignRole('user');
 
-        // 2. Create another customer for IDOR/isolation testing
+        // 2. Pelanggan kedua untuk pengujian isolasi data (IDOR)
         $this->otherCustomer = User::factory()->create([
             'name' => 'Siti Customer',
             'email' => 'siti@example.com',
@@ -50,7 +54,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
         ]);
         $this->otherCustomer->assignRole('user');
 
-        // 3. Create administrator
+        // 3. Administrator sistem
         $this->admin = User::factory()->create([
             'name' => 'Admin Dantie',
             'email' => 'admin@dantie.com',
@@ -58,7 +62,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
         ]);
         $this->admin->assignRole('admin');
 
-        // 4. Seed test services
+        // 4. Data master layanan pengujian
         $this->layananA = Layanan::create([
             'nama_layanan' => 'Full Wrapping Satin Black',
             'kategori' => 'mobil',
@@ -79,7 +83,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'status' => 'aktif',
         ]);
 
-        // 5. Seed test gallery
+        // 5. Data master galeri pengujian
         Galeri::create([
             'judul' => 'Porsche 911 GT3 Satin Black',
             'kategori' => 'matte',
@@ -91,7 +95,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
     }
 
     // =========================================================================
-    // 1. AUDIT: LANDING PAGE & PUBLIC ROUTES
+    // 1. HALAMAN UTAMA & RUTE PUBLIK
     // =========================================================================
 
     public function test_landing_page_beranda_renders_successfully(): void
@@ -112,16 +116,16 @@ class ComprehensiveFeatureAuditTest extends TestCase
 
     public function test_landing_page_layanan_and_katalog(): void
     {
-        // Guest visiting /layanan
+        // Pengunjung tamu mengakses /layanan
         $resLayananGuest = $this->get(route('layanan'));
         $resLayananGuest->assertStatus(200);
         $resLayananGuest->assertSee('Full Wrapping Satin Black');
 
-        // Authenticated user visiting /layanan is redirected to katalog
+        // Pengguna terautentikasi dialihkan ke katalog pengguna
         $resLayananAuth = $this->actingAs($this->customer)->get(route('layanan'));
         $resLayananAuth->assertRedirect(route('katalog.user'));
 
-        // Visiting katalog
+        // Akses langsung katalog
         $resKatalog = $this->get(route('katalog.user'));
         $resKatalog->assertStatus(200);
         $resKatalog->assertSee('Full Wrapping Satin Black');
@@ -155,17 +159,17 @@ class ComprehensiveFeatureAuditTest extends TestCase
 
     public function test_metrics_endpoint_ip_security(): void
     {
-        // 127.0.0.1 is allowed
+        // Akses dari localhost diizinkan
         $resLocal = $this->call('GET', '/metrics', [], [], [], ['REMOTE_ADDR' => '127.0.0.1']);
         $resLocal->assertStatus(200);
 
-        // Foreign IP is rejected with 403
+        // Akses dari IP eksternal ditolak dengan 403 Forbidden
         $resForeign = $this->call('GET', '/metrics', [], [], [], ['REMOTE_ADDR' => '203.0.113.195']);
         $resForeign->assertStatus(403);
     }
 
     // =========================================================================
-    // 2. AUDIT: KERANJANG BELANJA (CART) & MULTI-TENANT ISOLATION
+    // 2. KERANJANG BELANJA & ISOLASI MULTI-PENGGUNA
     // =========================================================================
 
     public function test_customer_can_view_cart_and_add_items(): void
@@ -173,7 +177,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
         $resCart = $this->actingAs($this->customer)->get(route('keranjang.index'));
         $resCart->assertStatus(200);
 
-        // Add package to cart
+        // Tambah item layanan ke keranjang
         $resAdd = $this->actingAs($this->customer)->post(route('keranjang.tambah'), [
             'id_paket' => $this->layananA->id_layanan,
             'jumlah' => 1,
@@ -217,7 +221,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'jumlah' => 1,
         ]);
 
-        // 4th package addition must be rejected with error toast
+        // Penambahan paket ke-4 harus ditolak dengan notifikasi error
         $resFourth = $this->actingAs($this->customer)->post(route('keranjang.tambah'), [
             'id_paket' => $layananD->id_layanan,
             'jumlah' => 1,
@@ -258,7 +262,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
 
     public function test_cart_item_deletion_and_isolation_security(): void
     {
-        // Customer A cart item
+        // Item keranjang milik Pelanggan A
         $cartA = Keranjang::create(['id_user' => $this->customer->id, 'status' => 'active']);
         $itemA = DetailKeranjang::create([
             'id_keranjang' => $cartA->id_keranjang,
@@ -268,12 +272,12 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'subtotal' => 4500000,
         ]);
 
-        // Other Customer attempts to delete Customer A's cart item -> 403 Forbidden
+        // Pelanggan lain mencoba menghapus item milik Pelanggan A -> 403 Forbidden
         $resHacker = $this->actingAs($this->otherCustomer)->delete(route('keranjang.hapus', $itemA->id_detail));
         $resHacker->assertStatus(403);
         $this->assertDatabaseHas('detail_keranjangs', ['id_detail' => $itemA->id_detail]);
 
-        // Legitimate owner deletes item -> Success
+        // Pemilik yang sah menghapus item -> Berhasil
         $resOwner = $this->actingAs($this->customer)->delete(route('keranjang.hapus', $itemA->id_detail));
         $resOwner->assertRedirect(route('keranjang.index'));
         $this->assertDatabaseMissing('detail_keranjangs', ['id_detail' => $itemA->id_detail]);
@@ -296,7 +300,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
     }
 
     // =========================================================================
-    // 3. AUDIT: PESANAN & INVOICE ACCESS CONTROL
+    // 3. PESANAN & HAK AKSES INVOICE
     // =========================================================================
 
     public function test_customer_pesanan_isolation_and_show(): void
@@ -322,12 +326,12 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'alamat_pengiriman' => 'Rogojampi, Banyuwangi',
         ]);
 
-        // Owner can view order
+        // Pemilik dapat melihat detail pesanan
         $resOwner = $this->actingAs($this->customer)->get(route('pesanan.show', $pesananA->id_pesanan));
         $resOwner->assertStatus(200);
         $resOwner->assertSee('ORD-TEST-001');
 
-        // Other customer cannot view order (404/not found for this user)
+        // Pelanggan lain tidak dapat melihat pesanan pengguna lain -> 404
         $resOther = $this->actingAs($this->otherCustomer)->get(route('pesanan.show', $pesananA->id_pesanan));
         $resOther->assertStatus(404);
     }
@@ -349,12 +353,12 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'subtotal' => 4500000,
         ]);
 
-        // Menunggu pembayaran -> cannot download invoice
+        // Menunggu pembayaran -> tidak dapat mengunduh invoice
         $resInvBlocked = $this->actingAs($this->customer)->get(route('pesanan.invoice', $pesanan->id_pesanan));
         $resInvBlocked->assertRedirect();
         $resInvBlocked->assertSessionHas('toast_error');
 
-        // Update status to dikonfirmasi -> invoice accessible
+        // Setelah dikonfirmasi -> invoice dapat diunduh
         $pesanan->update(['status' => Pesanan::STATUS_DIKONFIRMASI]);
         $resInvAllowed = $this->actingAs($this->customer)->get(route('pesanan.invoice', $pesanan->id_pesanan));
         $resInvAllowed->assertStatus(200);
@@ -362,7 +366,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
     }
 
     // =========================================================================
-    // 4. AUDIT: ADMIN DASHBOARD & SECURITY ACCESS CONTROL
+    // 4. DASHBOARD ADMIN & KEAMANAN OTORISASI
     // =========================================================================
 
     public function test_admin_laporan_strictly_forbidden_for_normal_customer(): void
@@ -370,7 +374,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
         $resCustomer = $this->actingAs($this->customer)->get(route('admin.laporan'));
         $this->assertTrue(in_array($resCustomer->status(), [403, 302]));
 
-        // Admin can access laporan and view calculations
+        // Admin dapat mengakses laporan penjualan
         $resAdmin = $this->actingAs($this->admin)->get(route('admin.laporan', ['type' => 'hari']));
         $resAdmin->assertStatus(200);
         $resAdmin->assertSee('Laporan Penjualan Transaksi');
@@ -378,7 +382,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
 
     public function test_admin_laporan_unifies_both_pesanan_and_booking_payments(): void
     {
-        // 1. Pesanan Selesai Rp 750.000
+        // 1. Pesanan selesai senilai Rp 750.000
         Pesanan::create([
             'id_user' => $this->customer->id,
             'kode_pesanan' => 'PSN-UNIFY-001',
@@ -387,8 +391,8 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'total_harga' => 750000,
         ]);
 
-        // 2. Booking dengan BookingPayment verified Rp 250.000
-        $booking = Booking::create([
+        // 2. Reservasi dengan pembayaran terverifikasi senilai Rp 250.000
+        $booking = Reservasi::create([
             'booking_code' => 'BKG-UNIFY-001',
             'user_id' => $this->customer->id,
             'customer_name' => $this->customer->name,
@@ -397,10 +401,10 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'booking_time' => '10:00',
             'payment_type' => 'dp',
             'vehicle_name' => 'Toyota Avanza',
-            'status' => 'confirmed',
+            'status' => BookingStatus::CONFIRMED,
         ]);
 
-        \App\Models\BookingPayment::create([
+        PembayaranReservasi::create([
             'booking_id' => $booking->id,
             'payment_method' => 'BCA',
             'amount' => 250000,
@@ -408,7 +412,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'verified_at' => now(),
         ]);
 
-        // Akses laporan
+        // Admin melihat rekapitulasi total pendapatan
         $resAdmin = $this->actingAs($this->admin)->get(route('admin.laporan', ['type' => 'hari']));
         $resAdmin->assertStatus(200);
         $resAdmin->assertSee('PSN-UNIFY-001');
@@ -420,35 +424,34 @@ class ComprehensiveFeatureAuditTest extends TestCase
     public function test_filament_admin_panel_strictly_forbidden_for_normal_customer(): void
     {
         $resCustomer = $this->actingAs($this->customer)->get('/admin');
-        // Non-admin user should be forbidden (403) or redirected
         $this->assertTrue(in_array($resCustomer->status(), [403, 302]));
 
-        // Admin can access filament dashboard
+        // Admin dapat mengakses dashboard Filament
         $resAdmin = $this->actingAs($this->admin)->get('/admin');
         $resAdmin->assertStatus(200);
     }
 
     public function test_filament_admin_can_render_bookings_table_with_various_statuses(): void
     {
-        Booking::create([
+        Reservasi::create([
             'booking_code' => 'BK-TEST-ADMIN-01',
             'user_id' => $this->customer->id,
             'layanan_id' => $this->layananA->id_layanan,
             'booking_date' => now()->addDays(2),
             'booking_time' => '10:00',
             'payment_type' => 'dp',
-            'status' => \App\Enums\BookingStatus::PENDING,
+            'status' => BookingStatus::PENDING,
             'vehicle_name' => 'Honda Civic',
         ]);
 
-        Booking::create([
+        Reservasi::create([
             'booking_code' => 'BK-TEST-ADMIN-02',
             'user_id' => $this->customer->id,
             'layanan_id' => $this->layananA->id_layanan,
             'booking_date' => now()->addDays(3),
             'booking_time' => '13:00',
             'payment_type' => 'lunas',
-            'status' => \App\Enums\BookingStatus::APPROVED,
+            'status' => BookingStatus::APPROVED,
             'vehicle_name' => 'Toyota Fortuner',
         ]);
 
@@ -459,7 +462,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
     }
 
     // =========================================================================
-    // 5. AUDIT: API ENDPOINTS (RESTful & Sanctum)
+    // 5. API ENDPOINTS (RESTful & Sanctum)
     // =========================================================================
 
     public function test_api_public_layanan_and_galeri(): void
@@ -506,11 +509,11 @@ class ComprehensiveFeatureAuditTest extends TestCase
 
     public function test_api_protected_sanctum_cart_and_notifications(): void
     {
-        // Unauthenticated access to /api/keranjang should return 401
+        // Tamu tanpa token otentikasi mengakses /api/keranjang -> 401 Unauthorized
         $resUnauth = $this->getJson('/api/keranjang');
         $resUnauth->assertStatus(401);
 
-        // Authenticated customer via Sanctum
+        // Pelanggan terautentikasi melalui Sanctum
         Sanctum::actingAs($this->customer);
 
         $resCart = $this->getJson('/api/keranjang');
@@ -519,8 +522,8 @@ class ComprehensiveFeatureAuditTest extends TestCase
         $resCartCount = $this->getJson('/api/keranjang/count');
         $resCartCount->assertStatus(200);
 
-        // Create a booking notification
-        $booking = Booking::create([
+        // Buat data notifikasi reservasi
+        $booking = Reservasi::create([
             'booking_code' => 'BKG-NOTIF-001',
             'user_id' => $this->customer->id,
             'customer_name' => $this->customer->name,
@@ -529,7 +532,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'booking_time' => '10:00',
             'payment_type' => 'dp',
             'vehicle_name' => 'Toyota Avanza',
-            'status' => 'pending',
+            'status' => BookingStatus::PENDING,
         ]);
 
         Notifikasi::create([
@@ -573,7 +576,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'subtotal' => $this->layananB->harga,
         ]);
 
-        // Customer books Layanan A
+        // Pelanggan melakukan booking untuk Layanan A
         $bookingDate = now()->addDays(3)->toDateString();
         $responseA = $this->actingAs($this->customer)->post(route('booking.store'), [
             'layanan_id' => $this->layananA->id_layanan,
@@ -589,13 +592,13 @@ class ComprehensiveFeatureAuditTest extends TestCase
 
         $responseA->assertSessionHas('toast_success');
 
-        // Verify that Layanan B is still in active cart!
+        // Pastikan Layanan B tetap aman tersimpan di dalam keranjang aktif
         $activeCart = Keranjang::where('id_user', $this->customer->id)->where('status', 'active')->first();
         $this->assertNotNull($activeCart);
         $this->assertEquals(1, $activeCart->details()->count());
         $this->assertEquals($this->layananB->id_layanan, $activeCart->details()->first()->id_paket);
 
-        // Now customer books Layanan B
+        // Selanjutnya pelanggan melakukan booking untuk Layanan B
         $responseB = $this->actingAs($this->customer)->post(route('booking.store'), [
             'layanan_id' => $this->layananB->id_layanan,
             'booking_date' => now()->addDays(4)->toDateString(),
@@ -610,7 +613,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
 
         $responseB->assertSessionHas('toast_success');
 
-        // Cart is now checked out because all items were booked
+        // Seluruh item telah dibooking, status keranjang menjadi checked_out
         $checkedOutCart = Keranjang::where('id_user', $this->customer->id)->where('status', 'checked_out')->first();
         $this->assertNotNull($checkedOutCart);
         $this->assertEquals(0, $checkedOutCart->details()->count());
@@ -626,7 +629,7 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'status' => 'aktif',
         ]);
 
-        $booking = Booking::create([
+        $booking = Reservasi::create([
             'booking_code' => 'BKG-INVOICE-TEST',
             'user_id' => $this->customer->id,
             'customer_name' => $this->customer->name,
@@ -637,10 +640,10 @@ class ComprehensiveFeatureAuditTest extends TestCase
             'booking_time' => '09:00',
             'payment_type' => 'dp',
             'vehicle_name' => 'Toyota GR Yaris',
-            'status' => 'approved',
+            'status' => BookingStatus::APPROVED,
         ]);
 
-        BookingPayment::create([
+        PembayaranReservasi::create([
             'booking_id' => $booking->id,
             'payment_method' => 'transfer_bank',
             'amount' => 2000000,
@@ -649,14 +652,14 @@ class ComprehensiveFeatureAuditTest extends TestCase
 
         $booking->load(['layanan', 'payment', 'user']);
 
-        // Test Blade rendering content of invoice-pdf
-        $company = app(\App\Settings\CompanySettings::class);
+        // Verifikasi render template Blade invoice-pdf
+        $company = app(CompanySettings::class);
         $renderedHtml = view('customer.booking.invoice-pdf', ['booking' => $booking, 'profil' => $company])->render();
         $this->assertStringContainsString('2.000.000', $renderedHtml);
         $this->assertStringContainsString('Sisa Tagihan di Workshop', $renderedHtml);
         $this->assertStringNotContainsString('100.000', $renderedHtml);
 
-        // Test PDF download response
+        // Verifikasi respons unduhan file PDF
         $responsePdf = $this->actingAs($this->customer)->get(route('booking.invoice', $booking->id));
         $responsePdf->assertStatus(200);
         $this->assertEquals('application/pdf', $responsePdf->headers->get('content-type'));

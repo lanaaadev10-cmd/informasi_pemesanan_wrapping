@@ -15,7 +15,14 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
-class BusinessFlowArchitectureTest extends TestCase
+/**
+ * Pengujian alur bisnis layanan reservasi:
+ * - Master merek & tipe kendaraan
+ * - Kalkulasi addons & penyesuaian DP
+ * - Deklarasi bahan jasa pasang
+ * - Proyek kustom (custom project) & invoice deal WhatsApp
+ */
+class AlurLayananBookingTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -34,7 +41,6 @@ class BusinessFlowArchitectureTest extends TestCase
         parent::setUp();
 
         $this->withoutMiddleware(\Illuminate\Routing\Middleware\ThrottleRequests::class);
-
         $this->seed(\Database\Seeders\RolesTableSeeder::class);
 
         $this->user = User::factory()->create([
@@ -75,7 +81,7 @@ class BusinessFlowArchitectureTest extends TestCase
             'tipe_layanan'    => 'custom',
             'kategori'        => 'mobil',
             'tipe_paket'      => 'custom',
-            'harga'           => 100000, // base placeholder
+            'harga'           => 100000,
             'estimasi_waktu'  => '3-5 Hari',
             'is_active'       => true,
         ]);
@@ -165,8 +171,6 @@ class BusinessFlowArchitectureTest extends TestCase
         $this->assertEquals('online', $booking->source);
 
         // Verifikasi snapshot keuangan
-        // Base: 3.000.000, Addons: 250.000 + 500.000 = 750.000. Grand total: 3.750.000
-        // DP: 1.500.000 + 375.000 = 1.875.000, Sisa: 1.875.000
         $this->assertEquals('Full Wrap Dantie Glossy', $booking->service_name_snapshot);
         $this->assertEquals(3000000, (float) $booking->base_price_snapshot);
         $this->assertEquals(750000, (float) $booking->addons_total_snapshot);

@@ -8,7 +8,7 @@ use Database\Seeders\LayananSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class LayananAssistantTest extends TestCase
+class KatalogLayananTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -33,7 +33,7 @@ class LayananAssistantTest extends TestCase
     {
         $this->seed(LayananSeeder::class);
 
-        // Verify Jasa Pasang Saja exist for both motor and mobil
+        // Verifikasi paket Jasa Pasang Saja untuk motor dan mobil
         $jasaPasangMotor = Layanan::where('kategori', 'motor')
             ->where('tipe_paket', 'jasa-pasang')
             ->get();
@@ -44,7 +44,7 @@ class LayananAssistantTest extends TestCase
             ->first();
         $this->assertNotNull($jasaPasangMobil);
 
-        // Verify Full Wrap with Oracal/Garansi exist for motor and mobil
+        // Verifikasi Full Wrap untuk motor dan mobil
         $wrapMotor = Layanan::where('kategori', 'motor')
             ->where('tipe_paket', 'wrapping')
             ->get();
@@ -55,7 +55,7 @@ class LayananAssistantTest extends TestCase
             ->get();
         $this->assertGreaterThanOrEqual(2, $wrapMobil->count());
 
-        // Verify features contain compatibility keywords
+        // Verifikasi atribut fitur paket kendaraan
         $motorKecil = Layanan::where('nama_layanan', 'like', '%Motor Kecil%')->first();
         $this->assertNotNull($motorKecil);
         $this->assertTrue(is_array($motorKecil->fitur));

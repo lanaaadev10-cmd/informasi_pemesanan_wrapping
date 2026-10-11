@@ -10,14 +10,16 @@
 |--------------------------------------------------------------------------
 */
 
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ReservasiController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\TransaksiController;
 use App\Models\Keranjang;
@@ -48,7 +50,7 @@ Route::middleware('throttle:60,5')->group(function () {
     Route::get('/profil-perusahaan', [LandingPageController::class, 'profile'])->name('profil.perusahaan');
     Route::get('/tentang-kami', [LandingPageController::class, 'tentangKami'])->name('tentang-kami');
     Route::get('/layanan', [LandingPageController::class, 'layanan'])->name('layanan');
-    Route::get('/katalog-layanan', [CustomerController::class, 'katalog'])->name('katalog.user');
+    Route::get('/katalog-layanan', [PelangganController::class, 'katalog'])->name('katalog.user');
     Route::get('/galeri-karya', [GaleriController::class, 'index'])->name('galeri.user');
     Route::get('/galeri/{kategori}', [GaleriController::class, 'kategori'])->name('galeri.kategori');
     Route::get('/kebijakan-privasi', [LandingPageController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
@@ -58,7 +60,7 @@ Route::middleware('throttle:60,5')->group(function () {
     // Fitur dinonaktifkan sesuai permintaan pengguna; URL lama dialihkan ke booking.
     Route::redirect('/kalkulator-wrapping', '/booking/buat')->name('kalkulator.index');
     Route::redirect('/admin/login.', '/admin/login');
-    Route::post('/admin/login', [\App\Http\Controllers\AdminAuthController::class, 'login'])->name('admin.login.submit');
+    Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 
     // Logout via GET — solusi jika form POST logout mengalami Error 419
     Route::get('/logout', function () {
@@ -76,7 +78,7 @@ Route::middleware('throttle:60,5')->group(function () {
 
         // Dashboard & Profile — bisa diakses oleh admin maupun user biasa
         Route::middleware('role:admin|user')->group(function () {
-            Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard');
+            Route::get('/dashboard', [PelangganController::class, 'dashboard'])->name('dashboard');
 
             Route::controller(ProfileController::class)->group(function () {
                 Route::get('/profile', 'edit')->name('profile.edit');
@@ -138,40 +140,32 @@ Route::middleware('throttle:60,5')->group(function () {
             Route::post('/{id}/upload-bukti', [PesananController::class, 'uploadBukti'])->name('pesanan.upload-bukti');
 
             // Alur 1: Rating per layanan dalam pesanan (hanya status selesai)
-            Route::get('/{id}/rating', [RatingController::class, 'form'])->name('pesanan.rating.form');
-            Route::post('/{id}/rating', [RatingController::class, 'store'])->name('pesanan.rating.store');
+            Route::get('/{id}/rating', [PenilaianController::class, 'form'])->name('pesanan.rating.form');
+            Route::post('/{id}/rating', [PenilaianController::class, 'store'])->name('pesanan.rating.store');
         });
 
-        // [DISABLED] Alur 2 — Rating layanan tanpa pesanan (dropdown layanan).
-        // Non-aktif karena tidak relevan; rating hanya melalui Alur 1 (pesanan berstatus selesai).
-        // Untuk re-enable: hapus tanda komentar di bawah ini.
-        // Route::prefix('rating')->group(function () {
-        //     Route::get('/buat', [RatingController::class, 'formLayanan'])->name('rating.layanan.form');
-        //     Route::post('/buat', [RatingController::class, 'storeLayanan'])->name('rating.layanan.store');
-        // });
-
         // ================================================================
-        // BOOKING — Fitur booking jadwal pengerjaan wrapping
+        // RESERVASI / BOOKING — Fitur reservasi jadwal pengerjaan wrapping
         // ================================================================
         Route::prefix('booking')->name('booking.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\BookingController::class, 'index'])->name('index');
-            Route::get('/buat', [\App\Http\Controllers\BookingController::class, 'create'])->name('create');
-            Route::post('/', [\App\Http\Controllers\BookingController::class, 'store'])
+            Route::get('/', [ReservasiController::class, 'index'])->name('index');
+            Route::get('/buat', [ReservasiController::class, 'create'])->name('create');
+            Route::post('/', [ReservasiController::class, 'store'])
                 ->middleware('throttle:3,1')
                 ->name('store');
-            Route::get('/{id}', [\App\Http\Controllers\BookingController::class, 'show'])->name('show');
-            Route::get('/{id}/invoice', [\App\Http\Controllers\BookingController::class, 'invoice'])->name('invoice');
-            Route::post('/{id}/upload-bukti', [\App\Http\Controllers\BookingController::class, 'uploadBukti'])
+            Route::get('/{id}', [ReservasiController::class, 'show'])->name('show');
+            Route::get('/{id}/invoice', [ReservasiController::class, 'invoice'])->name('invoice');
+            Route::post('/{id}/upload-bukti', [ReservasiController::class, 'uploadBukti'])
                 ->middleware('throttle:3,1')
                 ->name('upload-bukti');
-            Route::post('/{id}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel'])->name('cancel');
+            Route::post('/{id}/cancel', [ReservasiController::class, 'cancel'])->name('cancel');
 
             // Rating Booking (Hanya untuk booking berstatus selesai)
-            Route::post('/{id}/rating', [RatingController::class, 'storeBooking'])->name('rating.store');
+            Route::post('/{id}/rating', [PenilaianController::class, 'storeBooking'])->name('rating.store');
         });
 
         // Endpoint Terpadu Quick Submit Rating (Modal)
-        Route::post('/rating/quick-submit', [RatingController::class, 'quickSubmit'])->name('rating.quick-submit');
+        Route::post('/rating/quick-submit', [PenilaianController::class, 'quickSubmit'])->name('rating.quick-submit');
     });
 });
 

@@ -5,7 +5,7 @@ namespace App\Filament\Resources\BlockedDates;
 use App\Filament\Resources\BlockedDates\Pages\CreateBlockedDate;
 use App\Filament\Resources\BlockedDates\Pages\EditBlockedDate;
 use App\Filament\Resources\BlockedDates\Pages\ListBlockedDates;
-use App\Models\BlockedDate;
+use App\Models\TanggalDiblokir;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -20,7 +20,7 @@ use Filament\Actions\EditAction;
 
 class BlockedDateResource extends Resource
 {
-    protected static ?string $model = BlockedDate::class;
+    protected static ?string $model = TanggalDiblokir::class;
 
     protected static ?string $navigationLabel = 'Tanggal Libur / Blokir';
     protected static ?string $pluralLabel = 'Tanggal Libur / Blokir';

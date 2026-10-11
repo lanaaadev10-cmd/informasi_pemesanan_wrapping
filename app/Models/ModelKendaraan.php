@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Model Master Tipe/Model Kendaraan dengan Ukuran
+ * Model ModelKendaraan (Tipe / Model Kendaraan dengan Spesifikasi Ukuran)
  *
  * @property int $id
  * @property int $brand_id
@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
- * @property-read VehicleBrand $brand
+ * @property-read MerekKendaraan $brand
  */
-class VehicleModel extends Model
+class ModelKendaraan extends Model
 {
     use HasFactory;
 
@@ -38,7 +38,7 @@ class VehicleModel extends Model
 
     public function brand(): BelongsTo
     {
-        return $this->belongsTo(VehicleBrand::class, 'brand_id');
+        return $this->belongsTo(MerekKendaraan::class, 'brand_id');
     }
 
     public function scopeActive($query)

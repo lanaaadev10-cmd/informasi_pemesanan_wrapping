@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * Model BookingPayment (Pembayaran untuk Booking Jadwal)
+ * Model PembayaranReservasi (Transaksi Pembayaran DP/Pelunasan Reservasi Booking)
  *
- * @property int $id Primary key pembayaran booking
- * @property int $booking_id Foreign key ke tabel bookings
+ * @property int $id Primary key pembayaran reservasi
+ * @property int $booking_id Foreign key ke reservasi
  * @property string $payment_method Metode transfer pembayaran (BCA, Mandiri, dll)
  * @property float $amount Nominal yang dibayarkan
  * @property string|null $proof_file Path file foto bukti transfer di storage
@@ -19,9 +19,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  *
- * @property-read Booking $booking
+ * @property-read Reservasi $reservasi
  */
-class BookingPayment extends Model
+class PembayaranReservasi extends Model
 {
     protected $table = 'booking_payments';
 
@@ -45,9 +45,14 @@ class BookingPayment extends Model
         ];
     }
 
+    public function reservasi(): BelongsTo
+    {
+        return $this->belongsTo(Reservasi::class, 'booking_id');
+    }
+
     public function booking(): BelongsTo
     {
-        return $this->belongsTo(Booking::class);
+        return $this->belongsTo(Reservasi::class, 'booking_id');
     }
 
     public function isPending(): bool
@@ -57,7 +62,7 @@ class BookingPayment extends Model
 
     public function isVerified(): bool
     {
-        return $this->status === 'verified';
+        return in_array($this->status, ['verified', 'approved']);
     }
 
     public function isRejected(): bool

@@ -5,8 +5,8 @@ namespace App\Filament\Resources\VehicleModels;
 use App\Filament\Resources\VehicleModels\Pages\CreateVehicleModel;
 use App\Filament\Resources\VehicleModels\Pages\EditVehicleModel;
 use App\Filament\Resources\VehicleModels\Pages\ListVehicleModels;
-use App\Models\VehicleBrand;
-use App\Models\VehicleModel;
+use App\Models\MerekKendaraan;
+use App\Models\ModelKendaraan;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -22,7 +22,7 @@ use Filament\Actions\EditAction;
 
 class VehicleModelResource extends Resource
 {
-    protected static ?string $model = VehicleModel::class;
+    protected static ?string $model = ModelKendaraan::class;
 
     protected static ?string $navigationLabel = 'Tipe & Model Kendaraan';
     protected static ?string $pluralLabel = 'Tipe & Model Kendaraan';

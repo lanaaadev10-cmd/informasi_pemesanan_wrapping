@@ -226,6 +226,24 @@
                 </button>
             </div>
 
+            {{-- Asisten Pintar Bar --}}
+            <div class="px-5 py-3 bg-orange-50/60 border-b border-orange-200/60 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <i class="ph-bold ph-sparkle text-[#ff6b00]"></i>
+                    <span class="font-montserrat font-bold text-slate-800">Asisten Pintar Pilihan Layanan:</span>
+                    <span class="text-slate-500 font-medium">Tipe Kendaraan:</span>
+                    <span class="font-bold text-slate-700">Mobil / Motor</span>
+                    <span class="text-slate-400 hidden sm:inline">|</span>
+                    <span class="text-slate-500 font-medium">Jenis Kebutuhan:</span>
+                    <button type="button" @click="searchQuery = 'Jasa Pasang'" class="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700 hover:text-[#ff6b00] font-bold text-[11px] shadow-sm">Jasa Pasang</button>
+                    <button type="button" @click="searchQuery = 'Full Wrap'" class="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700 hover:text-[#ff6b00] font-bold text-[11px] shadow-sm">Full Wrap All-In</button>
+                </div>
+                <a href="{{ $whatsappConsultUrl }}" target="_blank" class="inline-flex items-center gap-1.5 text-[#ff6b00] hover:text-[#ea580c] font-bold shrink-0">
+                    <i class="ph-bold ph-whatsapp-logo"></i>
+                    <span>Tanya Teknisi via WA</span>
+                </a>
+            </div>
+
             {{-- Filter Bar di Modal --}}
             <div class="p-4 sm:p-5 border-b border-slate-200 bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                 {{-- Filter Tipe Kendaraan --}}

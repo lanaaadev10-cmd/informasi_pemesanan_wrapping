@@ -4,7 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
-use App\Models\BlockedDate;
+use App\Models\TanggalDiblokir;
 use App\Services\SlotKuotaService;
 use Filament\Actions\Action;
 use Filament\Pages\Page;

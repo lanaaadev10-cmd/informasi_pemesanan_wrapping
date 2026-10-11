@@ -4,14 +4,14 @@ namespace Tests\Feature;
 
 use App\Enums\BookingStatus;
 use App\Models\Booking;
-use App\Models\FormPesanan;
+use App\Models\FormulirPesanan;
 use App\Models\Layanan;
 use App\Models\Pesanan;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class TransaksiUnifiedTest extends TestCase
+class TransaksiTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -50,7 +50,7 @@ class TransaksiUnifiedTest extends TestCase
     /**
      * 1. Guest diarahkan ke login saat mengakses /transaksi.
      */
-    public function test_guest_is_redirected_to_login()
+    public function test_guest_is_redirected_to_login(): void
     {
         $response = $this->get(route('transaksi.index'));
         $response->assertRedirect(route('login'));
@@ -59,7 +59,7 @@ class TransaksiUnifiedTest extends TestCase
     /**
      * 2. User terautentikasi dapat melihat Hub Transaksi.
      */
-    public function test_authenticated_user_can_view_transaksi_hub()
+    public function test_authenticated_user_can_view_transaksi_hub(): void
     {
         $response = $this->actingAs($this->userA)->get(route('transaksi.index'));
 
@@ -72,7 +72,7 @@ class TransaksiUnifiedTest extends TestCase
     /**
      * 3. Anti-IDOR: Data antar user terisolasi 100%.
      */
-    public function test_transaksi_hub_isolates_user_data_strictly()
+    public function test_transaksi_hub_isolates_user_data_strictly(): void
     {
         // Booking & Pesanan User A
         Booking::create([
@@ -97,7 +97,7 @@ class TransaksiUnifiedTest extends TestCase
             'customer_name' => $this->userA->name,
             'whatsapp_number' => '081234567891',
         ]);
-        FormPesanan::create([
+        FormulirPesanan::create([
             'id_pesanan' => $pesananA->id_pesanan,
             'nama_pemesan' => $this->userA->name,
             'alamat_pengiriman' => 'Jl. Sudirman 1',
@@ -138,7 +138,7 @@ class TransaksiUnifiedTest extends TestCase
     /**
      * 4. Filter status booking.
      */
-    public function test_booking_status_tab_filtering()
+    public function test_booking_status_tab_filtering(): void
     {
         Booking::create([
             'booking_code' => 'BK-FILTER-UNPAID',
@@ -174,7 +174,7 @@ class TransaksiUnifiedTest extends TestCase
     /**
      * 5. Halaman Pusat Tagihan: Menampilkan daftar tagihan aktif dan rekening resmi.
      */
-    public function test_authenticated_user_can_view_tagihan_page_with_unpaid_items()
+    public function test_authenticated_user_can_view_tagihan_page_with_unpaid_items(): void
     {
         Booking::create([
             'booking_code' => 'BK-TAGIHAN-01',
@@ -199,7 +199,7 @@ class TransaksiUnifiedTest extends TestCase
     /**
      * 6. Halaman Pusat Tagihan: Menampilkan status lunas jika tidak ada tagihan.
      */
-    public function test_tagihan_page_shows_all_paid_when_no_unpaid_items()
+    public function test_tagihan_page_shows_all_paid_when_no_unpaid_items(): void
     {
         $response = $this->actingAs($this->userA)->get(route('transaksi.tagihan'));
         $response->assertStatus(200);

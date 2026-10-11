@@ -102,7 +102,7 @@ class Pesanan extends Model
 
     public function form(): HasOne
     {
-        return $this->hasOne(FormPesanan::class, 'id_pesanan', 'id_pesanan');
+        return $this->hasOne(FormulirPesanan::class, 'id_pesanan', 'id_pesanan');
     }
 
     public function pembayaran(): HasOne
