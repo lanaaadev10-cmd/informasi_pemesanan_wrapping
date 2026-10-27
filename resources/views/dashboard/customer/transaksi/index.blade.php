@@ -44,7 +44,7 @@
             <a href="{{ route('katalog.user') }}"
                class="inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-montserrat font-bold text-slate-700 shadow-sm transition-all active:scale-95">
                 <i class="ph-bold ph-storefront text-base"></i>
-                <span class="hidden xs:inline">Katalog</span> Layanan
+                <span class="hidden sm:inline">Katalog</span> Layanan
             </a>
             <a href="{{ route('booking.create') }}"
                class="inline-flex items-center justify-center gap-2 px-5 py-3 min-h-[44px] bg-[#FF6B00] hover:bg-[#E05D00] text-white font-montserrat font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95">
@@ -91,12 +91,12 @@
 
     <!-- 3. KONTEN TAB: JADWAL BOOKING -->
     @if($type === 'booking')
-        @include('dashboard.customer.transaksi.partials._tab-booking')
+        @include('dashboard.customer.transaksi.partials._tab_booking')
     @endif
 
     <!-- 4. KONTEN TAB: PESANAN & PEMBAYARAN -->
     @if($type === 'pesanan')
-        @include('dashboard.customer.transaksi.partials._tab-pesanan')
+        @include('dashboard.customer.transaksi.partials._tab_pesanan')
     @endif
 </div>
 @endsection

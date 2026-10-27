@@ -16,17 +16,17 @@
 use App\Http\Controllers\Api\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\Admin\AdminPembayaranController;
 use App\Http\Controllers\Api\Admin\AdminPesananController;
-use App\Http\Controllers\Api\Admin\AdminBookingController;
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Admin\AdminReservasiController;
+use App\Http\Controllers\Api\AutentikasiController;
 use App\Http\Controllers\Api\GaleriController;
 use App\Http\Controllers\Api\KeranjangController;
 use App\Http\Controllers\Api\LayananController;
 use App\Http\Controllers\Api\NotifikasiController;
 use App\Http\Controllers\Api\PembayaranController;
+use App\Http\Controllers\Api\PenilaianController;
 use App\Http\Controllers\Api\PesananController;
-use App\Http\Controllers\Api\RatingController;
-use App\Http\Controllers\Api\BookingPublicController;
-use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\ReservasiController;
+use App\Http\Controllers\Api\ReservasiPublikController;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -44,15 +44,15 @@ use Illuminate\Support\Facades\Route;
 RateLimiter::for('api', fn (Request $request) => Limit::perMinute(60)->by($request->user()?->id ?: $request->ip()));
 RateLimiter::for('auth', fn () => Limit::perMinute(10)->by(request()->ip()));
 RateLimiter::for('orders', fn (Request $request) => Limit::perMinute(30)->by($request->user()?->id ?: $request->ip()));
-RateLimiter::for('booking', fn (Request $request) => Limit::perMinute(3)->by($request->user()?->id ?: $request->ip()));
+RateLimiter::for('booking', fn (Request $request) => Limit::perMinute(15)->by($request->user()?->id ?: $request->ip()));
 
 // ============================================
 //  PUBLIC ROUTES — Tanpa perlu token
 // ============================================
 
 // Auth: register & login (rate limit ketat: 10x/menit)
-Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:auth');
-Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:auth');
+Route::post('/auth/register', [AutentikasiController::class, 'register'])->middleware('throttle:auth');
+Route::post('/auth/login', [AutentikasiController::class, 'login'])->middleware('throttle:auth');
 
 // Katalog layanan publik
 Route::prefix('layanan')->group(function () {
@@ -69,36 +69,43 @@ Route::prefix('galeri')->group(function () {
 });
 
 // Testimoni/Rating publik
-Route::get('/rating', [RatingController::class, 'index']);
+Route::get('/rating', [PenilaianController::class, 'index']);
 
 // Kuota booking publik (landing page calendar) — read-only, tanpa auth
 Route::prefix('booking')->group(function () {
-    Route::get('/quota-today', [BookingPublicController::class, 'getTodayQuota'])->middleware('throttle:booking');
-    Route::get('/quota/{date}', [BookingPublicController::class, 'checkQuota'])->middleware('throttle:booking');
-    Route::get('/quota-month/{year}/{month}', [BookingPublicController::class, 'getMonthQuota'])->middleware('throttle:booking');
+    Route::get('/quota-today', [ReservasiPublikController::class, 'getTodayQuota'])->middleware('throttle:api');
+    Route::get('/quota/{date}', [ReservasiPublikController::class, 'checkQuota'])->middleware('throttle:api');
+    Route::get('/quota-month/{year}/{month}', [ReservasiPublikController::class, 'getMonthQuota'])->middleware('throttle:api');
     // Detail slot per hari: kuota + daftar booking anonim (dipakai kalender dashboard)
-    Route::get('/day-detail/{date}', [BookingPublicController::class, 'getDayDetail'])->middleware('throttle:api');
+    Route::get('/day-detail/{date}', [ReservasiPublikController::class, 'getDayDetail'])->middleware('throttle:api');
 });
 
 // Master Kendaraan & Add-ons publik (untuk formulir booking & estimasi harga)
 Route::prefix('vehicles')->group(function () {
     Route::get('/brands', function (\Illuminate\Http\Request $request) {
         $type = $request->get('type');
-        $query = \App\Models\VehicleBrand::where('is_active', true);
-        if ($type) {
-            $query->where('vehicle_type', $type);
-        }
+        $cacheKey = 'api_vehicle_brands_' . ($type ?: 'all');
+        $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, 86400, function () use ($type) {
+            $query = \App\Models\VehicleBrand::where('is_active', true);
+            if ($type) {
+                $query->where('vehicle_type', $type);
+            }
+            return $query->orderBy('name')->get();
+        });
         return response()->json([
             'status' => 'success',
-            'data'   => $query->orderBy('name')->get(),
+            'data'   => $data,
         ]);
     });
 
     Route::get('/models/{brandId}', function ($brandId) {
-        $models = \App\Models\VehicleModel::where('brand_id', $brandId)
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
+        $cacheKey = 'api_vehicle_models_' . (int) $brandId;
+        $models = \Illuminate\Support\Facades\Cache::remember($cacheKey, 86400, function () use ($brandId) {
+            return \App\Models\VehicleModel::where('brand_id', $brandId)
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get();
+        });
         return response()->json([
             'status' => 'success',
             'data'   => $models,
@@ -108,13 +115,17 @@ Route::prefix('vehicles')->group(function () {
 
 Route::get('/addons', function (\Illuminate\Http\Request $request) {
     $category = $request->get('category');
-    $query = \App\Models\Addon::where('is_active', true);
-    if ($category && $category !== 'all') {
-        $query->whereIn('category', [$category, 'all']);
-    }
+    $cacheKey = 'api_addons_' . ($category ?: 'all');
+    $data = \Illuminate\Support\Facades\Cache::remember($cacheKey, 86400, function () use ($category) {
+        $query = \App\Models\Addon::where('is_active', true);
+        if ($category && $category !== 'all') {
+            $query->whereIn('category', [$category, 'all']);
+        }
+        return $query->orderBy('name')->get();
+    });
     return response()->json([
         'status' => 'success',
-        'data'   => $query->orderBy('name')->get(),
+        'data'   => $data,
     ]);
 });
 
@@ -126,8 +137,8 @@ Route::get('/addons', function (\Illuminate\Http\Request $request) {
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Auth: logout & profil
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
-    Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::post('/auth/logout', [AutentikasiController::class, 'logout']);
+    Route::get('/auth/me', [AutentikasiController::class, 'me']);
 
     // ========================================
     //  KERANJANG BELANJA
@@ -163,11 +174,11 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     //  BOOKING — Fitur booking user
     // ========================================
     Route::prefix('booking')->middleware('throttle:booking')->group(function () {
-        Route::get('/', [BookingController::class, 'index']);                       // daftar booking user
-        Route::post('/', [BookingController::class, 'store']);                      // buat booking (3x/menit)
-        Route::get('/{id}', [BookingController::class, 'show']);                    // detail booking
-        Route::post('/{id}/upload-bukti', [BookingController::class, 'uploadBukti']); // upload bukti (3x/menit)
-        Route::post('/{id}/cancel', [BookingController::class, 'cancel']);          // batalkan booking
+        Route::get('/', [ReservasiController::class, 'index']);                       // daftar booking user
+        Route::post('/', [ReservasiController::class, 'store']);                      // buat booking (3x/menit)
+        Route::get('/{id}', [ReservasiController::class, 'show']);                    // detail booking
+        Route::post('/{id}/upload-bukti', [ReservasiController::class, 'uploadBukti']); // upload bukti (3x/menit)
+        Route::post('/{id}/cancel', [ReservasiController::class, 'cancel']);          // batalkan booking
     });
 
     // ========================================
@@ -185,10 +196,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     //  RATING
     // ========================================
     Route::middleware('api.verified')->group(function () {
-        Route::get('/rating/saya', [RatingController::class, 'myRatings']);
+        Route::get('/rating/saya', [PenilaianController::class, 'myRatings']);
         // [DISABLED] Alur 2 — rating via dropdown layanan tanpa pesanan. Non-aktif.
         // Route::post('/rating/layanan', [RatingController::class, 'storeByLayanan']);
-        Route::post('/pesanan/{pesanan}/rating', [RatingController::class, 'storeByPesanan']);
+        Route::post('/pesanan/{pesanan}/rating', [PenilaianController::class, 'storeByPesanan']);
     });
 
     // ========================================
@@ -206,17 +217,17 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
         // Manajemen booking (verifikasi, konfirmasi, dll)
         Route::prefix('booking')->group(function () {
-            Route::get('/', [AdminBookingController::class, 'index']);
-            Route::get('/{id}', [AdminBookingController::class, 'show']);
-            Route::post('/{booking}/confirm', [AdminBookingController::class, 'confirm']);
-            Route::post('/{booking}/reject', [AdminBookingController::class, 'reject']);
-            Route::post('/{booking}/start', [AdminBookingController::class, 'start']);
-            Route::post('/{booking}/complete', [AdminBookingController::class, 'complete']);
+            Route::get('/', [AdminReservasiController::class, 'index']);
+            Route::get('/{id}', [AdminReservasiController::class, 'show']);
+            Route::post('/{booking}/confirm', [AdminReservasiController::class, 'confirm']);
+            Route::post('/{booking}/reject', [AdminReservasiController::class, 'reject']);
+            Route::post('/{booking}/start', [AdminReservasiController::class, 'start']);
+            Route::post('/{booking}/complete', [AdminReservasiController::class, 'complete']);
 
             // Verifikasi pembayaran booking
             Route::prefix('payment')->group(function () {
-                Route::post('/{bookingPayment}/verify', [AdminBookingController::class, 'verifyPayment']);
-                Route::post('/{bookingPayment}/reject', [AdminBookingController::class, 'rejectPayment']);
+                Route::post('/{bookingPayment}/verify', [AdminReservasiController::class, 'verifyPayment']);
+                Route::post('/{bookingPayment}/reject', [AdminReservasiController::class, 'rejectPayment']);
             });
         });
 

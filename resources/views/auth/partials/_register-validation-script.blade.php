@@ -109,10 +109,10 @@
         if (chkUpper) toggleCheck(chkUpper, /[A-Z]/.test(value));
         if (chkLower) toggleCheck(chkLower, /[a-z]/.test(value));
 
-        const confirmId = (prefix === 'm' ? 'm_pwd_conf' : 'd_pwd_conf');
+        const confirmId = (prefix === 'm' ? 'm_pwd_conf' : (prefix === 'reg' ? 'reg_pwd_conf' : 'd_pwd_conf'));
         const confirmEl = document.getElementById(confirmId);
         if (confirmEl && confirmEl.value) {
-            valConfirm(confirmEl.value, (prefix === 'm' ? 'm_pwd' : 'd_pwd'), prefix);
+            valConfirm(confirmEl.value, (prefix === 'm' ? 'm_pwd' : (prefix === 'reg' ? 'reg_pwd' : 'd_pwd')), prefix);
         }
     }
 
@@ -153,8 +153,10 @@
     document.addEventListener('DOMContentLoaded', function () {
         const mPwd = document.getElementById('m_pwd');
         const dPwd = document.getElementById('d_pwd');
+        const regPwd = document.getElementById('reg_pwd');
         const mConf = document.getElementById('m_pwd_conf');
         const dConf = document.getElementById('d_pwd_conf');
+        const regConf = document.getElementById('reg_pwd_conf');
 
         if (mPwd && mConf) {
             mPwd.addEventListener('input', function () {
@@ -164,6 +166,11 @@
         if (dPwd && dConf) {
             dPwd.addEventListener('input', function () {
                 if (dConf.value) valConfirm(dConf.value, 'd_pwd', 'd');
+            });
+        }
+        if (regPwd && regConf) {
+            regPwd.addEventListener('input', function () {
+                if (regConf.value) valConfirm(regConf.value, 'reg_pwd', 'reg');
             });
         }
     });

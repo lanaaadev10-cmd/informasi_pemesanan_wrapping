@@ -17,8 +17,11 @@ $modelAliases = [
     'App\Models\Rating' => \App\Models\Penilaian::class,
     'App\Models\RatingMedia' => \App\Models\MediaPenilaian::class,
     'App\Models\FormPesanan' => \App\Models\FormulirPesanan::class,
-    'App\Models\DummyModel' => \App\Models\ModelVirtual::class,
+    'App\Models\BookingProgressPhoto' => \App\Models\FotoProgresReservasi::class,
+    'App\Models\EWarranty' => \App\Models\GaransiElektronik::class,
+    'App\Models\Pelanggan' => \App\Models\User::class,
     'App\Models\Pengguna' => \App\Models\User::class,
+    'App\Models\DummyModel' => \App\Models\ModelVirtual::class,
 ];
 
 // Prepend autoloader agar dieksekusi sebelum autoloader Composer

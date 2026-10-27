@@ -41,9 +41,19 @@ class ModelKendaraan extends Model
         return $this->belongsTo(MerekKendaraan::class, 'brand_id');
     }
 
+    public function merek(): BelongsTo
+    {
+        return $this->brand();
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeAktif($query)
+    {
+        return $this->scopeActive($query);
     }
 
     public function getSizeLabelAttribute(): string
@@ -55,5 +65,10 @@ class ModelKendaraan extends Model
             'xlarge' => 'Ekstra Besar (XL)',
             default  => ucfirst($this->vehicle_size),
         };
+    }
+
+    public function getLabelUkuranAttribute(): string
+    {
+        return $this->getSizeLabelAttribute();
     }
 }

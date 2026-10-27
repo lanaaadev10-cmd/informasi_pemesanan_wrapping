@@ -105,18 +105,16 @@ class KatalogLayananTest extends TestCase
         $response->assertSee('Jasa Pasang Saja');
     }
 
-    public function test_layanan_page_renders_interactive_configurator_and_comparison_modal(): void
+    public function test_layanan_page_renders_portfolio_and_contact_sections(): void
     {
         $this->seed(LayananSeeder::class);
 
         $response = $this->get(route('layanan'));
 
         $response->assertStatus(200);
-        $response->assertSee('wrapping-studio-configurator', false);
-        $response->assertSee('STUDIO ESTIMASI & SIMULASI REAL-TIME');
-        $response->assertSee('modal-comparison-layanan', false);
-        $response->assertSee('Perbandingan: Bawa Bahan Sendiri vs Paket Lengkap Toko');
-        $response->assertSee('cfgSetVehicle', false);
-        $response->assertSee('cfgSetMaterial', false);
+        $response->assertSee('layanan-portfolio-section', false);
+        $response->assertSee('Portfolio');
+        $response->assertSee('layanan-kontak-section', false);
+        $response->assertSee('Contact Me');
     }
 }

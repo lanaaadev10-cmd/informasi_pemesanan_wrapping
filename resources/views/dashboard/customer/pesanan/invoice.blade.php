@@ -33,8 +33,8 @@
     $imageUrl  = $thumbnail ? \App\Helpers\StaticContent::fotoUrl($thumbnail) : null;
 @endphp
 
-    @include('dashboard.customer.pesanan.partials._invoice-styles')
-    @include('dashboard.customer.pesanan.partials._invoice-print-styles')
+    @include('dashboard.customer.pesanan.partials._gaya_invoice')
+    @include('dashboard.customer.pesanan.partials._gaya_cetak_invoice')
 </head>
 <body>
 

@@ -1,50 +1,30 @@
-@extends(auth()->check() ? 'layouts.dashboard-customer' : 'layouts.tampilan-utama')
+@extends('layouts.tampilan-utama')
 
 @section('title', 'Galeri Karya')
 
 @section('content')
-<div class="{{ auth()->check() ? 'max-w-6xl mx-auto py-8 px-4 sm:px-0' : 'max-w-7xl mx-auto px-6 pt-4 pb-12' }}">
-    <style>
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
-
     @php
         use App\Helpers\StaticContent;
-        $accentColor = '#f2994a';
+        $accentColor = '#ea580c';
         $galeriTitle = StaticContent::GALERI_TITLE;
         $galeriDesc  = StaticContent::GALERI_DESC;
         $galeriFilterAll = StaticContent::GALERI_FILTER_ALL;
-        $galeriFilterCategories = [
-            ['slug' => 'matte',   'label' => 'Variasi mobil'],
-            ['slug' => 'glossy',  'label' => 'Kaca film'],
-            ['slug' => 'satin',   'label' => 'Audio mobil'],
-        ];
+        $galeriFilterCategories = StaticContent::galeriCategories();
         $galeriHeroImage = null;
     @endphp
 
-    <style>
-        :root {
-            --accent-color: {{ $accentColor }};
-        }
-    </style>
+    {{-- 1. Bagian Utama / Jumbotron (Full Cinematic Banner) --}}
+    @include('landing.galeri._bagian_utama')
 
-    {{-- 1. Hero / Header Section --}}
-    @include('landing.galeri._hero')
+    {{-- 2. Kontainer Utama Konten Galeri --}}
+    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-8 sm:space-y-10">
+        {{-- Penyaring Kategori --}}
+        @include('landing.galeri._penyaring')
 
-    {{-- 2. Category Filter Pills --}}
-    @include('landing.galeri._filter')
+        {{-- Kisi Galeri --}}
+        @include('landing.galeri._kisi_galeri')
+    </div>
 
-    {{-- 3. Gallery Grid --}}
-    @include('landing.galeri._grid')
-
-</div>
-
-{{-- 5. Filter JavaScript --}}
-@include('landing.galeri._script')
+{{-- 5. Skrip JavaScript Penyaring --}}
+@include('landing.galeri._skrip')
 @endsection

@@ -77,6 +77,11 @@
         @csrf
         
         <input type="hidden" name="keterangan_tambahan" id="hidden_keterangan">
+        @if(!empty($selectedIds))
+            @foreach($selectedIds as $sid)
+                <input type="hidden" name="selected_ids[]" value="{{ $sid }}">
+            @endforeach
+        @endif
 
         <!-- PANEL 2: DATA KENDARAAN (Form Pengisian) -->
         <div id="step-panel-2" class="animate-fade-in max-w-4xl">
@@ -152,12 +157,12 @@
         </div>
 
         <!-- PANEL 3: REVIEW (Step 3) -->
-        @include('dashboard.customer.pesanan.partials._checkout-step-review')
+        @include('dashboard.customer.pesanan.partials._tinjauan_checkout')
 
     </form>
 </div>
 
 <!-- Scripts & Animations -->
-@include('dashboard.customer.pesanan.partials._checkout-scripts')
+@include('dashboard.customer.pesanan.partials._skrip_checkout')
 
 @endsection

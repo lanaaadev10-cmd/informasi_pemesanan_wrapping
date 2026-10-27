@@ -164,17 +164,20 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2.5 flex-wrap">
                                     <span class="font-audiowide text-slate-900 text-sm sm:text-base tracking-wide">{{ $booking->booking_code }}</span>
-                                    @include('customer.booking.partials.status-badge', ['statusValue' => $statusValue])
+                                    @include('customer.booking.partials._lencana_status', ['statusValue' => $statusValue])
                                 </div>
-                                <p class="text-xs sm:text-sm font-montserrat font-bold text-slate-700 mt-1 truncate flex items-center gap-2">
-                                    <span>{{ $booking->service_name_snapshot ?? ($booking->layanan?->nama_layanan ?? 'Proyek Custom Wrapping') }}</span>
-                                    <span class="text-slate-300">&bull;</span>
-                                    <span class="text-[#ff6b00]">{{ $booking->vehicle_name }}</span>
+                                <p class="text-xs sm:text-sm font-montserrat font-bold text-slate-700 mt-1 flex items-center gap-2 flex-wrap">
+                                    <span class="truncate max-w-[200px] sm:max-w-none">{{ $booking->service_name_snapshot ?? ($booking->layanan?->nama_layanan ?? 'Proyek Custom Wrapping') }}</span>
+                                    @if($booking->vehicle_name)
+                                        <span class="text-slate-300 hidden sm:inline">&bull;</span>
+                                        <span class="text-[#ff6b00] truncate max-w-[160px] sm:max-w-none">{{ $booking->vehicle_name }}</span>
+                                    @endif
                                 </p>
                                 <div class="flex items-center gap-3 mt-1.5 flex-wrap font-questrial text-xs text-slate-500">
                                     <span>{{ $booking->booking_date?->translatedFormat('l, d F Y') }}</span>
                                     @if($info && $info[1])
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-montserrat font-bold uppercase tracking-wider bg-orange-50 text-[#ff6b00] border border-orange-200">{{ $info[1] }}</span>
+                                        <span class="text-slate-300">&bull;</span>
+                                        <span class="text-[#ff6b00] font-montserrat font-bold uppercase tracking-wider text-[10px]">{{ $info[1] }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -183,7 +186,7 @@
                         {{-- Aksi --}}
                         <div class="flex items-center justify-between sm:justify-end gap-2.5 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100 shrink-0 flex-wrap">
                             <div class="inline-flex">
-                                @include('customer.booking.partials.payment-pill', ['paymentType' => $booking->payment_type])
+                                @include('customer.booking.partials._lencana_pembayaran', ['paymentType' => $booking->payment_type])
                             </div>
                             @if($statusValue === 'completed')
                                 @if($booking->rating)

@@ -175,6 +175,26 @@ class Reservasi extends Model
         return $this->hasOne(Penilaian::class, 'booking_id', 'id');
     }
 
+    public function progressPhotos(): HasMany
+    {
+        return $this->hasMany(FotoProgresReservasi::class, 'booking_id')->latest();
+    }
+
+    public function fotoProgres(): HasMany
+    {
+        return $this->progressPhotos();
+    }
+
+    public function warranty(): HasOne
+    {
+        return $this->hasOne(GaransiElektronik::class, 'booking_id');
+    }
+
+    public function garansi(): HasOne
+    {
+        return $this->warranty();
+    }
+
     public function getLabelStatusAttribute(): string
     {
         return $this->status->label();
@@ -202,6 +222,11 @@ class Reservasi extends Model
 
     public function getJenisLayananAttribute(): string
     {
+        $name = strtolower($this->service_name_snapshot ?? '');
+        if (str_contains($name, 'jasa') || $this->layanan?->jenis_layanan === 'jasa_pasang') {
+            return 'jasa';
+        }
+
         if (empty($this->layanan_id) || $this->quotation_status !== 'none' || ($this->quotation_amount !== null && (float) $this->quotation_amount > 0)) {
             return 'custom';
         }
@@ -290,11 +315,13 @@ class Reservasi extends Model
         static::saved(function (Reservasi $booking) {
             \Cache::forget("slot_quota_{$booking->booking_date->format('Y-m-d')}");
             \Cache::forget("booking_quota_{$booking->booking_date->format('Y-m-d')}");
+            \App\Services\CacheService::clearStatsCaches();
         });
 
         static::deleted(function (Reservasi $booking) {
             \Cache::forget("slot_quota_{$booking->booking_date->format('Y-m-d')}");
             \Cache::forget("booking_quota_{$booking->booking_date->format('Y-m-d')}");
+            \App\Services\CacheService::clearStatsCaches();
         });
     }
 }

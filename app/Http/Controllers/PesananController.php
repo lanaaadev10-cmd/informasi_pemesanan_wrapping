@@ -71,6 +71,47 @@ class PesananController extends Controller
     }
 
     /**
+     * Tampilkan halaman formulir checkout khusus barang yang dipilih
+     */
+    public function checkoutForm(Request $request)
+    {
+        $keranjang = Keranjang::where('id_user', Auth::id())
+            ->where('status', 'active')
+            ->with('details.layanan')
+            ->first();
+
+        if (!$keranjang || $keranjang->details->isEmpty()) {
+            return redirect()->route('keranjang.index')
+                ->with('toast_error', 'Keranjang belanja Anda masih kosong.');
+        }
+
+        $sessionKey = 'selected_cart_' . Auth::id();
+        $allItemIds = $keranjang->details->pluck('id_detail')->toArray();
+
+        // Ambil ID yang dipilih dari query param atau sesi user
+        if ($request->has('selected')) {
+            $rawSelected = (array) $request->input('selected', []);
+            $selectedIds = array_values(array_intersect($rawSelected, $allItemIds));
+            session([$sessionKey => $selectedIds]);
+        } elseif (session()->has($sessionKey)) {
+            $selectedIds = array_values(array_intersect((array) session($sessionKey, []), $allItemIds));
+        } else {
+            $selectedIds = $allItemIds;
+            session([$sessionKey => $selectedIds]);
+        }
+
+        if (empty($selectedIds)) {
+            return redirect()->route('keranjang.index')
+                ->with('toast_error', 'Silakan pilih minimal satu barang untuk melanjutkan ke checkout.');
+        }
+
+        // Filter detail keranjang hanya untuk barang yang dipilih
+        $keranjang->setRelation('details', $keranjang->details->whereIn('id_detail', $selectedIds)->values());
+
+        return view('dashboard.customer.pesanan.checkout', compact('keranjang', 'selectedIds'));
+    }
+
+    /**
      * LANGKAH 1: User checkout → status: menunggu_konfirmasi_admin
      */
     public function checkout(StorePesananRequest $request)
@@ -91,7 +132,28 @@ class PesananController extends Controller
             ->with('details.layanan')
             ->firstOrFail();
 
-        $totalHarga = $keranjang->details->sum('subtotal');
+        $sessionKey = 'selected_cart_' . Auth::id();
+        $allItemIds = $keranjang->details->pluck('id_detail')->toArray();
+
+        // Ambil selected_ids dari form input atau dari sesi user
+        $rawSelected = $request->input('selected_ids') ?: session($sessionKey, []);
+        $selectedIds = array_values(array_intersect((array) $rawSelected, $allItemIds));
+
+        if (empty($selectedIds)) {
+            return back()->with('toast_error', 'Pilih minimal satu barang untuk melanjutkan ke checkout.')->withInput();
+        }
+
+        // Ambil HANYA item yang dipilih dan benar-benar milik keranjang user
+        $selectedItems = $keranjang->details->whereIn('id_detail', $selectedIds);
+
+        if ($selectedItems->isEmpty()) {
+            return back()->with('toast_error', 'Barang yang dipilih tidak valid atau sudah tidak ada di keranjang.')->withInput();
+        }
+
+        // Hitung ulang total harga di backend secara aman
+        $totalHarga = $selectedItems->sum(function ($item) {
+            return (float) ($item->harga_satuan * $item->jumlah);
+        });
 
         // Buat pesanan dengan status PERTAMA: menunggu konfirmasi admin
         $pesanan = Pesanan::create([
@@ -103,8 +165,8 @@ class PesananController extends Controller
             'total_harga'   => $totalHarga,
         ]);
 
-        // Salin detail keranjang ke detail pesanan
-        foreach ($keranjang->details as $item) {
+        // Salin HANYA detail barang terpilih ke detail pesanan
+        foreach ($selectedItems as $item) {
             DetailPesanan::create([
                 'id_pesanan'     => $pesanan->id_pesanan,
                 'id_paket'       => $item->id_paket,
@@ -160,8 +222,19 @@ class PesananController extends Controller
             'Pesanan #' . $pesanan->kode_pesanan . ' menunggu konfirmasi Anda.'
         );
 
-        // Kosongkan keranjang
-        $keranjang->update(['status' => 'checked_out']);
+        // Hapus HANYA barang terpilih dari detail keranjang
+        $keranjang->details()->whereIn('id_detail', $selectedIds)->delete();
+
+        // Cek apakah masih ada barang tersisa di keranjang
+        $remainingCount = $keranjang->details()->count();
+        if ($remainingCount === 0) {
+            $keranjang->update(['status' => 'checked_out']);
+            session()->forget($sessionKey);
+        } else {
+            // Sisa barang tetap aktif di keranjang user
+            $remainingIds = $keranjang->details()->pluck('id_detail')->toArray();
+            session([$sessionKey => $remainingIds]);
+        }
 
         // Refresh cache kuota kalender
         $slotKuotaService->clearCache($request->jadwal_pengerjaan);

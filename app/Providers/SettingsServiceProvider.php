@@ -30,43 +30,50 @@ class SettingsServiceProvider extends ServiceProvider
             static $cartCounts = [];
 
             if ($profil === null) {
-                $profil = new \stdClass();
+                $profil = \Illuminate\Support\Facades\Cache::remember(\App\Services\CacheService::SITE_PROFIL_SETTINGS, \App\Services\CacheService::TTL_ONE_DAY, function () {
+                    $obj = new \stdClass();
 
-                $settingsClasses = [
-                    CompanySettings::class,
-                    HomepageSettings::class,
-                    LayananSettings::class,
-                    TentangKamiSettings::class,
-                    KatalogSettings::class,
-                    PesananSettings::class,
-                    KeranjangCheckoutSettings::class,
-                    DashboardCustomerSettings::class,
-                    ProfilPageSettings::class,
-                    ContentSettings::class,
-                    LayoutSettings::class,
-                ];
+                    $settingsClasses = [
+                        CompanySettings::class,
+                        HomepageSettings::class,
+                        LayananSettings::class,
+                        TentangKamiSettings::class,
+                        KatalogSettings::class,
+                        PesananSettings::class,
+                        KeranjangCheckoutSettings::class,
+                        DashboardCustomerSettings::class,
+                        ProfilPageSettings::class,
+                        ContentSettings::class,
+                        LayoutSettings::class,
+                    ];
 
-                foreach ($settingsClasses as $settingsClass) {
-                    try {
-                        $settings = app($settingsClass);
-                        foreach ($settings->toArray() as $key => $value) {
-                            $profil->{$key} = $value;
+                    foreach ($settingsClasses as $settingsClass) {
+                        try {
+                            $settings = app($settingsClass);
+                            foreach ($settings->toArray() as $key => $value) {
+                                $obj->{$key} = $value;
+                            }
+                        } catch (\Exception $e) {
+                            // skip if settings not available
                         }
-                    } catch (\Exception $e) {
-                        // skip if settings not available
                     }
-                }
 
-                // Computed properties
-                if (!empty($profil->nomor_telepon)) {
-                    $nomor = preg_replace('/[^0-9]/', '', $profil->nomor_telepon);
-                    if (str_starts_with($nomor, '0')) {
-                        $nomor = '62' . substr($nomor, 1);
+                    // Computed properties
+                    if (!empty($obj->nomor_telepon)) {
+                        $nomor = preg_replace('/[^0-9]/', '', $obj->nomor_telepon);
+                        if (str_starts_with($nomor, '0')) {
+                            $nomor = '62' . substr($nomor, 1);
+                        }
+                        $obj->whatsapp_link = "https://wa.me/{$nomor}";
+                    } else {
+                        $obj->whatsapp_link = \App\Helpers\StaticContent::COMPANY_WHATSAPP;
                     }
-                    $profil->whatsapp_link = "https://wa.me/{$nomor}";
-                } else {
-                    $profil->whatsapp_link = \App\Helpers\StaticContent::COMPANY_WHATSAPP;
-                }
+
+                    $obj->whatsapp_jasa_url = \App\Helpers\WhatsAppHelper::getJasaUrl();
+                    $obj->whatsapp_custom_url = \App\Helpers\WhatsAppHelper::getCustomUrl();
+
+                    return $obj;
+                });
             }
 
             $view->with('profil', $profil);

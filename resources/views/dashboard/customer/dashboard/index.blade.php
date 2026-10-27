@@ -34,37 +34,37 @@
     </div>
 
     {{-- Banner Pengingat Ulasan Pengerjaan Selesai (Jika Ada yang Belum Dinilai) --}}
-    @include('dashboard.customer.dashboard._review-reminder-banner')
+    @include('dashboard.customer.dashboard._pengingat_ulasan')
 
     {{-- ═══════════════════════════════════════════════════════════
          2. WIDGET: BOOKING SAYA YANG AKTIF (FOTO PERTAMA)
             (Ditaruh tepat di atas Aksi Cepat sesuai instruksi)
     ═══════════════════════════════════════════════════════════ --}}
-    @include('dashboard.customer.dashboard._active-booking-widget')
+    @include('dashboard.customer.dashboard._widget_booking_aktif')
 
     {{-- ═══════════════════════════════════════════════════════════
          3. AKSI CEPAT: 12 FITUR LENGKAP USER DASHBOARD
             (Thumb-Zone Grid: 4 Kolom di HP, 6 Kolom di Desktop)
     ═══════════════════════════════════════════════════════════ --}}
-    @include('dashboard.customer.dashboard._quick-action-grid')
+    @include('dashboard.customer.dashboard._menu_aksi_cepat')
 
     {{-- ═══════════════════════════════════════════════════════════
          4. KALENDER KOTAK KETERSEDIAAN SLOT (RESPONSIF SEMUA DEVICE)
             (Format Kotak Bulanan 7 Kolom + Live Quota + Detail Slot)
     ═══════════════════════════════════════════════════════════ --}}
     <div id="booking-calendar" class="scroll-mt-24 w-full">
-        @include('dashboard.customer.dashboard._booking-calendar')
+        @include('dashboard.customer.dashboard._kalender_booking')
     </div>
 
     {{-- ═══════════════════════════════════════════════════════════
          5. PEEK CAROUSEL: PAKET WRAPPING TERPOPULER & FILTER KATEGORI
     ═══════════════════════════════════════════════════════════ --}}
-    @include('dashboard.customer.dashboard._top-picks')
+    @include('dashboard.customer.dashboard._paket_unggulan')
 
     {{-- ═══════════════════════════════════════════════════════════
          6. GALERI PORTOFOLIO KARYA TERBARU
     ═══════════════════════════════════════════════════════════ --}}
-    @include('dashboard.customer.dashboard._gallery-section')
+    @include('dashboard.customer.dashboard._seksi_galeri')
 
 </div>
 @endsection

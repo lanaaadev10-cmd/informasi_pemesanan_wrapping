@@ -158,7 +158,7 @@ class StaticContent
      * - Paths that exist under public/ (e.g. images/layanan/...) → asset($path).
      * - Anything else falls back to storage (admin uploads via Filament).
      */
-    public static function fotoUrl(string $path): string
+    public static function fotoUrl(?string $path): string
     {
         if (! $path) {
             return asset('images/placeholder.svg');
@@ -166,6 +166,13 @@ class StaticContent
         if (str_starts_with($path, 'http')) {
             return $path;
         }
+
+        // Optimasi WebP otomatis: gunakan file .webp jika tersedia di folder public/
+        $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $path);
+        if ($webpPath !== $path && file_exists(public_path($webpPath))) {
+            return asset($webpPath);
+        }
+
         if (file_exists(public_path($path))) {
             return asset($path);
         }
@@ -181,10 +188,10 @@ class StaticContent
      * Used consistently across both /layanan and /katalog-layanan pages.
      */
     const LAYANAN_FALLBACK_IMAGES = [
-        'images/layanan/wrapping-mobil.jpg',
-        'images/layanan/kaca-film.jpg',
-        'images/layanan/audio-head.jpg',
-        'images/layanan/lampu-biled.jpg',
+        'images/layanan/wrapping-mobil.webp',
+        'images/layanan/kaca-film.webp',
+        'images/layanan/audio-head.webp',
+        'images/layanan/lampu-biled.webp',
     ];
 
     const LAYANAN_HERO_TITLE = 'Presisi di Setiap Lapisan.';

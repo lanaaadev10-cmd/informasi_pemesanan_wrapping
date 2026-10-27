@@ -72,7 +72,7 @@
                 <p class="text-xs font-bold uppercase tracking-widest text-[#FF6B00] mb-2">Kode Pendaftaran Booking</p>
                 <div class="flex items-center gap-3 flex-wrap">
                     <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">{{ $booking->booking_code }}</h1>
-                    @include('customer.booking.partials.status-badge', ['statusValue' => $statusVal, 'extra' => 'text-xs px-3 py-1 font-bold uppercase tracking-wider'])
+                    @include('customer.booking.partials._lencana_status', ['statusValue' => $statusVal, 'extra' => 'text-xs px-3 py-1 font-bold uppercase tracking-wider'])
                 </div>
                 <p class="text-xs text-slate-500 mt-2 flex items-center gap-1.5">
                     Diajukan pada {{ $booking->created_at?->translatedFormat('l, d F Y • H:i') }} WIB
@@ -94,9 +94,9 @@
     </div>
 
     {{-- Progress Stepper, Callout, & Form Upload Bukti --}}
-    @include('customer.booking.partials._booking-stepper')
+    @include('customer.booking.partials._tahapan_booking')
 
     {{-- Detail Paket Layanan, Spesifikasi Kendaraan, dan Pembayaran --}}
-    @include('customer.booking.partials._booking-details')
+    @include('customer.booking.partials._detail_booking')
 </div>
 @endsection

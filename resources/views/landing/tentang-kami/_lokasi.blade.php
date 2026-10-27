@@ -1,36 +1,42 @@
 {{-- ============================================
     BAGIAN: Lokasi Kami (Google Maps)
-    Deskripsi: Menampilkan lokasi perusahaan dari field
-    maps_url pada Pengaturan Perusahaan (diisi admin).
-    Section otomatis tersembunyi jika maps_url kosong.
+    Deskripsi: Menampilkan lokasi workshop dari field maps_url
 ============================================ --}}
-@if(!empty($profil->maps_url))
-    <div class="rounded-[32px] border border-white/5 overflow-hidden shadow-2xl z-10 relative bg-[#121212]" data-aos="zoom-in">
-        <div class="p-6 sm:p-8 flex flex-wrap justify-between items-center gap-4" style="background: linear-gradient(135deg, rgba(242, 153, 74, 0.06) 0%, rgba(0, 0, 0, 0) 60%), #0c0c0c;">
-            <div class="flex items-center gap-3.5">
-                <div class="w-11 h-11 rounded-xl bg-[#f2994a]/10 flex items-center justify-center text-[#f2994a]">
-                    <i class="ph-bold ph-map-trifold text-lg"></i>
-                </div>
-                <div>
-                    <h4 class="text-sm font-extrabold text-white">{{ $profil->label_temukan_kami ?? 'Temukan Kami' }}</h4>
-                    <p class="text-[11px] text-gray-500 font-medium mt-0.5">{{ $profil->alamat ?? 'Klik peta untuk navigasi langsung' }}</p>
-                </div>
+@php
+    $mapsEmbed = !empty($profil->maps_url) 
+        ? $profil->maps_url 
+        : 'https://maps.google.com/maps?q=' . urlencode($profil->alamat ?? \App\Helpers\StaticContent::COMPANY_ADDRESS) . '&t=&z=15&ie=UTF8&iwloc=&output=embed';
+@endphp
+<div class="rounded-3xl border border-slate-200/90 overflow-hidden shadow-lg z-10 relative bg-white" data-aos="zoom-in">
+    <div class="p-6 sm:p-8 flex flex-wrap justify-between items-center gap-4 bg-slate-900 text-white">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400">
+                <i class="ph-bold ph-map-pin text-2xl"></i>
             </div>
-            <a href="https://maps.google.com/?q={{ urlencode($profil->alamat ?? '') }}" target="_blank" rel="noopener"
-               class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-xs font-bold text-black bg-gradient-to-r from-[#e28a44] to-[#f2994a] hover:opacity-90 transition-all hover:scale-105 active:scale-95">
-                <i class="ph-bold ph-navigation text-sm"></i> Buka Google Maps
-            </a>
+            <div>
+                <h4 class="text-base sm:text-lg font-bold font-montserrat text-white">
+                    {{ $profil->label_temukan_kami ?? 'Studio Workshop Kami' }}
+                </h4>
+                <p class="text-xs text-slate-400 font-medium mt-0.5">
+                    {{ $profil->alamat ?? \App\Helpers\StaticContent::COMPANY_ADDRESS }}
+                </p>
+            </div>
         </div>
-        <div class="w-full h-[380px] sm:h-[440px] bg-[#0b0b0b]">
-            <iframe
-                src="{{ $profil->maps_url }}"
-                width="100%"
-                height="100%"
-                style="border:0;"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                class="w-full h-full"></iframe>
-        </div>
+        
+        <a href="https://maps.google.com/?q={{ urlencode($profil->alamat ?? \App\Helpers\StaticContent::COMPANY_ADDRESS) }}" target="_blank" rel="noopener"
+           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-montserrat font-medium uppercase tracking-wider text-white bg-gradient-to-r from-[#ea580c] to-[#f97316] hover:brightness-105 transition-all hover:scale-105 active:scale-95 shadow-md shadow-orange-500/20 text-center">
+            <i class="ph-bold ph-navigation-arrow text-sm"></i>
+            <span>Petunjuk Arah Google Maps</span>
+        </a>
     </div>
-@endif
+    <div class="w-full h-[320px] sm:h-[400px] bg-slate-100">
+        <iframe
+            src="{{ $mapsEmbed }}"
+            width="100%"
+            height="100%"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            class="w-full h-full border-0"></iframe>
+    </div>
+</div>

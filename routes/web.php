@@ -10,15 +10,15 @@
 |--------------------------------------------------------------------------
 */
 
-use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AutentikasiAdminController;
+use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\KeranjangController;
-use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\PesananController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ReservasiController;
 use App\Http\Controllers\TestimoniController;
 use App\Http\Controllers\TransaksiController;
@@ -26,10 +26,10 @@ use App\Models\Keranjang;
 use Illuminate\Support\Facades\Route;
 
 /*
- * Middleware throttle:60,5 — Proteksi agar user tidak melakukan
- * refresh berlebihan (maksimal 60 request dalam 5 menit).
+ * Middleware throttle:180,1 — Proteksi agar user tidak melakukan
+ * spam/serangan DoS tanpa menghambat navigasi dan interaksi checkout normal.
  */
-Route::middleware('throttle:60,5')->group(function () {
+Route::middleware('throttle:180,1')->group(function () {
 
     // ====================================================================
     // RUTE PUBLIK — Landing page & halaman yang bisa diakses siapa saja
@@ -46,21 +46,21 @@ Route::middleware('throttle:60,5')->group(function () {
             ->header('Content-Type', 'text/plain; version=0.0.4');
     });
 
-    Route::get('/', [LandingPageController::class, 'index'])->name('home');
-    Route::get('/profil-perusahaan', [LandingPageController::class, 'profile'])->name('profil.perusahaan');
-    Route::get('/tentang-kami', [LandingPageController::class, 'tentangKami'])->name('tentang-kami');
-    Route::get('/layanan', [LandingPageController::class, 'layanan'])->name('layanan');
+    Route::get('/', [BerandaController::class, 'index'])->name('home');
+    Route::get('/profil-perusahaan', [BerandaController::class, 'profile'])->name('profil.perusahaan');
+    Route::get('/tentang-kami', [BerandaController::class, 'tentangKami'])->name('tentang-kami');
+    Route::get('/layanan', [BerandaController::class, 'layanan'])->name('layanan');
     Route::get('/katalog-layanan', [PelangganController::class, 'katalog'])->name('katalog.user');
     Route::get('/galeri-karya', [GaleriController::class, 'index'])->name('galeri.user');
     Route::get('/galeri/{kategori}', [GaleriController::class, 'kategori'])->name('galeri.kategori');
-    Route::get('/kebijakan-privasi', [LandingPageController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
+    Route::get('/kebijakan-privasi', [BerandaController::class, 'kebijakanPrivasi'])->name('kebijakan-privasi');
     Route::get('/testimoni', [TestimoniController::class, 'index'])->name('testimoni.index');
 
     // [REMOVED] KALKULATOR WRAPPING & ESTIMASI BIAYA
     // Fitur dinonaktifkan sesuai permintaan pengguna; URL lama dialihkan ke booking.
     Route::redirect('/kalkulator-wrapping', '/booking/buat')->name('kalkulator.index');
     Route::redirect('/admin/login.', '/admin/login');
-    Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
+    Route::post('/admin/login', [AutentikasiAdminController::class, 'login'])->name('admin.login.submit');
 
     // Logout via GET — solusi jika form POST logout mengalami Error 419
     Route::get('/logout', function () {
@@ -80,7 +80,7 @@ Route::middleware('throttle:60,5')->group(function () {
         Route::middleware('role:admin|user')->group(function () {
             Route::get('/dashboard', [PelangganController::class, 'dashboard'])->name('dashboard');
 
-            Route::controller(ProfileController::class)->group(function () {
+            Route::controller(ProfilController::class)->group(function () {
                 Route::get('/profile', 'edit')->name('profile.edit');
                 Route::patch('/profile', 'update')->name('profile.update');
                 Route::delete('/profile', 'destroy')->name('profile.destroy');
@@ -107,6 +107,7 @@ Route::middleware('throttle:60,5')->group(function () {
         Route::prefix('keranjang')->group(function () {
             Route::get('/', [KeranjangController::class, 'index'])->name('keranjang.index');
             Route::post('/tambah', [KeranjangController::class, 'tambah'])->name('keranjang.tambah');
+            Route::post('/pilihan', [KeranjangController::class, 'simpanPilihan'])->name('keranjang.pilihan');
             Route::patch('/update/{id}', [KeranjangController::class, 'update'])->name('keranjang.update');
             Route::delete('/hapus/{id}', [KeranjangController::class, 'hapus'])->name('keranjang.hapus');
             Route::delete('/kosongkan', [KeranjangController::class, 'kosongkan'])->name('keranjang.kosongkan');
@@ -124,15 +125,8 @@ Route::middleware('throttle:60,5')->group(function () {
                 return redirect()->route('booking.create', $packageId ? ['layanan_id' => $packageId] : []);
             })->name('pesanan.direct-order');
 
-            // Checkout keranjang diarahkan langsung ke Booking Jadwal
-            Route::get('/checkout', function () {
-                $keranjang = Keranjang::where('id_user', auth()->id())
-                    ->where('status', 'active')
-                    ->first();
-                $packageId = $keranjang?->details?->first()?->id_paket;
-
-                return redirect()->route('booking.create', $packageId ? ['layanan_id' => $packageId] : []);
-            })->name('pesanan.checkout.form');
+            // Checkout keranjang dengan barang terpilih
+            Route::get('/checkout', [PesananController::class, 'checkoutForm'])->name('pesanan.checkout.form');
 
             Route::post('/checkout', [PesananController::class, 'checkout'])->name('pesanan.checkout.store');
             Route::get('/{id}', [PesananController::class, 'show'])->name('pesanan.show');
@@ -151,12 +145,13 @@ Route::middleware('throttle:60,5')->group(function () {
             Route::get('/', [ReservasiController::class, 'index'])->name('index');
             Route::get('/buat', [ReservasiController::class, 'create'])->name('create');
             Route::post('/', [ReservasiController::class, 'store'])
-                ->middleware('throttle:3,1')
+                ->middleware('throttle:15,1')
                 ->name('store');
             Route::get('/{id}', [ReservasiController::class, 'show'])->name('show');
             Route::get('/{id}/invoice', [ReservasiController::class, 'invoice'])->name('invoice');
+            Route::get('/{id}/garansi', [ReservasiController::class, 'garansi'])->name('garansi');
             Route::post('/{id}/upload-bukti', [ReservasiController::class, 'uploadBukti'])
-                ->middleware('throttle:3,1')
+                ->middleware('throttle:10,1')
                 ->name('upload-bukti');
             Route::post('/{id}/cancel', [ReservasiController::class, 'cancel'])->name('cancel');
 

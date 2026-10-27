@@ -39,8 +39,18 @@ class MerekKendaraan extends Model
         return $this->hasMany(ModelKendaraan::class, 'brand_id');
     }
 
+    public function modelKendaraan(): HasMany
+    {
+        return $this->models();
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeAktif($query)
+    {
+        return $this->scopeActive($query);
     }
 }

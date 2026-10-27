@@ -19,7 +19,7 @@
         Semua gaya kustom dashboard ada di: resources/css/dashboard.css
         Jangan tambahkan CSS inline baru di sini.
     -->
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Questrial&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Montserrat:wght@400;500;600;700;800&family=Questrial&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -27,7 +27,7 @@
 
     <div class="min-h-screen flex flex-col bg-white">
         {{-- Top Navigation Bar --}}
-        @include('layouts.customer._topbar')
+        @include('layouts.customer._bilah_atas')
 
         {{-- Contextual Back Bar: muncul di semua halaman kecuali beranda --}}
         @if(!Request::routeIs('dashboard'))
@@ -75,14 +75,14 @@
         @endif
 
         {{-- Main Page Content --}}
-        <main class="p-4 sm:p-6 md:p-8 flex-grow pb-24 lg:pb-8">
+        <main class="px-[5px] py-4 sm:p-6 md:p-8 flex-grow pb-24 lg:pb-8">
             @yield('content')
         </main>
         
         <!-- Footer matching light design -->
-        <footer class="p-6 md:p-8 border-t border-slate-200 bg-white text-[11px] font-questrial text-slate-500">
+        <footer class="p-6 md:p-8 pb-24 lg:pb-8 border-t border-slate-200 bg-white text-[11px] font-questrial text-slate-500">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-                <p>{{ $profil->footer_copyright ?? '&copy; ' . date('Y') . ' ' . ($profil->nama_perusahaan ?? 'Dantie Stiker') . '. All rights reserved.' }}</p>
+                <p>{!! $profil->footer_copyright ?? ('&copy; ' . date('Y') . ' ' . ($profil->nama_perusahaan ?? 'Dantie Stiker') . '. All rights reserved.') !!}</p>
                 <div class="flex items-center gap-6 font-montserrat text-[11px] font-medium text-slate-500">
                     <a href="#" class="hover:text-[#FF6B00] transition-colors">Support</a>
                     <a href="#" class="hover:text-[#FF6B00] transition-colors">Privacy Policy</a>
@@ -93,14 +93,16 @@
         </footer>
     </div>
 
-    {{-- Bottom Navigation Bar for Mobile --}}
-    @include('layouts.customer._bottom-nav')
+    {{-- Bottom Navigation Bar for Mobile (Disembunyikan pada checkout wizard karena ada floating action bar khusus) --}}
+    @if(!Request::routeIs('booking.create') && !Request::routeIs('pesanan.checkout*'))
+        @include('layouts.customer._navigasi_bawah')
+    @endif
 
     {{-- Notification System & Floating Toasts --}}
-    @include('layouts.customer._notification-scripts')
+    @include('layouts.customer._skrip_notifikasi')
 
     {{-- Rating & Ulasan Modal Global --}}
-    @include('dashboard.customer.partials._rating-modal')
+    @include('dashboard.customer.partials._modal_ulasan')
 
     @stack('scripts')
 </body>

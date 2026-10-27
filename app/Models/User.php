@@ -72,7 +72,12 @@ class User extends Authenticatable implements FilamentUser
 
     public function bookings(): HasMany
     {
-        return $this->hasMany(Booking::class, 'user_id');
+        return $this->hasMany(Reservasi::class, 'user_id');
+    }
+
+    public function reservasis(): HasMany
+    {
+        return $this->bookings();
     }
 
     public function pesanans(): HasMany

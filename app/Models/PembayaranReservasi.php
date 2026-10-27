@@ -60,13 +60,28 @@ class PembayaranReservasi extends Model
         return $this->status === 'pending';
     }
 
+    public function apakahMenunggu(): bool
+    {
+        return $this->isPending();
+    }
+
     public function isVerified(): bool
     {
         return in_array($this->status, ['verified', 'approved']);
     }
 
+    public function apakahTerverifikasi(): bool
+    {
+        return $this->isVerified();
+    }
+
     public function isRejected(): bool
     {
         return $this->status === 'rejected';
+    }
+
+    public function apakahDitolak(): bool
+    {
+        return $this->isRejected();
     }
 }

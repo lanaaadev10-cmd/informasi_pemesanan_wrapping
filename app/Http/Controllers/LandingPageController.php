@@ -16,8 +16,21 @@ class LandingPageController extends Controller
 {
     public function index()
     {
-        $galeris = Galeri::all();
-        return view('landing.beranda.index', compact('galeris'));
+        $galeris = \App\Services\CacheService::getLandingGaleris(6);
+        $layanans = \App\Services\CacheService::getSiteLayanans();
+        $ratingSummary = TestimoniController::dataCache()['summary'];
+        
+        $stats = \App\Services\CacheService::getLandingStats();
+        $minHarga = $stats['minHarga'];
+        $totalKlien = $stats['totalKlien'];
+
+        return view('landing.beranda.index', compact(
+            'galeris',
+            'layanans',
+            'ratingSummary',
+            'minHarga',
+            'totalKlien'
+        ));
     }
 
     public function profile()
@@ -36,10 +49,11 @@ class LandingPageController extends Controller
             return redirect()->route('katalog.user');
         }
 
-        $layanans = Layanan::where('is_active', true)->get();
+        $layanans = \App\Services\CacheService::getSiteLayanans();
+        $galeris = \App\Services\CacheService::getLandingGaleris(4);
         $ratingSummary = \App\Http\Controllers\TestimoniController::summaryPerLayananKeyed();
 
-        return view('landing.layanan.index', compact('layanans', 'ratingSummary'));
+        return view('landing.layanan.index', compact('layanans', 'ratingSummary', 'galeris'));
     }
 
     public function kebijakanPrivasi()

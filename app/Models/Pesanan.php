@@ -176,4 +176,14 @@ class Pesanan extends Model
     //  Lihat: app/Events/ & app/Listeners/ & EventServiceProvider.php
     //  Alasan: Mencegah duplikasi notifikasi dari model booted + service events
     // =============================================
+
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            \App\Services\CacheService::clearStatsCaches();
+        });
+        static::deleted(function () {
+            \App\Services\CacheService::clearStatsCaches();
+        });
+    }
 }

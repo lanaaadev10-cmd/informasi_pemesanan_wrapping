@@ -1,3 +1,16 @@
+{{--
+|--------------------------------------------------------------------------
+| Layout Fallback / Breeze Scaffolding (layouts/app.blade.php)
+|--------------------------------------------------------------------------
+| Catatan Arsitektur:
+| Halaman utama pelanggan menggunakan:
+| 1. layouts.tampilan-utama   -> Untuk seluruh landing page publik
+| 2. layouts.dashboard-customer -> Untuk portal customer (dashboard, booking, pesanan, transaksi)
+| 3. layouts.guest            -> Untuk alur autentikasi (login, register, reset)
+|
+| File ini dipertahankan sebagai fallback komponen <x-app-layout> bawaan Breeze.
+|--------------------------------------------------------------------------
+--}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>

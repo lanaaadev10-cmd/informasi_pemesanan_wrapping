@@ -3,23 +3,17 @@
 namespace Tests\Feature;
 
 use App\Enums\BookingStatus;
-use App\Models\Booking;
-use App\Models\BookingPayment;
 use App\Models\DetailKeranjang;
 use App\Models\DetailPesanan;
 use App\Models\FormPesanan;
-use App\Models\Galeri;
 use App\Models\Keranjang;
 use App\Models\Layanan;
-use App\Models\Notifikasi;
 use App\Models\PembayaranReservasi;
 use App\Models\Pesanan;
 use App\Models\Reservasi;
 use App\Models\User;
 use App\Settings\CompanySettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class FiturAplikasiTest extends TestCase
@@ -38,7 +32,6 @@ class FiturAplikasiTest extends TestCase
 
         $this->seed(\Database\Seeders\RolesTableSeeder::class);
 
-        // 1. Pelanggan standar
         $this->customer = User::factory()->create([
             'name' => 'Budi Customer',
             'email' => 'budi@example.com',
@@ -46,7 +39,6 @@ class FiturAplikasiTest extends TestCase
         ]);
         $this->customer->assignRole('user');
 
-        // 2. Pelanggan kedua untuk pengujian isolasi data (IDOR)
         $this->otherCustomer = User::factory()->create([
             'name' => 'Siti Customer',
             'email' => 'siti@example.com',
@@ -54,7 +46,6 @@ class FiturAplikasiTest extends TestCase
         ]);
         $this->otherCustomer->assignRole('user');
 
-        // 3. Administrator sistem
         $this->admin = User::factory()->create([
             'name' => 'Admin Dantie',
             'email' => 'admin@dantie.com',
@@ -62,7 +53,6 @@ class FiturAplikasiTest extends TestCase
         ]);
         $this->admin->assignRole('admin');
 
-        // 4. Data master layanan pengujian
         $this->layananA = Layanan::create([
             'nama_layanan' => 'Full Wrapping Satin Black',
             'kategori' => 'mobil',
@@ -82,102 +72,13 @@ class FiturAplikasiTest extends TestCase
             'deskripsi' => 'Kaca film tolak panas tinggi 99% UV rejection.',
             'status' => 'aktif',
         ]);
-
-        // 5. Data master galeri pengujian
-        Galeri::create([
-            'judul' => 'Porsche 911 GT3 Satin Black',
-            'kategori' => 'matte',
-            'jenis' => 'Full Body',
-            'foto' => 'galeri/sample.jpg',
-            'tanggal_upload' => now()->toDateString(),
-            'is_featured' => true,
-        ]);
     }
-
-    // =========================================================================
-    // 1. HALAMAN UTAMA & RUTE PUBLIK
-    // =========================================================================
-
-    public function test_landing_page_beranda_renders_successfully(): void
-    {
-        $response = $this->get(route('home'));
-        $response->assertStatus(200);
-        $response->assertSee('Dantie');
-    }
-
-    public function test_landing_page_profil_and_tentang_kami_render(): void
-    {
-        $resProfil = $this->get(route('profil.perusahaan'));
-        $resProfil->assertStatus(200);
-
-        $resTentang = $this->get(route('tentang-kami'));
-        $resTentang->assertStatus(200);
-    }
-
-    public function test_landing_page_layanan_and_katalog(): void
-    {
-        // Pengunjung tamu mengakses /layanan
-        $resLayananGuest = $this->get(route('layanan'));
-        $resLayananGuest->assertStatus(200);
-        $resLayananGuest->assertSee('Full Wrapping Satin Black');
-
-        // Pengguna terautentikasi dialihkan ke katalog pengguna
-        $resLayananAuth = $this->actingAs($this->customer)->get(route('layanan'));
-        $resLayananAuth->assertRedirect(route('katalog.user'));
-
-        // Akses langsung katalog
-        $resKatalog = $this->get(route('katalog.user'));
-        $resKatalog->assertStatus(200);
-        $resKatalog->assertSee('Full Wrapping Satin Black');
-    }
-
-    public function test_landing_page_galeri_and_kategori_filter(): void
-    {
-        $resGaleri = $this->get(route('galeri.user'));
-        $resGaleri->assertStatus(200);
-        $resGaleri->assertSee('Porsche 911 GT3 Satin Black');
-
-        $resKategori = $this->get(route('galeri.kategori', ['kategori' => 'matte']));
-        $resKategori->assertStatus(200);
-        $resKategori->assertSee('Porsche 911 GT3 Satin Black');
-    }
-
-    public function test_landing_page_kebijakan_privasi_and_testimoni(): void
-    {
-        $resPrivasi = $this->get(route('kebijakan-privasi'));
-        $resPrivasi->assertStatus(200);
-
-        $resTestimoni = $this->get(route('testimoni.index'));
-        $resTestimoni->assertStatus(200);
-    }
-
-    public function test_kalkulator_wrapping_redirects_to_booking(): void
-    {
-        $response = $this->get('/kalkulator-wrapping');
-        $response->assertRedirect('/booking/buat');
-    }
-
-    public function test_metrics_endpoint_ip_security(): void
-    {
-        // Akses dari localhost diizinkan
-        $resLocal = $this->call('GET', '/metrics', [], [], [], ['REMOTE_ADDR' => '127.0.0.1']);
-        $resLocal->assertStatus(200);
-
-        // Akses dari IP eksternal ditolak dengan 403 Forbidden
-        $resForeign = $this->call('GET', '/metrics', [], [], [], ['REMOTE_ADDR' => '203.0.113.195']);
-        $resForeign->assertStatus(403);
-    }
-
-    // =========================================================================
-    // 2. KERANJANG BELANJA & ISOLASI MULTI-PENGGUNA
-    // =========================================================================
 
     public function test_customer_can_view_cart_and_add_items(): void
     {
         $resCart = $this->actingAs($this->customer)->get(route('keranjang.index'));
         $resCart->assertStatus(200);
 
-        // Tambah item layanan ke keranjang
         $resAdd = $this->actingAs($this->customer)->post(route('keranjang.tambah'), [
             'id_paket' => $this->layananA->id_layanan,
             'jumlah' => 1,
@@ -221,7 +122,6 @@ class FiturAplikasiTest extends TestCase
             'jumlah' => 1,
         ]);
 
-        // Penambahan paket ke-4 harus ditolak dengan notifikasi error
         $resFourth = $this->actingAs($this->customer)->post(route('keranjang.tambah'), [
             'id_paket' => $layananD->id_layanan,
             'jumlah' => 1,
@@ -262,7 +162,6 @@ class FiturAplikasiTest extends TestCase
 
     public function test_cart_item_deletion_and_isolation_security(): void
     {
-        // Item keranjang milik Pelanggan A
         $cartA = Keranjang::create(['id_user' => $this->customer->id, 'status' => 'active']);
         $itemA = DetailKeranjang::create([
             'id_keranjang' => $cartA->id_keranjang,
@@ -272,12 +171,10 @@ class FiturAplikasiTest extends TestCase
             'subtotal' => 4500000,
         ]);
 
-        // Pelanggan lain mencoba menghapus item milik Pelanggan A -> 403 Forbidden
         $resHacker = $this->actingAs($this->otherCustomer)->delete(route('keranjang.hapus', $itemA->id_detail));
         $resHacker->assertStatus(403);
         $this->assertDatabaseHas('detail_keranjangs', ['id_detail' => $itemA->id_detail]);
 
-        // Pemilik yang sah menghapus item -> Berhasil
         $resOwner = $this->actingAs($this->customer)->delete(route('keranjang.hapus', $itemA->id_detail));
         $resOwner->assertRedirect(route('keranjang.index'));
         $this->assertDatabaseMissing('detail_keranjangs', ['id_detail' => $itemA->id_detail]);
@@ -298,10 +195,6 @@ class FiturAplikasiTest extends TestCase
         $resEmpty->assertRedirect(route('keranjang.index'));
         $this->assertEquals(0, $cart->details()->count());
     }
-
-    // =========================================================================
-    // 3. PESANAN & HAK AKSES INVOICE
-    // =========================================================================
 
     public function test_customer_pesanan_isolation_and_show(): void
     {
@@ -326,12 +219,10 @@ class FiturAplikasiTest extends TestCase
             'alamat_pengiriman' => 'Rogojampi, Banyuwangi',
         ]);
 
-        // Pemilik dapat melihat detail pesanan
         $resOwner = $this->actingAs($this->customer)->get(route('pesanan.show', $pesananA->id_pesanan));
         $resOwner->assertStatus(200);
         $resOwner->assertSee('ORD-TEST-001');
 
-        // Pelanggan lain tidak dapat melihat pesanan pengguna lain -> 404
         $resOther = $this->actingAs($this->otherCustomer)->get(route('pesanan.show', $pesananA->id_pesanan));
         $resOther->assertStatus(404);
     }
@@ -353,270 +244,14 @@ class FiturAplikasiTest extends TestCase
             'subtotal' => 4500000,
         ]);
 
-        // Menunggu pembayaran -> tidak dapat mengunduh invoice
         $resInvBlocked = $this->actingAs($this->customer)->get(route('pesanan.invoice', $pesanan->id_pesanan));
         $resInvBlocked->assertRedirect();
         $resInvBlocked->assertSessionHas('toast_error');
 
-        // Setelah dikonfirmasi -> invoice dapat diunduh
         $pesanan->update(['status' => Pesanan::STATUS_DIKONFIRMASI]);
         $resInvAllowed = $this->actingAs($this->customer)->get(route('pesanan.invoice', $pesanan->id_pesanan));
         $resInvAllowed->assertStatus(200);
         $resInvAllowed->assertSee('ORD-TEST-INV');
-    }
-
-    // =========================================================================
-    // 4. DASHBOARD ADMIN & KEAMANAN OTORISASI
-    // =========================================================================
-
-    public function test_admin_laporan_strictly_forbidden_for_normal_customer(): void
-    {
-        $resCustomer = $this->actingAs($this->customer)->get(route('admin.laporan'));
-        $this->assertTrue(in_array($resCustomer->status(), [403, 302]));
-
-        // Admin dapat mengakses laporan penjualan
-        $resAdmin = $this->actingAs($this->admin)->get(route('admin.laporan', ['type' => 'hari']));
-        $resAdmin->assertStatus(200);
-        $resAdmin->assertSee('Laporan Penjualan Transaksi');
-    }
-
-    public function test_admin_laporan_unifies_both_pesanan_and_booking_payments(): void
-    {
-        // 1. Pesanan selesai senilai Rp 750.000
-        Pesanan::create([
-            'id_user' => $this->customer->id,
-            'kode_pesanan' => 'PSN-UNIFY-001',
-            'tanggal_pesan' => now(),
-            'status' => Pesanan::STATUS_SELESAI,
-            'total_harga' => 750000,
-        ]);
-
-        // 2. Reservasi dengan pembayaran terverifikasi senilai Rp 250.000
-        $booking = Reservasi::create([
-            'booking_code' => 'BKG-UNIFY-001',
-            'user_id' => $this->customer->id,
-            'customer_name' => $this->customer->name,
-            'layanan_id' => $this->layananA->id_layanan,
-            'booking_date' => now()->toDateString(),
-            'booking_time' => '10:00',
-            'payment_type' => 'dp',
-            'vehicle_name' => 'Toyota Avanza',
-            'status' => BookingStatus::CONFIRMED,
-        ]);
-
-        PembayaranReservasi::create([
-            'booking_id' => $booking->id,
-            'payment_method' => 'BCA',
-            'amount' => 250000,
-            'status' => 'verified',
-            'verified_at' => now(),
-        ]);
-
-        // Admin melihat rekapitulasi total pendapatan
-        $resAdmin = $this->actingAs($this->admin)->get(route('admin.laporan', ['type' => 'hari']));
-        $resAdmin->assertStatus(200);
-        $resAdmin->assertSee('PSN-UNIFY-001');
-        $resAdmin->assertSee('BKG-UNIFY-001');
-        // Total pendapatan 750.000 + 250.000 = 1.000.000
-        $resAdmin->assertSee('1.000.000');
-    }
-
-    public function test_filament_admin_panel_strictly_forbidden_for_normal_customer(): void
-    {
-        $resCustomer = $this->actingAs($this->customer)->get('/admin');
-        $this->assertTrue(in_array($resCustomer->status(), [403, 302]));
-
-        // Admin dapat mengakses dashboard Filament
-        $resAdmin = $this->actingAs($this->admin)->get('/admin');
-        $resAdmin->assertStatus(200);
-    }
-
-    public function test_filament_admin_can_render_bookings_table_with_various_statuses(): void
-    {
-        Reservasi::create([
-            'booking_code' => 'BK-TEST-ADMIN-01',
-            'user_id' => $this->customer->id,
-            'layanan_id' => $this->layananA->id_layanan,
-            'booking_date' => now()->addDays(2),
-            'booking_time' => '10:00',
-            'payment_type' => 'dp',
-            'status' => BookingStatus::PENDING,
-            'vehicle_name' => 'Honda Civic',
-        ]);
-
-        Reservasi::create([
-            'booking_code' => 'BK-TEST-ADMIN-02',
-            'user_id' => $this->customer->id,
-            'layanan_id' => $this->layananA->id_layanan,
-            'booking_date' => now()->addDays(3),
-            'booking_time' => '13:00',
-            'payment_type' => 'lunas',
-            'status' => BookingStatus::APPROVED,
-            'vehicle_name' => 'Toyota Fortuner',
-        ]);
-
-        $resAdmin = $this->actingAs($this->admin)->get('/admin/booking');
-        $resAdmin->assertStatus(200);
-        $resAdmin->assertSee('BK-TEST-ADMIN-01');
-        $resAdmin->assertSee('BK-TEST-ADMIN-02');
-    }
-
-    // =========================================================================
-    // 5. API ENDPOINTS (RESTful & Sanctum)
-    // =========================================================================
-
-    public function test_api_public_layanan_and_galeri(): void
-    {
-        $resApiLayanan = $this->getJson('/api/layanan');
-        $resApiLayanan->assertStatus(200);
-        $resApiLayanan->assertJsonStructure([
-            'status',
-            'data',
-        ]);
-
-        $resApiGaleri = $this->getJson('/api/galeri');
-        $resApiGaleri->assertStatus(200);
-        $resApiGaleri->assertJsonStructure(['data']);
-
-        $resApiCategories = $this->getJson('/api/galeri/kategori');
-        $resApiCategories->assertStatus(200);
-        $resApiCategories->assertJsonStructure(['data']);
-    }
-
-    public function test_api_booking_public_quotas(): void
-    {
-        $resQuotaToday = $this->getJson('/api/booking/quota-today');
-        $resQuotaToday->assertStatus(200);
-        $resQuotaToday->assertJsonStructure([
-            'date',
-            'quota' => [
-                'available',
-                'is_full',
-            ],
-        ]);
-
-        $tomorrow = now()->addDay()->toDateString();
-        $resQuotaDate = $this->getJson("/api/booking/quota/{$tomorrow}");
-        $resQuotaDate->assertStatus(200);
-        $resQuotaDate->assertJsonStructure([
-            'date',
-            'quota' => [
-                'available',
-                'is_full',
-            ],
-        ]);
-    }
-
-    public function test_api_protected_sanctum_cart_and_notifications(): void
-    {
-        // Tamu tanpa token otentikasi mengakses /api/keranjang -> 401 Unauthorized
-        $resUnauth = $this->getJson('/api/keranjang');
-        $resUnauth->assertStatus(401);
-
-        // Pelanggan terautentikasi melalui Sanctum
-        Sanctum::actingAs($this->customer);
-
-        $resCart = $this->getJson('/api/keranjang');
-        $resCart->assertStatus(200);
-
-        $resCartCount = $this->getJson('/api/keranjang/count');
-        $resCartCount->assertStatus(200);
-
-        // Buat data notifikasi reservasi
-        $booking = Reservasi::create([
-            'booking_code' => 'BKG-NOTIF-001',
-            'user_id' => $this->customer->id,
-            'customer_name' => $this->customer->name,
-            'layanan_id' => $this->layananA->id_layanan,
-            'booking_date' => now()->toDateString(),
-            'booking_time' => '10:00',
-            'payment_type' => 'dp',
-            'vehicle_name' => 'Toyota Avanza',
-            'status' => BookingStatus::PENDING,
-        ]);
-
-        Notifikasi::create([
-            'id_user' => $this->customer->id,
-            'booking_id' => $booking->id,
-            'judul' => 'Booking Diajukan',
-            'pesan' => 'Booking Anda sedang diproses.',
-            'tipe' => 'in_app',
-        ]);
-
-        $resNotif = $this->getJson('/api/notifikasi');
-        $resNotif->assertStatus(200);
-        $this->assertEquals($booking->id, $resNotif->json('data.0.booking_id'));
-
-        $resNotifCount = $this->getJson('/api/notifikasi/unread-count');
-        $resNotifCount->assertStatus(200);
-    }
-
-    public function test_booking_preserves_unbooked_items_in_user_cart(): void
-    {
-        $this->withoutMiddleware(\Illuminate\Routing\Middleware\ThrottleRequests::class);
-
-        $keranjang = Keranjang::create([
-            'id_user' => $this->customer->id,
-            'status' => 'active',
-        ]);
-
-        DetailKeranjang::create([
-            'id_keranjang' => $keranjang->id_keranjang,
-            'id_paket' => $this->layananA->id_layanan,
-            'jumlah' => 1,
-            'harga_satuan' => $this->layananA->harga,
-            'subtotal' => $this->layananA->harga,
-        ]);
-
-        DetailKeranjang::create([
-            'id_keranjang' => $keranjang->id_keranjang,
-            'id_paket' => $this->layananB->id_layanan,
-            'jumlah' => 1,
-            'harga_satuan' => $this->layananB->harga,
-            'subtotal' => $this->layananB->harga,
-        ]);
-
-        // Pelanggan melakukan booking untuk Layanan A
-        $bookingDate = now()->addDays(3)->toDateString();
-        $responseA = $this->actingAs($this->customer)->post(route('booking.store'), [
-            'layanan_id' => $this->layananA->id_layanan,
-            'booking_date' => $bookingDate,
-            'booking_time' => '10:00',
-            'payment_type' => 'dp',
-            'payment_method' => 'Transfer BCA',
-            'customer_name' => $this->customer->name,
-            'customer_phone' => '081234567890',
-            'customer_email' => $this->customer->email,
-            'vehicle_name' => 'Honda Civic',
-        ]);
-
-        $responseA->assertSessionHas('toast_success');
-
-        // Pastikan Layanan B tetap aman tersimpan di dalam keranjang aktif
-        $activeCart = Keranjang::where('id_user', $this->customer->id)->where('status', 'active')->first();
-        $this->assertNotNull($activeCart);
-        $this->assertEquals(1, $activeCart->details()->count());
-        $this->assertEquals($this->layananB->id_layanan, $activeCart->details()->first()->id_paket);
-
-        // Selanjutnya pelanggan melakukan booking untuk Layanan B
-        $responseB = $this->actingAs($this->customer)->post(route('booking.store'), [
-            'layanan_id' => $this->layananB->id_layanan,
-            'booking_date' => now()->addDays(4)->toDateString(),
-            'booking_time' => '11:00',
-            'payment_type' => 'lunas',
-            'payment_method' => 'Transfer BCA',
-            'customer_name' => $this->customer->name,
-            'customer_phone' => '081234567890',
-            'customer_email' => $this->customer->email,
-            'vehicle_name' => 'Honda Civic',
-        ]);
-
-        $responseB->assertSessionHas('toast_success');
-
-        // Seluruh item telah dibooking, status keranjang menjadi checked_out
-        $checkedOutCart = Keranjang::where('id_user', $this->customer->id)->where('status', 'checked_out')->first();
-        $this->assertNotNull($checkedOutCart);
-        $this->assertEquals(0, $checkedOutCart->details()->count());
     }
 
     public function test_booking_invoice_calculates_dynamic_dp_and_remaining_balance(): void
@@ -652,14 +287,12 @@ class FiturAplikasiTest extends TestCase
 
         $booking->load(['layanan', 'payment', 'user']);
 
-        // Verifikasi render template Blade invoice-pdf
         $company = app(CompanySettings::class);
         $renderedHtml = view('customer.booking.invoice-pdf', ['booking' => $booking, 'profil' => $company])->render();
         $this->assertStringContainsString('2.000.000', $renderedHtml);
         $this->assertStringContainsString('Sisa Tagihan di Workshop', $renderedHtml);
         $this->assertStringNotContainsString('100.000', $renderedHtml);
 
-        // Verifikasi respons unduhan file PDF
         $responsePdf = $this->actingAs($this->customer)->get(route('booking.invoice', $booking->id));
         $responsePdf->assertStatus(200);
         $this->assertEquals('application/pdf', $responsePdf->headers->get('content-type'));

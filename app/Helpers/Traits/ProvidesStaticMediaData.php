@@ -11,12 +11,12 @@ trait ProvidesStaticMediaData
      * Gallery image URL mapping — local placeholder path → local image asset.
      */
     private static array $galeriFotoMap = [
-        'images/galeri/tesla-model-s.jpg'     => '/images/tesla_model_s.png',
-        'images/galeri/range-rover-sport.jpg' => '/images/hero_racing_car.jpg',
-        'images/galeri/ferrari-f8.jpg'        => '/images/banner_exclusive_car.jpg',
-        'images/galeri/porsche-911.jpg'       => '/images/hero_car.png',
-        'images/galeri/mercedes-s-class.jpg'  => '/images/banner_exclusive_car.jpg',
-        'images/galeri/lamborghini-urus.jpg'  => '/images/hero_racing_car.jpg',
+        'images/galeri/tesla-model-s.jpg'     => '/images/tesla_model_s.webp',
+        'images/galeri/range-rover-sport.jpg' => '/images/hero_racing_car.webp',
+        'images/galeri/ferrari-f8.jpg'        => '/images/banner_exclusive_car.webp',
+        'images/galeri/porsche-911.jpg'       => '/images/hero_car.webp',
+        'images/galeri/mercedes-s-class.jpg'  => '/images/banner_exclusive_car.webp',
+        'images/galeri/lamborghini-urus.jpg'  => '/images/hero_racing_car.webp',
     ];
 
     /**
@@ -26,7 +26,7 @@ trait ProvidesStaticMediaData
     {
         return self::$galeriFotoMap[$path]
             ?? self::$galeriFotoMap['images/galeri/tesla-model-s.jpg']
-            ?? '/images/hero_car.png';
+            ?? '/images/hero_car.webp';
     }
 
     /**
@@ -100,24 +100,32 @@ trait ProvidesStaticMediaData
     {
         return [
             [
-                'nama'   => 'Silahkan isi nama anda',
-                'posisi' => 'Owner & Founder',
-                'foto'   => 'public/images/team/Owner&Founder.jpg',
+                'nama'        => 'Dantie',
+                'posisi'      => 'Founder & Master Installer',
+                'foto'        => 'images/team/dantie.webp',
+                'pengalaman'  => '10+ Tahun',
+                'spesialisasi'=> 'Full Body Wrap & PPF',
             ],
             [
-                'nama'   => '...',
-                'posisi' => 'Admin & Content Creator',
-                'foto'   => 'public/images/team/Admin&ContentCreator.jpg',
+                'nama'        => 'Rian',
+                'posisi'      => 'Admin & Creative Director',
+                'foto'        => 'images/team/rian.webp',
+                'pengalaman'  => '5+ Tahun',
+                'spesialisasi'=> 'Customer Care & Consultation',
             ],
             [
-                'nama'   => '...',
-                'posisi' => 'Team Wrapping',
-                'foto'   => 'public/images/team/TeamWrapping.jpg',
+                'nama'        => 'Dimas',
+                'posisi'      => 'Senior Wrapping Specialist',
+                'foto'        => 'images/team/dimas.webp',
+                'pengalaman'  => '7+ Tahun',
+                'spesialisasi'=> 'Precision Knifeless Cutting',
             ],
             [
-                'nama'   => '....',
-                'posisi' => 'Team Wrapping',
-                'foto'   => 'public/images/team/TeamWrapping.jpg',
+                'nama'        => 'Aris',
+                'posisi'      => 'Quality Control & Finishing',
+                'foto'        => 'images/team/aris.webp',
+                'pengalaman'  => '6+ Tahun',
+                'spesialisasi'=> 'Post-Heating & Edge Seal',
             ],
         ];
     }

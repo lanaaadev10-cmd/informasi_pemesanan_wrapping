@@ -65,19 +65,13 @@ class Layanan extends Model
     protected static function booted()
     {
         static::saved(function () {
-            Cache::forget('site_layanans');
-            Cache::forget('katalog_layanans');
-            Cache::forget('dashboard_layanans');
+            \App\Services\CacheService::clearLayananCaches();
         });
         static::deleted(function () {
-            Cache::forget('site_layanans');
-            Cache::forget('katalog_layanans');
-            Cache::forget('dashboard_layanans');
+            \App\Services\CacheService::clearLayananCaches();
         });
         static::restored(function () {
-            Cache::forget('site_layanans');
-            Cache::forget('katalog_layanans');
-            Cache::forget('dashboard_layanans');
+            \App\Services\CacheService::clearLayananCaches();
         });
     }
 
@@ -85,4 +79,69 @@ class Layanan extends Model
     {
         return $this->hasMany(Rating::class, 'id_layanan', 'id_layanan');
     }
+
+    /**
+     * Dapatkan 4 Pilar Kebutuhan Layanan (2-Tier Cascading Selector)
+     * 1. jasa-pasang : Jasa pemasangan wrapping / decal (bawa bahan sendiri)
+     * 2. full-wrap   : Paket wrapping bodi kendaraan menyeluruh bergaransi
+     * 3. custom      : Desain custom, striping, cutting, partial
+     * 4. aksesoris   : Kaca film, audio, lighting/biled, variasi
+     */
+    public function getPillarAttribute(): string
+    {
+        $catSlug = strtolower(trim($this->tipe_paket ?? ''));
+        $jenis   = strtolower(trim($this->jenis_layanan ?? ''));
+        $name    = strtolower(trim($this->nama_layanan ?? ''));
+
+        if ($jenis === 'jasa_pasang' || str_contains($catSlug, 'jasa-pasang') || str_contains($name, 'jasa pasang')) {
+            return 'jasa-pasang';
+        }
+
+        if (in_array($catSlug, ['custom', 'striping', 'partial']) || str_contains($name, 'custom') || str_contains($name, 'striping')) {
+            return 'custom';
+        }
+
+        if (in_array($catSlug, ['window-film', 'lighting', 'audio', 'aksesoris']) || str_contains($name, 'kaca film') || str_contains($name, 'film') || str_contains($name, 'biled') || str_contains($name, 'lampu') || str_contains($name, 'audio')) {
+            return 'aksesoris';
+        }
+
+        return 'full-wrap';
+    }
+
+    /**
+     * Label representatif untuk 4 pilar kebutuhan
+     */
+    public function getPillarLabelAttribute(): string
+    {
+        return match ($this->pillar) {
+            'jasa-pasang' => 'Jasa Pasang',
+            'full-wrap'   => 'Full Wrap',
+            'custom'      => 'Custom',
+            'aksesoris'   => 'Aksesoris',
+            default       => 'Layanan',
+        };
+    }
+
+    /**
+     * Warna badge representatif untuk 4 pilar kebutuhan
+     */
+    public function getPillarBadgeColorAttribute(): string
+    {
+        return match ($this->pillar) {
+            'jasa-pasang' => 'bg-emerald-600/90 text-white',
+            'full-wrap'   => 'bg-blue-600/90 text-white',
+            'custom'      => 'bg-purple-600/90 text-white',
+            'aksesoris'   => 'bg-amber-600/90 text-white',
+            default       => 'bg-slate-700/90 text-white',
+        };
+    }
+
+    /**
+     * Cek apakah pilar diarahkan khusus melalui WhatsApp (tanpa direct checkout/cart)
+     */
+    public function isWhatsappOnly(): bool
+    {
+        return in_array($this->pillar, ['jasa-pasang', 'custom']);
+    }
 }
+

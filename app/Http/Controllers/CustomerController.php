@@ -13,7 +13,7 @@ class CustomerController extends Controller
 
     public function katalog()
     {
-        $layanan = Layanan::where('is_active', true)->get();
+        $layanan = \App\Services\CacheService::getKatalogLayanans();
         $ratingSummary = TestimoniController::summaryPerLayananKeyed();
 
         return view('landing.katalog.index', compact('layanan', 'ratingSummary'));
@@ -21,8 +21,8 @@ class CustomerController extends Controller
 
     public function dashboard()
     {
-        $layanans      = Layanan::where('is_active', true)->get();
-        $galeris       = Galeri::all();
+        $layanans      = \App\Services\CacheService::getDashboardLayanans();
+        $galeris       = \App\Services\CacheService::getDashboardGaleris(6);
         $ratingSummary = \App\Http\Controllers\TestimoniController::summaryPerLayananKeyed();
 
         $latestOrders = \App\Models\Pesanan::where('id_user', auth()->id())

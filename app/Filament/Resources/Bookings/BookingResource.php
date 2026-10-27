@@ -17,9 +17,9 @@ class BookingResource extends Resource
 {
     protected static ?string $model = Reservasi::class;
 
-    protected static ?string $navigationLabel = 'Booking Online';
-    protected static ?string $pluralLabel = 'Booking Online';
-    protected static ?string $modelLabel = 'Booking';
+    protected static ?string $navigationLabel = 'Pemesanan & Booking';
+    protected static ?string $pluralLabel = 'Pemesanan & Booking';
+    protected static ?string $modelLabel = 'Pesanan / Booking';
     protected static ?string $slug = 'booking';
     protected static string|null|\UnitEnum $navigationGroup = 'Transaksi';
     protected static string|null|\BackedEnum $navigationIcon = 'heroicon-o-calendar-days';

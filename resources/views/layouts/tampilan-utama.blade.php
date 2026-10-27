@@ -16,16 +16,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com">
 
-    <!-- Tipografi Premium -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tipografi Standar Sistem (Montserrat untuk Heading/Tombol, Inter untuk Deskripsi/Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+    @if(Request::routeIs('home'))
+        <!-- LCP Image Preload untuk Beranda -->
+        <link rel="preload" as="image" href="{{ asset('images/banner_exclusive_car.webp') }}" type="image/webp" fetchpriority="high">
+    @endif
     
     <!-- Icon & Animasi (Deferred load to prevent render-blocking) -->
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></noscript>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    @include('layouts.landing._styles')
+    @include('layouts.landing._gaya_tampilan')
 </head>
 <body class="antialiased overflow-x-hidden">
     {{-- Preloader Element --}}
@@ -34,17 +40,25 @@
     </div>
 
     {{-- Navbar Utama --}}
-    @include('layouts.landing._navbar')
+    @include('layouts.landing._bilah_navigasi')
 
     {{-- Konten Utama --}}
-    <main class="{{ (Request::routeIs('home') || Request::routeIs('layanan')) ? 'pt-0' : 'pt-32' }}">
+    @php
+        $hasTopHero = Request::routeIs('home') 
+            || Request::routeIs('layanan') 
+            || Request::routeIs('galeri.*') 
+            || Request::routeIs('tentang-kami') 
+            || Request::routeIs('profil.perusahaan') 
+            || Request::routeIs('testimoni.index');
+    @endphp
+    <main class="{{ $hasTopHero ? 'pt-0' : 'pt-24 sm:pt-28' }}">
         @yield('content')
     </main>
 
     {{-- Footer Utama --}}
-    @include('layouts.landing._footer')
+    @include('layouts.landing._kaki_halaman')
 
     {{-- Script Inisialisasi --}}
-    @include('layouts.landing._scripts')
+    @include('layouts.landing._skrip')
 </body>
 </html>

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\VehicleBrand;
-use App\Models\VehicleModel;
+use App\Models\MerekKendaraan;
+use App\Models\ModelKendaraan;
 use Illuminate\Database\Seeder;
 
 class VehicleSeeder extends Seeder
@@ -129,7 +129,7 @@ class VehicleSeeder extends Seeder
         ];
 
         foreach ($brands as $bData) {
-            $brand = VehicleBrand::firstOrCreate(
+            $brand = MerekKendaraan::firstOrCreate(
                 ['name' => $bData['name']],
                 [
                     'vehicle_type' => $bData['vehicle_type'],
@@ -138,7 +138,7 @@ class VehicleSeeder extends Seeder
             );
 
             foreach ($bData['models'] as $m) {
-                VehicleModel::firstOrCreate(
+                ModelKendaraan::firstOrCreate(
                     [
                         'brand_id' => $brand->id,
                         'name'     => $m['name'],

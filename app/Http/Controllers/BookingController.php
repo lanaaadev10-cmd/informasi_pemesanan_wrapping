@@ -62,7 +62,11 @@ class BookingController extends Controller
                 ->with('details')
                 ->first();
             if ($activeCart && $activeCart->details->isNotEmpty()) {
-                $selectedLayananId = $activeCart->details->first()->id_paket;
+                $sessionKey = 'selected_cart_' . Auth::id();
+                $selectedIds = (array) session($sessionKey, []);
+                $selectedDetail = $activeCart->details->whereIn('id_detail', $selectedIds)->first()
+                    ?: $activeCart->details->first();
+                $selectedLayananId = $selectedDetail?->id_paket;
             }
         }
 
@@ -232,5 +236,52 @@ class BookingController extends Controller
         } catch (\Exception $e) {
             return back()->with('toast_error', $e->getMessage());
         }
+    }
+
+    /**
+     * Unduh Kartu Garansi Digital Resmi (E-Warranty) format PDF.
+     */
+    public function garansi($id)
+    {
+        $query = Booking::with(['user', 'layanan', 'warranty'])
+            ->where('id', $id);
+
+        if (!Auth::user()->hasRole('admin')) {
+            $query->where('user_id', Auth::id());
+        }
+
+        $booking = $query->firstOrFail();
+
+        if ($booking->status !== \App\Enums\BookingStatus::COMPLETED && !Auth::user()->hasRole('admin')) {
+            return back()->with('toast_error', 'Kartu garansi digital hanya tersedia untuk booking yang telah selesai dikerjakan.');
+        }
+
+        $warranty = $booking->warranty ?? \App\Models\EWarranty::firstOrCreate(
+            ['booking_id' => $booking->id],
+            [
+                'warranty_code'   => 'WRN-' . date('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(5)),
+                'warranty_type'   => 'Garansi Pemasangan & Lem Resmi Dantie',
+                'duration_months' => 12,
+                'start_date'      => $booking->updated_at?->toDateString() ?? now()->toDateString(),
+                'end_date'        => ($booking->updated_at ? $booking->updated_at->copy()->addMonths(12) : now()->addMonths(12))->toDateString(),
+                'terms'           => "1. Garansi mencakup pengelupasan lem, gelembung udara, dan sambungan sudut selama 12 bulan.\n2. Garansi tidak mencakup kelalaian benturan fisik, gesekan benda tajam, atau cuci steam tekanan tinggi di sambungan.\n3. Wajib menunjukkan sertifikat garansi ini saat verifikasi klaim.",
+                'status'          => 'active',
+            ]
+        );
+
+        $profil = app(CompanySettings::class);
+
+        $pdf = Pdf::loadView('customer.booking.garansi-pdf', compact('booking', 'warranty', 'profil'))
+            ->setPaper('a4', 'landscape')
+            ->setOptions([
+                'defaultFont'          => 'DejaVu Sans',
+                'isRemoteEnabled'      => false,
+                'isHtml5ParserEnabled' => true,
+                'dpi'                  => 96,
+            ]);
+
+        $filename = 'Garansi-' . $warranty->warranty_code . '.pdf';
+
+        return $pdf->download($filename);
     }
 }

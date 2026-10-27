@@ -24,19 +24,30 @@ class BookingForm
     {
         return $schema->columns(['default' => 3])
             ->schema([
-                Section::make('Akun & Pelanggan')
-                    ->description('Tautkan pesanan ini ke akun pelanggan agar langsung muncul di dashboard & riwayat pesanan mereka.')
+                Section::make('Akun Pembeli')
+                    ->description('Pilih akun pembeli yang sesuai atau daftarkan akun baru agar pesanan langsung muncul di akun & riwayat mereka.')
                     ->schema([
                         Select::make('user_id')
-                            ->label('Pilih / Buatkan Akun Pelanggan')
-                            ->placeholder('Cari nama atau email pelanggan, atau klik [+] untuk buatkan akun baru...')
-                            ->options(User::whereDoesntHave('roles', fn ($q) => $q->where('name', 'admin'))->pluck('name', 'id'))
+                            ->label('Pilih Akun Pembeli *')
+                            ->placeholder('Cari nama pembeli, nomor WhatsApp, atau email...')
+                            ->options(function () {
+                                return User::whereDoesntHave('roles', fn ($q) => $q->where('name', 'admin'))
+                                    ->orderBy('name')
+                                    ->get()
+                                    ->mapWithKeys(function ($u) {
+                                        $phone = $u->phone ?: ($u->no_hp ?? '');
+                                        $phoneLabel = $phone ? " • {$phone}" : '';
+                                        return [$u->id => "{$u->name}{$phoneLabel} ({$u->email})"];
+                                    })
+                                    ->toArray();
+                            })
                             ->searchable()
                             ->preload()
                             ->live()
+                            ->required()
                             ->createOptionForm([
                                 TextInput::make('name')
-                                    ->label('Nama Lengkap Pelanggan *')
+                                    ->label('Nama Lengkap Pembeli *')
                                     ->placeholder('Contoh: Budi Santoso')
                                     ->required(),
                                 TextInput::make('phone')
@@ -45,15 +56,15 @@ class BookingForm
                                     ->tel()
                                     ->required(),
                                 TextInput::make('email')
-                                    ->label('Email Pelanggan (Opsional)')
+                                    ->label('Email Pembeli (Opsional)')
                                     ->placeholder('contoh: budi@gmail.com')
                                     ->email()
                                     ->helperText('Jika dikosongkan, sistem otomatis membuat email: customer_[no_wa]@dantiestiker.id'),
                                 TextInput::make('password')
-                                    ->label('Password Akun Pelanggan')
+                                    ->label('Password Akun')
                                     ->default('password123')
                                     ->required()
-                                    ->helperText('Password default untuk pelanggan login ke website.'),
+                                    ->helperText('Password default untuk pembeli login ke sistem.'),
                             ])
                             ->createOptionUsing(function (array $data): int {
                                 $phone = trim($data['phone'] ?? '');
@@ -83,10 +94,10 @@ class BookingForm
                             })
                             ->createOptionAction(
                                 fn (\Filament\Actions\Action $action) => $action
-                                    ->label('Buatkan Akun Pelanggan Baru')
-                                    ->tooltip('Klik untuk mendaftarkan akun pelanggan baru secara instan')
-                                    ->modalHeading('➕ Buatkan Akun Pelanggan Baru')
-                                    ->modalDescription('Akun ini akan langsung aktif dan pesanan akan otomatis tersimpan di riwayat akunnya.')
+                                    ->label('Buatkan Akun Pembeli Baru')
+                                    ->tooltip('Klik untuk mendaftarkan akun pembeli baru secara instan')
+                                    ->modalHeading('➕ Buatkan Akun Pembeli Baru')
+                                    ->modalDescription('Akun ini akan langsung aktif dan pesanan otomatis tersimpan di dashboard pembeli.')
                                     ->modalSubmitActionLabel('Simpan Akun & Pilih')
                             )
                             ->afterStateUpdated(function ($state, Set $set) {
@@ -101,11 +112,11 @@ class BookingForm
                                     }
                                 }
                             })
-                            ->helperText('Pelanggan belum terdaftar? Klik tombol [+] untuk membuatkan akunnya seketika.')
+                            ->helperText('Pilih akun pembeli yang terdaftar. Jika pembeli baru, klik tanda [+] untuk membuat akun seketika.')
                             ->columnSpanFull(),
 
                         TextInput::make('customer_name')
-                            ->label('Nama Lengkap Pelanggan *')
+                            ->label('Nama Lengkap Pembeli *')
                             ->placeholder('Nama pemesan...')
                             ->required(),
 
@@ -115,7 +126,7 @@ class BookingForm
                             ->required(),
 
                         TextInput::make('customer_email')
-                            ->label('Email Pelanggan (Opsional)')
+                            ->label('Email Pembeli (Opsional)')
                             ->email()
                             ->columnSpanFull(),
                     ])
@@ -125,7 +136,7 @@ class BookingForm
                 Section::make('Status & Kendali')
                     ->schema([
                         TextInput::make('booking_code')
-                            ->label('Kode Booking')
+                            ->label('Kode Pesanan / Booking')
                             ->disabled()
                             ->dehydrated()
                             ->default(fn () => 'BKG-' . date('YmdHis') . '-' . strtoupper(\Illuminate\Support\Str::random(6))),
@@ -136,77 +147,85 @@ class BookingForm
                                 ->mapWithKeys(fn ($case) => [$case->value => $case->label()])
                                 ->toArray())
                             ->default(BookingStatus::CONFIRMED->value)
-                            ->helperText('Default: Terkonfirmasi jika sudah deal di WhatsApp.'),
+                            ->helperText('Pilih status: Dikonfirmasi (deal), Menunggu Bayar (tagihan aktif), dll.'),
 
                         Textarea::make('admin_notes')
                             ->label('Catatan Internal Admin')
                             ->rows(3)
+                            ->placeholder('Catatan internal staff bengkel...')
                             ->columnSpanFull(),
                     ])
                     ->columnSpan(1),
 
-                Section::make('Layanan & Kesepakatan Biaya')
-                    ->description('Pilih apakah pesanan merupakan paket standar atau proyek Custom hasil negosiasi/deal WhatsApp.')
+                Section::make('Jenis Pesanan & Detail Kesepakatan')
+                    ->description('Masukkan jenis pesanan (Jasa atau Custom), detail kebutuhan, harga yang disepakati, dan jadwal pengerjaan.')
                     ->schema([
                         Radio::make('tipe_pemesanan')
-                            ->label('Jenis Pengerjaan')
+                            ->label('Jenis Pesanan *')
                             ->options([
-                                'custom' => '🎨 Proyek Custom (Hasil Kesepakatan / Deal WhatsApp)',
-                                'paket'  => '📦 Paket Standar (Pilih dari Katalog Workshop)',
+                                'jasa'   => '✂️ Jasa (Pemasangan Stiker / Bawa Bahan Sendiri - Deal WhatsApp)',
+                                'custom' => '🎨 Custom (Wrapping Custom / Desain Livery Khusus - Deal WhatsApp)',
+                                'paket'  => '📦 Paket Katalog (Pilihan Layanan Standar Bengkel)',
                             ])
-                            ->default('custom')
+                            ->default('jasa')
                             ->inline()
                             ->live()
+                            ->required()
                             ->columnSpanFull(),
 
-                        // Tampilan saat CUSTOM (Deal WA):
+                        // Tampilan saat JASA atau CUSTOM (Deal WhatsApp) — Tanpa mengharuskan memilih paket katalog
                         TextInput::make('custom_project_name')
-                            ->label('Nama / Konsep Proyek Custom *')
-                            ->placeholder('Contoh: Full Decal Racing Livery Beat / Wrap Two-Tone Atap + Spion Brio')
-                            ->required(fn (Get $get) => $get('tipe_pemesanan') === 'custom')
-                            ->visible(fn (Get $get) => $get('tipe_pemesanan') === 'custom')
-                            ->helperText('Nama pengerjaan custom yang disepakati dengan pelanggan via WhatsApp.')
+                            ->label(fn (Get $get) => $get('tipe_pemesanan') === 'jasa'
+                                ? 'Detail Kebutuhan Jasa Pengerjaan *'
+                                : 'Detail Kebutuhan Proyek Custom *')
+                            ->placeholder(fn (Get $get) => $get('tipe_pemesanan') === 'jasa'
+                                ? 'Contoh: Pasang decal stiker motor Nmax full body (bahan Oracal bawa sendiri)'
+                                : 'Contoh: Wrapping custom livery anime two-tone kap & atap Brio')
+                            ->required(fn (Get $get) => in_array($get('tipe_pemesanan'), ['jasa', 'custom', null]))
+                            ->visible(fn (Get $get) => in_array($get('tipe_pemesanan'), ['jasa', 'custom', null]))
+                            ->helperText('Rincian kebutuhan pengerjaan hasil kesepakatan dengan pembeli via WhatsApp.')
                             ->columnSpanFull(),
 
                         TextInput::make('quotation_amount')
-                            ->label('Nominal Kesepakatan / Deal di WhatsApp (Rp) *')
+                            ->label('Harga yang Disepakati (Rp) *')
                             ->numeric()
                             ->prefix('Rp')
-                            ->required(fn (Get $get) => $get('tipe_pemesanan') === 'custom')
-                            ->visible(fn (Get $get) => $get('tipe_pemesanan') === 'custom')
-                            ->helperText('Nominal total pengerjaan hasil deal di WhatsApp. Otomatis menentukan batas DP dan tagihan.')
+                            ->required(fn (Get $get) => in_array($get('tipe_pemesanan'), ['jasa', 'custom', null]))
+                            ->visible(fn (Get $get) => in_array($get('tipe_pemesanan'), ['jasa', 'custom', null]))
+                            ->helperText('Total harga pengerjaan hasil kesepakatan via WhatsApp.')
                             ->live(),
 
                         Select::make('quotation_status')
                             ->label('Status Kesepakatan WA')
                             ->options([
-                                'sent'     => '✅ Deal di WhatsApp (Penawaran Disepakati)',
-                                'accepted' => '🤝 Disetujui Pelanggan',
+                                'accepted' => '🤝 Disepakati Pembeli (Deal)',
+                                'sent'     => '✅ Penawaran Terkirim',
                                 'pending'  => '⏳ Menunggu Negosiasi Lanjutan',
                             ])
-                            ->default('sent')
-                            ->visible(fn (Get $get) => $get('tipe_pemesanan') === 'custom'),
+                            ->default('accepted')
+                            ->visible(fn (Get $get) => in_array($get('tipe_pemesanan'), ['jasa', 'custom', null])),
 
                         Textarea::make('quotation_notes')
-                            ->label('Rincian Kesepakatan di Chat WhatsApp')
+                            ->label('Catatan Kesepakatan WhatsApp')
                             ->rows(2)
-                            ->placeholder('Contoh: Deal warna stiker abu doff, atap hitam + spion. DP 50%. Estimasi pengerjaan 2 hari.')
-                            ->visible(fn (Get $get) => $get('tipe_pemesanan') === 'custom')
+                            ->placeholder('Contoh: Deal harga Rp 1.500.000, estimasi 2 hari pengerjaan, DP 50%, pelunasan di bengkel.')
+                            ->visible(fn (Get $get) => in_array($get('tipe_pemesanan'), ['jasa', 'custom', null]))
                             ->columnSpanFull(),
 
-                        // Tampilan saat PAKET STANDAR:
+                        // Tampilan HANYA saat PAKET STANDAR (Katalog):
                         Select::make('layanan_id')
                             ->label('Pilih Paket Layanan Katalog *')
                             ->relationship('layanan', 'nama_layanan')
                             ->searchable()
                             ->preload()
-                            ->required(fn (Get $get) => $get('tipe_pemesanan') !== 'custom')
-                            ->visible(fn (Get $get) => $get('tipe_pemesanan') !== 'custom')
+                            ->required(fn (Get $get) => $get('tipe_pemesanan') === 'paket')
+                            ->visible(fn (Get $get) => $get('tipe_pemesanan') === 'paket')
+                            ->helperText('Pilih paket standar katalog jika bukan proyek Jasa atau Custom.')
                             ->columnSpanFull(),
 
                         // Jadwal & Pembayaran
                         DatePicker::make('booking_date')
-                            ->label('Tanggal Pengerjaan')
+                            ->label('Jadwal Tanggal Pengerjaan *')
                             ->default(now()->toDateString())
                             ->required(),
 
@@ -216,7 +235,7 @@ class BookingForm
                             ->placeholder('09:00'),
 
                         Select::make('payment_type')
-                            ->label('Tipe Pembayaran Tagihan')
+                            ->label('Skema Pembayaran')
                             ->options(collect(PaymentType::cases())
                                 ->mapWithKeys(fn ($case) => [$case->value => $case->label()])
                                 ->toArray())
@@ -245,14 +264,14 @@ class BookingForm
                             ->maxLength(100),
 
                         TextInput::make('vehicle_license')
-                            ->label('Nomor Polisi')
+                            ->label('Nomor Polisi (Plat)')
                             ->placeholder('Contoh: B 1234 ABC')
                             ->maxLength(50),
 
                         Textarea::make('notes')
-                            ->label('Catatan Tambahan untuk Teknisi')
+                            ->label('Catatan Khusus untuk Teknisi')
                             ->rows(2)
-                            ->placeholder('Catatan khusus saat pengerjaan...')
+                            ->placeholder('Catatan spesifikasi kendaraan atau teknis saat pengerjaan...')
                             ->columnSpanFull(),
                     ])
                     ->columns(['default' => 3])

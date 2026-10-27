@@ -5,27 +5,26 @@
 ============================================ --}}
 @guest
 <div id="register-prompt-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
-    <div id="register-modal-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-    <div class="relative bg-[#121212] border border-white/10 rounded-[28px] p-8 max-w-sm w-full mx-4 shadow-2xl animate-modal-in">
-        <div class="absolute -right-8 -top-8 w-32 h-32 bg-[#f2994a]/5 blur-[60px] rounded-full pointer-events-none"></div>
-        <div class="relative z-10 text-center space-y-6">
-            <div class="w-16 h-16 mx-auto rounded-full bg-[#f2994a]/10 border border-[#f2994a]/20 flex items-center justify-center">
-                <i class="ph-bold ph-user-plus text-2xl text-[#f2994a]"></i>
+    <div id="register-modal-overlay" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+    <div class="relative bg-white border border-slate-200 rounded-[28px] p-6 sm:p-8 max-w-sm w-full mx-4 shadow-2xl animate-modal-in">
+        <div class="relative z-10 text-center space-y-5">
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center">
+                <i class="ph-bold ph-user-plus text-3xl text-[#ea580c]"></i>
             </div>
-            <div class="space-y-2">
-                <h3 class="text-lg font-extrabold text-white">Registrasi Diperlukan</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">
-                    Untuk melakukan pemesanan, silakan registrasi terlebih dahulu ya.
+            <div class="space-y-1.5">
+                <h3 class="text-xl font-bold font-montserrat text-slate-900">Registrasi Diperlukan</h3>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                    Untuk melakukan reservasi jadwal atau pemesanan paket, silakan masuk atau buat akun terlebih dahulu.
                 </p>
             </div>
-            <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-2.5 pt-2">
                 <a href="{{ route('register') }}"
-                   class="flex items-center justify-center gap-2 py-3.5 bg-[#f2994a] hover:bg-[#e28a44] text-black font-extrabold text-[10px] tracking-[0.1em] uppercase px-5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-95 shadow-[0_4px_15px_rgba(242,153,74,0.3)]">
-                    <i class="ph-bold ph-user-plus text-xs"></i> Daftar Sekarang
+                   class="flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-[#ea580c] to-[#f97316] text-white font-montserrat font-medium text-xs tracking-wider uppercase px-5 rounded-full transition-all duration-200 hover:brightness-105 active:scale-95 shadow-md shadow-orange-500/20">
+                    <i class="ph-bold ph-user-plus text-sm"></i> Daftar Akun Baru
                 </a>
                 <a href="{{ route('login') }}"
-                   class="flex items-center justify-center gap-2 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white font-extrabold text-[10px] tracking-[0.1em] uppercase px-5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-95">
-                    <i class="ph-bold ph-sign-in text-xs"></i> Masuk
+                   class="flex items-center justify-center gap-2 py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-montserrat font-medium text-xs tracking-wider uppercase px-5 rounded-full transition-all duration-200 active:scale-95">
+                    <i class="ph-bold ph-sign-in text-sm text-[#ea580c]"></i> Masuk ke Akun
                 </a>
             </div>
         </div>

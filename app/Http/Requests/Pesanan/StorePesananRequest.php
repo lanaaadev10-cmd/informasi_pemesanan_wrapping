@@ -30,6 +30,8 @@ class StorePesananRequest extends FormRequest
             'lokasi_pengerjaan'   => ['required', 'string', 'in:toko'],
             'jadwal_pengerjaan'   => ['required', 'date', 'after_or_equal:today'],
             'keterangan_tambahan' => ['nullable', 'string', 'max:500'],
+            'selected_ids'        => ['nullable', 'array'],
+            'selected_ids.*'      => ['integer'],
         ];
     }
 

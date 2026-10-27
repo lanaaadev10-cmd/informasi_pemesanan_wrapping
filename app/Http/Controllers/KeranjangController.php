@@ -20,7 +20,65 @@ class KeranjangController extends Controller
             ->with('details.layanan')
             ->first();
 
-        return view('dashboard.customer.keranjang.index', compact('keranjang'));
+        $allItemIds = $keranjang ? $keranjang->details->pluck('id_detail')->toArray() : [];
+        $sessionKey = 'selected_cart_' . Auth::id();
+
+        if (session()->has($sessionKey)) {
+            // Ambil ID yang tersimpan di sesi dan pastikan masih ada dalam keranjang
+            $storedIds = (array) session($sessionKey, []);
+            $selectedIds = array_values(array_intersect($storedIds, $allItemIds));
+        } else {
+            // Default: seluruh barang di keranjang terpilih secara otomatis
+            $selectedIds = $allItemIds;
+            session([$sessionKey => $selectedIds]);
+        }
+
+        return view('dashboard.customer.keranjang.index', compact('keranjang', 'selectedIds'));
+    }
+
+    /**
+     * Simpan status pemilihan barang per-user (AJAX) ke dalam sesi terisolasi
+     */
+    public function simpanPilihan(Request $request)
+    {
+        $request->validate([
+            'selected_ids'   => 'nullable|array',
+            'selected_ids.*' => 'integer',
+        ]);
+
+        $keranjang = Keranjang::where('id_user', Auth::id())
+            ->where('status', 'active')
+            ->with('details')
+            ->first();
+
+        if (!$keranjang) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Keranjang aktif tidak ditemukan.',
+            ], 404);
+        }
+
+        $allItemIds = $keranjang->details->pluck('id_detail')->toArray();
+        $rawSelected = (array) $request->input('selected_ids', []);
+
+        // Validasi kepemilikan ketat: hanya id_detail yang benar-benar milik keranjang user ini
+        $validSelectedIds = array_values(array_intersect($rawSelected, $allItemIds));
+
+        // Simpan dalam sesi terisolasi berdasarkan id user
+        $sessionKey = 'selected_cart_' . Auth::id();
+        session([$sessionKey => $validSelectedIds]);
+
+        $selectedDetails = $keranjang->details->whereIn('id_detail', $validSelectedIds);
+        $selectedSubtotal = $selectedDetails->sum(fn ($item) => (float) $item->subtotal);
+
+        return response()->json([
+            'success'            => true,
+            'selected_ids'       => $validSelectedIds,
+            'selected_count'     => $selectedDetails->count(),
+            'total_cart_count'   => $keranjang->details->count(),
+            'subtotal_raw'       => $selectedSubtotal,
+            'subtotal_formatted' => 'Rp ' . number_format($selectedSubtotal, 0, ',', '.'),
+        ]);
     }
 
     /**
@@ -98,6 +156,13 @@ class KeranjangController extends Controller
 
         $detail->delete();
 
+        // Bersihkan ID yang terhapus dari pilihan sesi user
+        $sessionKey = 'selected_cart_' . Auth::id();
+        if (session()->has($sessionKey)) {
+            $storedIds = (array) session($sessionKey, []);
+            session([$sessionKey => array_values(array_diff($storedIds, [(int) $id_detail]))]);
+        }
+
         return redirect()->route('keranjang.index')
             ->with('toast_success', 'Item berhasil dihapus dari keranjang.');
     }
@@ -114,6 +179,8 @@ class KeranjangController extends Controller
         if ($keranjang) {
             $keranjang->details()->delete();
         }
+
+        session()->forget('selected_cart_' . Auth::id());
 
         return redirect()->route('keranjang.index')
             ->with('toast_success', 'Keranjang berhasil dikosongkan.');

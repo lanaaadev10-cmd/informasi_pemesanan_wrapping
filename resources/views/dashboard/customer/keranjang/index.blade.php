@@ -71,70 +71,128 @@
             
             <!-- Left Side: List of items -->
             <div class="lg:col-span-8 space-y-4">
+
+                <!-- ════ TOOLBAR KONTROL PEMILIHAN BARANG ════ -->
+                <div class="bg-white border border-slate-200/90 rounded-[22px] px-5 py-3.5 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <!-- Tombol Pilih Semua -->
+                        <button type="button" 
+                                id="btn-select-all" 
+                                onclick="toggleSelectAll()" 
+                                class="inline-flex items-center gap-2.5 text-xs font-bold font-montserrat text-slate-800 hover:text-emerald-600 transition-colors cursor-pointer select-none py-1">
+                            <div id="check-all-box" 
+                                 class="w-5 h-5 rounded-md flex items-center justify-center transition-all border-2 {{ count($selectedIds) === $keranjang->details->count() && count($selectedIds) > 0 ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm' : 'border-slate-300 bg-white' }}">
+                                <i class="ph-bold ph-check text-xs {{ count($selectedIds) === $keranjang->details->count() && count($selectedIds) > 0 ? '' : 'hidden' }}" id="check-all-icon"></i>
+                            </div>
+                            <span id="label-select-all" class="text-xs font-extrabold">
+                                {{ count($selectedIds) === $keranjang->details->count() && count($selectedIds) > 0 ? 'Pilih Semua (Aktif)' : 'Pilih Semua' }}
+                            </span>
+                        </button>
+
+                        <span class="text-slate-200">|</span>
+
+                        <!-- Tombol Batalkan Semua Pilihan -->
+                        <button type="button" 
+                                onclick="deselectAllItems()" 
+                                class="text-[11px] font-bold text-slate-500 hover:text-red-500 transition-colors cursor-pointer py-1">
+                            Batalkan Semua Pilihan
+                        </button>
+                    </div>
+
+                    <!-- Badge Status Terpilih -->
+                    <div class="text-[11px] font-questrial text-slate-500 flex items-center gap-1.5 shrink-0">
+                        <span>Terpilih:</span>
+                        <span id="badge-selected-count" class="font-audiowide font-bold text-emerald-600 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs">
+                            {{ count($selectedIds) }}
+                        </span>
+                        <span>dari <span id="badge-total-count" class="font-bold text-slate-800">{{ $keranjang->details->count() }}</span> barang</span>
+                    </div>
+                </div>
+
+                <!-- ════ DAFTAR BARANG DALAM KERANJANG ════ -->
                 @foreach($keranjang->details as $item)
                     @php
                         $itemImage = \App\Helpers\StaticContent::fotoUrl($item->layanan->foto_contoh ?? '');
+                        $isSelected = in_array($item->id_detail, $selectedIds);
                     @endphp
 
-                    <div class="bg-white border border-slate-200/80 rounded-[28px] overflow-hidden p-5 flex flex-col sm:flex-row items-center gap-6 group hover:border-[#FF6B00]/60 transition-all duration-300 relative shadow-sm hover:shadow-md">
+                    <div id="cart-item-{{ $item->id_detail }}"
+                         data-detail-id="{{ $item->id_detail }}"
+                         data-unit-price="{{ $item->harga_satuan }}"
+                         onclick="handleCardClick(event, {{ $item->id_detail }})"
+                         class="cart-card-item bg-white border {{ $isSelected ? 'border-emerald-500/60 bg-emerald-50/10 shadow-sm ring-1 ring-emerald-500/20' : 'border-slate-200/80 opacity-90 hover:opacity-100' }} rounded-[28px] overflow-hidden p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 group hover:border-emerald-500/60 transition-all duration-250 relative cursor-pointer select-none">
                         
-                        <!-- Rounded visual thumbnail -->
-                        <div class="w-24 h-24 rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 shadow-inner">
+                        <!-- Kontrol Checkbox Centang Hijau -->
+                        <div class="flex items-center shrink-0" onclick="event.stopPropagation()">
+                            <button type="button" 
+                                    id="checkbox-btn-{{ $item->id_detail }}" 
+                                    onclick="toggleItemSelection({{ $item->id_detail }}, event)" 
+                                    aria-label="Pilih layanan {{ $item->layanan->nama_layanan }}"
+                                    class="w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer hover:bg-slate-100 active:scale-90 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                <div id="checkbox-indicator-{{ $item->id_detail }}"
+                                     class="w-6 h-6 rounded-lg flex items-center justify-center transition-all {{ $isSelected ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm shadow-emerald-500/30' : 'border-2 border-slate-300 bg-white hover:border-emerald-400' }}">
+                                    <i class="ph-bold ph-check text-sm {{ $isSelected ? '' : 'hidden' }}" id="checkbox-icon-{{ $item->id_detail }}"></i>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Thumbnail Gambar Layanan -->
+                        <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 shadow-inner">
                             <img src="{{ $itemImage }}" alt="{{ $item->layanan->nama_layanan }}" class="w-full h-full object-cover transform scale-100 group-hover:scale-105 transition-transform duration-700">
                         </div>
 
-                        <!-- Product details -->
-                        <div class="flex-grow flex flex-col justify-between self-stretch py-1">
+                        <!-- Detail Produk -->
+                        <div class="flex-grow flex flex-col justify-between self-stretch py-1 min-w-0">
                             <div class="flex justify-between items-start gap-4">
                                 <div class="space-y-1">
                                     <span class="text-[9px] font-bold text-[#FF6B00] uppercase tracking-widest block font-mono">
                                         {{ $item->layanan->kategori ?? 'Layanan Premium' }}
                                     </span>
-                                    <h3 class="text-base font-bold text-slate-900 group-hover:text-[#FF6B00] transition-colors leading-tight line-clamp-1 font-montserrat">
+                                    <h3 class="text-base font-bold text-slate-900 group-hover:text-emerald-700 transition-colors leading-tight line-clamp-1 font-montserrat">
                                         {{ $item->layanan->nama_layanan }}
                                     </h3>
                                 </div>
 
-                                <!-- Delete button from figma -->
-                                <form action="{{ route('keranjang.hapus', $item->id_detail) }}" method="POST" class="shrink-0" onsubmit="return confirmDeleteItem(event, this, '{{ $item->layanan->nama_layanan }}')">
+                                <!-- Tombol Hapus Item -->
+                                <form action="{{ route('keranjang.hapus', $item->id_detail) }}" method="POST" class="shrink-0" onclick="event.stopPropagation()" onsubmit="return confirmDeleteItem(event, this, '{{ $item->layanan->nama_layanan }}')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" 
-                                            class="flex items-center gap-1.5 text-xs text-red-500 hover:text-red-600 font-bold transition-all px-3 py-1.5 rounded-xl hover:bg-red-50 active:scale-95">
+                                            class="flex items-center gap-1.5 text-xs text-red-500 hover:text-red-600 font-bold transition-all px-3 py-1.5 rounded-xl hover:bg-red-50 active:scale-95 cursor-pointer">
                                         <i class="ph ph-trash-simple text-sm"></i>
                                         <span>{{ $profil->cta_hapus ?? 'Hapus' }}</span>
                                     </button>
                                 </form>
                             </div>
                             
-                            <!-- Bottom control panel -->
+                            <!-- Panel Kontrol Kuantitas & Subtotal -->
                             <div class="flex flex-wrap items-end justify-between gap-4 mt-4">
-                                <div class="flex items-center gap-6">
+                                <div class="flex items-center gap-5 sm:gap-6" onclick="event.stopPropagation()">
                                     
-                                    <!-- Dynamic quantity buttons block -->
+                                    <!-- Tombol Pengatur Kuantitas -->
                                     <div class="space-y-1.5">
                                         <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Jumlah Unit</span>
                                         <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-                                            <!-- Decrease Button -->
+                                            <!-- Tombol Kurang (-) -->
                                             <button type="button" 
                                                     id="btn-dec-{{ $item->id_detail }}" 
                                                     onclick="changeQty({{ $item->id_detail }}, -1)" 
                                                     {{ $item->jumlah <= 1 ? 'disabled' : '' }} 
-                                                    class="w-7 h-7 bg-white hover:bg-slate-200 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-900 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm">
+                                                    class="w-7 h-7 bg-white hover:bg-slate-200 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-900 transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-sm cursor-pointer">
                                                 <i class="ph ph-minus text-[10px]"></i>
                                             </button>
                                             
-                                            <!-- Current Qty -->
+                                            <!-- Angka Kuantitas -->
                                             <span id="qty-{{ $item->id_detail }}" 
                                                   class="w-8 text-center text-xs font-bold text-slate-900">
                                                 {{ $item->jumlah }}
                                             </span>
                                             
-                                            <!-- Increase Button -->
+                                            <!-- Tombol Tambah (+) -->
                                             <button type="button" 
                                                     id="btn-inc-{{ $item->id_detail }}" 
                                                     onclick="changeQty({{ $item->id_detail }}, 1)" 
-                                                    class="w-7 h-7 bg-white hover:bg-slate-200 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-900 transition-all shadow-sm">
+                                                    class="w-7 h-7 bg-white hover:bg-slate-200 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-900 transition-all shadow-sm cursor-pointer">
                                                 <i class="ph ph-plus text-[10px]"></i>
                                             </button>
                                         </div>
@@ -150,7 +208,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Subtotal calculation display -->
+                                <!-- Tampilan Subtotal Item -->
                                 <div class="text-right">
                                     <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block mb-0.5">{{ $profil->label_subtotal ?? 'Subtotal' }}</span>
                                     <span id="subtotal-{{ $item->id_detail }}" 
@@ -168,12 +226,12 @@
                                 </div>
                             @endif
 
-                            <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                            <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2" onclick="event.stopPropagation()">
                                 <span class="text-[10px] text-slate-500 font-questrial">
                                     Pilih jadwal reservasi pengerjaan untuk paket ini:
                                 </span>
                                 <a href="{{ route('booking.create', ['layanan_id' => $item->id_paket]) }}"
-                                   class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-orange-50 hover:bg-[#FF6B00] text-[#FF6B00] hover:text-white border border-orange-200 text-[10px] font-montserrat font-bold uppercase tracking-wider transition-all active:scale-95 shadow-sm">
+                                   class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-orange-50 hover:bg-[#FF6B00] text-[#FF6B00] hover:text-white border border-orange-200 text-[10px] font-montserrat font-bold uppercase tracking-wider transition-all active:scale-95 shadow-sm cursor-pointer">
                                     <i class="ph-bold ph-calendar-plus text-xs"></i>
                                     <span>Jadwalkan Paket Ini</span>
                                     <i class="ph-bold ph-arrow-right text-[10px]"></i>
@@ -194,13 +252,13 @@
             </div>
 
             <!-- Right Side: Order Summary -->
-            @include('dashboard.customer.keranjang.partials._cart-summary')
+            @include('dashboard.customer.keranjang.partials._ringkasan_keranjang')
 
         </div>
     @endif
 </div>
 
 <!-- Quantity Adjustment Controller & Confirmation Modal -->
-@include('dashboard.customer.keranjang.partials._cart-scripts')
+@include('dashboard.customer.keranjang.partials._skrip_keranjang')
 
 @endsection

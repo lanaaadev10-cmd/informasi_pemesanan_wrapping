@@ -15,9 +15,10 @@ export default {
             //  TIPOGRAFI — Sesuaikan dengan Google Fonts yang dimuat di app.css
             // ─────────────────────────────────────────────────────────────
             fontFamily: {
-                sans:       ['Questrial', 'Montserrat', ...defaultTheme.fontFamily.sans],
-                audiowide:  ['Audiowide', 'cursive', 'sans-serif'],
+                sans:       ['Inter', 'Montserrat', ...defaultTheme.fontFamily.sans],
+                inter:      ['Inter', 'sans-serif'],
                 montserrat: ['Montserrat', 'sans-serif'],
+                audiowide:  ['Audiowide', 'cursive', 'sans-serif'],
                 questrial:  ['Questrial', 'sans-serif'],
             },
 

@@ -29,13 +29,13 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 z-10 relative">
         {{-- Kolom Kiri: Detail Transfer Bank & Ringkasan --}}
-        @include('dashboard.customer.pesanan.partials._detail-transfer')
+        @include('dashboard.customer.pesanan.partials._detail_transfer')
 
         {{-- Kolom Kanan: Form Upload Bukti atau Status Terkini --}}
-        @include('dashboard.customer.pesanan.partials._status-actions')
+        @include('dashboard.customer.pesanan.partials._aksi_status')
     </div>
 </div>
 
 {{-- Skrip Interaktif, Preview Upload, dan Notifikasi Toast --}}
-@include('dashboard.customer.pesanan.partials._show-scripts')
+@include('dashboard.customer.pesanan.partials._skrip_detail_pesanan')
 @endsection

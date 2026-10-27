@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Addon;
+use App\Models\Tambahan;
 use Illuminate\Database\Seeder;
 
 class AddonSeeder extends Seeder
@@ -55,7 +55,7 @@ class AddonSeeder extends Seeder
         ];
 
         foreach ($addons as $addon) {
-            Addon::firstOrCreate(
+            Tambahan::firstOrCreate(
                 ['name' => $addon['name']],
                 $addon
             );

@@ -1,13 +1,23 @@
 @extends('layouts.tampilan-utama')
 
-@section('title', 'Layanan - Wapping Premium Wrap')
+@section('title', 'Layanan - ' . (\App\Helpers\StaticContent::APP_NAME ?? 'Dantie Stiker'))
 
 @section('content')
 
     @php
-        $accentColor = '#f2994a';
+        $accentColor = '#ea580c';
 
-        $services = $layanans->map(fn($l) => [
+        // Sesuai ketentuan: Untuk pilihan Jasa dan Custom, jangan tampilkan daftar layanan,
+        // detail layanan, paket, harga paket, keranjang, atau checkout (dialihkan langsung via WhatsApp).
+        $services = $layanans->filter(function ($l) {
+            $isJasa = ($l->jenis_layanan === 'jasa_pasang')
+                || str_contains(strtolower($l->tipe_paket ?? ''), 'jasa-pasang')
+                || str_contains(strtolower($l->nama_layanan ?? ''), 'jasa pasang');
+            $isCustom = ($l->jenis_layanan === 'custom')
+                || in_array(strtolower($l->tipe_paket ?? ''), ['custom', 'partial'])
+                || str_contains(strtolower($l->nama_layanan ?? ''), 'custom');
+            return !$isJasa && !$isCustom;
+        })->map(fn($l) => [
             'id'         => $l->id_layanan,
             'nama'       => $l->nama_layanan,
             'harga'      => $l->harga > 0 ? 'Rp ' . number_format($l->harga, 0, ',', '.') : 'Menyesuaikan',
@@ -17,68 +27,50 @@
             'kategori'   => $l->kategori ?? 'mobil',
             'tipe_paket' => $l->tipe_paket ?? 'wrapping',
             'estimasi'   => $l->estimasi_waktu ?: '1-3 Hari',
-        ])->toArray();
-
-        $paketLabels = [
-            'wrapping'    => 'Variasi',
-            'window-film' => 'Kaca Film',
-            'audio'       => 'Audio',
-            'lighting'    => 'Lampu',
-            'striping'    => 'Striping',
-        ];
-
-        $badgeLabels = array_map(fn($l) => strtoupper($paketLabels[$l->tipe_paket] ?? $l->tipe_paket ?? ''), $layanans->all());
-        $badgeColors = array_fill(0, count($services), 'rgba(242,153,74,0.12)');
-        $badgeTextColors = array_fill(0, count($services), 'var(--accent)');
+        ])->values()->toArray();
 
         $fallbackImages = \App\Helpers\StaticContent::LAYANAN_FALLBACK_IMAGES;
+        $galeris = $galeris ?? \App\Models\Galeri::take(4)->get();
     @endphp
 
-    <style>
-    :root{--accent:{{$accentColor}}}
-    @keyframes modal-in {
-        from { transform: scale(0.9) translateY(20px); opacity: 0; }
-        to { transform: scale(1) translateY(0); opacity: 1; }
-    }
-    .animate-modal-in {
-        animation: modal-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-</style>
+    <div class="bg-white min-h-screen relative">
 
-    <div class="bg-[#0a0a0a] min-h-screen relative">
+        {{-- Subtle Top Accent Background Gradient --}}
+        <div class="absolute inset-x-0 top-0 h-[450px] pointer-events-none z-0 bg-gradient-to-b from-orange-500/5 via-transparent to-transparent"></div>
 
-        <div class="absolute inset-x-0 top-0 h-[500px] pointer-events-none z-0"
-             style="background:radial-gradient(ellipse 55% 35% at 50% 0,{{$accentColor}}15,transparent 70%)"></div>
-
-        <div class="relative z-10 max-w-7xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 pt-20 sm:pt-28 pb-16 sm:pb-24 space-y-10 sm:space-y-16 lg:space-y-24">
+        <div class="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-20 sm:pb-28 space-y-16 sm:space-y-20 lg:space-y-28">
 
             {{-- ══════════════════════════════════════
-                 HERO HEADER
+                 1. HERO HEADER (Dual Column Sesuai Gambar Referensi)
             ══════════════════════════════════════ --}}
-            @include('landing.layanan._hero')
+            @include('landing.layanan._bagian_utama')
 
             {{-- ══════════════════════════════════════
-                 STUDIO KONFIGURATOR WRAPPING & LIVE ESTIMATOR INTERAKTIF
+                 2. STANDAR WORKSHOP (Seksi "ABOUT ME" pada Gambar Referensi)
             ══════════════════════════════════════ --}}
-            @include('landing.layanan._configurator')
+            @include('landing.layanan._manfaat_garansi')
 
             {{-- ══════════════════════════════════════
-                 FILTER INTERAKTIF & ASISTEN LAYANAN
+                 3. SERVICES TITLE & FILTER INTERAKTIF ("SERVICES" pada Gambar Referensi)
             ══════════════════════════════════════ --}}
-            @include('landing.layanan._filter')
+            @include('landing.layanan._penyaring')
 
             {{-- ══════════════════════════════════════
-                 SERVICE CARDS GRID
+                 4. SERVICE CARDS GRID (Sesuai 4-Column Grid pada Gambar Referensi)
             ══════════════════════════════════════ --}}
-            @include('landing.layanan._grid')
+            @include('landing.layanan._kisi_layanan')
 
             {{-- ══════════════════════════════════════
-                 MENGAPA MEMILIH KAMI + GARANSI RESMI
+                 5. PORTOFOLIO PENGERJAAN (Seksi "Portfolio" Staggered pada Gambar Referensi)
             ══════════════════════════════════════ --}}
-            @include('landing.layanan._benefits')
+            @include('landing.layanan._portofolio')
+
+            {{-- ══════════════════════════════════════
+                 7. KONSULTASI & KONTAK WORKSHOP (Seksi "Contact Me" pada Gambar Referensi)
+            ══════════════════════════════════════ --}}
+            @include('landing.layanan._kontak')
 
         </div>{{-- /max-w-7xl --}}
-        </div>
+
     </div>
 @endsection
-

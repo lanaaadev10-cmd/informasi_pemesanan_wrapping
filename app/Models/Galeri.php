@@ -22,4 +22,14 @@ class Galeri extends Model
         'is_featured',
         'badge_text',
     ];
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            \App\Services\CacheService::clearGaleriCaches();
+        });
+        static::deleted(function () {
+            \App\Services\CacheService::clearGaleriCaches();
+        });
+    }
 }

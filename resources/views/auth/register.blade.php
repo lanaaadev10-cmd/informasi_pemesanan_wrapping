@@ -1,200 +1,240 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="bg-white">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar - {{ $profil->meta_title ?? config('app.name') }}</title>
+    <title>Member Register - {{ $profil->nama_perusahaan ?? config('app.name', 'Dantie Stiker') }}</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Questrial&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="bg-racing-black font-['Plus_Jakarta_Sans',sans-serif]">
+<body class="bg-white text-slate-800 font-questrial antialiased min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 lg:p-12">
 
-    {{-- Ambient Glow Decoration --}}
-    <div class="glow-orb glow-orb-bl"></div>
-    <div class="glow-orb glow-orb-tr"></div>
+    {{-- Main Auth Card (Mengikuti Komposisi Visual Gambar Referensi) --}}
+    <div class="max-w-4xl lg:max-w-5xl w-full bg-white rounded-2xl md:rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)] overflow-hidden flex flex-col md:flex-row relative border border-slate-200 my-auto">
+        
+        {{-- KOLOM KIRI: FORM REGISTER --}}
+        <div class="w-full md:w-[50%] lg:w-[48%] bg-white p-7 sm:p-10 md:p-12 lg:p-14 flex flex-col justify-between z-10 order-2 md:order-1 min-h-[580px]">
+            <div>
+                {{-- Judul Halaman Sesuai Gambar Referensi --}}
+                <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-wider uppercase font-montserrat mb-6 sm:mb-8">
+                    MEMBER REGISTER
+                </h1>
 
-    {{-- ====== MOBILE LAYOUT ====== --}}
-    @include('auth.partials._register-mobile')
+                <form method="POST" action="{{ route('register') }}" class="space-y-4 sm:space-y-5" novalidate>
+                    @csrf
 
-    {{-- ====== DESKTOP LAYOUT (2 kolom) ====== --}}
-    <div class="hidden md:flex min-h-screen items-center justify-center p-8 lg:p-12 relative z-10">
-        <div class="auth-card">
-
-            {{-- Kolom Kiri: Visual / Foto --}}
-            <div class="auth-panel-visual"
-                 style="background-image: url('{{ asset('images/hero_car.png') }}');">
-                <div class="auth-visual-overlay"></div>
-
-                <div class="z-10 p-10 lg:p-14">
-                    <a href="/" class="inline-flex items-center gap-2">
-                        <span class="font-extrabold text-lg tracking-widest text-racing-orangeLight uppercase">
-                            {{ $profil->nama_perusahaan ?? 'Dantie Wrapping' }}
-                        </span>
-                    </a>
-                </div>
-
-                <div class="z-10 space-y-6 p-10 lg:p-14">
-                    <p class="text-gray-300 text-sm font-light leading-relaxed max-w-sm">
-                        Precision in every layer. Transform your assets with the world's finest automotive films.
-                    </p>
-                    <div class="auth-testimonial-card">
-                        <p class="text-xs text-gray-200 leading-relaxed font-light italic">
-                            "Hasil pengerjaan sangat presisi dan detail. Benar-benar standar kelas dunia untuk mobil koleksi saya."
-                        </p>
-                        <span class="text-[10px] text-racing-orangeLight font-bold block mt-3 uppercase tracking-wider">
-                            — Robert O., Automotive Enthusiast
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Kolom Kanan: Form Registrasi --}}
-            <div class="w-1/2 p-10 lg:p-14 bg-racing-formDark border-l border-white/5 flex flex-col justify-center">
-                <div class="space-y-7">
-
-                    <a href="{{ url('/') }}" class="back-link">
-                        <i class="ph ph-arrow-left text-sm"></i>
-                        {{ $profil->cta_kembali ?? 'Kembali ke Beranda' }}
-                    </a>
-
-                    <div class="space-y-2">
-                        <h2 class="text-2xl font-bold text-white tracking-tight">Buat Akun Baru</h2>
-                        <p class="text-xs text-gray-400 font-light leading-relaxed">
-                            Lengkapi detail di bawah untuk memulai pemesanan layanan eksklusif kami.
-                        </p>
+                    {{-- Field 1: Nama Lengkap / Username --}}
+                    <div>
+                        <div class="relative">
+                            <input type="text"
+                                   name="name"
+                                   id="reg_name"
+                                   value="{{ old('name') }}"
+                                   required
+                                   autofocus
+                                   placeholder="Username / Nama Lengkap"
+                                   oninput="valName(this.value, 'reg')"
+                                   class="w-full bg-transparent border-0 border-b border-slate-300 focus:border-[#d35400] focus:ring-0 py-2.5 pl-1 pr-9 text-sm font-questrial text-slate-800 placeholder-slate-400 transition-colors focus:outline-none">
+                            <i class="ph ph-user absolute right-1 top-1/2 -translate-y-1/2 text-slate-300 text-lg pointer-events-none"></i>
+                        </div>
+                        <p id="reg_name_error" class="hidden text-[11px] text-red-500 font-medium mt-1"></p>
+                        <x-input-error :messages="$errors->get('name')" class="mt-1 text-xs text-red-500 font-medium" />
                     </div>
 
-                    <form method="POST" action="{{ route('register') }}" class="space-y-4" novalidate>
-                        @csrf
-
-                        {{-- Nama Lengkap --}}
-                        <div class="space-y-1.5">
-                            <label class="label-form">{{ $profil->form_nama_lengkap ?? 'Nama Lengkap' }}</label>
-                            <div class="relative">
-                                <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
-                                <input type="text" name="name" id="d_name" value="{{ old('name') }}" required autofocus
-                                       class="input-dark" placeholder="John Doe"
-                                       oninput="valName(this.value, 'd')">
-                            </div>
-                            <p id="d_name_error" class="hidden text-[10px] text-red-400 mt-1"></p>
-                            <x-input-error :messages="$errors->get('name')" />
+                    {{-- Field 2: Email --}}
+                    <div>
+                        <div class="relative">
+                            <input type="email"
+                                   name="email"
+                                   id="reg_email"
+                                   value="{{ old('email') }}"
+                                   required
+                                   placeholder="Email Address"
+                                   oninput="valEmail(this.value, 'reg')"
+                                   class="w-full bg-transparent border-0 border-b border-slate-300 focus:border-[#d35400] focus:ring-0 py-2.5 pl-1 pr-9 text-sm font-questrial text-slate-800 placeholder-slate-400 transition-colors focus:outline-none">
+                            <i class="ph ph-envelope absolute right-1 top-1/2 -translate-y-1/2 text-slate-300 text-lg pointer-events-none"></i>
                         </div>
+                        <p id="reg_email_error" class="hidden text-[11px] text-red-500 font-medium mt-1"></p>
+                        <x-input-error :messages="$errors->get('email')" class="mt-1 text-xs text-red-500 font-medium" />
+                    </div>
 
-                        {{-- Email --}}
-                        <div class="space-y-1.5">
-                            <label class="label-form">{{ $profil->form_email ?? 'Email' }}</label>
-                            <div class="relative">
-                                <i class="ph ph-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
-                                <input type="email" name="email" id="d_email" value="{{ old('email') }}" required
-                                       class="input-dark" placeholder="email@premiumwrap.id"
-                                       oninput="valEmail(this.value, 'd')">
-                            </div>
-                            <p id="d_email_error" class="hidden text-[10px] text-red-400 mt-1"></p>
-                            <x-input-error :messages="$errors->get('email')" />
+                    {{-- Field 3: WhatsApp --}}
+                    <div>
+                        <div class="relative">
+                            <input type="text"
+                                   name="phone"
+                                   id="reg_wa"
+                                   value="{{ old('phone') }}"
+                                   placeholder="Nomor WhatsApp (08xxxxxxxxxx)"
+                                   oninput="valWA(this.value, 'reg')"
+                                   class="w-full bg-transparent border-0 border-b border-slate-300 focus:border-[#d35400] focus:ring-0 py-2.5 pl-1 pr-9 text-sm font-questrial text-slate-800 placeholder-slate-400 transition-colors focus:outline-none">
+                            <i class="ph ph-whatsapp-logo absolute right-1 top-1/2 -translate-y-1/2 text-slate-300 text-lg pointer-events-none"></i>
+                            <i id="reg_wa_check" class="ph ph-check-circle hidden absolute right-7 top-1/2 -translate-y-1/2 text-base text-emerald-500"></i>
                         </div>
+                        <p id="reg_wa_error" class="hidden text-[11px] text-red-500 font-medium mt-1"></p>
+                        <x-input-error :messages="$errors->get('phone')" class="mt-1 text-xs text-red-500 font-medium" />
+                    </div>
 
-                        {{-- WhatsApp --}}
-                        <div class="space-y-1.5">
-                            <label class="label-form">Nomor WhatsApp</label>
+                    {{-- Field 4 & 5: Password & Konfirmasi Password (Grid Responsif) --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {{-- Password --}}
+                        <div>
                             <div class="relative">
-                                <i class="ph ph-whatsapp-logo absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
-                                <input type="text" name="phone" id="d_wa" value="{{ old('phone') }}"
-                                       class="input-dark pr-10" placeholder="08xxxxxxxxxx"
-                                       oninput="valWA(this.value, 'd')">
-                                <i id="d_wa_check" class="ph ph-check-circle hidden absolute right-4 top-1/2 -translate-y-1/2 text-lg text-green-500"></i>
-                            </div>
-                            <p id="d_wa_error" class="hidden text-[10px] text-red-400 mt-1"></p>
-                            <x-input-error :messages="$errors->get('phone')" />
-                        </div>
-
-                        {{-- Password & Konfirmasi (grid 2 kolom) --}}
-                        <div class="grid grid-cols-2 gap-3">
-
-                            {{-- Kata Sandi --}}
-                            <div class="space-y-1.5">
-                                <label class="label-form">Kata Sandi</label>
-                                <div class="relative">
-                                    <i class="ph ph-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
-                                    <input type="password" name="password" id="d_pwd" required
-                                           class="input-dark pr-12" placeholder="••••••••"
-                                           oninput="valPassword(this.value, 'd')">
-                                    <button type="button" onclick="togglePwd('d_pwd', this)"
-                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
-                                        <i class="ph ph-eye text-lg"></i>
+                                <input type="password"
+                                       name="password"
+                                       id="reg_pwd"
+                                       required
+                                       placeholder="Password"
+                                       oninput="valPassword(this.value, 'reg')"
+                                       class="w-full bg-transparent border-0 border-b border-slate-300 focus:border-[#d35400] focus:ring-0 py-2.5 pl-1 pr-14 text-sm font-questrial text-slate-800 placeholder-slate-400 transition-colors focus:outline-none">
+                                <div class="absolute right-1 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                                    <button type="button"
+                                            onclick="togglePwd('reg_pwd', this)"
+                                            class="text-slate-400 hover:text-slate-600 transition-colors p-1 focus:outline-none"
+                                            title="Lihat / Sembunyikan Kata Sandi">
+                                        <i class="ph ph-eye text-base"></i>
                                     </button>
+                                    <i class="ph ph-lock text-slate-300 text-lg pointer-events-none"></i>
                                 </div>
-                                <div id="d_pwd_checklist" class="mt-2 space-y-1 hidden">
-                                    <p id="d_pwd_chk_minlen" class="transition-colors duration-200 text-[10px] text-gray-500">
-                                        <span class="circle-icon inline">○</span><span class="check-icon hidden">✓</span> Minimal 9 karakter
-                                    </p>
-                                    <p id="d_pwd_chk_maxlen" class="transition-colors duration-200 text-[10px] text-gray-500">
-                                        <span class="circle-icon inline">○</span><span class="check-icon hidden">✓</span> Maksimal 20 karakter
-                                    </p>
-                                    <p id="d_pwd_chk_upper" class="transition-colors duration-200 text-[10px] text-gray-500">
-                                        <span class="circle-icon inline">○</span><span class="check-icon hidden">✓</span> Mengandung huruf kapital (A-Z)
-                                    </p>
-                                    <p id="d_pwd_chk_lower" class="transition-colors duration-200 text-[10px] text-gray-500">
-                                        <span class="circle-icon inline">○</span><span class="check-icon hidden">✓</span> Mengandung huruf kecil (a-z)
-                                    </p>
-                                </div>
-                                <x-input-error :messages="$errors->get('password')" />
                             </div>
+                            <x-input-error :messages="$errors->get('password')" class="mt-1 text-xs text-red-500 font-medium" />
+                        </div>
 
-                            {{-- Konfirmasi Password --}}
-                            <div class="space-y-1.5">
-                                <label class="label-form">{{ $profil->form_konfirmasi_password ?? 'Konfirmasi' }}</label>
-                                <div class="relative">
-                                    <i class="ph ph-shield-check absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg"></i>
-                                    <input type="password" name="password_confirmation" id="d_pwd_conf" required
-                                           class="input-dark pr-12" placeholder="••••••••"
-                                           oninput="valConfirm(this.value, 'd_pwd', 'd')">
-                                    <button type="button" onclick="togglePwd('d_pwd_conf', this)"
-                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
-                                        <i class="ph ph-eye text-lg"></i>
+                        {{-- Konfirmasi Password --}}
+                        <div>
+                            <div class="relative">
+                                <input type="password"
+                                       name="password_confirmation"
+                                       id="reg_pwd_conf"
+                                       required
+                                       placeholder="Confirm Password"
+                                       class="w-full bg-transparent border-0 border-b border-slate-300 focus:border-[#d35400] focus:ring-0 py-2.5 pl-1 pr-14 text-sm font-questrial text-slate-800 placeholder-slate-400 transition-colors focus:outline-none">
+                                <div class="absolute right-1 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                                    <button type="button"
+                                            onclick="togglePwd('reg_pwd_conf', this)"
+                                            class="text-slate-400 hover:text-slate-600 transition-colors p-1 focus:outline-none"
+                                            title="Lihat / Sembunyikan Kata Sandi">
+                                        <i class="ph ph-eye text-base"></i>
                                     </button>
+                                    <i class="ph ph-shield-check text-slate-300 text-lg pointer-events-none"></i>
                                 </div>
-                                <p id="d_pwd_conf_error" class="hidden text-[10px] text-red-400 mt-1"></p>
-                                <i id="d_pwd_conf_check" class="ph ph-check-circle hidden text-green-500 text-sm mt-1.5"></i>
-                                <x-input-error :messages="$errors->get('password')" />
                             </div>
-
+                            <p id="reg_pwd_conf_error" class="hidden text-[11px] text-red-500 font-medium mt-1"></p>
                         </div>
+                    </div>
 
-                        {{-- Syarat & Ketentuan --}}
-                        <div class="flex items-start gap-3 pt-1">
-                            <input type="checkbox" id="d_terms" required
-                                   class="mt-0.5 rounded bg-racing-input border-white/5
-                                          text-racing-orangeLight focus:ring-racing-orangeLight">
-                            <label for="d_terms" class="text-[10px] text-gray-400 leading-normal font-light">
-                                {{ $profil->form_setuju_syarat ?? 'Saya menyetujui Syarat & Ketentuan serta Kebijakan Privasi.' }}
-                            </label>
-                        </div>
+                    {{-- Checklist Kriteria Password (Dinamis & Ringkas) --}}
+                    <div id="reg_pwd_checklist" class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 hidden">
+                        <p id="reg_pwd_chk_minlen" class="text-[10px] text-slate-500 transition-colors">
+                            <span class="circle-icon inline">&bull;</span><span class="check-icon hidden text-emerald-600 font-bold">&check;</span> Minimal 9 karakter
+                        </p>
+                        <p id="reg_pwd_chk_maxlen" class="text-[10px] text-slate-500 transition-colors">
+                            <span class="circle-icon inline">&bull;</span><span class="check-icon hidden text-emerald-600 font-bold">&check;</span> Maksimal 20 karakter
+                        </p>
+                        <p id="reg_pwd_chk_upper" class="text-[10px] text-slate-500 transition-colors">
+                            <span class="circle-icon inline">&bull;</span><span class="check-icon hidden text-emerald-600 font-bold">&check;</span> Huruf kapital (A-Z)
+                        </p>
+                        <p id="reg_pwd_chk_lower" class="text-[10px] text-slate-500 transition-colors">
+                            <span class="circle-icon inline">&bull;</span><span class="check-icon hidden text-emerald-600 font-bold">&check;</span> Huruf kecil (a-z)
+                        </p>
+                    </div>
 
-                        {{-- Submit --}}
-                        <button type="submit" class="btn-primary">
-                            {{ $profil->cta_daftar_sekarang ?? 'Daftar Sekarang' }}
-                            <i class="ph-bold ph-arrow-right text-sm"></i>
+                    {{-- Syarat & Ketentuan --}}
+                    <div class="flex items-start gap-2 pt-1">
+                        <input type="checkbox"
+                               id="reg_terms"
+                               required
+                               class="mt-0.5 rounded border-slate-300 text-[#d35400] focus:ring-[#d35400] w-4 h-4 cursor-pointer">
+                        <label for="reg_terms" class="text-[11px] text-slate-500 font-questrial leading-snug cursor-pointer select-none">
+                            Saya menyetujui Syarat &amp; Ketentuan serta Kebijakan Privasi bengkel.
+                        </label>
+                    </div>
+
+                    {{-- Tombol Oval Pill REGISTER --}}
+                    <div class="pt-3 sm:pt-4">
+                        <button type="submit"
+                                class="w-36 sm:w-44 py-3.5 rounded-full bg-[#d35400] hover:bg-[#b84300] active:scale-95 text-white font-montserrat font-bold text-xs sm:text-sm tracking-widest uppercase shadow-md hover:shadow-lg transition-all cursor-pointer flex items-center justify-center min-h-[46px]">
+                            REGISTER
                         </button>
-
-                        <p class="text-center text-[10px] text-gray-400 font-medium pt-1">
-                            Sudah memiliki akun?
-                            <a href="{{ route('login') }}"
-                               class="text-racing-orangeLight font-bold hover:underline ml-1">
-                                Masuk di sini
-                            </a>
-                        </p>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
 
+            {{-- Footer Tautan Bawah (Link ke Login) --}}
+            <div class="flex items-center justify-between gap-4 pt-6 sm:pt-8 text-xs font-montserrat font-semibold border-t border-slate-100 mt-6">
+                <span class="text-slate-500 font-normal">
+                    Sudah memiliki akun?
+                </span>
+                <a href="{{ route('login') }}"
+                   class="text-[#d35400] hover:text-[#b84300] transition-colors">
+                    Login
+                </a>
+            </div>
         </div>
+
+        {{-- KOLOM KANAN: HERO / VISUAL PANEL --}}
+        <div class="w-full md:w-[50%] lg:w-[52%] relative min-h-[220px] sm:min-h-[280px] md:min-h-[620px] bg-cover bg-center flex flex-col justify-between p-7 sm:p-10 md:p-12 lg:p-14 text-white overflow-hidden order-1 md:order-2"
+             style="background-image: url('{{ asset('images/banner_exclusive_car.webp') }}');">
+            
+            {{-- Dark Overlay --}}
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/75 to-slate-950/70 z-0"></div>
+
+            {{-- Tombol Close "X" di Kanan Atas --}}
+            <a href="{{ url('/') }}"
+               class="absolute top-5 right-6 z-20 text-white/70 hover:text-white hover:scale-110 active:scale-95 transition-all text-3xl font-light leading-none cursor-pointer"
+               title="Tutup &amp; Kembali ke Beranda">
+                &times;
+            </a>
+
+            {{-- Spacer Top --}}
+            <div class="z-10 hidden md:block">
+                <span class="text-[10px] font-mono tracking-widest uppercase text-white/60">
+                    {{ $profil->nama_perusahaan ?? 'Dantie Stiker' }}
+                </span>
+            </div>
+
+            {{-- Konten Utama Teks Showcase --}}
+            <div class="my-auto text-center space-y-3 sm:space-y-4 px-2 sm:px-4 z-10 py-6 md:py-0">
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-wider uppercase font-montserrat leading-tight drop-shadow-md">
+                    HALLO, SELAMAT DATANG DI SISTEM INFORMASI 
+                </h2>
+                <p class="text-white/85 font-questrial text-xs sm:text-sm md:text-base max-w-sm mx-auto leading-relaxed drop-shadow">
+                    Pemesanan dantie wrapping 
+                </p>
+            </div>
+
+            {{-- Footer Bawah Hero --}}
+            <div class="z-10 text-center md:text-left hidden md:block">
+                <span class="text-[10px] font-mono tracking-widest uppercase text-white/50">
+                    Official Workshop &amp; Studio System
+                </span>
+            </div>
+        </div>
+
     </div>
 
-    {{-- Script validasi form --}}
+    {{-- Script Validasi Form Terpadu & Password Checklist --}}
     @include('auth.partials._register-validation-script')
+
+    <script>
+        function togglePwd(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('ph-eye');
+                icon.classList.add('ph-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('ph-eye-slash');
+                icon.classList.add('ph-eye');
+            }
+        }
+    </script>
 </body>
 </html>

@@ -27,8 +27,8 @@
     $isLunas = in_array($statusVal, ['approved', 'in_progress', 'completed']);
 @endphp
 
-    @include('dashboard.customer.pesanan.partials._invoice-styles')
-    @include('dashboard.customer.pesanan.partials._invoice-print-styles')
+    @include('dashboard.customer.pesanan.partials._gaya_invoice')
+    @include('dashboard.customer.pesanan.partials._gaya_cetak_invoice')
 </head>
 <body>
 

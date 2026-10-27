@@ -51,4 +51,9 @@ class Tambahan extends Model
     {
         return $query->where('is_active', true);
     }
+
+    public function scopeAktif($query)
+    {
+        return $this->scopeActive($query);
+    }
 }

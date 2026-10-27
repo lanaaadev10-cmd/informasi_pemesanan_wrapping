@@ -54,6 +54,15 @@ class PesananService
                 throw new \Exception('Keranjang kosong. Tambahkan item terlebih dahulu.');
             }
 
+            // Filter HANYA barang yang dipilih jika selected_ids disediakan
+            if (!empty($data['selected_ids'])) {
+                $rawSelected = (array) $data['selected_ids'];
+                $keranjangDetails = $keranjangDetails->whereIn('id_detail', $rawSelected);
+                if ($keranjangDetails->isEmpty()) {
+                    throw new \Exception('Barang yang dipilih tidak valid dalam keranjang.');
+                }
+            }
+
             // Generate unique order code
             $kodePesanan = 'ORD-' . date('YmdHis') . '-' . strtoupper(Str::random(10));
 
@@ -90,8 +99,16 @@ class PesananService
                 'keterangan_tambahan' => $data['keterangan_tambahan'] ?? null,
             ]);
 
-            // 4. Clear cart
-            $this->keranjangService->clearCart($userId);
+            // 4. Hapus hanya barang yang di-checkout dari keranjang
+            if (!empty($data['selected_ids'])) {
+                $selectedIds = $keranjangDetails->pluck('id_detail')->toArray();
+                $keranjang->details()->whereIn('id_detail', $selectedIds)->delete();
+                if ($keranjang->details()->count() === 0) {
+                    $keranjang->update(['status' => 'checked_out']);
+                }
+            } else {
+                $this->keranjangService->clearCart($userId);
+            }
 
             DB::commit();
 
